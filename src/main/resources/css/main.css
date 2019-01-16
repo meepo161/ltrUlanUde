@@ -1,0 +1,16 @@
+.root {
+	-fx-font-size: 16px;
+	-fx-font-family: Arial;
+	}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.status-bar {
+	-fx-background-color: none;
+}
+
+.chart-title, .axis-label {
+    -fx-font-size: 16px;
+}
