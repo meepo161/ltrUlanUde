@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="layouts.LTR212SettingView">
+   <children>
+      <GridPane layoutX="94.0" layoutY="103.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="300.0" prefHeight="300.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="5" GridPane.rowIndex="8" GridPane.rowSpan="4" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="5" GridPane.rowIndex="2" />
+            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" text="Инициализация" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets left="-135.0" />
+               </GridPane.margin>
+            </Button>
+            <Label text="Каналы:" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label text="Тип мостового подключения:" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Диапазон измерений:" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <CheckBox fx:id="checkChannelN1" mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN1" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN1" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <CheckBox fx:id="checkChannelN11" mnemonicParsing="false" text="Канал 2" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN11" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN11" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <CheckBox fx:id="checkChannelN111" mnemonicParsing="false" text="Канал 3" GridPane.columnIndex="3" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN111" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN111" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <CheckBox fx:id="checkChannelN1111" mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="4" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN1111" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN1111" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label styleClass="title" text="Настройки модуля LTR212" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label text="Каналы:" GridPane.rowIndex="8">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <Label text="Тип мостового подключения:" GridPane.rowIndex="9">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <Label text="Диапазон измерений:" GridPane.rowIndex="10">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <CheckBox fx:id="checkChannelN12" mnemonicParsing="false" text="Канал 5" GridPane.columnIndex="1" GridPane.rowIndex="8">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN12" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN12" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <CheckBox fx:id="checkChannelN112" mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="2" GridPane.rowIndex="8">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN112" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN112" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <CheckBox fx:id="checkChannelN1112" mnemonicParsing="false" text="Канал 7" GridPane.columnIndex="3" GridPane.rowIndex="8">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN1112" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN1112" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <CheckBox fx:id="checkChannelN11111" mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="4" GridPane.rowIndex="8">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <ComboBox fx:id="bridgeTypeOfChannelN11111" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN11111" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" text="Назад" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="13">
+               <GridPane.margin>
+                  <Insets right="-135.0" />
+               </GridPane.margin>
+            </Button>
+            <Label text="Текущее значение:" GridPane.rowIndex="5">
+               <font>
+                  <Font name="Arial" size="16.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>

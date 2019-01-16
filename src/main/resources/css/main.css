@@ -14,3 +14,12 @@
 .chart-title, .axis-label {
     -fx-font-size: 16px;
 }
+
+.wrapper {
+    -fx-border-radius: 3px;
+    -fx-border-color: #7D7D7D;
+}
+
+.title {
+    -fx-font-weight: bold;
+}
