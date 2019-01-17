@@ -25,7 +25,7 @@ public class Main extends Application {
 
     @Override
     public void init() throws IOException {
-        DataBaseRepository.init(false);
+        DataBaseRepository.init(true);
 
         crateLoginScene();
         createMainScene();

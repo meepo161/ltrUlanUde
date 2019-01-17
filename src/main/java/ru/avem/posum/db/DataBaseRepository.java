@@ -3,6 +3,7 @@ package ru.avem.posum.db;
 import ru.avem.posum.db.models.Account;
 import ru.avem.posum.db.models.Protocol;
 import ru.avem.posum.db.models.TestingSample;
+import ru.avem.posum.db.models.Event;
 
 import java.io.File;
 
@@ -30,6 +31,12 @@ public class DataBaseRepository {
             ProtocolRepository.createTable(Protocol.class);
 
             Protocol protocol = new Protocol(testingSampleN1);
+
+            EventRepository.createTable(Event.class);
+
+            Event event = new Event(0, "База создана");
+            EventRepository.insertEvent(event);
+
         }
     }
 }
