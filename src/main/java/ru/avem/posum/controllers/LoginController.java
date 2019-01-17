@@ -18,6 +18,11 @@ public class LoginController {
 
     private Main main;
 
+    @FXML
+    private void initialize() {
+
+    }
+
     public void setMainApp(Main main) {
         this.main = main;
     }
@@ -26,7 +31,7 @@ public class LoginController {
         authenticateUser();
     }
 
-    public void authenticateUser() {
+    private void authenticateUser() {
         List<Account> allAccounts = AccountRepository.getAllAccounts();
         String login = userLogin.getText();
         String password = userPassword.getText();
@@ -36,14 +41,18 @@ public class LoginController {
         } else if (password.isEmpty()) {
             Toast.makeText("Введите пароль").show(Toast.ToastType.WARNING);
         } else {
-            for (int i = 0; i < allAccounts.size(); i++) {
-                if (login.equals(allAccounts.get(i).getUserName()) && password.equals((allAccounts.get(i).getUserPassword()))) {
-                    main.showMainView();
-                    break;
-                } else {
-                    if (i == allAccounts.size() - 1) {
-                        Toast.makeText("Неверное имя пользователя или пароль").show(Toast.ToastType.ERROR);
-                    }
+            checkLoginAndPassword(allAccounts, login, password);
+        }
+    }
+
+    private void checkLoginAndPassword(List<Account> allAccounts, String login, String password) {
+        for (int i = 0; i < allAccounts.size(); i++) {
+            if (login.equals(allAccounts.get(i).getUserName()) && password.equals((allAccounts.get(i).getUserPassword()))) {
+                main.setMainView();
+                break;
+            } else {
+                if (i == allAccounts.size() - 1) {
+                    Toast.makeText("Неверное имя пользователя или пароль").show(Toast.ToastType.ERROR);
                 }
             }
         }
