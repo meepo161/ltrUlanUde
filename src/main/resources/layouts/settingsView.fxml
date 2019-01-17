@@ -162,7 +162,7 @@
                               </AnchorPane>
                               <Button fx:id="chooseCrate_Button" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleChooseCrate" text="Выбрать" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                                  <font>
-                                    <Font name="Arial" size="16.0" />
+                                    <Font sampleName="Arial" size="16.0" />
                                  </font>
                                  <GridPane.margin>
                                     <Insets />
@@ -170,7 +170,7 @@
                               </Button>
                               <Button fx:id="setupModule_Button" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSetupModule" text="Настроить" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                                  <font>
-                                    <Font name="Arial" size="16.0" />
+                                    <Font sampleName="Arial" size="16.0" />
                                  </font>
                               </Button>
                               <ListView fx:id="crates_ListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
@@ -185,7 +185,7 @@
                               </ListView>
                               <Label text="Модули:" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
                                  <font>
-                                    <Font name="Arial" size="16.0" />
+                                    <Font sampleName="Arial" size="16.0" />
                                  </font>
                                  <GridPane.margin>
                                     <Insets left="10.0" top="5.0" />
@@ -193,7 +193,7 @@
                               </Label>
                               <Label fx:id="crates_Label" text="Крейты:" GridPane.rowIndex="1">
                                  <font>
-                                    <Font name="Arial" size="16.0" />
+                                    <Font sampleName="Arial" size="16.0" />
                                  </font>
                                  <GridPane.margin>
                                     <Insets left="10.0" />
@@ -201,7 +201,7 @@
                               </Label>
                               <Button fx:id="saveSetup_Button" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveSetup" text="Сохранить настройки" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                                  <font>
-                                    <Font name="Arial" size="16.0" />
+                                    <Font sampleName="Arial" size="16.0" />
                                  </font>
                               </Button>
                            </children>

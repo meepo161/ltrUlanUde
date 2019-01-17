@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ru.avem.posum.controllers.LoginController;
 import ru.avem.posum.controllers.MainController;
+import ru.avem.posum.db.DataBaseRepository;
 
 import java.awt.*;
 import java.io.IOException;
@@ -21,8 +22,11 @@ public class Main extends Application {
     private LoginController loginViewController;
     private MainController mainViewController;
 
+
     @Override
     public void init() throws IOException {
+        DataBaseRepository.init(true);
+
         crateLoginScene();
         createMainScene();
     }
@@ -67,5 +71,10 @@ public class Main extends Application {
     private void showLoginView() {
         PRIMARY_STAGE.setTitle("Авторизация");
         PRIMARY_STAGE.setScene(loginScene);
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

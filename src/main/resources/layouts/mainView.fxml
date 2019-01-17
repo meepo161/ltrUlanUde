@@ -73,9 +73,6 @@
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
-                     <font>
-                        <Font name="Arial" size="16.0" />
-                     </font>
                   </Button>
                </children>
             </GridPane>

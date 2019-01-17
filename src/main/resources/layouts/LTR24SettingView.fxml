@@ -55,7 +55,7 @@
             </Button>
             <Label text="Каналы:" GridPane.rowIndex="2">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <padding>
                   <Insets left="10.0" />
@@ -63,7 +63,7 @@
             </Label>
             <Label text="Режим работы канала:" GridPane.rowIndex="3">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -71,7 +71,7 @@
             </Label>
             <Label text="Диапазон измерений:" GridPane.rowIndex="4">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -79,7 +79,7 @@
             </Label>
             <CheckBox fx:id="checkChannelN1" mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -97,7 +97,7 @@
             </ComboBox>
             <CheckBox fx:id="checkChannelN11" mnemonicParsing="false" text="Канал 2" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -115,7 +115,7 @@
             </ComboBox>
             <CheckBox fx:id="checkChannelN111" mnemonicParsing="false" text="Канал 3" GridPane.columnIndex="3" GridPane.rowIndex="2">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -133,7 +133,7 @@
             </ComboBox>
             <CheckBox fx:id="checkChannelN1111" mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="4" GridPane.rowIndex="2">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -152,7 +152,7 @@
             <Label styleClass="title" text="Настройки модуля LTR24" GridPane.columnSpan="5" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Label text="Каналы:" GridPane.rowIndex="10">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <padding>
                   <Insets left="10.0" />
@@ -160,7 +160,7 @@
             </Label>
             <Label text="Режим работы канала:" GridPane.rowIndex="11">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -168,7 +168,7 @@
             </Label>
             <Label text="Диапазон измерений:" GridPane.rowIndex="12">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -176,7 +176,7 @@
             </Label>
             <CheckBox fx:id="checkChannelN12" mnemonicParsing="false" text="Канал 5" GridPane.columnIndex="1" GridPane.rowIndex="10">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -194,7 +194,7 @@
             </ComboBox>
             <CheckBox fx:id="checkChannelN112" mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="2" GridPane.rowIndex="10">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -212,7 +212,7 @@
             </ComboBox>
             <CheckBox fx:id="checkChannelN1112" mnemonicParsing="false" text="Канал 7" GridPane.columnIndex="3" GridPane.rowIndex="10">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -230,7 +230,7 @@
             </ComboBox>
             <CheckBox fx:id="checkChannelN11111" mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="4" GridPane.rowIndex="10">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -253,7 +253,7 @@
             </Button>
             <Label text="Текущее значение:" GridPane.rowIndex="5">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -321,7 +321,7 @@
             </Button>
             <Label text="Текущее значение:" GridPane.rowIndex="13">
                <font>
-                  <Font name="Arial" size="16.0" />
+                  <Font sampleName="Arial" size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets left="10.0" />
