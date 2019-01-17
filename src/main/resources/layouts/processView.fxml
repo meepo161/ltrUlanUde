@@ -64,7 +64,7 @@
             </VBox>
             <SplitPane dividerPositions="0.1755050505050505" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="792.0" prefWidth="420.0">
               <items>
-                  <TableView minHeight="75.0" prefHeight="125.0" prefWidth="219.0">
+                  <TableView fx:id="tableViewProgramProcess" minHeight="75.0" prefHeight="125.0" prefWidth="219.0">
                     <columns>
                       <TableColumn prefWidth="75.0" text="Команда" />
                       <TableColumn prefWidth="75.0" text="Свойства" />
@@ -83,7 +83,7 @@
                         <RowConstraints maxHeight="25.0" minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <TableView minHeight="75.0" prefHeight="391.0" prefWidth="500.0" GridPane.columnSpan="2">
+                        <TableView fx:id="tableViewEventProcess" minHeight="75.0" prefHeight="391.0" prefWidth="500.0" GridPane.columnSpan="2">
                           <columns>
                             <TableColumn prefWidth="73.0" text="Время" />
                             <TableColumn prefWidth="144.0" text="Событие" />
@@ -92,8 +92,8 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Добавить событие" GridPane.rowIndex="1" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="addEvent_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1" />
+                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
               </items>
@@ -111,24 +111,24 @@
                <children>
                   <HBox prefHeight="93.0" prefWidth="1172.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="108.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="Инициализация">
+                        <Button fx:id="init_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitButton" text="Инициализация">
                            <font>
-                              <Font sampleName="Arial" size="12.0" />
+                              <Font name="Arial" size="12.0" />
                            </font>
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
                         </Button>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="Запуск" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="Плавная остановка" textAlignment="CENTER" wrapText="true" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="СТОП" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="К программе" />
+                        <Button fx:id="run_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleRunButton" text="Запуск" />
+                        <Button fx:id="smoothStop_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSmoothStopButton" text="Плавная остановка" textAlignment="CENTER" wrapText="true" />
+                        <Button fx:id="stop_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStopButton" text="СТОП" />
+                        <Button fx:id="toProgramm_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleToProgrammButton" text="К программе" />
                         <Pane prefHeight="93.0" prefWidth="156.0">
                            <children>
                               <Label layoutX="14.0" layoutY="6.0" text="Время режима" />
                               <TextField alignment="TOP_RIGHT" editable="false" layoutX="7.0" layoutY="29.0" maxHeight="16.0" prefHeight="16.0" prefWidth="146.0" text="0:00:00">
                                  <font>
-                                    <Font sampleName="Arial Bold" size="16.0" />
+                                    <Font name="Arial Bold" size="16.0" />
                                  </font>
                               </TextField>
                               <Button layoutX="128.0" layoutY="2.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="&gt;" />
@@ -137,9 +137,9 @@
                               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                            </padding>
                         </Pane>
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="Записать точку" textAlignment="CENTER" wrapText="true" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="105.0" text="Записать осциллограмму" textAlignment="CENTER" wrapText="true" />
-                        <Button maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="105.0" text="Сохранить протокол испытания" textAlignment="CENTER" wrapText="true" />
+                        <Button fx:id="savePoint_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePointButton" text="Записать точку" textAlignment="CENTER" wrapText="true" />
+                        <Button fx:id="saveWaveform_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveWaveformButton" prefHeight="60.0" prefWidth="105.0" text="Записать осциллограмму" textAlignment="CENTER" wrapText="true" />
+                        <Button fx:id="saveProtocol_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveProtocolButton" prefHeight="60.0" prefWidth="105.0" text="Сохранить протокол испытания" textAlignment="CENTER" wrapText="true" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -147,7 +147,7 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" layoutX="1174.0" layoutY="-3.0" prefHeight="93.0" prefWidth="106.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1174.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" text="Назад" textAlignment="CENTER" wrapText="true">
+                        <Button fx:id="back_Button" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" textAlignment="CENTER" wrapText="true">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin></Button>
@@ -196,13 +196,13 @@
                         <Label layoutX="3.0" layoutY="8.0" text="П" />
                         <Label layoutX="3.0" layoutY="37.0" text="И" />
                         <Label layoutX="3.0" layoutY="66.0" text="Д" />
-                        <Slider layoutX="18.0" layoutY="10.0" prefHeight="14.0" prefWidth="204.0" />
-                        <Slider layoutX="18.0" layoutY="39.0" prefHeight="14.0" prefWidth="204.0" />
-                        <Slider layoutX="18.0" layoutY="68.0" prefHeight="14.0" prefWidth="204.0" />
-                        <TextField layoutX="225.0" layoutY="3.0" prefHeight="25.0" prefWidth="75.0" text="0" />
-                        <TextField layoutX="225.0" layoutY="33.0" prefHeight="25.0" prefWidth="75.0" text="0" />
-                        <TextField layoutX="225.0" layoutY="63.0" prefHeight="25.0" prefWidth="75.0" text="0" />
-                        <Button layoutX="305.0" layoutY="4.0" mnemonicParsing="false" prefHeight="82.0" prefWidth="74.0" text="Сохранить" />
+                        <Slider fx:id="p_Slider" layoutX="18.0" layoutY="10.0" prefHeight="14.0" prefWidth="204.0" />
+                        <Slider fx:id="i_Slider" layoutX="18.0" layoutY="39.0" prefHeight="14.0" prefWidth="204.0" />
+                        <Slider fx:id="d_Slider" layoutX="18.0" layoutY="68.0" prefHeight="14.0" prefWidth="204.0" />
+                        <TextField fx:id="pValue_TextEdit" layoutX="225.0" layoutY="3.0" prefHeight="25.0" prefWidth="75.0" text="0" />
+                        <TextField fx:id="iValue_TextEdit" layoutX="225.0" layoutY="33.0" prefHeight="25.0" prefWidth="75.0" text="0" />
+                        <TextField fx:id="dValue_TextEdit" layoutX="225.0" layoutY="63.0" prefHeight="25.0" prefWidth="75.0" text="0" />
+                        <Button fx:id="savePid_Button" layoutX="305.0" layoutY="4.0" mnemonicParsing="false" onAction="#handlePidButton" prefHeight="82.0" prefWidth="74.0" text="Сохранить" />
                      </children>
                      <opaqueInsets>
                         <Insets left="2.0" />
