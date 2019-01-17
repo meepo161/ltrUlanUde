@@ -35,7 +35,7 @@ public class AccountRepository extends DataBaseRepository {
         sendAction((accountDao) -> accountDao.delete(account));
     }
 
-    public static List<Account> getAllAccount(){
+    public static List<Account> getAllAccounts(){
         final List[] accounts = {null};
         sendAction((accountsDao -> accounts[0] = accountsDao.queryForAll()));
         return (List<Account>) accounts[0];

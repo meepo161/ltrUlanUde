@@ -25,7 +25,7 @@ public class Main extends Application {
 
     @Override
     public void init() throws IOException {
-        DataBaseRepository.init(true);
+        DataBaseRepository.init(false);
 
         crateLoginScene();
         createMainScene();
@@ -46,6 +46,8 @@ public class Main extends Application {
                         Platform.exit();
                     }
                     break;
+                case ENTER:
+                    loginViewController.handleLogIn();
             }
         });
     }
@@ -76,5 +78,12 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void showMainView() {
+        PRIMARY_STAGE.setTitle("ПО Система управления многоканальная");
+        PRIMARY_STAGE.setScene(mainScene);
+        PRIMARY_STAGE.setX(0);
+        PRIMARY_STAGE.setY(0);
     }
 }
