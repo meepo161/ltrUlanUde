@@ -10,6 +10,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ru.avem.posum.controllers.LoginController;
 import ru.avem.posum.controllers.MainController;
+import ru.avem.posum.controllers.SettingsController;
 import ru.avem.posum.db.DataBaseRepository;
 
 import java.awt.*;
@@ -21,9 +22,11 @@ public class Main extends Application {
 
     private Scene loginScene;
     private Scene mainScene;
+    private Scene settingsScene;
 
     private LoginController loginViewController;
     private MainController mainViewController;
+    private SettingsController settingsViewController;
 
 
     @Override
@@ -32,6 +35,7 @@ public class Main extends Application {
 
         crateLoginScene();
         createMainScene();
+        createSettingsScene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -63,6 +67,16 @@ public class Main extends Application {
         mainViewController.setMainApp(this);
 
         mainScene = new Scene(mainViewParent, 1280, 720);
+    }
+
+    private void createSettingsScene() throws IOException {
+        FXMLLoader settingsViewLoader = new FXMLLoader();
+        settingsViewLoader.setLocation(Main.class.getResource("/layouts/settingsView.fxml"));
+        Parent settingsViewParent = settingsViewLoader.load();
+        settingsViewController = settingsViewLoader.getController();
+        settingsViewController.setMainApp(this);
+
+        settingsScene = new Scene(settingsViewParent, 1280, 720);
     }
 
 
@@ -107,6 +121,23 @@ public class Main extends Application {
 
         PRIMARY_STAGE.show();
         LOGIN_STAGE.close();
+    }
+
+    public void setSettingsView() {
+        PRIMARY_STAGE.setTitle("Настрока программы испытаний");
+        PRIMARY_STAGE.setScene(settingsScene);
+    }
+
+    public static Stage getPrimaryStage() {
+        return PRIMARY_STAGE;
+    }
+
+    public Scene getMainScene() {
+        return mainScene;
+    }
+
+    public Scene getSettingsScene() {
+        return settingsScene;
     }
 
     public static void main(String[] args) {

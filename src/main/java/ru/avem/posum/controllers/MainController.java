@@ -13,6 +13,8 @@ public class MainController {
     }
 
     public void handleMenuItemAdd() {
+        main.setSettingsView();
+        Main.getPrimaryStage().setScene(main.getSettingsScene());
     }
 
     public void handleMenuItemSettings() {

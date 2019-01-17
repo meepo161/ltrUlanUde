@@ -4,6 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Date;
 import java.util.Objects;
 
 @XmlRootElement
@@ -13,9 +14,23 @@ public class Protocol {
     private long id;
 
     @DatabaseField
+    private String expirementName;
+    @DatabaseField
     private String sampleName;
     @DatabaseField
-    private String serialNumber;
+    private String sampleSerialNumber;
+    @DatabaseField
+    private String documentNumber;
+    @DatabaseField
+    private String expirementType;
+    @DatabaseField
+    private String expirementTime;
+    @DatabaseField
+    private Date expirementDate;
+    @DatabaseField
+    private String leadEngineer;
+    @DatabaseField
+    private String comments;
 
     public Protocol() {
         // ORMLite and XML binder need a no-arg constructor
@@ -27,7 +42,7 @@ public class Protocol {
 
     public void getTestingSampleInfo(TestingSample testingSample) {
         sampleName = testingSample.getSampleName();
-        serialNumber = testingSample.getSerialNumber();
+        sampleSerialNumber = testingSample.getSerialNumber();
     }
 
     public long getId() {
@@ -45,11 +60,11 @@ public class Protocol {
         Protocol protocol = (Protocol) o;
         return id == protocol.id &&
                 Objects.equals(sampleName, protocol.sampleName) &&
-                Objects.equals(serialNumber, protocol.serialNumber);
+                Objects.equals(sampleSerialNumber, protocol.sampleSerialNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, sampleName, serialNumber);
+        return Objects.hash(id, sampleName, sampleSerialNumber);
     }
 }

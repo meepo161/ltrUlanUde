@@ -3,12 +3,17 @@
 	-fx-font-family: Arial;
 	}
 
+.context-menu {
+    -fx-min-width: 100px;
+}
+
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
     -fx-border-color: transparent;
 }
 
 .status-bar {
 	-fx-background-color: none;
+	-fx-border-radius: 3px;
 }
 
 .chart-title, .axis-label {
