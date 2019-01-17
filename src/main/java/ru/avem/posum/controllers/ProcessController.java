@@ -1,6 +1,12 @@
 package ru.avem.posum.controllers;
 
+import ru.avem.posum.Main;
+
 public class ProcessController {
+    private Main main;
+    public void setMainApp(Main main) {
+        this.main = main;
+    }
 
     public void handleInitButton() {
     }
