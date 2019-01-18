@@ -30,6 +30,11 @@ public class MainController {
     public void handleMenuItemSettings() {
     }
 
+    public void handleMenuItemProcess() {
+        main.setProcessView();
+        Main.getPrimaryStage().setScene(main.getProcessScene());
+    }
+
     public void handleMenuItemDelete() {
     }
 

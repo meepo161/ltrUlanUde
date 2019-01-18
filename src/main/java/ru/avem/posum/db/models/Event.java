@@ -27,9 +27,7 @@ public class Event {
 
     public Event(long idTest, String description, long millis) {
         this.idTest = idTest;
-        this.millis = millis;
-        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
-        this.time = new SimpleDateFormat("HH:mm:ss").format(millis);
+        this.setMillis(millis);
         this.description = description;
     }
 
