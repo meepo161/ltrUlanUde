@@ -47,6 +47,7 @@ public class ProtocolRepository extends DataBaseRepository {
         return protocol[0];
     }
 
+
     @FunctionalInterface
     private interface Actionable {
         void onAction(Dao<Protocol, Long> protocolDao) throws SQLException;

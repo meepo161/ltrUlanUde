@@ -1,9 +1,6 @@
 package ru.avem.posum.db;
 
-import ru.avem.posum.db.models.Account;
-import ru.avem.posum.db.models.Protocol;
-import ru.avem.posum.db.models.TestingSample;
-import ru.avem.posum.db.models.Event;
+import ru.avem.posum.db.models.*;
 
 import java.io.File;
 
@@ -23,6 +20,8 @@ public class DataBaseRepository {
 
             TestingSample testingSampleN1 = new TestingSample("Внешний подвес вертолета Ми-8", "11011");
             TestingSample testingSampleN2 = new TestingSample("Внешний подвес вертолета Ми-17", "13015");
+            Experiment experimentN1 = new Experiment("Испытания внешнего подвеса вертолета Ми-8", "Подвес", "120021", "№342", "Тестовые испытания", "01:00:00", "18:01:2019", "Петрович", "Hello world!");
+            Experiment experimentN2 = new Experiment("Испытания внешнего подвеса вертолета Ми-17", "Подвес", "540321", "№356", "Тестовые испытания", "01:00:00", "18:01:2019", "Иванович", "Bye world!");
 
             TestingSampleRepository.createTable(TestingSample.class);
             TestingSampleRepository.insertTestingSample(testingSampleN1);
@@ -30,7 +29,10 @@ public class DataBaseRepository {
 
             ProtocolRepository.createTable(Protocol.class);
 
-            Protocol protocol = new Protocol(testingSampleN1);
+            Protocol protocolN1 = new Protocol(experimentN1);
+            Protocol protocolN2 = new Protocol(experimentN2);
+            ProtocolRepository.insertProtocol(protocolN1);
+            ProtocolRepository.insertProtocol(protocolN2);
 
             EventRepository.createTable(Event.class);
 
