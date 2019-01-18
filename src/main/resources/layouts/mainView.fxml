@@ -29,6 +29,8 @@
                   <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSettings" text="Настроить" />
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDelete" text="Удалить" />
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem mnemonicParsing="false" onAction="#handleMenuItemProcess" text="Испытание" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">

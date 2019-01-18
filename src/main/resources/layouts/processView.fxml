@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.StatusBar?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.ProcessController">
    <center>
       <SplitPane dividerPositions="0.8126740947075209">
          <items>
@@ -64,7 +64,7 @@
             </VBox>
             <SplitPane dividerPositions="0.1755050505050505" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="792.0" prefWidth="420.0">
               <items>
-                  <TableView fx:id="tableViewProgramProcess" minHeight="75.0" prefHeight="125.0" prefWidth="219.0">
+                  <TableView fx:id="tableViewProgramProcess" minHeight="75.0">
                     <columns>
                       <TableColumn prefWidth="75.0" text="Команда" />
                       <TableColumn prefWidth="75.0" text="Свойства" />
@@ -83,7 +83,7 @@
                         <RowConstraints maxHeight="25.0" minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <TableView fx:id="tableViewEventProcess" minHeight="75.0" prefHeight="391.0" prefWidth="500.0" GridPane.columnSpan="2">
+                        <TableView fx:id="tableViewEventProcess" minHeight="75.0" GridPane.columnSpan="2">
                           <columns>
                             <TableColumn prefWidth="73.0" text="Время" />
                             <TableColumn prefWidth="144.0" text="Событие" />

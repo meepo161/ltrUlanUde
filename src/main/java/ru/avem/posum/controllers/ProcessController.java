@@ -25,12 +25,16 @@ public class ProcessController {
     public void handleSaveProtocolButton() {
     }
     public void handleBackButton() {
+       Main.getPrimaryStage().setScene(main.getMainScene());
     }
     public void handleAddEventButton() {
     }
     public void handleExpandEventTableButton() {
     }
     public void handlePidButton() {
+    }
+
+    public void handlePlugButton() {
     }
 
 }

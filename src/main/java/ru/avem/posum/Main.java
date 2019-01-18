@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import ru.avem.posum.controllers.LoginController;
 import ru.avem.posum.controllers.MainController;
 import ru.avem.posum.controllers.SettingsController;
+import ru.avem.posum.controllers.ProcessController;
 import ru.avem.posum.db.DataBaseRepository;
 
 import java.awt.*;
@@ -23,10 +24,12 @@ public class Main extends Application {
     private Scene loginScene;
     private Scene mainScene;
     private Scene settingsScene;
+    private Scene processScene;
 
     private LoginController loginViewController;
     private MainController mainViewController;
     private SettingsController settingsViewController;
+    private ProcessController processViewController;
 
 
     @Override
@@ -36,6 +39,7 @@ public class Main extends Application {
         crateLoginScene();
         createMainScene();
         createSettingsScene();
+        createProcessScene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -79,6 +83,15 @@ public class Main extends Application {
         settingsScene = new Scene(settingsViewParent, 1280, 720);
     }
 
+    private void createProcessScene() throws IOException {
+        FXMLLoader processViewLoader = new FXMLLoader();
+        processViewLoader.setLocation(Main.class.getResource("/layouts/processView.fxml"));
+        Parent processViewParent = processViewLoader.load();
+        processViewController = processViewLoader.getController();
+        processViewController.setMainApp(this);
+
+        processScene = new Scene(processViewParent, 1280, 720);
+    }
 
     @Override
     public void start(Stage loginStage) throws Exception {
@@ -128,6 +141,12 @@ public class Main extends Application {
         PRIMARY_STAGE.setScene(settingsScene);
     }
 
+    public void setProcessView() {
+        PRIMARY_STAGE.setTitle("Программа испытаний");
+        PRIMARY_STAGE.setScene(processScene);
+    }
+
+
     public static Stage getPrimaryStage() {
         return PRIMARY_STAGE;
     }
@@ -138,6 +157,10 @@ public class Main extends Application {
 
     public Scene getSettingsScene() {
         return settingsScene;
+    }
+
+    public Scene getProcessScene() {
+        return processScene;
     }
 
     public static void main(String[] args) {
