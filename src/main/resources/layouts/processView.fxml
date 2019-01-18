@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.StatusBar?>
 
-<BorderPane minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.ProcessController">
+<BorderPane minHeight="680.0" minWidth="1200.0" prefHeight="680.0" prefWidth="1200.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.ProcessController">
    <center>
       <SplitPane dividerPositions="0.8126740947075209">
          <items>
@@ -32,7 +32,7 @@
                <children>
                   <HBox prefWidth="1043.0" VBox.vgrow="NEVER">
                      <children>
-                        <TableView fx:id="tableViewSimple" editable="true" minHeight="50.0" prefHeight="50.0" prefWidth="739.0">
+                        <TableView fx:id="tableViewSimple" editable="true" minHeight="50.0" prefHeight="50.0" prefWidth="739.0" styleClass="processTable">
                           <columns>
                             <TableColumn editable="false" prefWidth="75.0" text="основные" />
                             <TableColumn editable="false" prefWidth="75.0" text="отклик" />
@@ -64,7 +64,7 @@
             </VBox>
             <SplitPane dividerPositions="0.1755050505050505" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="792.0" prefWidth="420.0">
               <items>
-                  <TableView fx:id="tableViewProgramProcess" minHeight="75.0">
+                  <TableView fx:id="tableViewProgramProcess" minHeight="75.0" styleClass="programTable">
                     <columns>
                       <TableColumn prefWidth="75.0" text="Команда" />
                       <TableColumn prefWidth="75.0" text="Свойства" />
@@ -83,7 +83,7 @@
                         <RowConstraints maxHeight="25.0" minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <TableView fx:id="tableViewEventProcess" minHeight="75.0" GridPane.columnSpan="2">
+                        <TableView fx:id="tableViewEventProcess" minHeight="75.0" styleClass="eventTable" GridPane.columnSpan="2">
                           <columns>
                             <TableColumn prefWidth="73.0" text="Время" />
                             <TableColumn prefWidth="144.0" text="Событие" />
@@ -92,8 +92,16 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <Button fx:id="addEvent_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1" />
-                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="addEvent_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1" >
+                        <font>
+                           <Font name="Arial" size="12.0" />
+                        </font>
+                        </Button>
+                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1" >
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Button>
                      </children>
                   </GridPane>
               </items>
@@ -109,7 +117,7 @@
          <children>
             <AnchorPane>
                <children>
-                  <HBox prefHeight="93.0" prefWidth="1172.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="108.0" AnchorPane.topAnchor="0.0">
+                  <HBox prefHeight="93.0" prefWidth="1172.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Button fx:id="init_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitButton" text="Инициализация">
                            <font>
@@ -172,7 +180,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <HBox alignment="CENTER_RIGHT" layoutX="1174.0" layoutY="-3.0" prefHeight="93.0" prefWidth="106.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1174.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER_RIGHT" layoutX="1174.0" layoutY="-3.0" prefHeight="93.0" prefWidth="106.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1040.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Button fx:id="back_Button" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" textAlignment="CENTER" wrapText="true">
                            <HBox.margin>
@@ -190,7 +198,10 @@
                   <Pane prefHeight="97.0" prefWidth="491.0">
                      <children>
                         <ListView fx:id="plug_ListView" prefHeight="97.0" prefWidth="58.0" />
-                        <Button fx:id="plug_Button" layoutX="57.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран" />
+                        <Button fx:id="plug_Button" layoutX="57.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран" >
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font></Button>
                         <Label layoutX="127.0" layoutY="2.0" text="Амплитуда">
                            <font>
                               <Font name="Arial" size="12.0" />
