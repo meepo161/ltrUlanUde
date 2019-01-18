@@ -20,6 +20,22 @@
     -fx-font-size: 16px;
 }
 
+.processTable {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.programTable {
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+}
+
+.eventTable {
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+}
+
+
 .wrapper {
     -fx-border-radius: 3px;
     -fx-border-color: #7D7D7D;

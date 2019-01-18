@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.MainController">
    <top>
       <MenuBar style="-fx-font-size: 12px;" BorderPane.alignment="CENTER">
         <menus>
@@ -25,12 +25,10 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Редактировать">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAdd" text="Добавить" />
-                  <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSettings" text="Настроить" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
+              <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAdd" text="Добавить" />
+              <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSettings" text="Настроить" />
+              <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDelete" text="Удалить" />
-                <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#handleMenuItemProcess" text="Испытание" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">
@@ -69,7 +67,7 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" text="Открыть" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                  <Button fx:id="openProcess_Button" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleOpenProcessButton" text="Открыть" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>

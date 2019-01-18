@@ -30,7 +30,7 @@ public class MainController {
     public void handleMenuItemSettings() {
     }
 
-    public void handleMenuItemProcess() {
+    public void handleOpenProcessButton() {
         main.setProcessView();
         Main.getPrimaryStage().setScene(main.getProcessScene());
     }
