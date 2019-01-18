@@ -8,29 +8,22 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import ru.avem.posum.controllers.LoginController;
-import ru.avem.posum.controllers.MainController;
-import ru.avem.posum.controllers.SettingsController;
-import ru.avem.posum.controllers.ProcessController;
+import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 
 import java.awt.*;
 import java.io.IOException;
 
-public class Main extends Application {
-    private static Stage LOGIN_STAGE;
-    private static Stage PRIMARY_STAGE;
+public class Main extends Application implements WindowsManager {
+    private Stage loginStage;
+    private Stage primaryStage;
 
     private Scene loginScene;
     private Scene mainScene;
     private Scene settingsScene;
     private Scene processScene;
 
-    private LoginController loginViewController;
-    private MainController mainViewController;
-    private SettingsController settingsViewController;
-    private ProcessController processViewController;
-
+    private LoginController loginController;
 
     @Override
     public void init() throws IOException {
@@ -46,8 +39,8 @@ public class Main extends Application {
         FXMLLoader loginViewLoader = new FXMLLoader();
         loginViewLoader.setLocation(Main.class.getResource("/layouts/loginView.fxml"));
         Parent loginViewParent = loginViewLoader.load();
-        loginViewController = loginViewLoader.getController();
-        loginViewController.setMainApp(this);
+        loginController = loginViewLoader.getController();
+        loginController.setMainApp(this);
 
         loginScene = new Scene(loginViewParent, 300, 215);
         loginScene.setOnKeyPressed(event -> {
@@ -58,60 +51,48 @@ public class Main extends Application {
                     }
                     break;
                 case ENTER:
-                    loginViewController.handleLogIn();
+                    loginController.handleLogIn();
+                    break;
             }
         });
     }
 
     private void createMainScene() throws IOException {
-        FXMLLoader mainViewLoader = new FXMLLoader();
-        mainViewLoader.setLocation(Main.class.getResource("/layouts/mainView.fxml"));
-        Parent mainViewParent = mainViewLoader.load();
-        mainViewController = mainViewLoader.getController();
-        mainViewController.setMainApp(this);
+        mainScene = createScene("/layouts/mainView.fxml");
+    }
 
-        mainScene = new Scene(mainViewParent, 1280, 720);
+    private Scene createScene(String layoutPath) throws IOException {
+        FXMLLoader mainViewLoader = new FXMLLoader();
+        mainViewLoader.setLocation(Main.class.getResource(layoutPath));
+        Parent mainViewParent = mainViewLoader.load();
+        BaseController baseController = mainViewLoader.getController();
+        baseController.setWindowManager(this);
+
+        return new Scene(mainViewParent, 1280, 720);
     }
 
     private void createSettingsScene() throws IOException {
-        FXMLLoader settingsViewLoader = new FXMLLoader();
-        settingsViewLoader.setLocation(Main.class.getResource("/layouts/settingsView.fxml"));
-        Parent settingsViewParent = settingsViewLoader.load();
-        settingsViewController = settingsViewLoader.getController();
-        settingsViewController.setMainApp(this);
-
-        settingsScene = new Scene(settingsViewParent, 1280, 720);
+        settingsScene = createScene("/layouts/settingsView.fxml");
     }
 
     private void createProcessScene() throws IOException {
-        FXMLLoader processViewLoader = new FXMLLoader();
-        processViewLoader.setLocation(Main.class.getResource("/layouts/processView.fxml"));
-        Parent processViewParent = processViewLoader.load();
-        processViewController = processViewLoader.getController();
-        processViewController.setMainApp(this);
-
-        processScene = new Scene(processViewParent, 1280, 720);
+        processScene = createScene("/layouts/processView.fxml");
     }
 
     @Override
-    public void start(Stage loginStage) throws Exception {
-        LOGIN_STAGE = loginStage;
-        setLoginView();
-        LOGIN_STAGE.show();
-    }
-
-    private void setLoginView() {
-        LOGIN_STAGE.setTitle("Авторизация");
-        LOGIN_STAGE.setScene(loginScene);
-        LOGIN_STAGE.setMinWidth(300);
-        LOGIN_STAGE.setMinHeight(250);
-        LOGIN_STAGE.setWidth(300);
-        LOGIN_STAGE.setHeight(250);
-        LOGIN_STAGE.setMaxWidth(300);
-        LOGIN_STAGE.setMaxHeight(250);
-        LOGIN_STAGE.setResizable(false);
-
-        setCentreOfStage(LOGIN_STAGE);
+    public void start(Stage loginStage) {
+        this.loginStage = loginStage;
+        this.loginStage.setTitle("Авторизация");
+        this.loginStage.setScene(loginScene);
+        this.loginStage.setMinWidth(300);
+        this.loginStage.setMinHeight(250);
+        this.loginStage.setWidth(300);
+        this.loginStage.setHeight(250);
+        this.loginStage.setMaxWidth(300);
+        this.loginStage.setMaxHeight(250);
+        this.loginStage.setResizable(false);
+        setCentreOfStage(this.loginStage);
+        this.loginStage.show();
     }
 
     private void setCentreOfStage(Stage stage) {
@@ -121,46 +102,43 @@ public class Main extends Application {
     }
 
     public void setMainView() {
-        PRIMARY_STAGE = new Stage();
-        PRIMARY_STAGE.setTitle("ПО Система управления многоканальная");
-        PRIMARY_STAGE.setScene(mainScene);
-        PRIMARY_STAGE.setMinWidth(1280);
-        PRIMARY_STAGE.setMinHeight(720);
-        PRIMARY_STAGE.setWidth(1280);
-        PRIMARY_STAGE.setHeight(720);
-        PRIMARY_STAGE.setResizable(true);
-
-        setCentreOfStage(PRIMARY_STAGE);
-
-        PRIMARY_STAGE.show();
-        LOGIN_STAGE.close();
+        primaryStage = new Stage();
+        primaryStage.setTitle("ПО Система управления многоканальная");
+        primaryStage.setScene(mainScene);
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
+        primaryStage.setResizable(true);
+        setCentreOfStage(primaryStage);
+        primaryStage.show();
+        loginStage.close();
     }
 
-    public void setSettingsView() {
-        PRIMARY_STAGE.setTitle("Настрока программы испытаний");
-        PRIMARY_STAGE.setScene(settingsScene);
-    }
-
-    public void setProcessView() {
-        PRIMARY_STAGE.setTitle("Программа испытаний");
-        PRIMARY_STAGE.setScene(processScene);
-    }
-
-
-    public static Stage getPrimaryStage() {
-        return PRIMARY_STAGE;
-    }
-
-    public Scene getMainScene() {
-        return mainScene;
-    }
-
-    public Scene getSettingsScene() {
-        return settingsScene;
-    }
-
-    public Scene getProcessScene() {
-        return processScene;
+    @Override
+    public void setScene(WindowsManager.Scenes scene) {
+        switch (scene) {
+            case MAIN_SCENE:
+                primaryStage.setTitle("Программа испытаний");
+                primaryStage.setScene(mainScene);
+                break;
+            case SETTINGS_SCENE:
+                primaryStage.setTitle("Настрока программы испытаний");
+                primaryStage.setScene(settingsScene);
+                break;
+            case PROCESS_SCENE:
+                primaryStage.setTitle("Процесс испытаний");
+                primaryStage.setScene(processScene);
+                break;
+            case SIGNAL_GRPAH_SCENE:
+                break;
+            case LTR34_SCENE:
+                break;
+            case LTR212_SCENE:
+                break;
+            case LTR24_SCENE:
+                break;
+        }
     }
 
     public static void main(String[] args) {

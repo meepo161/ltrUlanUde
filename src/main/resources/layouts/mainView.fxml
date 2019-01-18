@@ -30,7 +30,6 @@
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDelete" text="Удалить" />
                 <SeparatorMenuItem mnemonicParsing="false" />
-                <MenuItem mnemonicParsing="false" onAction="#handleMenuItemProcess" text="Испытание" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">
@@ -55,21 +54,21 @@
                 <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <TableView fx:id="tableViewExperimentsMain" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowSpan="2">
+                  <TableView fx:id="expirements_TableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2" GridPane.rowSpan="2">
                     <columns>
-                        <TableColumn fx:id="tableColumnID" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="ID" />
-                      <TableColumn fx:id="tableColumnName" prefWidth="75.0" text="Название испытания" />
-                        <TableColumn fx:id="tableColumnCreated" prefWidth="75.0" text="Дата создания" />
-                        <TableColumn fx:id="tableColumnChanged" prefWidth="75.0" text="Дата изменения" />
-                        <TableColumn fx:id="tableColumnTime" prefWidth="75.0" text="Длительность испытания" />
-                        <TableColumn fx:id="tableColumnMethod" prefWidth="75.0" text="Тип испытаний" />
-                        <TableColumn fx:id="tableColumnSample" prefWidth="75.0" text="Объект испытаний" />
+                        <TableColumn fx:id="columnProtocolId" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" text="ID" />
+                      <TableColumn fx:id="columnExpirementName" minWidth="270.0" prefWidth="270.0" text="Название испытания" />
+                        <TableColumn fx:id="columnProtocolCreatingDate" minWidth="30.0" prefWidth="30.0" text="Дата создания" />
+                        <TableColumn fx:id="columnProtocolChangingDate" minWidth="30.0" prefWidth="30.0" text="Дата изменения" />
+                        <TableColumn fx:id="columnExpirementTime" minWidth="30.0" prefWidth="30.0" text="Длительность испытания" />
+                        <TableColumn fx:id="columnExpirementType" minWidth="100.0" prefWidth="100.0" text="Тип испытаний" />
+                        <TableColumn fx:id="columnTestingSample" minWidth="-1.0" prefWidth="-1.0" text="Объект испытаний" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
-                  <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" text="Открыть" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                  <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleMenuItemProcess" text="Открыть" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>

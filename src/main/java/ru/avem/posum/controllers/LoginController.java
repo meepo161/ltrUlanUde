@@ -4,34 +4,33 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import ru.avem.posum.Main;
+import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.AccountRepository;
 import ru.avem.posum.db.models.Account;
 import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
-public class LoginController {
+public class LoginController implements BaseController {
     @FXML
     private TextField userLogin;
     @FXML
     private PasswordField userPassword;
 
-    private Main main;
+    private Main main = new Main();
+
+    private WindowsManager wm;
 
     @FXML
     private void initialize() {
 
     }
 
-    public void setMainApp(Main main) {
-        this.main = main;
-    }
-
     public void handleLogIn() {
         authenticateUser();
     }
 
-    private void authenticateUser() {
+    public void authenticateUser() {
         List<Account> allAccounts = AccountRepository.getAllAccounts();
         String login = userLogin.getText();
         String password = userPassword.getText();
@@ -56,6 +55,15 @@ public class LoginController {
                 }
             }
         }
+    }
+
+    public void setMainApp(Main main) {
+        this.main = main;
+    }
+
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
     }
 }
 

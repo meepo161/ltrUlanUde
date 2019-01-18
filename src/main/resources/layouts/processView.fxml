@@ -36,7 +36,7 @@
                           <columns>
                             <TableColumn editable="false" prefWidth="75.0" text="основные" />
                             <TableColumn editable="false" prefWidth="75.0" text="отклик" />
-                              <TableColumn editable="false" prefWidth="75.0" text="амп отклик" />
+                              <TableColumn editable="false" prefWidth="75.0" text="амм отклик" />
                               <TableColumn editable="false" prefWidth="75.0" text="стат отклик" />
                               <TableColumn editable="false" prefWidth="78.0" text="фаза отклик" />
                               <TableColumn editable="false" prefWidth="43.0" text="част" />

@@ -5,9 +5,9 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import ru.avem.posum.Main;
+import ru.avem.posum.WindowsManager;
 
-public class SettingsController {
+public class SettingsController implements BaseController {
     @FXML
     private DatePicker experimentDate_DatePicker;
     @FXML
@@ -27,11 +27,7 @@ public class SettingsController {
     @FXML
     private TextField leadEngineer_TextField;
 
-    private Main main;
-
-    public void setMainApp(Main main) {
-        this.main = main;
-    }
+    private WindowsManager wm;
 
     public void handleChooseCrate() {
 
@@ -50,6 +46,11 @@ public class SettingsController {
     }
 
     public void handleBackButton() {
-        Main.getPrimaryStage().setScene(main.getMainScene());
+        wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
+    }
+
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
     }
 }
