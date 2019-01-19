@@ -35,7 +35,6 @@
     -fx-font-size: 12px;
 }
 
-
 .wrapper {
     -fx-border-radius: 3px;
     -fx-border-color: #7D7D7D;
@@ -43,4 +42,8 @@
 
 .title {
     -fx-font-weight: bold;
+}
+
+.table-view:focused {
+    -fx-background-color: none;
 }
