@@ -17,20 +17,24 @@ public class LoginController implements BaseController {
     @FXML
     private PasswordField userPassword;
 
-    private Main main = new Main();
-
+    private Main main;
     private WindowsManager wm;
 
-    @FXML
-    private void initialize() {
 
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
+    }
+
+    public void showScene() {
+        wm.setScene(WindowsManager.Scenes.LOGIN_SCENE);
     }
 
     public void handleLogIn() {
         authenticateUser();
     }
 
-    public void authenticateUser() {
+    private void authenticateUser() {
         List<Account> allAccounts = AccountRepository.getAllAccounts();
         String login = userLogin.getText();
         String password = userPassword.getText();
@@ -59,11 +63,6 @@ public class LoginController implements BaseController {
 
     public void setMainApp(Main main) {
         this.main = main;
-    }
-
-    @Override
-    public void setWindowManager(WindowsManager wm) {
-        this.wm = wm;
     }
 }
 

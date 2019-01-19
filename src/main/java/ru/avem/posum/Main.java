@@ -24,6 +24,11 @@ public class Main extends Application implements WindowsManager {
     private Scene processScene;
 
     private LoginController loginController;
+    private MainController mainController;
+    private SettingsController settingsController;
+    private ProcessController processController;
+
+    private Parent parent;
 
     @Override
     public void init() throws IOException {
@@ -36,13 +41,28 @@ public class Main extends Application implements WindowsManager {
     }
 
     private void crateLoginScene() throws IOException {
-        FXMLLoader loginViewLoader = new FXMLLoader();
-        loginViewLoader.setLocation(Main.class.getResource("/layouts/loginView.fxml"));
-        Parent loginViewParent = loginViewLoader.load();
-        loginController = loginViewLoader.getController();
+        loginController = (LoginController) getController("/layouts/loginView.fxml");
         loginController.setMainApp(this);
 
-        loginScene = new Scene(loginViewParent, 300, 215);
+        loginScene = createScene(300, 215);
+        setKeyListener();
+    }
+
+    private BaseController getController(String layoutPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource(layoutPath));
+        parent = loader.load();
+        BaseController baseController = loader.getController();
+        baseController.setWindowManager(this);
+
+        return baseController;
+    }
+
+    private Scene createScene(int width, int heigh) {
+        return new Scene(parent, width, heigh);
+    }
+
+    private void setKeyListener() {
         loginScene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case ESCAPE:
@@ -58,32 +78,30 @@ public class Main extends Application implements WindowsManager {
     }
 
     private void createMainScene() throws IOException {
-        mainScene = createScene("/layouts/mainView.fxml");
-    }
-
-    private Scene createScene(String layoutPath) throws IOException {
-        FXMLLoader mainViewLoader = new FXMLLoader();
-        mainViewLoader.setLocation(Main.class.getResource(layoutPath));
-        Parent mainViewParent = mainViewLoader.load();
-        BaseController baseController = mainViewLoader.getController();
-        baseController.setWindowManager(this);
-
-        return new Scene(mainViewParent, 1280, 720);
+        mainController = (MainController) getController("/layouts/mainView.fxml");
+        mainScene = createScene(1280, 720);
     }
 
     private void createSettingsScene() throws IOException {
-        settingsScene = createScene("/layouts/settingsView.fxml");
+        settingsController = (SettingsController) getController("/layouts/settingsView.fxml");
+        settingsScene = createScene(1280, 720);
     }
 
     private void createProcessScene() throws IOException {
-        processScene = createScene("/layouts/processView.fxml");
+        processController = (ProcessController) getController("/layouts/processView.fxml");
+        processScene = createScene(1280, 720);
     }
 
     @Override
     public void start(Stage loginStage) {
         this.loginStage = loginStage;
-        this.loginStage.setTitle("Авторизация");
-        this.loginStage.setScene(loginScene);
+        setLoginStageSize();
+        setCentreOfStage(this.loginStage);
+        this.loginStage.show();
+        loginController.showScene();
+    }
+
+    private void setLoginStageSize() {
         this.loginStage.setMinWidth(300);
         this.loginStage.setMinHeight(250);
         this.loginStage.setWidth(300);
@@ -91,8 +109,6 @@ public class Main extends Application implements WindowsManager {
         this.loginStage.setMaxWidth(300);
         this.loginStage.setMaxHeight(250);
         this.loginStage.setResizable(false);
-        setCentreOfStage(this.loginStage);
-        this.loginStage.show();
     }
 
     private void setCentreOfStage(Stage stage) {
@@ -105,19 +121,27 @@ public class Main extends Application implements WindowsManager {
         primaryStage = new Stage();
         primaryStage.setTitle("ПО Система управления многоканальная");
         primaryStage.setScene(mainScene);
-        primaryStage.setMinWidth(1280);
-        primaryStage.setMinHeight(720);
-        primaryStage.setWidth(1280);
-        primaryStage.setHeight(720);
-        primaryStage.setResizable(true);
+        setMainStageSize();
         setCentreOfStage(primaryStage);
         primaryStage.show();
         loginStage.close();
     }
 
+    private void setMainStageSize() {
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
+        primaryStage.setResizable(true);
+    }
+
     @Override
     public void setScene(WindowsManager.Scenes scene) {
         switch (scene) {
+            case LOGIN_SCENE:
+                loginStage.setTitle("Авторизация");
+                loginStage.setScene(loginScene);
+                break;
             case MAIN_SCENE:
                 primaryStage.setTitle("Программа испытаний");
                 primaryStage.setScene(mainScene);
