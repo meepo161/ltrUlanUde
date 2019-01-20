@@ -1,9 +1,8 @@
-package ru.avem.st49.hardware;
+package ru.avem.posum.hardware;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import ru.avem.posum.controllers.IMainController;
 import ru.avem.posum.utils.TextEncoder;
 
 public class Crate {
@@ -17,11 +16,8 @@ public class Crate {
     private String status;
     private String error;
     private TextEncoder textEncoder = new TextEncoder();
-    private IMainController iMainController;
 
-    public Crate(IMainController iMainController) {
-        this.iMainController = iMainController;
-
+    public Crate() {
         status = fillCratesList(crates);
         checkStatus();
 
@@ -71,7 +67,7 @@ public class Crate {
             status = textEncoder.cp2utf(status);
             error = status;
             Platform.runLater(() -> {
-                iMainController.setMainStatusBarText(error);
+//                baseController.setMainStatusBarText(error);
             });
         }
     }

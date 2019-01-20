@@ -12,6 +12,8 @@ public class Protocol{
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
+    private int index;
+    @DatabaseField
     private String experimentName;
     @DatabaseField
     private String sampleName;
@@ -34,20 +36,25 @@ public class Protocol{
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public Protocol(Experiment experiment){
-        getExperimentInfo(experiment);
-    }
-
-    private void getExperimentInfo(Experiment experiment) {
-        experimentName = experiment.getExperimentName();
-        sampleName = experiment.getSampleName();
-        sampleSerialNumber = experiment.getSampleSerialNumber();
-        documentNumber = experiment.getDocumentNumber();
-        experimentType = experiment.getExperimentType();
-        experimentTime = experiment.getExperimentTime();
-        experimentDate = experiment.getExperimentDate();
-        leadEngineer = experiment.getLeadEngineer();
-        comments = experiment.getComments();
+    public Protocol(String experimentName,
+                    String sampleName,
+                    String sampleSerialNumber,
+                    String documentNumber,
+                    String experimentType,
+                    String experimentTime,
+                    String experimentDate,
+                    String leadEngineer,
+                    String comments) {
+        index++;
+        this.experimentName = experimentName;
+        this.sampleName = sampleName;
+        this.sampleSerialNumber = sampleSerialNumber;
+        this.documentNumber = documentNumber;
+        this.experimentType = experimentType;
+        this.experimentTime = experimentTime;
+        this.experimentDate = experimentDate;
+        this.leadEngineer = leadEngineer;
+        this.comments = comments;
     }
 
     public long getId() {
@@ -56,6 +63,14 @@ public class Protocol{
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getExperimentName() {

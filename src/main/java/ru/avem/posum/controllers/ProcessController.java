@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers;
 
+import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 
 public class ProcessController implements BaseController {
@@ -49,5 +50,10 @@ public class ProcessController implements BaseController {
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+
     }
 }

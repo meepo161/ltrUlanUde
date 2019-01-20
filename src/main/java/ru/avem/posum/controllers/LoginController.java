@@ -3,6 +3,7 @@ package ru.avem.posum.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import ru.avem.posum.ControllerManager;
 import ru.avem.posum.Main;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.AccountRepository;
@@ -11,7 +12,7 @@ import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
-public class LoginController implements BaseController {
+public class LoginController implements BaseController, ControllerManager {
     @FXML
     private TextField userLogin;
     @FXML
@@ -24,6 +25,11 @@ public class LoginController implements BaseController {
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+
     }
 
     public void showScene() {
@@ -63,6 +69,11 @@ public class LoginController implements BaseController {
 
     public void setMainApp(Main main) {
         this.main = main;
+    }
+
+    @Override
+    public void loadItemsForTableView() {
+
     }
 }
 

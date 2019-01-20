@@ -31,6 +31,15 @@ public class ProtocolRepository extends DataBaseRepository {
         sendAction((protocolDao) -> protocolDao.update(protocol));
     }
 
+    public static void updateProtocolIndex() {
+        List<Protocol> protocols = getAllProtocols();
+
+        for (int i = 0; i < protocols.size(); i++) {
+            protocols.get(i).setIndex(i + 1);
+            updateProtocol(protocols.get(i));
+        }
+    }
+
     public static void deleteProtocol(Protocol protocol) {
         sendAction((protocolDao) -> protocolDao.delete(protocol));
     }
@@ -46,7 +55,6 @@ public class ProtocolRepository extends DataBaseRepository {
         sendAction((protocolDao) -> protocol[0] = protocolDao.queryForId(id));
         return protocol[0];
     }
-
 
     @FunctionalInterface
     private interface Actionable {

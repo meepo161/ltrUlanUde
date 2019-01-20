@@ -12,65 +12,64 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
+import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.ProtocolRepository;
-import ru.avem.posum.db.models.Experiment;
 import ru.avem.posum.db.models.Protocol;
 
 import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
-    private Button openExpirementButton;
+    private Button openExperimentButton;
     @FXML
-    private TableView expirements_TableView;
+    private TableView<Protocol> experimentsTableView;
     @FXML
-    private TableColumn<Experiment, Integer> columnProtocolId;
+    private TableColumn<Protocol, Integer> columnProtocolId;
     @FXML
-    private TableColumn<Experiment, String> columnExpirementName;
+    private TableColumn<Protocol, String> columnExperimentName;
     @FXML
-    private TableColumn<Experiment, String> columnProtocolCreatingDate;
+    private TableColumn<Protocol, String> columnProtocolCreatingDate;
     @FXML
-    private TableColumn<Experiment, String> columnProtocolChangingDate;
+    private TableColumn<Protocol, String> columnProtocolChangingDate;
     @FXML
-    private TableColumn<Experiment, String> columnExpirementTime;
+    private TableColumn<Protocol, String> columnExperimentTime;
     @FXML
-    private TableColumn<Experiment, String> columnExpirementType;
+    private TableColumn<Protocol, String> columnExperimentType;
     @FXML
-    private TableColumn<Experiment, String> columnTestingSample;
+    private TableColumn<Protocol, String> columnTestingSample;
 
     private ObservableList<Protocol> protocols;
     private WindowsManager wm;
+    private ControllerManager cm;
     private boolean isFirstStart = true;
 
     @FXML
     private void initialize() {
-        initData();
+        showPotocols();
 
-        makeColumnTitleWrapper(columnExpirementName);
+        makeColumnTitleWrapper(columnExperimentName);
         makeColumnTitleWrapper(columnProtocolCreatingDate);
         makeColumnTitleWrapper(columnProtocolChangingDate);
-        makeColumnTitleWrapper(columnExpirementTime);
-        makeColumnTitleWrapper(columnExpirementType);
+        makeColumnTitleWrapper(columnExperimentTime);
+        makeColumnTitleWrapper(columnExperimentType);
         makeColumnTitleWrapper(columnTestingSample);
 
-        columnProtocolId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        columnExpirementName.setCellValueFactory(new PropertyValueFactory<>("experimentName"));
+        columnProtocolId.setCellValueFactory(new PropertyValueFactory<>("index"));
+        columnExperimentName.setCellValueFactory(new PropertyValueFactory<>("experimentName"));
         columnProtocolCreatingDate.setCellValueFactory(new PropertyValueFactory<>("experimentDate"));
         columnProtocolChangingDate.setCellValueFactory(new PropertyValueFactory<>("experimentDate"));
-        columnExpirementTime.setCellValueFactory(new PropertyValueFactory<>("experimentTime"));
-        columnExpirementType.setCellValueFactory(new PropertyValueFactory<>("experimentType"));
+        columnExperimentTime.setCellValueFactory(new PropertyValueFactory<>("experimentTime"));
+        columnExperimentType.setCellValueFactory(new PropertyValueFactory<>("experimentType"));
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
 
-        expirements_TableView.setItems(protocols);
-
         if (isFirstStart) {
-            repeatFocus(openExpirementButton);
+            repeatFocus(openExperimentButton);
         }
     }
 
-    private void printSelectedItemIndex() {
-        System.out.println(expirements_TableView.getSelectionModel().getSelectedIndex());
+    private int getSelectedItemIndex() {
+         return experimentsTableView.getSelectionModel().getSelectedIndex();
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -87,9 +86,11 @@ public class MainController implements BaseController {
         col.setGraphic(stack);
     }
 
-    private void initData() {
+    public void showPotocols() {
+        ProtocolRepository.updateProtocolIndex();
         List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
         protocols = FXCollections.observableArrayList(allProtocols);
+        experimentsTableView.setItems(protocols);
     }
 
     public void handleMenuItemExit() {
@@ -103,19 +104,26 @@ public class MainController implements BaseController {
     }
 
     public void handleMenuItemDelete() {
+        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
+        ProtocolRepository.deleteProtocol(allProtocols.get(getSelectedItemIndex()));
+        cm.loadItemsForTableView();
     }
 
     public void handleMenuItemAboutUs() {
     }
 
     public void handleOpenExpirement() {
-        printSelectedItemIndex();
         wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
     }
 
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
     }
 
     private void repeatFocus(Button button) {

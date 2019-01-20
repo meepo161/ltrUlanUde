@@ -149,5 +149,13 @@
             <version>4.0.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>ru.avem</groupId>
+            <artifactId>CrateLibrary</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/Oleg/.m2/repository/crate/CrateLibrary.dll</systemPath>
+        </dependency>
+
     </dependencies>
 </project>

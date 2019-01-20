@@ -44,6 +44,11 @@
     -fx-font-weight: bold;
 }
 
-.table-view:focused {
-    -fx-background-color: none;
+.table-view:focused{
+    -fx-background-color: c8c8c8;
+    -fx-background-insets: 0;
+}
+
+.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused {
+    -fx-background-insets: 0;
 }

@@ -14,7 +14,7 @@ import ru.avem.posum.db.DataBaseRepository;
 import java.awt.*;
 import java.io.IOException;
 
-public class Main extends Application implements WindowsManager {
+public class Main extends Application implements WindowsManager, ControllerManager {
     private Stage loginStage;
     private Stage primaryStage;
 
@@ -32,7 +32,7 @@ public class Main extends Application implements WindowsManager {
 
     @Override
     public void init() throws IOException {
-        DataBaseRepository.init(true);
+        DataBaseRepository.init(false);
 
         crateLoginScene();
         createMainScene();
@@ -54,6 +54,7 @@ public class Main extends Application implements WindowsManager {
         parent = loader.load();
         BaseController baseController = loader.getController();
         baseController.setWindowManager(this);
+        baseController.setControllerManager(this);
 
         return baseController;
     }
@@ -167,5 +168,10 @@ public class Main extends Application implements WindowsManager {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void loadItemsForTableView() {
+        mainController.showPotocols();
     }
 }
