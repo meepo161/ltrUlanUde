@@ -1,13 +1,13 @@
 package ru.avem.posum.models;
 
 public class CrateModel {
-    private int selectedCrate;
+    private String selectedCrate;
 
-    public int getSelectedCrate() {
+    public String getSelectedCrate() {
         return selectedCrate;
     }
 
-    public void setSelectedCrate(int selectedCrate) {
+    public void setSelectedCrate(String selectedCrate) {
         this.selectedCrate = selectedCrate;
     }
 }

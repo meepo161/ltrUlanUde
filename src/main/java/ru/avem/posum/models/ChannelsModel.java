@@ -5,7 +5,7 @@ import javafx.scene.control.ComboBox;
 
 import java.util.List;
 
-public class ChannelsModel implements ru.avem.posum.models.IChannelsModel {
+public class ChannelsModel implements IChannelsModel {
     @Override
     public void loadCheckedChannels(int[] checkedChannels, List<CheckBox> channels) {
         for (int i = 0; i < checkedChannels.length; i++) {

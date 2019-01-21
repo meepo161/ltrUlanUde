@@ -1,6 +1,8 @@
 package ru.avem.posum.controllers;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -8,9 +10,16 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.ProtocolRepository;
 import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.models.CrateModel;
 import ru.avem.posum.models.HardwareModel;
 
 public class SettingsController implements BaseController {
+    @FXML
+    private Button chooseCrateButton;
+    @FXML
+    private Button saveSetupButton;
+    @FXML
+    private Button setupModuleButton;
     @FXML
     private ListView<String> cratesListView;
     @FXML
@@ -46,6 +55,9 @@ public class SettingsController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private CrateModel crateModel = new CrateModel();
+
+    private int selectedCrate;
 
     @FXML
     private void initialize() {
@@ -61,11 +73,24 @@ public class SettingsController implements BaseController {
     }
 
     public void handleChooseCrate() {
+        selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
 
+        crateModel.setSelectedCrate(HardwareModel.getInstance().getCrate().getCratesNames().get(selectedCrate));
+        toggleUiElements();
+    }
+
+    private void toggleUiElements() {
+        cratesListView.setDisable(true);
+        chooseCrateButton.setDisable(true);
+        modulesListView.setDisable(false);
+        setupModuleButton.setDisable(false);
     }
 
     public void handleSetupModule() {
-
+        ObservableList<String> modulesNames;
+        modulesNames = HardwareModel.getInstance().getCrate().getModulesNames(selectedCrate);
+        String module = modulesNames.get(modulesListView.getSelectionModel().getSelectedIndex());
+        showModuleSettings(module);
     }
 
     public void handleSaveSetup() {
@@ -93,6 +118,20 @@ public class SettingsController implements BaseController {
     public void handleBackButton() {
         cm.loadItemsForTableView();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
+    }
+
+    public void showModuleSettings(String module) {
+        switch (module) {
+            case "LTR24":
+                wm.setScene(WindowsManager.Scenes.LTR24_SCENE);
+                break;
+            case "LTR34":
+                wm.setScene(WindowsManager.Scenes.LTR34_SCENE);
+                break;
+            case "LTR212":
+                wm.setScene(WindowsManager.Scenes.LTR212_SCENE);
+                break;
+        }
     }
 
     @Override

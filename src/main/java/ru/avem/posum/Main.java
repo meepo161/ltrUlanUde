@@ -22,11 +22,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene mainScene;
     private Scene settingsScene;
     private Scene processScene;
+    private Scene ltr24Scene;
+    private Scene ltr34Scene;
+    private Scene ltr212Scene;
 
     private LoginController loginController;
     private MainController mainController;
     private SettingsController settingsController;
     private ProcessController processController;
+    private LTR24SettingController ltr24SettingController;
+    private LTR34SettingController ltr34SettingController;
+    private LTR212SettingController ltr212SettingController;
 
     private Parent parent;
 
@@ -38,6 +44,9 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createMainScene();
         createSettingsScene();
         createProcessScene();
+        createLTR24Scene();
+        createLTR34Scene();
+        createLTR212Scene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -91,6 +100,21 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createProcessScene() throws IOException {
         processController = (ProcessController) getController("/layouts/processView.fxml");
         processScene = createScene(1280, 720);
+    }
+
+    private void createLTR24Scene() throws IOException {
+        ltr24SettingController = (LTR24SettingController) getController("/layouts/LTR24SettingView.fxml");
+        ltr24Scene = createScene(1280, 720);
+    }
+
+    private void createLTR34Scene() throws IOException {
+        ltr34SettingController = (LTR34SettingController) getController("/layouts/LTR34SettingView.fxml");
+        ltr34Scene = createScene(1280, 720);
+    }
+
+    private void createLTR212Scene() throws IOException {
+        ltr212SettingController = (LTR212SettingController) getController("/layouts/LTR212SettingView.fxml");
+        ltr212Scene = createScene(1280, 720);
     }
 
     @Override
@@ -155,13 +179,19 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Процесс испытаний");
                 primaryStage.setScene(processScene);
                 break;
-            case SIGNAL_GRPAH_SCENE:
+            case LTR24_SCENE:
+                primaryStage.setTitle("Настройки модуля LTR24");
+                primaryStage.setScene(ltr24Scene);
                 break;
             case LTR34_SCENE:
+                primaryStage.setTitle("Настройки модуля LTR34");
+                primaryStage.setScene(ltr34Scene);
                 break;
             case LTR212_SCENE:
+                primaryStage.setTitle("Настройки модуля LTR212");
+                primaryStage.setScene(ltr212Scene);
                 break;
-            case LTR24_SCENE:
+            case SIGNAL_GRPAH_SCENE:
                 break;
         }
     }

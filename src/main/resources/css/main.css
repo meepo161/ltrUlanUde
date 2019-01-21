@@ -44,11 +44,13 @@
     -fx-font-weight: bold;
 }
 
-.table-view:focused{
+.table-view:focused, .list-view:focused{
     -fx-background-color: c8c8c8;
     -fx-background-insets: 0;
 }
 
-.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused {
+.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused
+{
     -fx-background-insets: 0;
 }
