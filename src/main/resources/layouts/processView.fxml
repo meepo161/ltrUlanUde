@@ -83,21 +83,21 @@
                         <RowConstraints maxHeight="25.0" minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <TableView fx:id="tableViewEventProcess" minHeight="75.0" styleClass="eventTable" GridPane.columnSpan="2">
+                        <TableView fx:id="tableEvent" minHeight="75.0" styleClass="eventTable" GridPane.columnSpan="2">
                           <columns>
-                            <TableColumn prefWidth="73.0" text="Время" />
-                            <TableColumn prefWidth="144.0" text="Событие" />
+                            <TableColumn fx:id="eventTimeColumn" prefWidth="73.0" text="Время" />
+                            <TableColumn fx:id="eventDescriptionColumn" prefWidth="144.0" text="Событие" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
-                        <Button fx:id="addEvent_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1" >
+                        <Button fx:id="addEvent_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1">
                         <font>
                            <Font name="Arial" size="12.0" />
                         </font>
                         </Button>
-                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1" >
+                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
@@ -198,7 +198,7 @@
                   <Pane prefHeight="97.0" prefWidth="491.0">
                      <children>
                         <ListView fx:id="plug_ListView" prefHeight="97.0" prefWidth="58.0" />
-                        <Button fx:id="plug_Button" layoutX="57.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран" >
+                        <Button fx:id="plug_Button" layoutX="57.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font></Button>
