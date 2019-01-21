@@ -19,37 +19,21 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private Button backButton;
     @FXML
-    private Button graphOfChannelN1;
+    private Button valueOfChannelN1;
     @FXML
-    private Button graphOfChannelN2;
+    private Button valueOfChannelN2;
     @FXML
-    private Button graphOfChannelN3;
+    private Button valueOfChannelN3;
     @FXML
-    private Button graphOfChannelN4;
+    private Button valueOfChannelN4;
     @FXML
-    private Button graphOfChannelN5;
+    private Button valueOfChannelN5;
     @FXML
-    private Button graphOfChannelN6;
+    private Button valueOfChannelN6;
     @FXML
-    private Button graphOfChannelN7;
+    private Button valueOfChannelN7;
     @FXML
-    private Button graphOfChannelN8;
-    @FXML
-    private Button calibrateChannelN1;
-    @FXML
-    private Button calibrateChannelN2;
-    @FXML
-    private Button calibrateChannelN3;
-    @FXML
-    private Button calibrateChannelN4;
-    @FXML
-    private Button calibrateChannelN5;
-    @FXML
-    private Button calibrateChannelN6;
-    @FXML
-    private Button calibrateChannelN7;
-    @FXML
-    private Button calibrateChannelN8;
+    private Button valueOfChannelN8;
     @FXML
     private CheckBox checkChannelN1;
     @FXML
@@ -66,6 +50,8 @@ public class LTR24SettingController implements BaseController {
     private CheckBox checkChannelN7;
     @FXML
     private CheckBox checkChannelN8;
+    @FXML
+    private ComboBox<String> crateSlot;
     @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
@@ -115,8 +101,7 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private TextField currentValueOfChannelN8;
 
-    private List<Button> graphOfChannelsButtons = new ArrayList<>();
-    private List<Button> calibrateChannelsButtons = new ArrayList<>();
+    private List<Button> valueOfChannelsButtons = new ArrayList<>();
     private List<TextField> channelsValues = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
@@ -132,10 +117,10 @@ public class LTR24SettingController implements BaseController {
         fillListOfMeasuringRangesComboBoxes();
         fillListOfChannelsValuesTextFields();
         fillListOfChannelsGraphsButtons();
-        fillListOfCalibrateChannelsButtons();
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
+        addListOfCrateSlots(crateSlot);
         checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
         loadDefaultParameters();
     }
@@ -193,28 +178,15 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void fillListOfChannelsGraphsButtons() {
-        graphOfChannelsButtons.addAll(Arrays.asList(
-                graphOfChannelN1,
-                graphOfChannelN2,
-                graphOfChannelN3,
-                graphOfChannelN4,
-                graphOfChannelN5,
-                graphOfChannelN6,
-                graphOfChannelN7,
-                graphOfChannelN8
-        ));
-    }
-
-    private void fillListOfCalibrateChannelsButtons() {
-        calibrateChannelsButtons.addAll(Arrays.asList(
-                calibrateChannelN1,
-                calibrateChannelN2,
-                calibrateChannelN3,
-                calibrateChannelN4,
-                calibrateChannelN5,
-                calibrateChannelN6,
-                calibrateChannelN7,
-                calibrateChannelN8
+        valueOfChannelsButtons.addAll(Arrays.asList(
+                valueOfChannelN1,
+                valueOfChannelN2,
+                valueOfChannelN3,
+                valueOfChannelN4,
+                valueOfChannelN5,
+                valueOfChannelN6,
+                valueOfChannelN7,
+                valueOfChannelN8
         ));
     }
 
@@ -231,6 +203,28 @@ public class LTR24SettingController implements BaseController {
         for (ComboBox<String> comboBox : measuringRangeComboBoxes) {
             comboBox.getItems().addAll(strings);
         }
+    }
+
+    private void addListOfCrateSlots(ComboBox<String> crateSlot) {
+        ObservableList<String> strings = FXCollections.observableArrayList();
+        strings.add("Слот 1");
+        strings.add("Слот 2");
+        strings.add("Слот 3");
+        strings.add("Слот 4");
+        strings.add("Слот 5");
+        strings.add("Слот 6");
+        strings.add("Слот 7");
+        strings.add("Слот 8");
+        strings.add("Слот 9");
+        strings.add("Слот 10");
+        strings.add("Слот 11");
+        strings.add("Слот 12");
+        strings.add("Слот 13");
+        strings.add("Слот 14");
+        strings.add("Слот 15");
+        strings.add("Слот 16");
+
+        crateSlot.getItems().setAll(strings);
     }
 
     private void addListenerForAllChannels() {
@@ -258,8 +252,7 @@ public class LTR24SettingController implements BaseController {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsValues.get(channel).setDisable(isDisable);
-        graphOfChannelsButtons.get(channel).setDisable(isDisable);
-        calibrateChannelsButtons.get(channel).setDisable(isDisable);
+        valueOfChannelsButtons.get(channel).setDisable(isDisable);
     }
 
     private void checkChannelType(List<ComboBox<String>> channelsTypesComboBoxes, List<ComboBox<String>> measuringRangesComboBoxes) {
