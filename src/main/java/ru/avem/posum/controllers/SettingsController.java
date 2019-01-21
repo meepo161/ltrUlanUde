@@ -58,6 +58,7 @@ public class SettingsController implements BaseController {
     private CrateModel crateModel = new CrateModel();
 
     private int selectedCrate;
+    private int selectedModule;
 
     @FXML
     private void initialize() {
@@ -89,7 +90,8 @@ public class SettingsController implements BaseController {
     public void handleSetupModule() {
         ObservableList<String> modulesNames;
         modulesNames = HardwareModel.getInstance().getCrate().getModulesNames(selectedCrate);
-        String module = modulesNames.get(modulesListView.getSelectionModel().getSelectedIndex());
+        selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
+        String module = modulesNames.get(selectedModule);
         showModuleSettings(module);
     }
 
@@ -142,5 +144,13 @@ public class SettingsController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
+    }
+
+    public int getSelectedCrate() {
+        return selectedCrate;
+    }
+
+    public int getSelectedModule() {
+        return selectedModule;
     }
 }

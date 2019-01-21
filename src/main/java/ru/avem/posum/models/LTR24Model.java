@@ -1,7 +1,5 @@
 package ru.avem.posum.models;
 
-import javafx.application.Platform;
-import ru.avem.posum.controllers.IMainController;
 import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
@@ -15,23 +13,21 @@ public class LTR24Model {
     private RingBuffer ringBuffer = new RingBuffer(data.length * 100);
     private TextEncoder textEncoder = new TextEncoder();
     private String decodedError;
-    private final IMainController iMainController;
     private boolean isInitialized;
     private boolean isFilled;
     private boolean isStopped;
 
 
-    public LTR24Model(IMainController iMainController, int slot) {
-        this.iMainController = iMainController;
+    public LTR24Model(int slot) {
         moduleSlot = slot;
     }
 
     public void initialize() {
-        String status = ltr24.initialize(moduleSlot, LTR24ChannelsModel.getSelectedChannelsTypes(), LTR24ChannelsModel.getSelectedMeasuringRanges());
-        isInitialized = checkError(status);
-        Platform.runLater(() -> {
-            iMainController.setMainStatusBarText(status == null ? "LTR24: Инициализация выполнена без ошибок" : decodedError);
-        });
+//        String status = ltr24.initialize(moduleSlot, LTR24ChannelsModel.getSelectedChannelsTypes(), LTR24ChannelsModel.getSelectedMeasuringRanges());
+//        isInitialized = checkError(status);
+//        Platform.runLater(() -> {
+//            iMainController.setMainStatusBarText(status == null ? "LTR24: Инициализация выполнена без ошибок" : decodedError);
+//        });
     }
 
     public void receiveData() {
@@ -78,6 +74,10 @@ public class LTR24Model {
 
     private String decodeError(String error) {
         return "LTR212 (слот " + moduleSlot + "): " + textEncoder.cp2utf(error);
+    }
+
+    public LTR24 getLtr24() {
+        return ltr24;
     }
 
     public RingBuffer getRingBuffer() {

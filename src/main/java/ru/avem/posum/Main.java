@@ -46,7 +46,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createProcessScene();
         createLTR24Scene();
         createLTR34Scene();
-        createLTR212Scene();
+//        createLTR212Scene();
     }
 
     private void crateLoginScene() throws IOException {

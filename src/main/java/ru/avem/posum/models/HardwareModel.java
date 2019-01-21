@@ -24,14 +24,14 @@ public class HardwareModel {
 
     public void initModules() {
         crate = new Crate();
-//        ltr212ModuleN1 = new LTR212Model(iMainController, 1);
+//        ltr212ModuleN1 = new LTR212Model(1);
 //        ltr212ModuleN2 = new LTR212Model(iMainController, 2);
 //        ltr212ModuleN3 = new LTR212Model(iMainController, 3);
 //        ltr212ModuleN4 = new LTR212Model(iMainController, 4);
 //        ltr212ModuleN5 = new LTR212Model(iMainController, 5);
 //        ltr212ModuleN6 = new LTR212Model(iMainController, 6);
 //        ltr212ModuleN7 = new LTR212Model(iMainController, 7);
-//        ltr24ModuleN8  = new LTR24Model(iMainController, 8);
+        ltr24ModuleN8  = new LTR24Model(8);
 //        ltr24ModuleN9  = new LTR24Model(iMainController, 9);
 //        ltr24ModuleN10 = new LTR24Model(iMainController, 10);
 //        ltr24ModuleN11 = new LTR24Model(iMainController, 11);

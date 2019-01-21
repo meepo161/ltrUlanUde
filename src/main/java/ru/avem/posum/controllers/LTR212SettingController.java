@@ -1,6 +1,5 @@
 package ru.avem.posum.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import ru.avem.posum.ControllerManager;
@@ -15,7 +14,7 @@ public class LTR212SettingController implements BaseController {
 
     @FXML
     private void initialize() {
-        repeatFocus(backButton);
+
     }
 
     @Override
@@ -30,14 +29,5 @@ public class LTR212SettingController implements BaseController {
 
     public void handleBackButton() {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
-    }
-
-    private void repeatFocus(Button button) {
-        Platform.runLater(() -> {
-            if (!button.isFocused()) {
-                button.requestFocus();
-                repeatFocus(button);
-            }
-        });
     }
 }

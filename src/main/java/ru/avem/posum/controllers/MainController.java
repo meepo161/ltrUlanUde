@@ -1,11 +1,9 @@
 package ru.avem.posum.controllers;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -20,8 +18,6 @@ import ru.avem.posum.db.models.Protocol;
 import java.util.List;
 
 public class MainController implements BaseController {
-    @FXML
-    private Button openExperimentButton;
     @FXML
     private TableView<Protocol> experimentsTableView;
     @FXML
@@ -42,7 +38,6 @@ public class MainController implements BaseController {
     private ObservableList<Protocol> protocols;
     private WindowsManager wm;
     private ControllerManager cm;
-    private boolean isFirstStart = true;
 
     @FXML
     private void initialize() {
@@ -62,10 +57,6 @@ public class MainController implements BaseController {
         columnExperimentTime.setCellValueFactory(new PropertyValueFactory<>("experimentTime"));
         columnExperimentType.setCellValueFactory(new PropertyValueFactory<>("experimentType"));
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
-
-        if (isFirstStart) {
-            repeatFocus(openExperimentButton);
-        }
     }
 
     private int getSelectedItemIndex() {
@@ -124,14 +115,5 @@ public class MainController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    private void repeatFocus(Button button) {
-        Platform.runLater(() -> {
-            if (!button.isFocused()) {
-                button.requestFocus();
-                repeatFocus(button);
-            }
-        });
     }
 }
