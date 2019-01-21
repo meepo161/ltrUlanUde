@@ -9,6 +9,8 @@ import ru.avem.posum.db.models.Event;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 public class EventRepository extends DataBaseRepository {
@@ -38,6 +40,14 @@ public class EventRepository extends DataBaseRepository {
     public static List<Event> getAllEvents() {
         final List[] event = {null};
         sendAction((eventDao) -> event[0] = eventDao.queryForAll());
+        return (List<Event>) event[0];
+    }
+
+    public static List<Event> getEventsByTestId(long idTest) {
+        final List[] event = {null};
+        Map<String, Object> map = new HashMap<>();
+        map.put("idTest", idTest);
+        sendAction((eventDao) -> event[0] = eventDao.queryForFieldValues(map));
         return (List<Event>) event[0];
     }
 

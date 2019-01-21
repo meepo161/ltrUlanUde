@@ -20,19 +20,26 @@ public class Event {
     private String time;
     @DatabaseField
     private String description;
+    @DatabaseField
+    private String status;
 
     public Event() {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public Event(long idTest, String description, long millis) {
+    public Event(long idTest, String description, String status, long millis) {
         this.idTest = idTest;
         this.setMillis(millis);
         this.description = description;
+        this.status = status;
+    }
+
+    public Event(long idTest, String description, String status) {
+        this(idTest, description, status, System.currentTimeMillis());
     }
 
     public Event(long idTest, String description) {
-        this(idTest, description, System.currentTimeMillis());
+        this(idTest, description, "LOG", System.currentTimeMillis());
     }
 
     public long getId() {
@@ -63,6 +70,14 @@ public class Event {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
