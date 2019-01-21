@@ -71,12 +71,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN1" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <ComboBox fx:id="typeOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN1" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <ComboBox fx:id="measuringRangeOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -86,12 +86,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN2" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <ComboBox fx:id="typeOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN2" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+            <ComboBox fx:id="measuringRangeOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -101,12 +101,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN3" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
+            <ComboBox fx:id="typeOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN3" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
+            <ComboBox fx:id="measuringRangeOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -116,12 +116,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN4" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="3">
+            <ComboBox fx:id="typeOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN4" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="4">
+            <ComboBox fx:id="measuringRangeOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -147,12 +147,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN5" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+            <ComboBox fx:id="typeOfChannelN5" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN5" disable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
+            <ComboBox fx:id="measuringRangeOfChannelN5" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -162,12 +162,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN6" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="11">
+            <ComboBox fx:id="typeOfChannelN6" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN6" disable="true" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="12">
+            <ComboBox fx:id="measuringRangeOfChannelN6" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -177,12 +177,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN7" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="11">
+            <ComboBox fx:id="typeOfChannelN7" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN7" disable="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="12">
+            <ComboBox fx:id="measuringRangeOfChannelN7" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -192,12 +192,12 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <ComboBox fx:id="typeOfChannelN8" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="11">
+            <ComboBox fx:id="typeOfChannelN8" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <ComboBox fx:id="measuringRangeOfChannelN8" disable="true" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="12">
+            <ComboBox fx:id="measuringRangeOfChannelN8" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="12">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -212,62 +212,62 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="currentValueOfChannelN1" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5">
+            <TextField fx:id="currentValueOfChannelN1" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="currentValueOfChannelN2" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="2" GridPane.rowIndex="5">
+            <TextField fx:id="currentValueOfChannelN2" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="2" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="currentValueOfChannelN3" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="3" GridPane.rowIndex="5">
+            <TextField fx:id="currentValueOfChannelN3" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="3" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="currentValueOfChannelN4" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="4" GridPane.rowIndex="5">
+            <TextField fx:id="currentValueOfChannelN4" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="4" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="graphOfChannelN1" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="1" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="graphOfChannelN2" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="graphOfChannelN3" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="3" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="3" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="graphOfChannelN4" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN1" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="1" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN2" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="2" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="2" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN3" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="3" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="3" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN4" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="4" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="4" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -277,62 +277,62 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="currentValueOfChannelN5" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="1" GridPane.rowIndex="13">
+            <TextField fx:id="currentValueOfChannelN5" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="1" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="currentValueOfChannelN6" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="2" GridPane.rowIndex="13">
+            <TextField fx:id="currentValueOfChannelN6" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="2" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="currentValueOfChannelN7" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="3" GridPane.rowIndex="13">
+            <TextField fx:id="currentValueOfChannelN7" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="3" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="currentValueOfChannelN8" disable="true" editable="false" maxWidth="150.0" promptText="Вольт" GridPane.columnIndex="4" GridPane.rowIndex="13">
+            <TextField fx:id="currentValueOfChannelN8" disable="true" editable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Вольт" GridPane.columnIndex="4" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="graphOfChannelN5" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="1" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN5" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="1" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="graphOfChannelN6" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="2" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN6" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="2" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="graphOfChannelN7" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="3" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN7" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="3" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="graphOfChannelN8" disable="true" mnemonicParsing="false" prefWidth="150.0" text="График" GridPane.columnIndex="4" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+            <Button fx:id="graphOfChannelN8" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="График" GridPane.columnIndex="4" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN5" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="1" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN5" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="1" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN6" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="2" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN6" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="2" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN7" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="3" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN7" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="3" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="calibrateChannelN8" disable="true" mnemonicParsing="false" prefWidth="150.0" text="Калибровка" GridPane.columnIndex="4" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
+            <Button fx:id="calibrateChannelN8" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" text="Калибровка" GridPane.columnIndex="4" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>

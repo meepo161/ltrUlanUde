@@ -50,6 +50,10 @@ public class LTR212Model {
         return "LTR212 (слот " + moduleSlot + "): " + textEncoder.cp2utf(error);
     }
 
+    public LTR212 getLtr212() {
+        return ltr212;
+    }
+
     public RingBuffer getRingBuffer() {
         return ringBuffer;
     }

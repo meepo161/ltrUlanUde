@@ -119,8 +119,8 @@ public class LTR24SettingController implements BaseController {
     private List<Button> calibrateChannelsButtons = new ArrayList<>();
     private List<TextField> channelsValues = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
-    private List<ComboBox> channelsTypesComboBoxes = new ArrayList<>();
-    private List<ComboBox> measuringRangesComboBoxes = new ArrayList<>();
+    private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
+    private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
 
     private WindowsManager wm;
     private ControllerManager cm;
@@ -136,7 +136,7 @@ public class LTR24SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
-
+        checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
         loadDefaultParameters();
     }
 
@@ -218,13 +218,19 @@ public class LTR24SettingController implements BaseController {
         ));
     }
 
-    private void addListOfChannelsTypes(List<ComboBox> channelsTypesComboBoxes) {
+    private void addListOfChannelsTypes(List<ComboBox<String>> channelsTypesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("Дифференциальный вход без отсечки постоянной составляющей");
         strings.add("Дифференциальный вход с отсечкой постоянной составляющей");
         strings.add("Режим ICP-вход");
 
         setComboBox(channelsTypesComboBoxes, strings);
+    }
+
+    private void setComboBox(List<ComboBox<String>> measuringRangeComboBoxes, ObservableList<String> strings) {
+        for (ComboBox<String> comboBox : measuringRangeComboBoxes) {
+            comboBox.getItems().addAll(strings);
+        }
     }
 
     private void addListenerForAllChannels() {
@@ -256,40 +262,13 @@ public class LTR24SettingController implements BaseController {
         calibrateChannelsButtons.get(channel).setDisable(isDisable);
     }
 
-    private void loadDefaultParameters() {
-        int[] channelsTypes = HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getChannelsTypes();
-        int[] measurinRanges = HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getMeasuringRanges();
-
-        for (int i = 0; i < channelsTypes.length; i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
+    private void checkChannelType(List<ComboBox<String>> channelsTypesComboBoxes, List<ComboBox<String>> measuringRangesComboBoxes) {
+        for (int i = 0; i < channelsTypesComboBoxes.size(); i++) {
+            toggleICPChannels(channelsTypesComboBoxes.get(i), measuringRangesComboBoxes.get(i));
         }
     }
 
-    @Override
-    public void setWindowManager(WindowsManager wm) {
-        this.wm = wm;
-    }
-
-    @Override
-    public void setControllerManager(ControllerManager cm) {
-        this.cm = cm;
-    }
-
-    public void handleBackButton() {
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
-    }
-
-
-
-
-    protected void checkChannelType(List<CheckBox> channels, List<ComboBox> channelsTypes, List<ComboBox> measuringRanges) {
-        for (int i = 0; i < channels.size(); i++) {
-            toggleICPChannels(channelsTypes.get(i), measuringRanges.get(i));
-        }
-    }
-
-    private void toggleICPChannels(ComboBox channelType, ComboBox measuringRange) {
+    private void toggleICPChannels(ComboBox<String> channelType, ComboBox<String> measuringRange) {
         channelType.valueProperty().addListener(observable -> {
             if (channelType.getSelectionModel().isSelected(2)) {
                 addListOfICPMeasuringRanges(measuringRange);
@@ -301,13 +280,7 @@ public class LTR24SettingController implements BaseController {
         });
     }
 
-    private void setComboBox(List<ComboBox> measuringRangeComboBoxes, ObservableList<String> strings) {
-        for (ComboBox comboBox : measuringRangeComboBoxes) {
-            comboBox.getItems().addAll(strings);
-        }
-    }
-
-    private void addListOfDifferentialMeasuringRanges(ComboBox measuringRange) {
+    private void addListOfDifferentialMeasuringRanges(ComboBox<String> measuringRange) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-2 В/+2 В");
         strings.add("-10 В/+10 В");
@@ -315,11 +288,35 @@ public class LTR24SettingController implements BaseController {
         measuringRange.getItems().setAll(strings);
     }
 
-    private void addListOfICPMeasuringRanges(ComboBox measuringRange) {
+    private void addListOfICPMeasuringRanges(ComboBox<String> measuringRange) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("~1 В");
         strings.add("~5 В");
 
         measuringRange.getItems().setAll(strings);
+    }
+
+    private void loadDefaultParameters() {
+        int[] channelsTypes = HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getChannelsTypes();
+        int[] measurinRanges = HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getMeasuringRanges();
+
+        for (int i = 0; i < channelsTypes.length; i++) {
+            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
+            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
+        }
+    }
+
+    public void handleBackButton() {
+        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
     }
 }
