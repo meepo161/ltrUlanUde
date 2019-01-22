@@ -21,7 +21,6 @@ public class EventsModel {
     }
 
     public void loadData(long idTest) {
-        //TODO выборка из базы данных по таблице
         List<Event> allNeedEvents = EventRepository.getEventsByTestId(idTest);
 
         for (int i = 0; i < allNeedEvents.size(); i++) {
@@ -78,7 +77,6 @@ public class EventsModel {
     }
 
     public void setEvent(String description, EventsTypes status, long millis) {
-        //TODO добавить в БД, после этого добавить в таблицу.
         Event event = new Event(testId, description, status.toString(), millis);
         EventRepository.insertEvent(event);
         eventData.add(new Events(event.getTime(), event.getDescription(), event.getStatus()));
