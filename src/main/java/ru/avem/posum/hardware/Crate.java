@@ -18,11 +18,11 @@ public class Crate {
     private TextEncoder textEncoder = new TextEncoder();
 
     public Crate() {
-//        status = fillCratesList(crates);
+        status = fillCratesList(crates);
         checkStatus();
 
         if (!wasError) {
-//            status = getCratesInfo(names, connectionInterfaces);
+            status = getCratesInfo(names, connectionInterfaces);
             checkStatus();
         }
 
@@ -38,7 +38,7 @@ public class Crate {
         }
 
         if (!wasError) {
-//            status = stop();
+            status = stop();
             checkStatus();
         }
 
@@ -102,6 +102,6 @@ public class Crate {
     }
 
     static {
-//        System.loadLibrary("CrateLibrary");
+        System.loadLibrary("CrateLibrary");
     }
 }

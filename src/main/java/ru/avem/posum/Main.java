@@ -25,6 +25,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene ltr24Scene;
     private Scene ltr34Scene;
     private Scene ltr212Scene;
+    private Scene signalGraphScene;
 
     private LoginController loginController;
     private MainController mainController;
@@ -33,6 +34,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private LTR24SettingController ltr24SettingController;
     private LTR34SettingController ltr34SettingController;
     private LTR212SettingController ltr212SettingController;
+    private SignalGraphController signalGraphController;
 
     private Parent parent;
 
@@ -47,6 +49,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createLTR24Scene();
         createLTR34Scene();
         createLTR212Scene();
+        createSignalGraphScene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -115,6 +118,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createLTR212Scene() throws IOException {
         ltr212SettingController = (LTR212SettingController) getController("/layouts/LTR212SettingView.fxml");
         ltr212Scene = createScene(1280, 720);
+    }
+
+    private void createSignalGraphScene() throws IOException {
+        signalGraphController = (SignalGraphController) getController("/layouts/signalGraphView.fxml");
+        signalGraphScene = createScene(1280, 720);
     }
 
     @Override
@@ -191,7 +199,9 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Настройки модуля LTR212");
                 primaryStage.setScene(ltr212Scene);
                 break;
-            case SIGNAL_GRPAH_SCENE:
+            case SIGNAL_GRAPH_SCENE:
+                primaryStage.setTitle("Настройки канала");
+                primaryStage.setScene(signalGraphScene);
                 break;
         }
     }

@@ -2,7 +2,6 @@ package ru.avem.posum.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -17,8 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LTR24SettingController implements BaseController {
-    @FXML
-    private Button backButton;
     @FXML
     private Button valueOfChannelN1;
     @FXML
@@ -86,27 +83,27 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN8;
     @FXML
-    private TextField currentValueOfChannelN1;
+    private TextField descriptionOfChannelN1;
     @FXML
-    private TextField currentValueOfChannelN2;
+    private TextField descriptionOfChannelN2;
     @FXML
-    private TextField currentValueOfChannelN3;
+    private TextField descriptionOfChannelN3;
     @FXML
-    private TextField currentValueOfChannelN4;
+    private TextField descriptionOfChannelN4;
     @FXML
-    private TextField currentValueOfChannelN5;
+    private TextField descriptionOfChannelN5;
     @FXML
-    private TextField currentValueOfChannelN6;
+    private TextField descriptionOfChannelN6;
     @FXML
-    private TextField currentValueOfChannelN7;
+    private TextField descriptionOfChannelN7;
     @FXML
-    private TextField currentValueOfChannelN8;
+    private TextField descriptionOfChannelN8;
 
-    private List<Button> valueOfChannelsButtons = new ArrayList<>();
-    private List<TextField> channelsValues = new ArrayList<>();
+    private List<TextField> channelsDescription = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
+    private List<Button> valueOfChannelsButtons = new ArrayList<>();
 
     private WindowsManager wm;
     private ControllerManager cm;
@@ -114,10 +111,10 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private void initialize() {
         fillListOfChannelsCheckBoxes();
+        fillListOfChannelsDescriptionTextFields();
         fillListOfChannelsTypesComboBoxes();
         fillListOfMeasuringRangesComboBoxes();
-        fillListOfChannelsValuesTextFields();
-        fillListOfChannelsGraphsButtons();
+        fillListOfChannelsValuesButtons();
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
@@ -136,6 +133,19 @@ public class LTR24SettingController implements BaseController {
                 checkChannelN6,
                 checkChannelN7,
                 checkChannelN8
+        ));
+    }
+
+    private void fillListOfChannelsDescriptionTextFields() {
+        channelsDescription.addAll(Arrays.asList(
+                descriptionOfChannelN1,
+                 descriptionOfChannelN2,
+                 descriptionOfChannelN3,
+                 descriptionOfChannelN4,
+                 descriptionOfChannelN5,
+                 descriptionOfChannelN6,
+                 descriptionOfChannelN7,
+                 descriptionOfChannelN8
         ));
     }
 
@@ -165,20 +175,7 @@ public class LTR24SettingController implements BaseController {
         ));
     }
 
-    private void fillListOfChannelsValuesTextFields() {
-        channelsValues.addAll(Arrays.asList(
-                currentValueOfChannelN1,
-                currentValueOfChannelN2,
-                currentValueOfChannelN3,
-                currentValueOfChannelN4,
-                currentValueOfChannelN5,
-                currentValueOfChannelN6,
-                currentValueOfChannelN7,
-                currentValueOfChannelN8
-        ));
-    }
-
-    private void fillListOfChannelsGraphsButtons() {
+    private void fillListOfChannelsValuesButtons() {
         valueOfChannelsButtons.addAll(Arrays.asList(
                 valueOfChannelN1,
                 valueOfChannelN2,
@@ -206,28 +203,6 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    private void addListOfCrateSlots(ComboBox<String> crateSlot) {
-        ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("Слот 1");
-        strings.add("Слот 2");
-        strings.add("Слот 3");
-        strings.add("Слот 4");
-        strings.add("Слот 5");
-        strings.add("Слот 6");
-        strings.add("Слот 7");
-        strings.add("Слот 8");
-        strings.add("Слот 9");
-        strings.add("Слот 10");
-        strings.add("Слот 11");
-        strings.add("Слот 12");
-        strings.add("Слот 13");
-        strings.add("Слот 14");
-        strings.add("Слот 15");
-        strings.add("Слот 16");
-
-        crateSlot.getItems().setAll(strings);
-    }
-
     private void addListenerForAllChannels() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             toggleChannelsUiElements(channelsCheckBoxes.get(i), i);
@@ -252,8 +227,30 @@ public class LTR24SettingController implements BaseController {
     private void toggleUiElements(int channel, boolean isDisable) {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
-        channelsValues.get(channel).setDisable(isDisable);
+        channelsDescription.get(channel).setDisable(isDisable);
         valueOfChannelsButtons.get(channel).setDisable(isDisable);
+    }
+
+    private void addListOfCrateSlots(ComboBox<String> crateSlot) {
+        ObservableList<String> strings = FXCollections.observableArrayList();
+        strings.add("Слот 1");
+        strings.add("Слот 2");
+        strings.add("Слот 3");
+        strings.add("Слот 4");
+        strings.add("Слот 5");
+        strings.add("Слот 6");
+        strings.add("Слот 7");
+        strings.add("Слот 8");
+        strings.add("Слот 9");
+        strings.add("Слот 10");
+        strings.add("Слот 11");
+        strings.add("Слот 12");
+        strings.add("Слот 13");
+        strings.add("Слот 14");
+        strings.add("Слот 15");
+        strings.add("Слот 16");
+
+        crateSlot.getItems().setAll(strings);
     }
 
     private void checkChannelType(List<ComboBox<String>> channelsTypesComboBoxes, List<ComboBox<String>> measuringRangesComboBoxes) {
@@ -300,10 +297,6 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    public void handleBackButton() {
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
-    }
-
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -314,7 +307,15 @@ public class LTR24SettingController implements BaseController {
         this.cm = cm;
     }
 
+    public void handleValueOfChannel() {
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
     public void handleInitialize() {
 
+    }
+
+    public void handleBackButton() {
+        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 }

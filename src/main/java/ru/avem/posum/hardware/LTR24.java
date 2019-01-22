@@ -44,6 +44,6 @@ public class LTR24 {
     }
 
     static {
-//        System.loadLibrary("LTR24Library");
+        System.loadLibrary("LTR24Library");
     }
 }

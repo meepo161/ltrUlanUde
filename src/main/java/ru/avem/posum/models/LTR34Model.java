@@ -1,7 +1,6 @@
 package ru.avem.posum.models;
 
 import javafx.application.Platform;
-import ru.avem.posum.controllers.IMainController;
 import ru.avem.posum.hardware.LTR34;
 import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
@@ -14,14 +13,12 @@ public class LTR34Model {
     private RingBuffer ringBuffer = new RingBuffer(data.length * 10);
     private TextEncoder textEncoder = new TextEncoder();
     private String decodedError;
-    private final IMainController iMainController;
     private int riseTime = 10;
     private boolean isInitialized;
     private boolean isStarted;
     private boolean isStopped;
 
-    public LTR34Model(IMainController iMainController, int slot) {
-        this.iMainController = iMainController;
+    public LTR34Model(int slot) {
         moduleSlot = slot;
     }
 
@@ -29,14 +26,14 @@ public class LTR34Model {
         String status = ltr34.initialize(moduleSlot);
         isInitialized = checkError(status);
         Platform.runLater(() -> {
-            iMainController.setMainStatusBarText(status == null ? "LTR34: Инициализация выполнена без ошибок" : decodedError);
+//            iMainController.setMainStatusBarText(status == null ? "LTR34: Инициализация выполнена без ошибок" : decodedError);
         });
     }
 
     public void generateSignal(int sin8HzAmplitude, int sin20HzAmplitude) {
         String status = ltr34.start();
         isStarted = checkError(status);
-        iMainController.setMainStatusBarText(status == null ? "LTR34: Запуск выполнен без ошибок" : decodedError);
+//        iMainController.setMainStatusBarText(status == null ? "LTR34: Запуск выполнен без ошибок" : decodedError);
 
 //        new Thread(() -> {
 //            while (!MainController.experimentFinished) {
@@ -79,7 +76,7 @@ public class LTR34Model {
             String status = ltr34.stop();
             isStopped = checkError(status);
             Platform.runLater(() -> {
-                iMainController.setMainStatusBarText(status == null ? "LTR34: Остановка выполнена без ошибок" : decodedError);
+//                iMainController.setMainStatusBarText(status == null ? "LTR34: Остановка выполнена без ошибок" : decodedError);
             });
 
             return true;
@@ -122,6 +119,10 @@ public class LTR34Model {
     public double[] takeData() {
         ringBuffer.take(outputArray, data.length);
         return outputArray;
+    }
+
+    public LTR34 getLtr34() {
+        return ltr34;
     }
 
     public boolean isInitialized() {

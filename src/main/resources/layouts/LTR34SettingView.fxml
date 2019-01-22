@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import org.controlsfx.control.StatusBar?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.LTR34SettingController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.LTR34SettingController">
    <children>
       <GridPane layoutX="84.0" layoutY="93.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -60,122 +60,122 @@
                   <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="Напряжение, В" lowerBound="-10.0" side="LEFT" tickUnit="2.0" upperBound="10.0" />
                </yAxis>
             </LineChart>
-            <CheckBox mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN1" mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox mnemonicParsing="false" text="Канал 2" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN2" mnemonicParsing="false" text="Канал 2" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox mnemonicParsing="false" text="Канал 3" GridPane.columnIndex="3" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN3" mnemonicParsing="false" text="Канал 3" GridPane.columnIndex="3" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <CheckBox mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="4" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN4" mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="4" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN1" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN1" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="1" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="2" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN2" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="2" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="2" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN2" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="2" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="3" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN3" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="3" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="3" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN3" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="3" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="4" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN4" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="4" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="4" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN4" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="4" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox mnemonicParsing="false" text="Канал 5" GridPane.columnIndex="5" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN5" mnemonicParsing="false" text="Канал 5" GridPane.columnIndex="5" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="5" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN5" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="5" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="5" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN5" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="5" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="6" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN6" mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="6" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="6" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN6" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="6" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="6" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN6" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="6" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox mnemonicParsing="false" text="Канал 7" GridPane.columnIndex="7" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN7" mnemonicParsing="false" text="Канал 7" GridPane.columnIndex="7" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="7" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN7" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="7" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="7" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN7" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="7" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="8" GridPane.rowIndex="3">
+            <CheckBox fx:id="checkChannelN8" mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="8" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <TextField disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="8" GridPane.rowIndex="4">
+            <TextField fx:id="frequencyOfChannelN8" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="8" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <TextField disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="8" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeOfChannelN8" disable="true" maxWidth="120.0" promptText="Амплитуда" GridPane.columnIndex="8" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>

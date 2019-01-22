@@ -30,6 +30,6 @@ public class LTR212 {
     }
 
     static {
-//        System.loadLibrary("LTR212Library");
+        System.loadLibrary("LTR212Library");
     }
 }

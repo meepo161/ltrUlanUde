@@ -2,7 +2,6 @@ package ru.avem.posum.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -231,7 +230,7 @@ public class LTR212SettingController implements BaseController {
 
     private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
         for (ComboBox<String> comboBox : comboBoxes) {
-            comboBox.getItems().addAll(strings);
+//            comboBox.getItems().addAll(strings);
         }
     }
 
@@ -279,13 +278,13 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void loadDefaultParameters() {
-        int[] channelsTypes = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getChannelsTypes();
-        int[] measurinRanges = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getMeasuringRanges();
-
-        for (int i = 0; i < channelsTypes.length; i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
-        }
+//        int[] channelsTypes = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getChannelsTypes();
+//        int[] measurinRanges = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getMeasuringRanges();
+//
+//        for (int i = 0; i < channelsTypes.length; i++) {
+//            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
+//            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
+//        }
     }
 
     public void handleBackButton() {

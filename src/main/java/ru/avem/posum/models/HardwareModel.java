@@ -24,7 +24,7 @@ public class HardwareModel {
 
     public void initModules() {
         crate = new Crate();
-        ltr212ModuleN1 = new LTR212Model(1);
+//        ltr212ModuleN1 = new LTR212Model(1);
 //        ltr212ModuleN2 = new LTR212Model(iMainController, 2);
 //        ltr212ModuleN3 = new LTR212Model(iMainController, 3);
 //        ltr212ModuleN4 = new LTR212Model(iMainController, 4);
@@ -35,7 +35,7 @@ public class HardwareModel {
 //        ltr24ModuleN9  = new LTR24Model(iMainController, 9);
 //        ltr24ModuleN10 = new LTR24Model(iMainController, 10);
 //        ltr24ModuleN11 = new LTR24Model(iMainController, 11);
-//        ltr34ModuleN12 = new LTR34Model(iMainController, 12);
+        ltr34ModuleN12 = new LTR34Model(12);
     }
 
     public static HardwareModel getInstance() {
