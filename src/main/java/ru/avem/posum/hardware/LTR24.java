@@ -1,31 +1,23 @@
 package ru.avem.posum.hardware;
 
+import ru.avem.posum.utils.TextEncoder;
+
 public class LTR24 {
     private int[] checkedChannels = new int[8];
+    private String[] descriptionOfChannels = new String[8];
     private int[] channelsTypes = new int[8];
     private int[] measuringRanges = new int[8];
+    private String crate;
+    private int slot;
+    private String status;
+    private TextEncoder textEncoder = new TextEncoder();
 
-    public LTR24() {
-        setDefaultParameters();
+    public void start() {
+        status = initialize(crate, slot, channelsTypes, measuringRanges);
+        status = textEncoder.cp2utf(status);
     }
 
-    /**
-     * Для каналов измерения виброускорения выбраны:
-     * 0 - Режим ICP-вход
-     * 1 - ~5 В
-     *
-     * Для каналов измерения перемещения выбраны:
-     * 0 - Дифференциальный вход без отсечки постоянной составляющей
-     * 1 - -10 В/+10 В
-     */
-    private void setDefaultParameters() {
-        for (int i = 0; i < channelsTypes.length; i++) {
-            channelsTypes[i] = 0;
-            measuringRanges[i] = 1;
-        }
-    }
-
-    public native String initialize(int slot, int[] selectedBridgeTypes, int[] selectedMeasuringRanges);
+    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
 
     public native String fillArray(double[] data);
 
@@ -35,12 +27,28 @@ public class LTR24 {
         return checkedChannels;
     }
 
+    public String[] getDescriptionOfChannels() {
+        return descriptionOfChannels;
+    }
+
     public int[] getChannelsTypes() {
         return channelsTypes;
     }
 
     public int[] getMeasuringRanges() {
         return measuringRanges;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
     static {

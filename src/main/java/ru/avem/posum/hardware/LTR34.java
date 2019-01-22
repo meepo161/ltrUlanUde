@@ -4,6 +4,7 @@ public class LTR34 {
     private int[] checkedChannels = new int[8];
     private int[] channelsFrequency = new int[8];
     private int[] measuringAmplitude = new int[8];
+    private int slot;
 
     public native String initialize(int slot);
 
@@ -26,6 +27,6 @@ public class LTR34 {
     }
 
     static {
-        System.loadLibrary("LTR34Library");
+//        System.loadLibrary("LTR34Library");
     }
 }

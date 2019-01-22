@@ -4,6 +4,7 @@ public class LTR212 {
     private int[] checkedChannels = new int[8];
     private int[] channelsTypes = new int[8];
     private int[] measuringRanges = new int[8];
+    private int slot;
 
     public LTR212() {
         setDefaultParameters();
@@ -35,6 +36,6 @@ public class LTR212 {
     }
 
     static {
-        System.loadLibrary("LTR212Library");
+//        System.loadLibrary("LTR212Library");
     }
 }

@@ -12,7 +12,7 @@ import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
-public class LoginController implements BaseController, ControllerManager {
+public class LoginController implements BaseController {
     @FXML
     private TextField userLogin;
     @FXML
@@ -69,11 +69,6 @@ public class LoginController implements BaseController, ControllerManager {
 
     public void setMainApp(Main main) {
         this.main = main;
-    }
-
-    @Override
-    public void loadItemsForTableView() {
-
     }
 }
 

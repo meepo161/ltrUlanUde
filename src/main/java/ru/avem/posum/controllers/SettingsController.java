@@ -10,14 +10,11 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.ProtocolRepository;
 import ru.avem.posum.db.models.Protocol;
-import ru.avem.posum.models.CrateModel;
-import ru.avem.posum.models.HardwareModel;
+import ru.avem.posum.hardware.Crate;
 
 public class SettingsController implements BaseController {
     @FXML
     private Button chooseCrateButton;
-    @FXML
-    private Button saveSetupButton;
     @FXML
     private Button setupModuleButton;
     @FXML
@@ -55,32 +52,25 @@ public class SettingsController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
-    private CrateModel crateModel = new CrateModel();
 
+    private Crate crate = new Crate();
     private int selectedCrate;
     private int selectedModule;
 
     @FXML
     private void initialize() {
-        HardwareModel.getInstance().initModules();
         initCrate();
     }
 
     private void initCrate() {
-        cratesListView.setItems(HardwareModel.getInstance().getCrate().getCratesNames());
+        cratesListView.setItems(crate.getCratesNames());
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
-            modulesListView.setItems(HardwareModel.getInstance().getCrate().getModulesNames(cratesListView.getSelectionModel().getSelectedIndex()));
+            selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
+            modulesListView.setItems(crate.getModulesNames(selectedCrate));
         }));
     }
 
     public void handleChooseCrate() {
-        selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
-
-        crateModel.setSelectedCrate(HardwareModel.getInstance().getCrate().getCratesNames().get(selectedCrate));
-        toggleUiElements();
-    }
-
-    private void toggleUiElements() {
         cratesListView.setDisable(true);
         chooseCrateButton.setDisable(true);
         modulesListView.setDisable(false);
@@ -89,7 +79,7 @@ public class SettingsController implements BaseController {
 
     public void handleSetupModule() {
         ObservableList<String> modulesNames;
-        modulesNames = HardwareModel.getInstance().getCrate().getModulesNames(selectedCrate);
+        modulesNames = crate.getModulesNames(selectedCrate);
         selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
         String module = modulesNames.get(selectedModule);
         showModuleSettings(module);
@@ -152,5 +142,9 @@ public class SettingsController implements BaseController {
 
     public int getSelectedModule() {
         return selectedModule;
+    }
+
+    public Crate getCrate() {
+        return crate;
     }
 }

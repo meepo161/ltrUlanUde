@@ -9,7 +9,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.models.HardwareModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -218,10 +217,10 @@ public class LTR212SettingController implements BaseController {
     private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-                HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getCheckedChannels()[channel] = 1;
+//                HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getCheckedChannels()[channel] = 1;
                 toggleUiElements(channel, false);
             } else {
-                HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getCheckedChannels()[channel] = 0;
+//                HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getCheckedChannels()[channel] = 0;
                 toggleUiElements(channel, true);
             }
         });
@@ -271,13 +270,13 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void loadDefaultParameters() {
-        int[] channelsTypes = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getChannelsTypes();
-        int[] measurinRanges = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getMeasuringRanges();
+//        int[] channelsTypes = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getChannelsTypes();
+//        int[] measurinRanges = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getMeasuringRanges();
 
-        for (int i = 0; i < channelsTypes.length; i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
-        }
+//        for (int i = 0; i < channelsTypes.length; i++) {
+//            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
+//            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
+//        }
     }
 
     @Override

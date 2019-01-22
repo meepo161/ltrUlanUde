@@ -9,7 +9,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.models.HardwareModel;
+import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.LTR24;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,6 +108,9 @@ public class LTR24SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private Crate crate;
+    private int selectedCrate;
+    private String status;
 
     @FXML
     private void initialize() {
@@ -120,7 +124,7 @@ public class LTR24SettingController implements BaseController {
         addListenerForAllChannels();
         addListOfCrateSlots(crateSlot);
         checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
-        loadDefaultParameters();
+        setDefaultParameters();
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -209,16 +213,11 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    /**
-     * В массив checkedChannels сохраняются значения 1 - канал отмечен, 0 - канал не отмечен
-     */
     private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-                HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getCheckedChannels()[channel] = 1;
                 toggleUiElements(channel, false);
             } else {
-                HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getCheckedChannels()[channel] = 0;
                 toggleUiElements(channel, true);
             }
         });
@@ -287,13 +286,19 @@ public class LTR24SettingController implements BaseController {
         measuringRange.getItems().setAll(strings);
     }
 
-    private void loadDefaultParameters() {
-        int[] channelsTypes = HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getChannelsTypes();
-        int[] measurinRanges = HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getMeasuringRanges();
-
-        for (int i = 0; i < channelsTypes.length; i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
+    /**
+     * Для каналов измерения виброускорения выбраны:
+     * 0 - Режим ICP-вход
+     * 1 - ~5 В
+     *
+     * Для каналов измерения перемещения выбраны:
+     * 0 - Дифференциальный вход без отсечки постоянной составляющей
+     * 1 - -10 В/+10 В
+     */
+    private void setDefaultParameters() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsTypesComboBoxes.get(i).getSelectionModel().select(0);
+            measuringRangesComboBoxes.get(i).getSelectionModel().select(1);
         }
     }
 
@@ -305,6 +310,7 @@ public class LTR24SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
+        crate = cm.getCrateFromSettingsController();
     }
 
     public void handleValueOfChannel() {
@@ -312,7 +318,21 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleInitialize() {
+        LTR24 ltr24 = new LTR24();
 
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                ltr24.getCheckedChannels()[i] = 1; // 1 - канал выбран
+                ltr24.getDescriptionOfChannels()[i] = channelsDescription.get(i).getText();
+                ltr24.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr24.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr24.setCrate(crate.getCrates()[0][cm.getSelectedCrate()]);
+                ltr24.setSlot(crateSlot.getSelectionModel().getSelectedIndex() + 1);
+            }
+        }
+
+        crate.getLtr24ModulesList().add(ltr24);
+        ltr24.start();
     }
 
     public void handleBackButton() {

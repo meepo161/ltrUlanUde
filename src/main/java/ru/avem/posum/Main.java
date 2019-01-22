@@ -10,6 +10,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
+import ru.avem.posum.hardware.Crate;
 
 import java.awt.*;
 import java.io.IOException;
@@ -213,5 +214,15 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void loadItemsForTableView() {
         mainController.showPotocols();
+    }
+
+    @Override
+    public int getSelectedCrate() {
+        return settingsController.getSelectedCrate();
+    }
+
+    @Override
+    public Crate getCrateFromSettingsController() {
+        return settingsController.getCrate();
     }
 }

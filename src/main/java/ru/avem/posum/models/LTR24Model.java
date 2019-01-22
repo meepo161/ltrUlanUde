@@ -6,7 +6,6 @@ import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24Model {
     private int moduleSlot;
-    private LTR24 ltr24 = new LTR24();
     private double[] data = new double[1024];
     public double[] outputArray = new double[data.length * 4];
     private double[] bufferData = new double[data.length];
@@ -31,7 +30,7 @@ public class LTR24Model {
     }
 
     public void receiveData() {
-        ltr24.fillArray(data);
+//        ltr24.fillArray(data);
         ringBuffer.put(data);
     }
 
@@ -60,9 +59,9 @@ public class LTR24Model {
         return channelData;
     }
 
-    public void stop() {
-        isStopped = checkError(ltr24.stop());
-    }
+//    public void stop() {
+//        isStopped = checkError(ltr24.stop());
+//    }
 
     private boolean checkError(String status) {
         if (status != null) {
@@ -74,10 +73,6 @@ public class LTR24Model {
 
     private String decodeError(String error) {
         return "LTR212 (слот " + moduleSlot + "): " + textEncoder.cp2utf(error);
-    }
-
-    public LTR24 getLtr24() {
-        return ltr24;
     }
 
     public RingBuffer getRingBuffer() {
