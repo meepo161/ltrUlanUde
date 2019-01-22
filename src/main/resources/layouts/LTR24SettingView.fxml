@@ -215,7 +215,7 @@
                   <Insets />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -225,7 +225,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="4" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -235,7 +235,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="6" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -245,7 +245,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="8" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="8" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -255,22 +255,22 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN5" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+            <TextField fx:id="descriptionOfChannelN5" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="2" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="descriptionOfChannelN6" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="10">
+            <TextField fx:id="descriptionOfChannelN6" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="4" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="descriptionOfChannelN7" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="10">
+            <TextField fx:id="descriptionOfChannelN7" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="6" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <TextField fx:id="descriptionOfChannelN8" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="8" GridPane.rowIndex="10">
+            <TextField fx:id="descriptionOfChannelN8" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="8" GridPane.rowIndex="10">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>

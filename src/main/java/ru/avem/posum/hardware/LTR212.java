@@ -1,6 +1,7 @@
 package ru.avem.posum.hardware;
 
 public class LTR212 {
+    private int[] checkedChannels = new int[8];
     private int[] channelsTypes = new int[8];
     private int[] measuringRanges = new int[8];
 
@@ -20,6 +21,10 @@ public class LTR212 {
     public native String fillArray(double[] data);
 
     public native String stop();
+
+    public int[] getCheckedChannels() {
+        return checkedChannels;
+    }
 
     public int[] getChannelsTypes() {
         return channelsTypes;
