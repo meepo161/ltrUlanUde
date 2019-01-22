@@ -24,35 +24,31 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.StatusBar?>
 
-<BorderPane minHeight="680.0" minWidth="1200.0" prefHeight="680.0" prefWidth="1200.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.ProcessController">
+<BorderPane minHeight="680.0" minWidth="1200.0" prefHeight="680.0" prefWidth="1200.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.ProcessController">
    <center>
       <SplitPane dividerPositions="0.8126740947075209">
          <items>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <HBox prefWidth="1043.0" VBox.vgrow="NEVER">
-                     <children>
-                        <TableView fx:id="tableViewSimple" editable="true" minHeight="50.0" prefHeight="50.0" prefWidth="739.0" styleClass="processTable">
-                          <columns>
-                            <TableColumn editable="false" prefWidth="75.0" text="основные" />
-                            <TableColumn editable="false" prefWidth="75.0" text="отклик" />
-                              <TableColumn editable="false" prefWidth="75.0" text="амм отклик" />
-                              <TableColumn editable="false" prefWidth="75.0" text="стат отклик" />
-                              <TableColumn editable="false" prefWidth="78.0" text="фаза отклик" />
-                              <TableColumn editable="false" prefWidth="43.0" text="част" />
-                              <TableColumn editable="false" maxWidth="50.0" minWidth="0.0" prefWidth="100.0" text="режим" />
-                              <TableColumn fx:id="tableColumnDopAmp" editable="false" prefWidth="94.0" text="выход доп амп" visible="false" />
-                              <TableColumn fx:id="tableColumnDopAmp1" editable="false" prefWidth="94.0" text="выход доп стат" visible="false" />
-                              <TableColumn fx:id="tableColumnDopAmp2" editable="false" prefWidth="94.0" text="выход доп фаза" visible="false" />
-                              <TableColumn fx:id="tableColumnDopAmp3" editable="false" prefWidth="56.0" text="зад 1к" />
-                              <TableColumn fx:id="tableColumnDopAmp4" editable="false" prefWidth="75.0" text="ЦАП амп" />
-                              <TableColumn fx:id="tableColumnDopAmp5" editable="false" prefWidth="74.0" text="ЦАП стат" />
-                              <TableColumn fx:id="tableColumnDopAmp6" editable="false" prefWidth="60.0" text="ЦАП" />
-                          </columns>
-                        </TableView>
-                     </children>
-                  </HBox>
-                  <LineChart prefHeight="742.0" prefWidth="1099.0">
+                  <TableView fx:id="tableSample" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="processTable">
+                    <columns>
+                      <TableColumn fx:id="mainTextSampleColumn" editable="false" prefWidth="75.0" text="основные" />
+                      <TableColumn editable="false" prefWidth="75.0" text="отклик" />
+                        <TableColumn editable="false" prefWidth="75.0" text="амм отклик" />
+                        <TableColumn editable="false" prefWidth="75.0" text="стат отклик" />
+                        <TableColumn editable="false" prefWidth="78.0" text="фаза отклик" />
+                        <TableColumn editable="false" prefWidth="43.0" text="част" />
+                        <TableColumn editable="false" maxWidth="50.0" minWidth="0.0" prefWidth="100.0" text="режим" />
+                        <TableColumn fx:id="tableColumnDopAmp" editable="false" prefWidth="94.0" text="выход доп амп" visible="false" />
+                        <TableColumn fx:id="tableColumnDopAmp1" editable="false" prefWidth="94.0" text="выход доп стат" visible="false" />
+                        <TableColumn fx:id="tableColumnDopAmp2" editable="false" prefWidth="94.0" text="выход доп фаза" visible="false" />
+                        <TableColumn fx:id="tableColumnDopAmp3" editable="false" prefWidth="56.0" text="зад 1к" />
+                        <TableColumn fx:id="tableColumnDopAmp4" editable="false" prefWidth="75.0" text="ЦАП амп" />
+                        <TableColumn fx:id="tableColumnDopAmp5" editable="false" prefWidth="74.0" text="ЦАП стат" />
+                        <TableColumn fx:id="tableColumnDopAmp6" editable="false" prefWidth="60.0" text="ЦАП" />
+                    </columns>
+                  </TableView>
+                  <LineChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                     <xAxis>
                       <CategoryAxis side="BOTTOM" />
                     </xAxis>

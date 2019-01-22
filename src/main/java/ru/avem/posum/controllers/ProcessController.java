@@ -1,12 +1,17 @@
 package ru.avem.posum.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.models.Events;
+import ru.avem.posum.models.EventsModel;
+import ru.avem.posum.models.ProcessSample;
+import ru.avem.posum.models.ProcessSampleModel;
+
 
 import java.util.Optional;
 
@@ -17,17 +22,28 @@ public class ProcessController implements BaseController {
     private TableColumn<Events, String> eventTimeColumn;
     @FXML
     private TableColumn<Events, String> eventDescriptionColumn;
+    @FXML
+    private TableView<ProcessSample> tableSample;
+    @FXML
+    private TableColumn<ProcessSample, String> mainTextSampleColumn;
 
-//    private EventsModel eventModel = new EventsModel();
+    private EventsModel eventModel = new EventsModel();
+    private ProcessSampleModel processSampleModel = new ProcessSampleModel();
 
     private WindowsManager wm;
 
     @FXML
     private void initialize() {
-//        eventModel.initEventData(tableEvent);
-//        eventModel.SetEventsTableFunction(tableEvent);
+        eventModel.initEventData(tableEvent);
+        eventModel.SetEventsTableFunction(tableEvent);
         eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+
+        processSampleModel.initProcessSampleData(tableSample);
+        processSampleModel.SetProcessSampleTableFunction(tableSample);
+        mainTextSampleColumn.setCellValueFactory(cellData -> cellData.getValue().mainTextProperty());
+        processSampleModel.fitTable(tableSample);
+
     }
 
     public void handleInitButton() {
@@ -61,10 +77,10 @@ public class ProcessController implements BaseController {
     public void handleAddEventButton() {
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Добавление события");
-        dialog.setHeaderText("Добавление события");
-        dialog.setContentText("Введите событие:");
+        dialog.setHeaderText("Введите событие:");
+        dialog.setContentText("Текст:");
         Optional<String> result = dialog.showAndWait();
-//        result.ifPresent(eventText -> eventModel.setEvent(eventText));
+        result.ifPresent(eventText -> eventModel.setEvent(eventText));
     }
 
     public void handleExpandEventTableButton() {
