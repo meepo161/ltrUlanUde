@@ -53,7 +53,7 @@
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="9" GridPane.rowSpan="6" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
-            <Button fx:id="initializeButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="19">
+            <Button fx:id="initializeButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="19">
                <GridPane.margin>
                   <Insets left="-160.0" />
                </GridPane.margin>
@@ -300,7 +300,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <Label text="Слот крейта:" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="16">
+            <Label fx:id="crateSlotLabel" text="Слот крейта:" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="16">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -310,7 +310,7 @@
                   <Insets />
                </GridPane.margin>
             </ComboBox>
-            <StatusBar text="" GridPane.columnSpan="10" GridPane.rowIndex="20" />
+            <StatusBar fx:id="statusBar" style="-fx-font-size: 14px;" text="" GridPane.columnSpan="10" GridPane.rowIndex="20" />
          </children>
       </GridPane>
    </children>

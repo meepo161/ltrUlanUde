@@ -44,7 +44,7 @@ public class LTR34Model {
 //                    e.printStackTrace();
 //                }
 //            }
-//        }).start();
+//        }).initModule();
     }
 
     public void doSmoothStart(int sin8HzAmplitude, int sin20HzAmplitude) {

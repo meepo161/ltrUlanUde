@@ -7,5 +7,7 @@ public interface ControllerManager {
 
     int getSelectedCrate();
 
-    Crate getCrateFromSettingsController();
+    int getSelectedModule();
+
+    Crate getCrateInstance();
 }

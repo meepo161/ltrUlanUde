@@ -222,7 +222,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public Crate getCrateFromSettingsController() {
+    public int getSelectedModule() {
+        return settingsController.getSelectedModule();
+    }
+
+    @Override
+    public Crate getCrateInstance() {
         return settingsController.getCrate();
     }
 }
