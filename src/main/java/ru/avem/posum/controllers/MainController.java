@@ -97,7 +97,7 @@ public class MainController implements BaseController {
     public void handleMenuItemDelete() {
         List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
         ProtocolRepository.deleteProtocol(allProtocols.get(getSelectedItemIndex()));
-        cm.loadItemsForTableView();
+        cm.loadItemsForMainTableView();
     }
 
     public void handleMenuItemAboutUs() {

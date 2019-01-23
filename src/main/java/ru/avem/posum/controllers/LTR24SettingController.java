@@ -3,13 +3,11 @@ package ru.avem.posum.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR24;
 
 import java.util.ArrayList;
@@ -17,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LTR24SettingController implements BaseController {
+    @FXML
+    private Button initializeButton;
     @FXML
     private Button valueOfChannelN1;
     @FXML
@@ -84,6 +84,10 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN8;
     @FXML
+    private StatusBar statusBar;
+    @FXML
+    private Label crateSlotLabel;
+    @FXML
     private TextField descriptionOfChannelN1;
     @FXML
     private TextField descriptionOfChannelN2;
@@ -108,8 +112,12 @@ public class LTR24SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
-    private Crate crate;
+
+    private CrateModel crateModel;
     private int selectedCrate;
+    private String[] cratesSN;
+    private int selectedModule;
+    private int selectedSlot;
     private String status;
 
     @FXML
@@ -143,13 +151,13 @@ public class LTR24SettingController implements BaseController {
     private void fillListOfChannelsDescriptionTextFields() {
         channelsDescription.addAll(Arrays.asList(
                 descriptionOfChannelN1,
-                 descriptionOfChannelN2,
-                 descriptionOfChannelN3,
-                 descriptionOfChannelN4,
-                 descriptionOfChannelN5,
-                 descriptionOfChannelN6,
-                 descriptionOfChannelN7,
-                 descriptionOfChannelN8
+                descriptionOfChannelN2,
+                descriptionOfChannelN3,
+                descriptionOfChannelN4,
+                descriptionOfChannelN5,
+                descriptionOfChannelN6,
+                descriptionOfChannelN7,
+                descriptionOfChannelN8
         ));
     }
 
@@ -228,6 +236,10 @@ public class LTR24SettingController implements BaseController {
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
         valueOfChannelsButtons.get(channel).setDisable(isDisable);
+
+        if (!crateSlot.getSelectionModel().isEmpty()) {
+            initializeButton.setDisable(isDisable);
+        }
     }
 
     private void addListOfCrateSlots(ComboBox<String> crateSlot) {
@@ -290,7 +302,7 @@ public class LTR24SettingController implements BaseController {
      * Для каналов измерения виброускорения выбраны:
      * 0 - Режим ICP-вход
      * 1 - ~5 В
-     *
+     * <p>
      * Для каналов измерения перемещения выбраны:
      * 0 - Дифференциальный вход без отсечки постоянной составляющей
      * 1 - -10 В/+10 В
@@ -299,6 +311,7 @@ public class LTR24SettingController implements BaseController {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsTypesComboBoxes.get(i).getSelectionModel().select(0);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(1);
+            crateSlot.getSelectionModel().select(0);
         }
     }
 
@@ -310,7 +323,7 @@ public class LTR24SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        crate = cm.getCrateFromSettingsController();
+        crateModel = cm.getCrateModelInstance();
     }
 
     public void handleValueOfChannel() {
@@ -318,24 +331,73 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleInitialize() {
-        LTR24 ltr24 = new LTR24();
+        selectedCrate = cm.getSelectedCrate();
+        cratesSN = crateModel.getCrates()[0];
+        selectedModule = cm.getSelectedModule();
+        selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
 
+        LTR24 ltr24 = new LTR24();
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
-                ltr24.getCheckedChannels()[i] = 1; // 1 - канал выбран
-                ltr24.getDescriptionOfChannels()[i] = channelsDescription.get(i).getText();
+                ltr24.getCheckedChannels()[i] = true; // 1 - канал выбран
+                ltr24.getChannelsDescription()[i] = channelsDescription.get(i).getText();
                 ltr24.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
-                ltr24.setCrate(crate.getCrates()[0][cm.getSelectedCrate()]);
-                ltr24.setSlot(crateSlot.getSelectionModel().getSelectedIndex() + 1);
+                ltr24.setCrate(cratesSN[selectedCrate]);
+                ltr24.setSlot(selectedSlot);
             }
         }
 
-        crate.getLtr24ModulesList().add(ltr24);
-        ltr24.start();
+        ltr24.initModule();
+        statusBar.setText(ltr24.getStatus());
+
+        if (ltr24.getStatus().equals("Операция успешно выполнена")) {
+            crateModel.getLtr24ModulesList().add(ltr24);
+            ltr24.start();
+            disableUiElements();
+
+            String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
+            crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
+        }
+    }
+
+    private void disableUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setDisable(true);
+            channelsDescription.get(i).setDisable(true);
+            channelsTypesComboBoxes.get(i).setDisable(true);
+            measuringRangesComboBoxes.get(i).setDisable(true);
+        }
+
+        initializeButton.setDisable(true);
+        crateSlotLabel.setDisable(true);
+        crateSlot.setDisable(true);
     }
 
     public void handleBackButton() {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        cm.loadItemsForMainTableView();
+        cm.loadItemsForModulesTableView();
+    }
+
+    public void refreshView() {
+        if (!crateModel.getLtr24ModulesList().isEmpty()) {
+            for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
+                LTR24 module = crateModel.getLtr24ModulesList().get(0);
+
+                channelsCheckBoxes.get(channel).setSelected(module.getCheckedChannels()[channel]);
+                channelsDescription.get(channel).setText(module.getChannelsDescription()[channel]);
+                channelsTypesComboBoxes.get(channel).getSelectionModel().select(module.getChannelsTypes()[channel]);
+                measuringRangesComboBoxes.get(channel).getSelectionModel().select(module.getMeasuringRanges()[channel]);
+                crateSlot.getSelectionModel().select(module.getSlot() - 1);
+
+                if (module.getCheckedChannels()[channel]) {
+                    channelsDescription.get(channel).setDisable(false);
+                    channelsTypesComboBoxes.get(channel).setDisable(false);
+                    measuringRangesComboBoxes.get(channel).setDisable(false);
+                    channelsCheckBoxes.get(channel).setDisable(false);
+                }
+            }
+        }
     }
 }

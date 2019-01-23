@@ -36,7 +36,8 @@ public class LoginController implements BaseController {
         wm.setScene(WindowsManager.Scenes.LOGIN_SCENE);
     }
 
-    public void handleLogIn() {
+    @FXML
+    private void handleLogIn() {
         authenticateUser();
     }
 

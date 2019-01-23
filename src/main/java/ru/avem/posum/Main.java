@@ -6,14 +6,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.CrateModel;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
     private Stage loginStage;
@@ -36,6 +40,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private LTR34SettingController ltr34SettingController;
     private LTR212SettingController ltr212SettingController;
     private SignalGraphController signalGraphController;
+
+    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
 
     private Parent parent;
 
@@ -72,21 +78,27 @@ public class Main extends Application implements WindowsManager, ControllerManag
         return baseController;
     }
 
-    private Scene createScene(int width, int heigh) {
-        return new Scene(parent, width, heigh);
+    private Scene createScene(int width, int height) {
+        return new Scene(parent, width, height);
+    }
+
+    private Pair<BaseController, Scene> loadScene(String layoutPath, int width, int height) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource(layoutPath));
+        Parent parent = loader.load();
+        BaseController baseController = loader.getController();
+        baseController.setWindowManager(this);
+        baseController.setControllerManager(this);
+
+        return new Pair<>(baseController, new Scene(parent, width, height));
     }
 
     private void setKeyListener() {
         loginScene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case ESCAPE:
-                    if (!(event.getTarget() instanceof TextField)) {
-                        Platform.exit();
-                    }
-                    break;
-                case ENTER:
-                    loginController.handleLogIn();
-                    break;
+            if (event.getCode() == KeyCode.ESCAPE) {
+                if (!(event.getTarget() instanceof TextField)) {
+                    Platform.exit();
+                }
             }
         });
     }
@@ -212,8 +224,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadItemsForTableView() {
+    public void loadItemsForMainTableView() {
         mainController.showPotocols();
+    }
+
+    @Override
+    public void loadItemsForModulesTableView() {
+        settingsController.refreshModulesList();
     }
 
     @Override
@@ -222,7 +239,48 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public Crate getCrateFromSettingsController() {
-        return settingsController.getCrate();
+    public int getSelectedModule() {
+        return settingsController.getSelectedModule();
+    }
+
+    @Override
+    public CrateModel getCrateModelInstance() {
+        return settingsController.getCrateModel();
+    }
+
+    @Override
+    public void refreshLTR24Settings() {
+        ltr24SettingController.refreshView();
+    }
+
+    @Override
+    public void createListModulesControllers(List<String> modulesNames) {
+        modulesPairs.clear();
+        for (String module : modulesNames) {
+            String layoutPath = null;
+            switch (module) {
+                case CrateModel.LTR24:
+                    layoutPath = "/layouts/LTR24SettingView.fxml";
+                    break;
+                case CrateModel.LTR34:
+                    layoutPath = "/layouts/LTR34SettingView.fxml";
+                    break;
+                case CrateModel.LTR212:
+                    layoutPath = "/layouts/LTR212SettingView.fxml";
+                    break;
+            }
+            try {
+                Pair<BaseController, Scene> pair = loadScene(layoutPath, 1280, 720);
+                modulesPairs.add(pair);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void setModuleScene(String moduleName, int id) {
+        primaryStage.setTitle("Настройки модуля " + moduleName);
+        primaryStage.setScene(modulesPairs.get(id).getValue());
     }
 }

@@ -8,7 +8,11 @@ import ru.avem.posum.utils.TextEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Crate {
+public class CrateModel {
+    public static final String LTR24 = "LTR24";
+    public static final String LTR34 = "LTR34";
+    public static final String LTR212 = "LTR212";
+
     private final int LTR_CRATES_MAX = 16;
     private final int LTR_MODULES_PER_CRATE_MAX = 16;
     private String[][] crates = new String[LTR_CRATES_MAX][LTR_CRATES_MAX]; // массив хранит серийные номера, имена и интерфейс подключения крейтов
@@ -21,7 +25,7 @@ public class Crate {
     private List<LTR34> ltr34modules = new ArrayList<>();
     private List<LTR212> ltr212modules = new ArrayList<>();
 
-    public Crate() {
+    public CrateModel() {
         initCratesList();
 
         status = fillCratesList(crates[0]);

@@ -1,11 +1,21 @@
 package ru.avem.posum;
 
-import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.CrateModel;
+
+import java.util.List;
 
 public interface ControllerManager {
-    void loadItemsForTableView();
+    void loadItemsForMainTableView();
+
+    void loadItemsForModulesTableView();
 
     int getSelectedCrate();
 
-    Crate getCrateFromSettingsController();
+    int getSelectedModule();
+
+    CrateModel getCrateModelInstance();
+
+    void refreshLTR24Settings();
+
+    void createListModulesControllers(List<String> modulesNames);
 }
