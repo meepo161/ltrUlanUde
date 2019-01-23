@@ -33,19 +33,19 @@
                   <TableView fx:id="tableSample" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="processTable">
                     <columns>
                       <TableColumn fx:id="mainTextSampleColumn" editable="false" prefWidth="75.0" text="основные" />
-                      <TableColumn editable="false" prefWidth="75.0" text="отклик" />
-                        <TableColumn editable="false" prefWidth="75.0" text="амм отклик" />
-                        <TableColumn editable="false" prefWidth="75.0" text="стат отклик" />
-                        <TableColumn editable="false" prefWidth="78.0" text="фаза отклик" />
-                        <TableColumn editable="false" prefWidth="43.0" text="част" />
-                        <TableColumn editable="false" maxWidth="50.0" minWidth="0.0" prefWidth="100.0" text="режим" />
+                      <TableColumn fx:id="group1ColorSampleColumn" editable="false" prefWidth="75.0" text="отклик" />
+                        <TableColumn fx:id="group1Value1SampleColumn" editable="false" prefWidth="75.0" text="амп отклик" />
+                        <TableColumn fx:id="group1Value2SampleColumn" editable="false" prefWidth="75.0" text="стат отклик" />
+                        <TableColumn fx:id="group1Value3SampleColumn" editable="false" prefWidth="78.0" text="фаза отклик" />
+                        <TableColumn fx:id="group1Value4SampleColumn" editable="false" prefWidth="43.0" text="част" />
+                        <TableColumn fx:id="group1Value5SampleColumn" editable="false" maxWidth="50.0" minWidth="0.0" prefWidth="100.0" text="режим" />
                         <TableColumn fx:id="tableColumnDopAmp" editable="false" prefWidth="94.0" text="выход доп амп" visible="false" />
                         <TableColumn fx:id="tableColumnDopAmp1" editable="false" prefWidth="94.0" text="выход доп стат" visible="false" />
                         <TableColumn fx:id="tableColumnDopAmp2" editable="false" prefWidth="94.0" text="выход доп фаза" visible="false" />
-                        <TableColumn fx:id="tableColumnDopAmp3" editable="false" prefWidth="56.0" text="зад 1к" />
-                        <TableColumn fx:id="tableColumnDopAmp4" editable="false" prefWidth="75.0" text="ЦАП амп" />
-                        <TableColumn fx:id="tableColumnDopAmp5" editable="false" prefWidth="74.0" text="ЦАП стат" />
-                        <TableColumn fx:id="tableColumnDopAmp6" editable="false" prefWidth="60.0" text="ЦАП" />
+                        <TableColumn fx:id="group2Value1SampleColumn" editable="false" prefWidth="56.0" text="зад 1к" />
+                        <TableColumn fx:id="group2Value2SampleColumn" editable="false" prefWidth="75.0" text="ЦАП амп" />
+                        <TableColumn fx:id="group2Value3SampleColumn" editable="false" prefWidth="74.0" text="ЦАП стат" />
+                        <TableColumn fx:id="group2ColorSampleColumn" editable="false" prefWidth="60.0" text="ЦАП" />
                     </columns>
                   </TableView>
                   <LineChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">

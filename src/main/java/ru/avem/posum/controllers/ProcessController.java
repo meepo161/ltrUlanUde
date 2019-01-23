@@ -26,6 +26,27 @@ public class ProcessController implements BaseController {
     private TableView<ProcessSample> tableSample;
     @FXML
     private TableColumn<ProcessSample, String> mainTextSampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group1ColorSampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group1Value1SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group1Value2SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group1Value3SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group1Value4SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group1Value5SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group2ColorSampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group2Value1SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group2Value2SampleColumn;
+    @FXML
+    private TableColumn<ProcessSample, String> group2Value3SampleColumn;
+
 
     private EventsModel eventModel = new EventsModel();
     private ProcessSampleModel processSampleModel = new ProcessSampleModel();
@@ -42,7 +63,27 @@ public class ProcessController implements BaseController {
         processSampleModel.initProcessSampleData(tableSample);
         processSampleModel.SetProcessSampleTableFunction(tableSample);
         mainTextSampleColumn.setCellValueFactory(cellData -> cellData.getValue().mainTextProperty());
+        group1ColorSampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1ColorProperty());
+        group1Value1SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value1Property());
+        group1Value2SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value2Property());
+        group1Value3SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value3Property());
+        group1Value4SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value4Property());
+        group1Value5SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value5Property());
+        group2ColorSampleColumn.setCellValueFactory(cellData -> cellData.getValue().group2ColorProperty());
+        group2Value1SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value1Property());
+        group2Value2SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value2Property());
+        group2Value3SampleColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value3Property());
         processSampleModel.fitTable(tableSample);
+        processSampleModel.SetProcessSampleColumnFunction(group1ColorSampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group1Value1SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group1Value2SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group1Value3SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group1Value4SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group1Value5SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group2ColorSampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group2Value1SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group2Value2SampleColumn);
+        processSampleModel.SetProcessSampleColumnFunction(group2Value3SampleColumn);
 
     }
 

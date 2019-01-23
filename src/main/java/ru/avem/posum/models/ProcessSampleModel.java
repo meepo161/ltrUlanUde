@@ -2,6 +2,8 @@ package ru.avem.posum.models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
@@ -16,12 +18,12 @@ public class ProcessSampleModel {
     }
 
     public void loadData(long idTest) {
-        processSampleData.add(new ProcessSample("ADC1 DAC1"));
-        processSampleData.add(new ProcessSample("ADC2 DAC2"));
-        processSampleData.add(new ProcessSample("ADC3 DAC3"));
-        processSampleData.add(new ProcessSample("ADC4 DAC4"));
-        processSampleData.add(new ProcessSample("ADC5 DAC5"));
-        processSampleData.add(new ProcessSample("ADC6 DAC6"));
+        processSampleData.add(new ProcessSample("ADC1 DAC1",1,2,0,0));
+        processSampleData.add(new ProcessSample("ADC2 DAC2",2,3,0,0));
+        processSampleData.add(new ProcessSample("ADC3 DAC3",3,4,0,0));
+        processSampleData.add(new ProcessSample("ADC4 DAC4",4,5,0,0));
+        processSampleData.add(new ProcessSample("ADC5 DAC5",5,6,0,0));
+        processSampleData.add(new ProcessSample("ADC6 DAC6",6,7,0,0));
     }
 
     public String setStyleByCode(int code) {
@@ -36,8 +38,45 @@ public class ProcessSampleModel {
         }
     }
 
+    public void SetProcessSampleColumnFunction(TableColumn<ProcessSample, String> columnProcessSample) {
+        columnProcessSample.setCellFactory(column -> {
+            return new TableCell<ProcessSample, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) { //If the cell is empty
+                        setText(null);
+                    } else {
+                        setText(item);
+                    }
+                    setGraphic(null);
+
+                    ProcessSample row = null;
+
+                    if(getIndex() > -1 && getIndex() < getTableView().getItems().size()) {
+                        row = getTableView().getItems().get(getIndex());
+                    }
+                    int colorRow = 0;
+                    if (row != null) {
+                        String groupNum = this.getTableColumn().getId().substring(5 , 6);
+                        switch(Integer.parseInt(groupNum)) {
+                            case 1: colorRow = Integer.parseInt(row.getGroup1Color()); break;
+                            case 2: colorRow = Integer.parseInt(row.getGroup2Color()); break;
+                            case 3: colorRow = Integer.parseInt(row.getGroup3Color()); break;
+                            case 4: colorRow = Integer.parseInt(row.getGroup4Color()); break;
+                            default: colorRow = 0;
+                        }
+                    }
+                    setStyle(setStyleByCode(colorRow));
+                }
+            };
+        });
+    }
+
+
+
     public void SetProcessSampleTableFunction(TableView<ProcessSample> newTableProcessSample) {
-        newTableProcessSample.setRowFactory((TableView<ProcessSample> paramP) -> new TableRow<ProcessSample>() {
+        /*newTableProcessSample.setRowFactory((TableView<ProcessSample> paramP) -> new TableRow<ProcessSample>() {
             @Override
             protected void updateItem(ProcessSample row, boolean paramBoolean) {
                  if (row != null) {
@@ -49,8 +88,7 @@ public class ProcessSampleModel {
                 }
                 super.updateItem(row, paramBoolean);
             }
-        });
-
+        });*/
     }
 
     public ObservableList<ProcessSample> getProcessSampleData() {
@@ -72,12 +110,10 @@ public class ProcessSampleModel {
     }
 
     public void setLineToProcessSample(String mainText) {
-        processSampleData.add(new ProcessSample(mainText));
+        processSampleData.add(new ProcessSample(mainText,0,0,0,0));
     }
 
     public void clearLineProcessSample(int lineId) {
         processSampleData.clear();
     }
-
-
 }
