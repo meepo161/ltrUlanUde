@@ -327,6 +327,10 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleValueOfChannel() {
+        new Thread(() -> {
+            LTR24 ltr24 = crateModel.getLtr24ModulesList().get(crateModel.getLtr24ModulesList().size() - 1);
+        }).start();
+
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 

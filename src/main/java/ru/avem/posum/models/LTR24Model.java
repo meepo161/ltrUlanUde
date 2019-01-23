@@ -1,6 +1,5 @@
 package ru.avem.posum.models;
 
-import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
@@ -16,22 +15,8 @@ public class LTR24Model {
     private boolean isFilled;
     private boolean isStopped;
 
-
-    public LTR24Model(int slot) {
-        moduleSlot = slot;
-    }
-
-    public void initialize() {
-//        String status = ltr24.initialize(moduleSlot, LTR24ChannelsModel.getSelectedChannelsTypes(), LTR24ChannelsModel.getSelectedMeasuringRanges());
-//        isInitialized = checkError(status);
-//        Platform.runLater(() -> {
-//            iMainController.setMainStatusBarText(status == null ? "LTR24: Инициализация выполнена без ошибок" : decodedError);
-//        });
-    }
-
     public void receiveData() {
-//        ltr24.fillArray(data);
-        ringBuffer.put(data);
+
     }
 
     public void doFFT() {
