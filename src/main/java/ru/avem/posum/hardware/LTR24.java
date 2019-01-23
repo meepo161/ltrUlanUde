@@ -4,10 +4,10 @@ import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 extends Thread {
-    private int[] checkedChannels = new int[8];
+    private boolean[] checkedChannels = new boolean[8];
     private int[] channelsTypes = new int[8];
     private int[] measuringRanges = new int[8];
-    private String[] descriptionOfChannels = new String[8];
+    private String[] channelsDescription = new String[8];
     private String crate;
     private int slot;
     private double[] data = new double[1024];
@@ -32,12 +32,12 @@ public class LTR24 extends Thread {
 
     public native String closeModule();
 
-    public int[] getCheckedChannels() {
+    public boolean[] getCheckedChannels() {
         return checkedChannels;
     }
 
-    public String[] getDescriptionOfChannels() {
-        return descriptionOfChannels;
+    public String[] getChannelsDescription() {
+        return channelsDescription;
     }
 
     public int[] getChannelsTypes() {
@@ -54,6 +54,10 @@ public class LTR24 extends Thread {
 
     public void setCrate(String crate) {
         this.crate = crate;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     public void setSlot(int slot) {

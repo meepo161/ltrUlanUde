@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR24;
 
 import java.util.ArrayList;
@@ -113,7 +113,7 @@ public class LTR24SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
 
-    private Crate crate;
+    private CrateModel crateModel;
     private int selectedCrate;
     private String[] cratesSN;
     private int selectedModule;
@@ -130,7 +130,6 @@ public class LTR24SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
-        addListenerToCrateSlotComboBox();
         addListOfCrateSlots(crateSlot);
         checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
         setDefaultParameters();
@@ -243,16 +242,6 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    private void addListenerToCrateSlotComboBox() {
-        crateSlot.getSelectionModel().selectedItemProperty().addListener(observable -> {
-            for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-                if (!crateSlot.getSelectionModel().isEmpty() & channelsCheckBoxes.get(i).isSelected()) {
-                    initializeButton.setDisable(false);
-                }
-            }
-        });
-    }
-
     private void addListOfCrateSlots(ComboBox<String> crateSlot) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("Слот 1");
@@ -322,6 +311,7 @@ public class LTR24SettingController implements BaseController {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsTypesComboBoxes.get(i).getSelectionModel().select(0);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(1);
+            crateSlot.getSelectionModel().select(0);
         }
     }
 
@@ -333,7 +323,7 @@ public class LTR24SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        crate = cm.getCrateInstance();
+        crateModel = cm.getCrateModelInstance();
     }
 
     public void handleValueOfChannel() {
@@ -342,15 +332,15 @@ public class LTR24SettingController implements BaseController {
 
     public void handleInitialize() {
         selectedCrate = cm.getSelectedCrate();
-        cratesSN = crate.getCrates()[0];
+        cratesSN = crateModel.getCrates()[0];
         selectedModule = cm.getSelectedModule();
         selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
 
         LTR24 ltr24 = new LTR24();
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
-                ltr24.getCheckedChannels()[i] = 1; // 1 - канал выбран
-                ltr24.getDescriptionOfChannels()[i] = channelsDescription.get(i).getText();
+                ltr24.getCheckedChannels()[i] = true; // 1 - канал выбран
+                ltr24.getChannelsDescription()[i] = channelsDescription.get(i).getText();
                 ltr24.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.setCrate(cratesSN[selectedCrate]);
@@ -362,12 +352,12 @@ public class LTR24SettingController implements BaseController {
         statusBar.setText(ltr24.getStatus());
 
         if (ltr24.getStatus().equals("Операция успешно выполнена")) {
-            crate.getLtr24ModulesList().add(ltr24);
+            crateModel.getLtr24ModulesList().add(ltr24);
             ltr24.start();
             disableUiElements();
 
-            System.out.println(crate.getModulesNames(selectedCrate).get(1));
-//            crate.getModulesNames(selectedCrate).set(selectedModule, oldName + "(Слот " + selectedSlot + ")");
+            String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
+            crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
         }
     }
 
@@ -386,5 +376,28 @@ public class LTR24SettingController implements BaseController {
 
     public void handleBackButton() {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        cm.loadItemsForMainTableView();
+        cm.loadItemsForModulesTableView();
+    }
+
+    public void refreshView() {
+        if (!crateModel.getLtr24ModulesList().isEmpty()) {
+            for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
+                LTR24 module = crateModel.getLtr24ModulesList().get(0);
+
+                channelsCheckBoxes.get(channel).setSelected(module.getCheckedChannels()[channel]);
+                channelsDescription.get(channel).setText(module.getChannelsDescription()[channel]);
+                channelsTypesComboBoxes.get(channel).getSelectionModel().select(module.getChannelsTypes()[channel]);
+                measuringRangesComboBoxes.get(channel).getSelectionModel().select(module.getMeasuringRanges()[channel]);
+                crateSlot.getSelectionModel().select(module.getSlot() - 1);
+
+                if (module.getCheckedChannels()[channel]) {
+                    channelsDescription.get(channel).setDisable(false);
+                    channelsTypesComboBoxes.get(channel).setDisable(false);
+                    measuringRangesComboBoxes.get(channel).setDisable(false);
+                    channelsCheckBoxes.get(channel).setDisable(false);
+                }
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.ProtocolRepository;
 import ru.avem.posum.db.models.Protocol;
-import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.CrateModel;
 
 public class SettingsController implements BaseController {
     @FXML
@@ -53,7 +53,8 @@ public class SettingsController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
 
-    private Crate crate = new Crate();
+
+    private CrateModel crateModel = new CrateModel();
     private int selectedCrate;
     private int selectedModule;
 
@@ -63,10 +64,11 @@ public class SettingsController implements BaseController {
     }
 
     private void initCrate() {
-        cratesListView.setItems(crate.getCratesNames());
+        cratesListView.setItems(crateModel.getCratesNames());
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
-            modulesListView.setItems(crate.getModulesNames(selectedCrate));
+            modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
+            cm.createListModulesControllers(crateModel.getModulesNames(selectedCrate));
         }));
     }
 
@@ -78,11 +80,13 @@ public class SettingsController implements BaseController {
     }
 
     public void handleSetupModule() {
-        ObservableList<String> modulesNames;
-        modulesNames = crate.getModulesNames(selectedCrate);
+        ObservableList<String> modulesNames = crateModel.getModulesNames(selectedCrate);
+        System.out.println(modulesNames);
         selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
         String module = modulesNames.get(selectedModule);
         showModuleSettings(module);
+
+        cm.refreshLTR24Settings();
     }
 
     public void handleSaveSetup() {
@@ -108,22 +112,17 @@ public class SettingsController implements BaseController {
     }
 
     public void handleBackButton() {
-        cm.loadItemsForTableView();
+        cm.loadItemsForMainTableView();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
-    public void showModuleSettings(String module) {
-        switch (module) {
-            case "LTR24":
-                wm.setScene(WindowsManager.Scenes.LTR24_SCENE);
-                break;
-            case "LTR34":
-                wm.setScene(WindowsManager.Scenes.LTR34_SCENE);
-                break;
-            case "LTR212":
-                wm.setScene(WindowsManager.Scenes.LTR212_SCENE);
-                break;
-        }
+    private void showModuleSettings(String module) {
+        String moduleName = (module + " ").substring(0, 6).trim();
+        wm.setModuleScene(moduleName, selectedModule);
+    }
+
+    public void refreshModulesList() {
+        modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
     }
 
     @Override
@@ -144,7 +143,7 @@ public class SettingsController implements BaseController {
         return selectedModule;
     }
 
-    public Crate getCrate() {
-        return crate;
+    public CrateModel getCrateModel() {
+        return crateModel;
     }
 }
