@@ -130,9 +130,11 @@ public class ProcessSampleModel {
     }
     public void fitTable(TableView<ProcessSample> newTableProcessSample) {
         int countItems = newTableProcessSample.getItems().size();
-        double heightRow = 49;
-
-        newTableProcessSample.setPrefHeight((countItems)*heightRow);
+        double heightRow = 24;
+        double heightTable = 49+(countItems*heightRow);
+        newTableProcessSample.setPrefHeight(heightTable);
+        newTableProcessSample.setMaxHeight(heightTable);
+        newTableProcessSample.setMinHeight(heightTable);
     }
 
     public void setTestId(long testId) {

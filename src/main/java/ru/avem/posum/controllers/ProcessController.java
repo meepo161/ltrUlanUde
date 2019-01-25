@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.models.Events;
@@ -16,6 +17,8 @@ import ru.avem.posum.models.ProcessSampleModel;
 import java.util.Optional;
 
 public class ProcessController implements BaseController {
+    @FXML
+    private StatusBar processStatusBar;
     @FXML
     private TableView<Events> tableEvent;
     @FXML
@@ -71,7 +74,6 @@ public class ProcessController implements BaseController {
         eventModel.SetEventsTableFunction(tableEvent);
         eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-
         processSampleModel.initProcessSampleData(tableSample);
         processSampleModel.SetProcessSampleTableFunction(tableSample);
         mainTextSampleColumn.setCellValueFactory(cellData -> cellData.getValue().mainTextProperty());
@@ -105,6 +107,7 @@ public class ProcessController implements BaseController {
         processSampleModel.SetProcessSampleColumnFunction(group4Value2SampleColumn);
 
         showSettingsPanel(true);
+        processStatusBar.setText("Инициализация произведена!");
     }
 
     public void showSettingsPanel(boolean hide) {

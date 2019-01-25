@@ -33,19 +33,19 @@
                   <TableView fx:id="tableSample" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pickOnBounds="false" styleClass="processTable">
                     <columns>
                       <TableColumn fx:id="mainTextSampleColumn" editable="false" maxWidth="150.0" prefWidth="90.0" sortable="false" text="основные" />
-                      <TableColumn fx:id="group1ColorSampleColumn" editable="false" maxWidth="70.0" prefWidth="70.0" text="отклик" />
-                        <TableColumn fx:id="group1Value1SampleColumn" editable="false" maxWidth="80.0" prefWidth="70.0" text="амп отклик" />
-                        <TableColumn fx:id="group1Value2SampleColumn" editable="false" maxWidth="80.0" prefWidth="70.0" text="амп норма" />
-                        <TableColumn fx:id="group1Value3SampleColumn" editable="false" maxWidth="80.0" prefWidth="70.0" text="амп откл, %" />
-                        <TableColumn fx:id="group2Value1SampleColumn" editable="false" maxWidth="80.0" prefWidth="70.0" text="Фаза отклик" />
-                        <TableColumn fx:id="group2Value2SampleColumn" editable="false" maxWidth="80.0" minWidth="-1.0" prefWidth="70.0" text="фаза норма" />
-                        <TableColumn fx:id="group2Value3SampleColumn" editable="false" maxWidth="80.0" minWidth="-1.0" prefWidth="70.0" text="фаза откл, %" />
-                        <TableColumn fx:id="group3Value1SampleColumn" editable="false" maxWidth="100.0" minWidth="-1.0" prefWidth="85.0" text="выход доп отклик" />
-                        <TableColumn fx:id="group3Value2SampleColumn" editable="false" maxWidth="100.0" minWidth="-1.0" text="выход доп норма" />
-                        <TableColumn fx:id="group3Value3SampleColumn" editable="false" maxWidth="100.0" minWidth="-1.0" text="выход доп откл, %" />
-                        <TableColumn fx:id="group4Value1SampleColumn" editable="false" maxWidth="60.0" prefWidth="60.0" text="ЦАП амп" />
-                        <TableColumn fx:id="group4Value2SampleColumn" editable="false" maxWidth="60.0" prefWidth="60.0" text="ЦАП стат" />
-                        <TableColumn fx:id="group4ColorSampleColumn" editable="false" maxWidth="60.0" prefWidth="60.0" text="ЦАП" />
+                      <TableColumn fx:id="group1ColorSampleColumn" editable="false" maxWidth="70.0" minWidth="63.0" prefWidth="65.0" text="отклик" />
+                        <TableColumn fx:id="group1Value1SampleColumn" editable="false" maxWidth="70.0" minWidth="63.0" prefWidth="65.0" text="амп отклик" />
+                        <TableColumn fx:id="group1Value2SampleColumn" editable="false" maxWidth="70.0" minWidth="63.0" prefWidth="65.0" text="амп норма" />
+                        <TableColumn fx:id="group1Value3SampleColumn" editable="false" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" text="амп откл, %" />
+                        <TableColumn fx:id="group2Value1SampleColumn" editable="false" maxWidth="80.0" minWidth="63.0" prefWidth="65.0" text="Фаза отклик" />
+                        <TableColumn fx:id="group2Value2SampleColumn" editable="false" maxWidth="80.0" minWidth="63.0" prefWidth="65.0" text="фаза норма" />
+                        <TableColumn fx:id="group2Value3SampleColumn" editable="false" maxWidth="80.0" minWidth="70.0" prefWidth="70.0" text="фаза откл, %" />
+                        <TableColumn fx:id="group3Value1SampleColumn" editable="false" maxWidth="100.0" minWidth="87.0" prefWidth="87.0" text="выход доп отклик" />
+                        <TableColumn fx:id="group3Value2SampleColumn" editable="false" maxWidth="100.0" minWidth="80.0" text="выход доп норма" />
+                        <TableColumn fx:id="group3Value3SampleColumn" editable="false" maxWidth="90.0" minWidth="80.0" text="выход доп откл, %" />
+                        <TableColumn fx:id="group4Value1SampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП амп" />
+                        <TableColumn fx:id="group4Value2SampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП стат" />
+                        <TableColumn fx:id="group4ColorSampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП" />
                     </columns>
                   </TableView>
                   <LineChart maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
@@ -106,7 +106,7 @@
       </SplitPane>
    </center>
    <bottom>
-      <StatusBar BorderPane.alignment="CENTER" />
+      <StatusBar fx:id="processStatusBar" BorderPane.alignment="CENTER" />
    </bottom>
    <top>
       <VBox fx:id="topPanel" maxHeight="200.0" minHeight="89.0" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
