@@ -1,6 +1,7 @@
 package ru.avem.posum.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class ProcessController implements BaseController {
     @FXML
     private StatusBar processStatusBar;
+    @FXML
+    private LineChart<Number, Number> processLineChart;
     @FXML
     private TableView<Events> tableEvent;
     @FXML
@@ -108,6 +111,8 @@ public class ProcessController implements BaseController {
 
         showSettingsPanel(true);
         processStatusBar.setText("Инициализация произведена!");
+
+        processSampleModel.chart(processLineChart);
     }
 
     public void showSettingsPanel(boolean hide) {
@@ -144,6 +149,7 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSavePointButton() {
+        processSampleModel.chartAdd();
     }
 
     public void handleSaveWaveformButton() {

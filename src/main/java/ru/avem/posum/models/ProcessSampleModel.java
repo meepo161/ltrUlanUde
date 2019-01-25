@@ -1,15 +1,46 @@
 package ru.avem.posum.models;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProcessSampleModel {
 
     private ObservableList<ProcessSample> processSampleData = FXCollections.observableArrayList();
+    private XYChart.Series<Number, Number> graphSeries_Channel_1 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_2 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_3 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_4 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_5 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_6 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_7 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_8 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_9 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_10 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_11 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_12 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_13 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_14 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_15 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_16 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_17 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_18 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_19 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_20 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_21 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_22 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_23 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel_24 = new XYChart.Series<>();
+
     private long testId = 0;
 
     public ProcessSampleModel() {
@@ -135,6 +166,38 @@ public class ProcessSampleModel {
         newTableProcessSample.setPrefHeight(heightTable);
         newTableProcessSample.setMaxHeight(heightTable);
         newTableProcessSample.setMinHeight(heightTable);
+    }
+
+    public void fillSeries(double[] data, XYChart.Series series) {
+        List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+
+        for (int i = 0; i < data.length; i++) {
+            intermediateList.add(new XYChart.Data<>((double) i / data.length, data[i]));
+        }
+
+        Platform.runLater(() -> {
+                series.getData().clear();
+                series.getData().addAll(intermediateList);
+        });
+    }
+
+    public void chart(LineChart<Number, Number> lineChart) {
+        graphSeries_Channel_1.setName("ch1");
+        graphSeries_Channel_2.setName("ch2");
+        lineChart.getData().add(graphSeries_Channel_1);
+        lineChart.getData().add(graphSeries_Channel_2);
+    }
+
+    public void chartAdd() {
+        int x = 255;
+        double arr1[] = new double[x];
+        double arr2[] = new double[x];
+        for (int i = 0; i < x; i++) {
+            arr1[i] = Math.sin(i);
+            arr2[i] = Math.cos(i);
+        }
+        fillSeries(arr1, graphSeries_Channel_1);
+        fillSeries(arr2, graphSeries_Channel_2);
     }
 
     public void setTestId(long testId) {
