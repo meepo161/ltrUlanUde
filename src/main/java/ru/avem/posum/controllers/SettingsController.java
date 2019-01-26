@@ -53,7 +53,6 @@ public class SettingsController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
 
-
     private CrateModel crateModel = new CrateModel();
     private int selectedCrate;
     private int selectedModule;
@@ -81,7 +80,6 @@ public class SettingsController implements BaseController {
 
     public void handleSetupModule() {
         ObservableList<String> modulesNames = crateModel.getModulesNames(selectedCrate);
-        System.out.println(modulesNames);
         selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
         String module = modulesNames.get(selectedModule);
         showModuleSettings(module);

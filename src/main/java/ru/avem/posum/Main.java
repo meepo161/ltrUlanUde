@@ -45,6 +45,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     private Parent parent;
 
+    private volatile boolean closed;
+
     @Override
     public void init() throws IOException {
         DataBaseRepository.init(false);
@@ -279,8 +281,29 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void showChannelData(int slot) {
+        signalGraphController.showValue(slot);
+    }
+
+    @Override
     public void setModuleScene(String moduleName, int id) {
         primaryStage.setTitle("Настройки модуля " + moduleName);
         primaryStage.setScene(modulesPairs.get(id).getValue());
+    }
+
+    @Override
+    public boolean isClosed() {
+        return closed;
+    }
+
+    @Override
+    public void setClosed(boolean cl) {
+        this.closed = cl;
+    }
+
+
+    @Override
+    public void stop() {
+        closed = true;
     }
 }

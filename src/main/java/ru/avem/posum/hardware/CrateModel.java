@@ -105,7 +105,6 @@ public class CrateModel {
     public ObservableList<String> getModulesNames(int crate) {
         ObservableList<String> modulesNames = FXCollections.observableArrayList();
 
-
         for (String name : modules[crate]) {
             if (!name.isEmpty()) {
                 modulesNames.addAll(name);

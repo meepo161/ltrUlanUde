@@ -3,15 +3,16 @@ package ru.avem.posum.hardware;
 import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
-public class LTR24 extends Thread {
+public class LTR24 {
+    private int id;
     private boolean[] checkedChannels = new boolean[8];
     private int[] channelsTypes = new int[8];
     private int[] measuringRanges = new int[8];
     private String[] channelsDescription = new String[8];
     private String crate;
     private int slot;
-    private double[] data = new double[1024];
-    private RingBuffer ringBuffer = new RingBuffer(data.length * 100);
+    private double[] data = new double[128];
+    private RingBuffer ringBuffer = new RingBuffer(data.length * 10);
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
 
@@ -28,7 +29,7 @@ public class LTR24 extends Thread {
 
     public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
 
-    public native String fillArray(double[] data);
+    public native String fillArray(int slot, double[] data);
 
     public native String closeModule();
 
@@ -48,12 +49,12 @@ public class LTR24 extends Thread {
         return measuringRanges;
     }
 
-    public String getStatus() {
-        return status;
+    public RingBuffer getRingBuffer() {
+        return ringBuffer;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public String getStatus() {
+        return status;
     }
 
     public int getSlot() {
@@ -64,12 +65,19 @@ public class LTR24 extends Thread {
         this.slot = slot;
     }
 
-    static {
-        System.loadLibrary("LTR24Library");
+    public void setCrate(String crate) {
+        this.crate = crate;
     }
 
-    public void run() {
-        fillArray(data);
-        ringBuffer.put(data);
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    static {
+        System.loadLibrary("LTR24Library");
     }
 }

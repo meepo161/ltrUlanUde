@@ -26,14 +26,6 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private Button valueOfChannelN4;
     @FXML
-    private Button valueOfChannelN5;
-    @FXML
-    private Button valueOfChannelN6;
-    @FXML
-    private Button valueOfChannelN7;
-    @FXML
-    private Button valueOfChannelN8;
-    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -41,14 +33,6 @@ public class LTR24SettingController implements BaseController {
     private CheckBox checkChannelN3;
     @FXML
     private CheckBox checkChannelN4;
-    @FXML
-    private CheckBox checkChannelN5;
-    @FXML
-    private CheckBox checkChannelN6;
-    @FXML
-    private CheckBox checkChannelN7;
-    @FXML
-    private CheckBox checkChannelN8;
     @FXML
     private ComboBox<String> crateSlot;
     @FXML
@@ -60,14 +44,6 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private ComboBox<String> typeOfChannelN4;
     @FXML
-    private ComboBox<String> typeOfChannelN5;
-    @FXML
-    private ComboBox<String> typeOfChannelN6;
-    @FXML
-    private ComboBox<String> typeOfChannelN7;
-    @FXML
-    private ComboBox<String> typeOfChannelN8;
-    @FXML
     private ComboBox<String> measuringRangeOfChannelN1;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN2;
@@ -75,14 +51,6 @@ public class LTR24SettingController implements BaseController {
     private ComboBox<String> measuringRangeOfChannelN3;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
-    @FXML
-    private ComboBox<String> measuringRangeOfChannelN5;
-    @FXML
-    private ComboBox<String> measuringRangeOfChannelN6;
-    @FXML
-    private ComboBox<String> measuringRangeOfChannelN7;
-    @FXML
-    private ComboBox<String> measuringRangeOfChannelN8;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -95,14 +63,6 @@ public class LTR24SettingController implements BaseController {
     private TextField descriptionOfChannelN3;
     @FXML
     private TextField descriptionOfChannelN4;
-    @FXML
-    private TextField descriptionOfChannelN5;
-    @FXML
-    private TextField descriptionOfChannelN6;
-    @FXML
-    private TextField descriptionOfChannelN7;
-    @FXML
-    private TextField descriptionOfChannelN8;
 
     private List<TextField> channelsDescription = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
@@ -112,6 +72,7 @@ public class LTR24SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private LTR24 ltr24 = new LTR24();
 
     private CrateModel crateModel;
     private int selectedCrate;
@@ -140,11 +101,7 @@ public class LTR24SettingController implements BaseController {
                 checkChannelN1,
                 checkChannelN2,
                 checkChannelN3,
-                checkChannelN4,
-                checkChannelN5,
-                checkChannelN6,
-                checkChannelN7,
-                checkChannelN8
+                checkChannelN4
         ));
     }
 
@@ -153,11 +110,7 @@ public class LTR24SettingController implements BaseController {
                 descriptionOfChannelN1,
                 descriptionOfChannelN2,
                 descriptionOfChannelN3,
-                descriptionOfChannelN4,
-                descriptionOfChannelN5,
-                descriptionOfChannelN6,
-                descriptionOfChannelN7,
-                descriptionOfChannelN8
+                descriptionOfChannelN4
         ));
     }
 
@@ -166,11 +119,7 @@ public class LTR24SettingController implements BaseController {
                 typeOfChannelN1,
                 typeOfChannelN2,
                 typeOfChannelN3,
-                typeOfChannelN4,
-                typeOfChannelN5,
-                typeOfChannelN6,
-                typeOfChannelN7,
-                typeOfChannelN8
+                typeOfChannelN4
         ));
     }
 
@@ -179,11 +128,7 @@ public class LTR24SettingController implements BaseController {
                 measuringRangeOfChannelN1,
                 measuringRangeOfChannelN2,
                 measuringRangeOfChannelN3,
-                measuringRangeOfChannelN4,
-                measuringRangeOfChannelN5,
-                measuringRangeOfChannelN6,
-                measuringRangeOfChannelN7,
-                measuringRangeOfChannelN8
+                measuringRangeOfChannelN4
         ));
     }
 
@@ -192,11 +137,7 @@ public class LTR24SettingController implements BaseController {
                 valueOfChannelN1,
                 valueOfChannelN2,
                 valueOfChannelN3,
-                valueOfChannelN4,
-                valueOfChannelN5,
-                valueOfChannelN6,
-                valueOfChannelN7,
-                valueOfChannelN8
+                valueOfChannelN4
         ));
     }
 
@@ -235,7 +176,6 @@ public class LTR24SettingController implements BaseController {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
-        valueOfChannelsButtons.get(channel).setDisable(isDisable);
 
         if (!crateSlot.getSelectionModel().isEmpty()) {
             initializeButton.setDisable(isDisable);
@@ -327,10 +267,8 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleValueOfChannel() {
-        new Thread(() -> {
-            LTR24 ltr24 = crateModel.getLtr24ModulesList().get(crateModel.getLtr24ModulesList().size() - 1);
-        }).start();
-
+        selectedSlot = ltr24.getSlot();
+        cm.showChannelData(selectedSlot);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
@@ -340,7 +278,6 @@ public class LTR24SettingController implements BaseController {
         selectedModule = cm.getSelectedModule();
         selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
 
-        LTR24 ltr24 = new LTR24();
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 ltr24.getCheckedChannels()[i] = true; // 1 - канал выбран
@@ -357,8 +294,8 @@ public class LTR24SettingController implements BaseController {
 
         if (ltr24.getStatus().equals("Операция успешно выполнена")) {
             crateModel.getLtr24ModulesList().add(ltr24);
-            ltr24.start();
             disableUiElements();
+            enableChannelsButtons();
 
             String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
             crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
@@ -376,6 +313,14 @@ public class LTR24SettingController implements BaseController {
         initializeButton.setDisable(true);
         crateSlotLabel.setDisable(true);
         crateSlot.setDisable(true);
+    }
+
+    private void enableChannelsButtons() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                valueOfChannelsButtons.get(i).setDisable(false);
+            }
+        }
     }
 
     public void handleBackButton() {

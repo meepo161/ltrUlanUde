@@ -18,4 +18,10 @@ public interface ControllerManager {
     void refreshLTR24Settings();
 
     void createListModulesControllers(List<String> modulesNames);
+
+    void showChannelData(int slot);
+
+    boolean isClosed();
+
+    void setClosed(boolean closed);
 }

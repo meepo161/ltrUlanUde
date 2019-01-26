@@ -1,26 +1,83 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.LTR24;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignalGraphController implements BaseController {
     @FXML
-    private LineChart signalGraph;
+    private LineChart<Number, Number> graph;
     @FXML
     private TextField valueTextField;
 
     private WindowsManager wm;
     private ControllerManager cm;
 
+    private int slot;
+    private LTR24 ltr24;
+    private double[] buffer = new double[128];
+    private double averageValue;
+    private int seconds;
+    private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
+    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+
+
+    @FXML
+    private void initialize() {
+        graphSeries.setName("Канал 1");
+        graph.getData().add(graphSeries);
+    }
+
+    private Runnable startShow = () -> {
+        while (!cm.isClosed()) {
+            showData();
+        }
+    };
+
+    private void showData() {
+        chooseSlot();
+
+        ltr24.fillArray(ltr24.getSlot(), buffer);
+        String status = ltr24.getStatus();
+        averageValue = buffer[0];
+        Platform.runLater(() -> {
+            graphSeries.getData().add(new XYChart.Data<>(seconds++, averageValue));
+            valueTextField.setText(String.valueOf(Math.ceil(averageValue * 100) / 100));
+        });
+    }
+
+    private void chooseSlot() {
+        for (LTR24 module : cm.getCrateModelInstance().getLtr24ModulesList()) {
+            if (module.getSlot() == slot) {
+                ltr24 = module;
+            }
+        }
+    }
+
+    public void showValue(int selectedSlot) {
+        this.slot = selectedSlot;
+        cm.setClosed(false);
+        handleClear();
+        new Thread(startShow).start();
+    }
+
     public void handleCalibrate() {
 
     }
 
     public void handleBackButton() {
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        cm.setClosed(true);
+        String module = cm.getCrateModelInstance().getModulesNames(cm.getSelectedCrate()).get(cm.getSelectedModule());
+        wm.setModuleScene(module, cm.getSelectedModule());
+        cm.loadItemsForModulesTableView();
     }
 
     @Override
@@ -31,5 +88,13 @@ public class SignalGraphController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
+    }
+
+    public void handleClear() {
+        graph.getData().clear();
+        graphSeries = new XYChart.Series<>();
+        intermediateList = new ArrayList<>();
+        graph.getData().add(graphSeries);
+        seconds = 0;
     }
 }
