@@ -25,6 +25,14 @@
     -fx-font-size: 12px;
 }
 
+.processTable .scroll-bar:vertical > .increment-button,
+.processTable .scroll-bar:vertical > .decrement-button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
 .programTable {
     -fx-font-weight: normal;
     -fx-font-size: 12px;
