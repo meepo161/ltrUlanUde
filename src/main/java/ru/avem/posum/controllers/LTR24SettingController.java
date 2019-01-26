@@ -79,7 +79,6 @@ public class LTR24SettingController implements BaseController {
     private String[] cratesSN;
     private int selectedModule;
     private int selectedSlot;
-    private String status;
 
     @FXML
     private void initialize() {
@@ -255,23 +254,6 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    @Override
-    public void setWindowManager(WindowsManager wm) {
-        this.wm = wm;
-    }
-
-    @Override
-    public void setControllerManager(ControllerManager cm) {
-        this.cm = cm;
-        crateModel = cm.getCrateModelInstance();
-    }
-
-    public void handleValueOfChannel() {
-        selectedSlot = ltr24.getSlot();
-        cm.showChannelData(selectedSlot);
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
-    }
-
     public void handleInitialize() {
         selectedCrate = cm.getSelectedCrate();
         cratesSN = crateModel.getCrates()[0];
@@ -348,5 +330,36 @@ public class LTR24SettingController implements BaseController {
                 }
             }
         }
+    }
+
+    public void handleValueOfChannelN1() {
+        cm.showChannelData(ltr24.getSlot(), 1);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    public void handleValueOfChannelN2() {
+        cm.showChannelData(ltr24.getSlot(), 2);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    public void handleValueOfChannelN3() {
+        cm.showChannelData(ltr24.getSlot(), 3);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    public void handleValueOfChannelN4() {
+        cm.showChannelData(ltr24.getSlot(), 4);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
+        crateModel = cm.getCrateModelInstance();
     }
 }

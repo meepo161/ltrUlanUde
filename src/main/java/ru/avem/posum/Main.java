@@ -281,8 +281,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void showChannelData(int slot) {
-        signalGraphController.showValue(slot);
+    public void showChannelData(int slot, int channel) {
+        signalGraphController.showValue(slot, channel);
     }
 
     @Override

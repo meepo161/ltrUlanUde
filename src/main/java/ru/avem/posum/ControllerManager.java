@@ -19,7 +19,7 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
-    void showChannelData(int slot);
+    void showChannelData(int slot, int channel);
 
     boolean isClosed();
 

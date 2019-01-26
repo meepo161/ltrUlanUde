@@ -144,7 +144,7 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="valueOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannel" text="Нагрузка на канале" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN1" text="Нагрузка на канале" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -154,7 +154,7 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="valueOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannel" text="Нагрузка на канале" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN2" text="Нагрузка на канале" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -164,7 +164,7 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="valueOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannel" text="Нагрузка на канале" GridPane.columnIndex="6" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN3" text="Нагрузка на канале" GridPane.columnIndex="6" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -174,7 +174,7 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="valueOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannel" text="Нагрузка на канале" GridPane.columnIndex="8" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN4" text="Нагрузка на канале" GridPane.columnIndex="8" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>

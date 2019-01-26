@@ -28,7 +28,7 @@ public class SignalGraphController implements BaseController {
     private int seconds;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-
+    private int channel;
 
     @FXML
     private void initialize() {
@@ -46,8 +46,13 @@ public class SignalGraphController implements BaseController {
         chooseSlot();
 
         ltr24.fillArray(ltr24.getSlot(), buffer);
-        String status = ltr24.getStatus();
-        averageValue = buffer[0];
+
+        averageValue = 0;
+        for (int i = 0; i < buffer.length; i += 4) {
+            averageValue += buffer[channel] / (buffer.length / 4);
+
+        }
+
         Platform.runLater(() -> {
             graphSeries.getData().add(new XYChart.Data<>(seconds++, averageValue));
             valueTextField.setText(String.valueOf(Math.ceil(averageValue * 100) / 100));
@@ -62,8 +67,9 @@ public class SignalGraphController implements BaseController {
         }
     }
 
-    public void showValue(int selectedSlot) {
+    public void showValue(int selectedSlot, int channel) {
         this.slot = selectedSlot;
+        this.channel = channel - 1;
         cm.setClosed(false);
         handleClear();
         new Thread(startShow).start();
