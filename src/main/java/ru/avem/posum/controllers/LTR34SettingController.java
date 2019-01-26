@@ -3,6 +3,7 @@ package ru.avem.posum.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
@@ -14,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LTR34SettingController implements BaseController {
+    @FXML
+    private Button generateSignalButton;
     @FXML
     private CheckBox checkChannelN1;
     @FXML
@@ -82,6 +85,7 @@ public class LTR34SettingController implements BaseController {
 
         addListenerForAllChannels();
         setDigitFilter();
+        setDefaultParameters();
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -169,15 +173,35 @@ public class LTR34SettingController implements BaseController {
     private void toggleUiElements(int channel, boolean isDisable) {
         frequencyTextFields.get(channel).setDisable(isDisable);
         amplitudeTextFields.get(channel).setDisable(isDisable);
+        toggleInitializeButton(isDisable);
     }
 
 
+    private void toggleInitializeButton(boolean isDisable) {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            listenTextField(frequencyTextFields.get(i), i);
+            listenTextField(amplitudeTextFields.get(i), i);
+        }
+    }
+
+    private void listenTextField(TextField textField, int channel) {
+        textField.textProperty().addListener(observable -> {
+            for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+                if (!frequencyTextFields.get(channel).getText().isEmpty() & !amplitudeTextFields.get(channel).getText().isEmpty()) {
+                    generateSignalButton.setDisable(false);
+                } else {
+                    generateSignalButton.setDisable(true);
+                }
+            }
+        });
+    }
+
     private void setDigitFilter() {
-        for (TextField textField: amplitudeTextFields) {
+        for (TextField textField : amplitudeTextFields) {
             setAmplitudeFilter(textField);
         }
 
-        for (TextField textField: frequencyTextFields) {
+        for (TextField textField : frequencyTextFields) {
             setFrequencyFilter(textField);
         }
     }
@@ -210,6 +234,10 @@ public class LTR34SettingController implements BaseController {
         });
     }
 
+    private void setDefaultParameters() {
+        crateSlot.getSelectionModel().select(0);
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -222,5 +250,9 @@ public class LTR34SettingController implements BaseController {
 
     public void handleBackButton() {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    public void handleGenerateSignal() {
+
     }
 }

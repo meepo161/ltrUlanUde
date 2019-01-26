@@ -181,7 +181,7 @@
                </GridPane.margin>
             </TextField>
             <Label styleClass="title" text="Настройки модуля LTR34" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" text="Генерировать сигнал" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+            <Button fx:id="generateSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleGenerateSignal" text="Генерировать сигнал" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>

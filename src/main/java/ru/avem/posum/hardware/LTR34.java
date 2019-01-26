@@ -1,30 +1,25 @@
 package ru.avem.posum.hardware;
 
 public class LTR34 {
-    private int[] checkedChannels = new int[8];
-    private int[] channelsFrequency = new int[8];
-    private int[] measuringAmplitude = new int[8];
+    private boolean[] checkedChannels = new boolean[8];
+    private int channelsCounter;
     private int slot;
 
-    public native String initialize(int slot);
+    public void countChannels() {
+        for (boolean channel : checkedChannels) {
+            if (channel) {
+                channelsCounter++;
+            }
+        }
+    }
+
+    public native String initialize(String crateSN, int slot, int channelsCounter, boolean[] checkedChannels);
 
     public native void dataSend(double[] data);
 
     public native String start();
 
     public native String stop();
-
-    public int[] getCheckedChannels() {
-        return checkedChannels;
-    }
-
-    public int[] getChannelsFrequency() {
-        return channelsFrequency;
-    }
-
-    public int[] getMeasuringAmplitude() {
-        return measuringAmplitude;
-    }
 
     static {
 //        System.loadLibrary("LTR34Library");

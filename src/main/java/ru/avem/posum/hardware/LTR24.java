@@ -5,10 +5,10 @@ import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 {
     private int id;
-    private boolean[] checkedChannels = new boolean[8];
-    private int[] channelsTypes = new int[8];
-    private int[] measuringRanges = new int[8];
-    private String[] channelsDescription = new String[8];
+    private boolean[] checkedChannels = new boolean[4];
+    private int[] channelsTypes = new int[4];
+    private int[] measuringRanges = new int[4];
+    private String[] channelsDescription = new String[4];
     private String crate;
     private int slot;
     private double[] data = new double[128];
