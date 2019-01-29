@@ -7,8 +7,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.util.Pair;
+import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR34;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +39,8 @@ public class LTR34SettingController implements BaseController {
     private CheckBox checkChannelN8;
     @FXML
     private ComboBox crateSlot;
+    @FXML
+    private StatusBar statusBar;
     @FXML
     private TextField frequencyOfChannelN1;
     @FXML
@@ -74,6 +80,18 @@ public class LTR34SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private LTR34 ltr34 = new LTR34();
+
+    private CrateModel crateModel;
+    private int selectedCrate;
+    private String[] cratesSN;
+    private int selectedModule;
+    private int selectedSlot;
+    private int channels;
+
+    private List<Pair<Integer, Integer>> signalParameters = new ArrayList<>();
+    double signal[] = new double[500_000]; // массив данных для генерации сигнала для каждого канала
+
 
     @FXML
     private void initialize() {
@@ -156,15 +174,15 @@ public class LTR34SettingController implements BaseController {
     }
 
     /**
-     * В массив checkedChannels сохраняются значения 1 - канал отмечен, 0 - канал не отмечен
+     * В массив checkedChannels сохраняются значения true - канал отмечен, false - канал не отмечен
      */
     private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-//                HardwareModel.getInstance().getLtr34ModuleN12().getLtr34().getCheckedChannels()[channel] = 1;
+                ltr34.getCheckedChannels()[channel] = true;
                 toggleUiElements(channel, false);
             } else {
-//                HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getCheckedChannels()[channel] = 0;
+                ltr34.getCheckedChannels()[channel] = false;
                 toggleUiElements(channel, true);
             }
         });
@@ -246,13 +264,98 @@ public class LTR34SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    public void handleBackButton() {
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        crateModel = cm.getCrateModelInstance();
     }
 
     public void handleGenerateSignal() {
+        selectedCrate = cm.getSelectedCrate();
+        cratesSN = crateModel.getCrates()[0];
+        selectedModule = cm.getSelectedModule();
+        selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
 
+        ltr34.countChannels();
+        ltr34.setCrate(cratesSN[selectedCrate]);
+        ltr34.setSlot(selectedSlot);
+        ltr34.initModule();
+
+        calculateSignal();
+
+        ltr34.dataSend(signal);
+        ltr34.start();
+        new Thread(() -> {
+            while (!cm.isClosed()) {
+                ltr34.dataSend(signal);
+            }
+        }).start();
+
+        statusBar.setText(ltr34.getStatus());
+    }
+
+    private void calculateSignal() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            int frequency = parse(frequencyTextFields.get(i));
+            int amplitude = parse(amplitudeTextFields.get(i));
+            signalParameters.add(new Pair<>(frequency, amplitude));
+        }
+        createChannelsData();
+    }
+
+    private int parse(TextField textField) {
+        if (!textField.getText().isEmpty()) {
+            return Integer.parseInt(textField.getText());
+        } else {
+            return 0;
+        }
+    }
+
+    private void createChannelsData() {
+        List<double[]> channelsData = new ArrayList<>();
+
+        if (ltr34.getChannelsCounter() <= 4) {
+            for (int i = 0; i < 4; i++) {
+                channelsData.add(createSin(125_000, signalParameters.get(i).getValue(), signalParameters.get(i).getKey()));
+            }
+        } else {
+            for (int i = 0; i < 8; i++) {
+                channelsData.add(createSin(62_500, signalParameters.get(i).getValue(), signalParameters.get(i).getKey()));
+            }
+        }
+
+        signal = mergeArrays(channelsData);
+    }
+
+    private double[] createSin(int length, int amplitude, int frequency) {
+        double[] data = new double[length];
+
+        for (int i = 0; i < length; i++) {
+            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length);
+        }
+
+        return data;
+    }
+
+    private static double[] mergeArrays(List<double[]> channelsData) {
+        int resultArraySize = 0;
+        int numOfArrays = 0;
+        for (double[] array : channelsData) {
+            resultArraySize += array.length;
+            numOfArrays++;
+        }
+        double[] resultArray = new double[resultArraySize];
+        int[] countsOfArrays = new int[numOfArrays];
+
+        for (int i = 0; i < resultArraySize; ) {
+            double[] currentArray = channelsData.get(i % numOfArrays);
+            int countsOfArray = countsOfArrays[i % numOfArrays]++;
+            resultArray[i++] = currentArray[countsOfArray];
+        }
+
+        return resultArray;
+    }
+
+    public void handleBackButton() {
+        cm.setClosed(true);
+        ltr34.stop();
+        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 }

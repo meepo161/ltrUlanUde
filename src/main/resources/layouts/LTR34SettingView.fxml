@@ -46,7 +46,7 @@
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="5" />
-            <StatusBar text="" GridPane.columnSpan="10" GridPane.rowIndex="12" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="12" />
             <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets left="10.0" />
