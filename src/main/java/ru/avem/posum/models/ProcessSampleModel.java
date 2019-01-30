@@ -21,7 +21,7 @@ public class ProcessSampleModel {
 
     private ObservableList<ProcessSample> processSampleData = FXCollections.observableArrayList();
     private XYChart.Series<Number, Number> graphSeries_Channel[] = new XYChart.Series[24];
-
+    private Boolean graphSeries_Channel_Enabled[] = new Boolean[24];
     private long testId = 0;
     private int  currentIndex = 0;
 
@@ -134,15 +134,50 @@ public class ProcessSampleModel {
                             ProcessSample row = getTableView().getItems().get(getIndex());
                             //System.out.println("CheckBox: " + row + " groupNum:" + groupNum + " isSelected:" + chBox.isSelected());
                             switch(Integer.parseInt(groupNum)) {
-                                case 1: row.setGroup1Enable(chBox.isSelected()); break;
-                                case 2: row.setGroup2Enable(chBox.isSelected()); break;
-                                case 4: row.setGroup4Enable(chBox.isSelected()); break;
-                                case 5: row.setGroup5Enable(chBox.isSelected()); break;
-                                case 6: row.setGroup6Enable(chBox.isSelected()); break;
-                                case 3: row.setGroup3Enable(chBox.isSelected()); break;
+                                case 1: row.setGroup1Enable(chBox.isSelected());
+                                        if(row.getGroup1GraphNum() < 0) {
+                                            row.setGroup1GraphNum(chartsAdd());
+                                            chartSetColor(row.getGroup1GraphNum(), row.getGroup1Color());
+                                        }
+                                        chartSetEnabled(row.getGroup1GraphNum(), chBox.isSelected());
+                                        break;
+                                case 2: row.setGroup2Enable(chBox.isSelected());
+                                    if(row.getGroup2GraphNum() < 0) {
+                                        row.setGroup2GraphNum(chartsAdd());
+                                        chartSetColor(row.getGroup2GraphNum(), row.getGroup2Color());
+                                    }
+                                    chartSetEnabled(row.getGroup2GraphNum(), chBox.isSelected());
+                                    break;
+                                case 3: row.setGroup3Enable(chBox.isSelected());
+                                    if(row.getGroup3GraphNum() < 0) {
+                                        row.setGroup3GraphNum(chartsAdd());
+                                        chartSetColor(row.getGroup3GraphNum(), row.getGroup3Color());
+                                    }
+                                    chartSetEnabled(row.getGroup3GraphNum(), chBox.isSelected());
+                                    break;
+                                case 4: row.setGroup4Enable(chBox.isSelected());
+                                    if(row.getGroup4GraphNum() < 0) {
+                                        row.setGroup4GraphNum(chartsAdd());
+                                        chartSetColor(row.getGroup4GraphNum(), row.getGroup4Color());
+                                    }
+                                    chartSetEnabled(row.getGroup4GraphNum(), chBox.isSelected());
+                                    break;
+                                case 5: row.setGroup5Enable(chBox.isSelected());
+                                    if(row.getGroup5GraphNum() < 0) {
+                                        row.setGroup5GraphNum(chartsAdd());
+                                        chartSetColor(row.getGroup5GraphNum(), row.getGroup5Color());
+                                    }
+                                    chartSetEnabled(row.getGroup5GraphNum(), chBox.isSelected());
+                                    break;
+                                case 6: row.setGroup6Enable(chBox.isSelected());
+                                    if(row.getGroup6GraphNum() < 0) {
+                                        row.setGroup6GraphNum(chartsAdd());
+                                        chartSetColor(row.getGroup6GraphNum(), row.getGroup6Color());
+                                    }
+                                    chartSetEnabled(row.getGroup6GraphNum(), chBox.isSelected());
+                                    break;
                                 default:
                             }
-
                         });
 
                     }
@@ -161,16 +196,20 @@ public class ProcessSampleModel {
                             ProcessSample row = getTableView().getItems().get(getIndex());
                             System.out.println("ColorPicker: " + row + " groupNum:" + groupNum + " isColor:" + colorValue);
                             switch(Integer.parseInt(groupNum)) {
-                                case 1: row.setGroup1Color(colorValue); break;
-                                case 2: row.setGroup2Color(colorValue); break;
-                                case 3: row.setGroup3Color(colorValue); break;
-                                case 4: row.setGroup4Color(colorValue); break;
-                                case 5: row.setGroup5Color(colorValue); break;
-                                case 6: row.setGroup6Color(colorValue); break;
+                                case 1: row.setGroup1Color(colorValue);
+                                        chartSetColor(row.getGroup1GraphNum(), row.getGroup1Color());break;
+                                case 2: row.setGroup2Color(colorValue);
+                                        chartSetColor(row.getGroup2GraphNum(), row.getGroup2Color());break;
+                                case 3: row.setGroup3Color(colorValue);
+                                        chartSetColor(row.getGroup3GraphNum(), row.getGroup3Color());break;
+                                case 4: row.setGroup4Color(colorValue);
+                                        chartSetColor(row.getGroup4GraphNum(), row.getGroup4Color());break;
+                                case 5: row.setGroup5Color(colorValue);
+                                        chartSetColor(row.getGroup5GraphNum(), row.getGroup5Color());break;
+                                case 6: row.setGroup6Color(colorValue);
+                                        chartSetColor(row.getGroup6GraphNum(), row.getGroup6Color());break;
                                 default: break;
                             }
-                           // graphSeries_Channel_1.getNode().setStyle("-fx-stroke: rgb(" + colorValue + ");");
-
                         });
                     }
                     private final HBox hBox = new HBox();
@@ -233,29 +272,44 @@ public class ProcessSampleModel {
         pLineChart.setLegendVisible(false);
     }
     // метод для получения номера линии с графика, и инициализация ее.
-    public int chartsAdd() {
+    private int chartsAdd() {
+        graphSeries_Channel[currentIndex] = new XYChart.Series<>();
         graphSeries_Channel[currentIndex].setName("ch"+String.valueOf(currentIndex));
+        graphSeries_Channel_Enabled[currentIndex] = true;
         pLineChart.getData().add(graphSeries_Channel[currentIndex]);
         currentIndex++;
         return (currentIndex-1);
     }
 
-    public void chartSetEnabled(int index, Boolean Status) {
-        if(Status) {
+    private void chartSetEnabled(int index, Boolean Status) {
+        if(!Status) {
             graphSeries_Channel[index].getData().clear();
+            graphSeries_Channel_Enabled[index] = false;
+        } else {
+            graphSeries_Channel_Enabled[index] = true;
+        }
+    }
+
+    private void chartSetColor(int index, String color) {
+        if(index >= 0) {
+            graphSeries_Channel[index].getNode().setStyle("-fx-stroke: rgb(" + color + ");");
+        }
+    }
+
+    public void chartSetData(int index, double array[]){
+        if(graphSeries_Channel_Enabled[index]) {
+            fillSeries(array, graphSeries_Channel[index]);
         }
     }
 
     public void chartAdd() {
-        int x = 255;
-        double arr1[] = new double[x];
-        double arr2[] = new double[x];
-        for (int i = 0; i < x; i++) {
-            arr1[i] = Math.sin(i);
-            arr2[i] = Math.cos(i);
+        double arr1[] = new double[255];
+        for (int j = 0; j < currentIndex; j++) {
+            for (int i = 0; i < 255; i++) {
+                arr1[i] = Math.sin(i + j);
+            }
+            chartSetData(j, arr1);
         }
-        fillSeries(arr1, graphSeries_Channel[0]);
-        fillSeries(arr2, graphSeries_Channel[1]);
     }
 
     public void setTestId(long testId) {
