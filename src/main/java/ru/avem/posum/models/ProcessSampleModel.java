@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -19,32 +20,12 @@ import java.util.List;
 public class ProcessSampleModel {
 
     private ObservableList<ProcessSample> processSampleData = FXCollections.observableArrayList();
-    private XYChart.Series<Number, Number> graphSeries_Channel_1 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_2 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_3 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_4 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_5 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_6 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_7 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_8 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_9 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_10 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_11 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_12 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_13 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_14 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_15 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_16 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_17 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_18 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_19 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_20 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_21 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_22 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_23 = new XYChart.Series<>();
-    private XYChart.Series<Number, Number> graphSeries_Channel_24 = new XYChart.Series<>();
+    private XYChart.Series<Number, Number> graphSeries_Channel[] = new XYChart.Series[24];
 
     private long testId = 0;
+    private int  currentIndex = 0;
+
+    private LineChart<Number, Number> pLineChart;
 
     public ProcessSampleModel() {
         this.testId = 0;
@@ -145,25 +126,23 @@ public class ProcessSampleModel {
             @Override
             public TableCell<ProcessSample, Void> call(final TableColumn<ProcessSample, Void> param) {
                 final TableCell<ProcessSample, Void> cell = new TableCell<ProcessSample, Void>() {
-
                     private final CheckBox chBox = new CheckBox("");
                     {
                         chBox.setMaxHeight(20);
-
                         chBox.setOnAction((ActionEvent event) -> {
                             String groupNum = this.getTableColumn().getId().substring(5 , 6);
                             ProcessSample row = getTableView().getItems().get(getIndex());
-                            System.out.println("selectedData: " + row + " groupNum:" + groupNum );
-                            /*int x
+                            //System.out.println("CheckBox: " + row + " groupNum:" + groupNum + " isSelected:" + chBox.isSelected());
                             switch(Integer.parseInt(groupNum)) {
-                                case 1: row.setGroup1Status(); break;
-                                case 2: row.setGroup2Status(); break;
-                                case 3: colorRow = row.getGroup3Status(); break;
-                                case 4: colorRow = row.getGroup4Status(); break;
-                                case 5: colorRow = row.getGroup5Status(); break;
-                                case 6: colorRow = row.getGroup6Status(); break;
-                                default: colorRow = 0;
-                            }*/
+                                case 1: row.setGroup1Enable(chBox.isSelected()); break;
+                                case 2: row.setGroup2Enable(chBox.isSelected()); break;
+                                case 4: row.setGroup4Enable(chBox.isSelected()); break;
+                                case 5: row.setGroup5Enable(chBox.isSelected()); break;
+                                case 6: row.setGroup6Enable(chBox.isSelected()); break;
+                                case 3: row.setGroup3Enable(chBox.isSelected()); break;
+                                default:
+                            }
+
                         });
 
                     }
@@ -171,10 +150,27 @@ public class ProcessSampleModel {
                     {
                         colorPicker.setMaxHeight(20);
                         colorPicker.setStyle("-fx-color-label-visible: false;");
-                        chBox.setOnAction((ActionEvent event) -> {
+                        colorPicker.setOnAction((ActionEvent event) -> {
                             String groupNum = this.getTableColumn().getId().substring(5, 6);
+                            String colorValue = String.format("%d, %d, %d",
+                                    (int) (colorPicker.getValue().getRed() * 255),
+                                    (int) (colorPicker.getValue().getGreen() * 255),
+                                    (int) (colorPicker.getValue().getBlue() * 255));
+
+
                             ProcessSample row = getTableView().getItems().get(getIndex());
-                            System.out.println("selectedData: " + row + " groupNum:" + groupNum);
+                            System.out.println("ColorPicker: " + row + " groupNum:" + groupNum + " isColor:" + colorValue);
+                            switch(Integer.parseInt(groupNum)) {
+                                case 1: row.setGroup1Color(colorValue); break;
+                                case 2: row.setGroup2Color(colorValue); break;
+                                case 3: row.setGroup3Color(colorValue); break;
+                                case 4: row.setGroup4Color(colorValue); break;
+                                case 5: row.setGroup5Color(colorValue); break;
+                                case 6: row.setGroup6Color(colorValue); break;
+                                default: break;
+                            }
+                           // graphSeries_Channel_1.getNode().setStyle("-fx-stroke: rgb(" + colorValue + ");");
+
                         });
                     }
                     private final HBox hBox = new HBox();
@@ -233,10 +229,21 @@ public class ProcessSampleModel {
     }
 
     public void chart(LineChart<Number, Number> lineChart) {
-        graphSeries_Channel_1.setName("ch1");
-        graphSeries_Channel_2.setName("ch2");
-        lineChart.getData().add(graphSeries_Channel_1);
-        lineChart.getData().add(graphSeries_Channel_2);
+        pLineChart = lineChart;
+        pLineChart.setLegendVisible(false);
+    }
+    // метод для получения номера линии с графика, и инициализация ее.
+    public int chartsAdd() {
+        graphSeries_Channel[currentIndex].setName("ch"+String.valueOf(currentIndex));
+        pLineChart.getData().add(graphSeries_Channel[currentIndex]);
+        currentIndex++;
+        return (currentIndex-1);
+    }
+
+    public void chartSetEnabled(int index, Boolean Status) {
+        if(Status) {
+            graphSeries_Channel[index].getData().clear();
+        }
     }
 
     public void chartAdd() {
@@ -247,8 +254,8 @@ public class ProcessSampleModel {
             arr1[i] = Math.sin(i);
             arr2[i] = Math.cos(i);
         }
-        fillSeries(arr1, graphSeries_Channel_1);
-        fillSeries(arr2, graphSeries_Channel_2);
+        fillSeries(arr1, graphSeries_Channel[0]);
+        fillSeries(arr2, graphSeries_Channel[1]);
     }
 
     public void setTestId(long testId) {

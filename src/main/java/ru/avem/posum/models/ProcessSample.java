@@ -18,26 +18,31 @@ public class ProcessSample {
     private final StringProperty group1Value2;
     private final StringProperty group1Value3;
     private final StringProperty group2Color;
+    private final BooleanProperty group2Enable;
     private final IntegerProperty group2Status;
     private final StringProperty group2Value1;
     private final StringProperty group2Value2;
     private final StringProperty group2Value3;
     private final StringProperty group3Color;
+    private final BooleanProperty group3Enable;
     private final IntegerProperty group3Status;
     private final StringProperty group3Value1;
     private final StringProperty group3Value2;
     private final StringProperty group3Value3;
     private final StringProperty group4Color;
+    private final BooleanProperty group4Enable;
     private final IntegerProperty group4Status;
     private final StringProperty group4Value1;
     private final StringProperty group4Value2;
     private final StringProperty group4Value3;
     private final StringProperty group5Color;
+    private final BooleanProperty group5Enable;
     private final IntegerProperty group5Status;
     private final StringProperty group5Value1;
     private final StringProperty group5Value2;
     private final StringProperty group5Value3;
     private final StringProperty group6Color;
+    private final BooleanProperty group6Enable;
     private final IntegerProperty group6Status;
     private final StringProperty group6Value1;
     private final StringProperty group6Value2;
@@ -54,26 +59,31 @@ public class ProcessSample {
         this.group1Value2 = new SimpleStringProperty("0");
         this.group1Value3 = new SimpleStringProperty("0");
         this.group2Color = new SimpleStringProperty(Integer.toString(group2Color));
+        this.group2Enable = new SimpleBooleanProperty( false );
         this.group2Status = new SimpleIntegerProperty(3);
         this.group2Value1 = new SimpleStringProperty("0");
         this.group2Value2 = new SimpleStringProperty("0");
         this.group2Value3 = new SimpleStringProperty("0");
         this.group3Color = new SimpleStringProperty(Integer.toString(group3Color));
+        this.group3Enable = new SimpleBooleanProperty( false );
         this.group3Status = new SimpleIntegerProperty(3);
         this.group3Value1 = new SimpleStringProperty("0");
         this.group3Value2 = new SimpleStringProperty("0");
         this.group3Value3 = new SimpleStringProperty("0");
         this.group4Color = new SimpleStringProperty(Integer.toString(group4Color));
+        this.group4Enable = new SimpleBooleanProperty( false );
         this.group4Status = new SimpleIntegerProperty(3);
         this.group4Value1 = new SimpleStringProperty("0");
         this.group4Value2 = new SimpleStringProperty("0");
         this.group4Value3 = new SimpleStringProperty("0");
         this.group5Color = new SimpleStringProperty(Integer.toString(group5Color));
+        this.group5Enable = new SimpleBooleanProperty( false );
         this.group5Status = new SimpleIntegerProperty(3);
         this.group5Value1 = new SimpleStringProperty("0");
         this.group5Value2 = new SimpleStringProperty("0");
         this.group5Value3 = new SimpleStringProperty("0");
         this.group6Color = new SimpleStringProperty(Integer.toString(group6Color));
+        this.group6Enable = new SimpleBooleanProperty( false );
         this.group6Status = new SimpleIntegerProperty(3);
         this.group6Value1 = new SimpleStringProperty("0");
         this.group6Value2 = new SimpleStringProperty("0");
@@ -128,6 +138,10 @@ public class ProcessSample {
     public StringProperty group2ColorProperty() { return group2Color; }
     public void  setGroup2Color(String group2Color) { this.group2Color.set(group2Color); }
 
+    public Boolean getGroup2Enable() { return group2Enable.get(); }
+    public BooleanProperty group2EnableProperty() { return group2Enable; }
+    public void  setGroup2Enable(Boolean group2Enable) { this.group2Enable.set(group2Enable); }
+
     public Integer getGroup2Status() { return group2Status.get(); }
     public IntegerProperty group2StatusProperty() { return group2Status; }
     public void  setGroup2Status(Integer group2Status) { this.group2Status.set(group2Status); }
@@ -147,6 +161,10 @@ public class ProcessSample {
     public String getGroup3Color() { return group3Color.get(); }
     public StringProperty group3ColorProperty() { return group3Color; }
     public void  setGroup3Color(String group3Color) { this.group3Color.set(group3Color); }
+
+    public Boolean getGroup3Enable() { return group3Enable.get(); }
+    public BooleanProperty group3EnableProperty() { return group3Enable; }
+    public void  setGroup3Enable(Boolean group3Enable) { this.group3Enable.set(group3Enable); }
 
     public Integer getGroup3Status() { return group3Status.get(); }
     public IntegerProperty group3StatusProperty() { return group3Status; }
@@ -168,6 +186,10 @@ public class ProcessSample {
     public StringProperty group4ColorProperty() { return group4Color; }
     public void  setGroup4Color(String group4Color) { this.group4Color.set(group4Color); }
 
+    public Boolean getGroup4Enable() { return group4Enable.get(); }
+    public BooleanProperty group4EnableProperty() { return group4Enable; }
+    public void  setGroup4Enable(Boolean group4Enable) { this.group4Enable.set(group4Enable); }
+
     public Integer getGroup4Status() { return group4Status.get(); }
     public IntegerProperty group4StatusProperty() { return group4Status; }
     public void  setGroup4Status(Integer group4Status) { this.group4Status.set(group4Status); }
@@ -188,6 +210,10 @@ public class ProcessSample {
     public StringProperty group5ColorProperty() { return group5Color; }
     public void  setGroup5Color(String group5Color) { this.group5Color.set(group5Color); }
 
+    public Boolean getGroup5Enable() { return group5Enable.get(); }
+    public BooleanProperty group5EnableProperty() { return group5Enable; }
+    public void  setGroup5Enable(Boolean group5Enable) { this.group5Enable.set(group5Enable); }
+
     public Integer getGroup5Status() { return group5Status.get(); }
     public IntegerProperty group5StatusProperty() { return group5Status; }
     public void  setGroup5Status(Integer group5Status) { this.group5Status.set(group5Status); }
@@ -207,6 +233,10 @@ public class ProcessSample {
     public String getGroup6Color() { return group6Color.get(); }
     public StringProperty group6ColorProperty() { return group6Color; }
     public void  setGroup6Color(String group6Color) { this.group6Color.set(group6Color); }
+
+    public Boolean getGroup6Enable() { return group6Enable.get(); }
+    public BooleanProperty group6EnableProperty() { return group6Enable; }
+    public void  setGroup6Enable(Boolean group6Enable) { this.group6Enable.set(group6Enable); }
 
     public Integer getGroup6Status() { return group6Status.get(); }
     public IntegerProperty group6StatusProperty() { return group6Status; }
