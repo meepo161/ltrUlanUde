@@ -52,9 +52,9 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
     @FXML
-    private StatusBar statusBar;
-    @FXML
     private Label crateSlotLabel;
+    @FXML
+    private StatusBar statusBar;
     @FXML
     private TextField descriptionOfChannelN1;
     @FXML
@@ -333,22 +333,22 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleValueOfChannelN1() {
-        cm.showChannelData(ltr24.getSlot(), 1);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 1);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN2() {
-        cm.showChannelData(ltr24.getSlot(), 2);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 2);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN3() {
-        cm.showChannelData(ltr24.getSlot(), 3);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 3);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN4() {
-        cm.showChannelData(ltr24.getSlot(), 4);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 4);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 

@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CrateModel {
+    public enum Moudules {
+        LTR24, LTR34, LTR212
+    }
+
     public static final String LTR24 = "LTR24";
     public static final String LTR34 = "LTR34";
     public static final String LTR212 = "LTR212";
@@ -126,11 +130,11 @@ public class CrateModel {
         return ltr24ModulesList;
     }
 
-    public List<LTR34> getLtr34modules() {
+    public List<LTR34> getLtr34ModulesList() {
         return ltr34modules;
     }
 
-    public List<LTR212> getLtr212modules() {
+    public List<LTR212> getLtr212ModulesList() {
         return ltr212modules;
     }
 

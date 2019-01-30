@@ -354,8 +354,8 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        cm.setClosed(true);
-        ltr34.stop();
+//        cm.setClosed(true);
+//        ltr34.stop();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 }

@@ -3,18 +3,20 @@ package ru.avem.posum.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class LTR212SettingController implements BaseController {
+    @FXML
+    private Button initializeButton;
     @FXML
     private Button valueOfChannelN1;
     @FXML
@@ -24,14 +26,6 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private Button valueOfChannelN4;
     @FXML
-    private Button valueOfChannelN5;
-    @FXML
-    private Button valueOfChannelN6;
-    @FXML
-    private Button valueOfChannelN7;
-    @FXML
-    private Button valueOfChannelN8;
-    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -39,14 +33,6 @@ public class LTR212SettingController implements BaseController {
     private CheckBox checkChannelN3;
     @FXML
     private CheckBox checkChannelN4;
-    @FXML
-    private CheckBox checkChannelN5;
-    @FXML
-    private CheckBox checkChannelN6;
-    @FXML
-    private CheckBox checkChannelN7;
-    @FXML
-    private CheckBox checkChannelN8;
     @FXML
     private ComboBox<String> crateSlot;
     @FXML
@@ -58,14 +44,6 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private ComboBox<String> typeOfChannelN4;
     @FXML
-    private ComboBox<String> typeOfChannelN5;
-    @FXML
-    private ComboBox<String> typeOfChannelN6;
-    @FXML
-    private ComboBox<String> typeOfChannelN7;
-    @FXML
-    private ComboBox<String> typeOfChannelN8;
-    @FXML
     private ComboBox<String> measuringRangeOfChannelN1;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN2;
@@ -74,13 +52,9 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
     @FXML
-    private ComboBox<String> measuringRangeOfChannelN5;
+    private Label crateSlotLabel;
     @FXML
-    private ComboBox<String> measuringRangeOfChannelN6;
-    @FXML
-    private ComboBox<String> measuringRangeOfChannelN7;
-    @FXML
-    private ComboBox<String> measuringRangeOfChannelN8;
+    private StatusBar statusBar;
     @FXML
     private TextField descriptionOfChannelN1;
     @FXML
@@ -89,14 +63,6 @@ public class LTR212SettingController implements BaseController {
     private TextField descriptionOfChannelN3;
     @FXML
     private TextField descriptionOfChannelN4;
-    @FXML
-    private TextField descriptionOfChannelN5;
-    @FXML
-    private TextField descriptionOfChannelN6;
-    @FXML
-    private TextField descriptionOfChannelN7;
-    @FXML
-    private TextField descriptionOfChannelN8;
 
     private List<TextField> channelsDescription = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
@@ -106,6 +72,13 @@ public class LTR212SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private LTR212 ltr212 = new LTR212();
+
+    private CrateModel crateModel;
+    private int selectedCrate;
+    private String[] cratesSN;
+    private int selectedModule;
+    private int selectedSlot;
 
     @FXML
     private void initialize() {
@@ -119,7 +92,7 @@ public class LTR212SettingController implements BaseController {
         addListenerForAllChannels();
         addListOfCrateSlots(crateSlot);
         addListOfMeasuringRanges(measuringRangesComboBoxes);
-        loadDefaultParameters();
+        setDefaultParameters();
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -127,11 +100,7 @@ public class LTR212SettingController implements BaseController {
                 checkChannelN1,
                 checkChannelN2,
                 checkChannelN3,
-                checkChannelN4,
-                checkChannelN5,
-                checkChannelN6,
-                checkChannelN7,
-                checkChannelN8
+                checkChannelN4
         ));
     }
 
@@ -140,11 +109,7 @@ public class LTR212SettingController implements BaseController {
                 descriptionOfChannelN1,
                 descriptionOfChannelN2,
                 descriptionOfChannelN3,
-                descriptionOfChannelN4,
-                descriptionOfChannelN5,
-                descriptionOfChannelN6,
-                descriptionOfChannelN7,
-                descriptionOfChannelN8
+                descriptionOfChannelN4
         ));
     }
 
@@ -153,11 +118,7 @@ public class LTR212SettingController implements BaseController {
                 typeOfChannelN1,
                 typeOfChannelN2,
                 typeOfChannelN3,
-                typeOfChannelN4,
-                typeOfChannelN5,
-                typeOfChannelN6,
-                typeOfChannelN7,
-                typeOfChannelN8
+                typeOfChannelN4
         ));
     }
 
@@ -166,11 +127,7 @@ public class LTR212SettingController implements BaseController {
                 measuringRangeOfChannelN1,
                 measuringRangeOfChannelN2,
                 measuringRangeOfChannelN3,
-                measuringRangeOfChannelN4,
-                measuringRangeOfChannelN5,
-                measuringRangeOfChannelN6,
-                measuringRangeOfChannelN7,
-                measuringRangeOfChannelN8
+                measuringRangeOfChannelN4
         ));
     }
 
@@ -179,11 +136,7 @@ public class LTR212SettingController implements BaseController {
                 valueOfChannelN1,
                 valueOfChannelN2,
                 valueOfChannelN3,
-                valueOfChannelN4,
-                valueOfChannelN5,
-                valueOfChannelN6,
-                valueOfChannelN7,
-                valueOfChannelN8
+                valueOfChannelN4
         ));
     }
 
@@ -217,10 +170,8 @@ public class LTR212SettingController implements BaseController {
     private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-//                HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getCheckedChannels()[channel] = 1;
                 toggleUiElements(channel, false);
             } else {
-//                HardwareModel.getInstance().getLtr24ModuleN8().getLtr24().getCheckedChannels()[channel] = 0;
                 toggleUiElements(channel, true);
             }
         });
@@ -269,14 +220,115 @@ public class LTR212SettingController implements BaseController {
         setComboBox(measuringRangesComboBoxes, strings);
     }
 
-    private void loadDefaultParameters() {
-//        int[] channelsTypes = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getChannelsTypes();
-//        int[] measurinRanges = HardwareModel.getInstance().getLtr212ModuleN1().getLtr212().getMeasuringRanges();
+    /**
+     * Для каналов измерения виброускорения выбраны:
+     * 0 - Сбалансированный мост (350 Ом)
+     * 1 - -10 мВ/+10 мВ
+     */
+    private void setDefaultParameters() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsTypesComboBoxes.get(i).getSelectionModel().select(1);
+            measuringRangesComboBoxes.get(i).getSelectionModel().select(3);
+            crateSlot.getSelectionModel().select(0);
+        }
+    }
 
-//        for (int i = 0; i < channelsTypes.length; i++) {
-//            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
-//            measuringRangesComboBoxes.get(i).getSelectionModel().select(measurinRanges[i]);
-//        }
+    public void handleInitialize() {
+        selectedCrate = cm.getSelectedCrate();
+        cratesSN = crateModel.getCrates()[0];
+        selectedModule = cm.getSelectedModule();
+        selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
+
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                ltr212.getCheckedChannels()[i] = true; // 1 - канал выбран
+                ltr212.getChannelsDescription()[i] = channelsDescription.get(i).getText();
+                ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr212.setCrate(cratesSN[selectedCrate]);
+                ltr212.setSlot(selectedSlot);
+            }
+        }
+
+        ltr212.initModule();
+        statusBar.setText(ltr212.getStatus());
+
+        if (ltr212.getStatus().equals("Операция успешно выполнена")) {
+            crateModel.getLtr212ModulesList().add(ltr212);
+            disableUiElements();
+            enableChannelsButtons();
+
+            String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
+            crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
+        }
+    }
+
+    private void disableUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setDisable(true);
+            channelsDescription.get(i).setDisable(true);
+            channelsTypesComboBoxes.get(i).setDisable(true);
+            measuringRangesComboBoxes.get(i).setDisable(true);
+        }
+
+        initializeButton.setDisable(true);
+        crateSlotLabel.setDisable(true);
+        crateSlot.setDisable(true);
+    }
+
+    private void enableChannelsButtons() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                valueOfChannelsButtons.get(i).setDisable(false);
+            }
+        }
+    }
+
+    public void handleBackButton() {
+        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        cm.loadItemsForMainTableView();
+        cm.loadItemsForModulesTableView();
+    }
+
+    public void refreshView() {
+        if (!crateModel.getLtr24ModulesList().isEmpty()) {
+            for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
+                LTR212 module = crateModel.getLtr212ModulesList().get(0);
+
+                channelsCheckBoxes.get(channel).setSelected(module.getCheckedChannels()[channel]);
+                channelsDescription.get(channel).setText(module.getChannelsDescription()[channel]);
+                channelsTypesComboBoxes.get(channel).getSelectionModel().select(module.getChannelsTypes()[channel]);
+                measuringRangesComboBoxes.get(channel).getSelectionModel().select(module.getMeasuringRanges()[channel]);
+                crateSlot.getSelectionModel().select(module.getSlot() - 1);
+
+                if (module.getCheckedChannels()[channel]) {
+                    channelsDescription.get(channel).setDisable(false);
+                    channelsTypesComboBoxes.get(channel).setDisable(false);
+                    measuringRangesComboBoxes.get(channel).setDisable(false);
+                    channelsCheckBoxes.get(channel).setDisable(false);
+                }
+            }
+        }
+    }
+
+    public void handleValueOfChannelN1() {
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 1);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    public void handleValueOfChannelN2() {
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 2);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    public void handleValueOfChannelN3() {
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 3);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    public void handleValueOfChannelN4() {
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 4);
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     @Override
@@ -287,17 +339,6 @@ public class LTR212SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    public void handleValueOfChannel() {
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
-    }
-
-    public void handleInitialize() {
-
-    }
-
-    public void handleBackButton() {
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        crateModel = cm.getCrateModelInstance();
     }
 }

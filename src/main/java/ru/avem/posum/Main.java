@@ -281,8 +281,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void showChannelData(int slot, int channel) {
-        signalGraphController.showValue(slot, channel);
+    public void showChannelData(CrateModel.Moudules moduleType, int slot, int channel) {
+        signalGraphController.showValue(moduleType, slot, channel);
     }
 
     @Override
@@ -300,7 +300,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void setClosed(boolean cl) {
         this.closed = cl;
     }
-
 
     @Override
     public void stop() {

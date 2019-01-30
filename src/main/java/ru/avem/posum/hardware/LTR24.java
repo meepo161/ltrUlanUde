@@ -4,7 +4,6 @@ import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 {
-    private int id;
     private boolean[] checkedChannels = new boolean[4];
     private int[] channelsTypes = new int[4];
     private int[] measuringRanges = new int[4];
@@ -67,14 +66,6 @@ public class LTR24 {
 
     public void setCrate(String crate) {
         this.crate = crate;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     static {
