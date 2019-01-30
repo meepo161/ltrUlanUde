@@ -1,5 +1,0 @@
-package ru.avem.posum.models;
-
-public enum ChannelsTypes {
-    DEFORMATION_CHANNELS, VIBROACCELERATION_CHANNELS, STRENGH_CHANNELS, MOTION_CHANNELS
-}
