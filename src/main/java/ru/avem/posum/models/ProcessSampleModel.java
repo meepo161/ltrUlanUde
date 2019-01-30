@@ -3,12 +3,15 @@ package ru.avem.posum.models;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,20 +139,68 @@ public class ProcessSampleModel {
         });
     }
 
-    public void SetProcessSampleTableFunction(TableView<ProcessSample> newTableProcessSample) {
-        /*newTableProcessSample.setRowFactory((TableView<ProcessSample> paramP) -> new TableRow<ProcessSample>() {
+    public void SetProcessSampleColumnColorFunction(TableColumn<ProcessSample, Void> columnProcessSample) {
+        makeHeaderWrappable(columnProcessSample);
+        Callback<TableColumn<ProcessSample, Void>, TableCell<ProcessSample, Void>> cellFactory = new Callback<TableColumn<ProcessSample, Void>, TableCell<ProcessSample, Void>>() {
             @Override
-            protected void updateItem(ProcessSample row, boolean paramBoolean) {
-                 if (row != null) {
-                     String newText = row.getMainText().substring(3 , 4);
-                     int x = Integer.parseInt(newText);
-                     setStyle(setStyleByCode(x));
-                } else {
-                    setStyle(null);
-                }
-                super.updateItem(row, paramBoolean);
+            public TableCell<ProcessSample, Void> call(final TableColumn<ProcessSample, Void> param) {
+                final TableCell<ProcessSample, Void> cell = new TableCell<ProcessSample, Void>() {
+
+                    private final CheckBox chBox = new CheckBox("");
+                    {
+                        chBox.setMaxHeight(20);
+
+                        chBox.setOnAction((ActionEvent event) -> {
+                            String groupNum = this.getTableColumn().getId().substring(5 , 6);
+                            ProcessSample row = getTableView().getItems().get(getIndex());
+                            System.out.println("selectedData: " + row + " groupNum:" + groupNum );
+                            /*int x
+                            switch(Integer.parseInt(groupNum)) {
+                                case 1: row.setGroup1Status(); break;
+                                case 2: row.setGroup2Status(); break;
+                                case 3: colorRow = row.getGroup3Status(); break;
+                                case 4: colorRow = row.getGroup4Status(); break;
+                                case 5: colorRow = row.getGroup5Status(); break;
+                                case 6: colorRow = row.getGroup6Status(); break;
+                                default: colorRow = 0;
+                            }*/
+                        });
+
+                    }
+                    private final ColorPicker colorPicker = new ColorPicker();
+                    {
+                        colorPicker.setMaxHeight(20);
+                        colorPicker.setStyle("-fx-color-label-visible: false;");
+                        chBox.setOnAction((ActionEvent event) -> {
+                            String groupNum = this.getTableColumn().getId().substring(5, 6);
+                            ProcessSample row = getTableView().getItems().get(getIndex());
+                            System.out.println("selectedData: " + row + " groupNum:" + groupNum);
+                        });
+                    }
+                    private final HBox hBox = new HBox();
+                    {
+                        hBox.setMaxHeight(22);
+                        hBox.getChildren().add(chBox);
+                        hBox.getChildren().add(colorPicker);
+                        hBox.setStyle(setStyleByCode(0));
+                    }
+
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(hBox);
+                            setStyle(setStyleByCode(0));
+                        }
+                    }
+                };
+                return cell;
             }
-        });*/
+        };
+
+        columnProcessSample.setCellFactory(cellFactory);
     }
 
     public ObservableList<ProcessSample> getProcessSampleData() {

@@ -2,6 +2,7 @@ package ru.avem.posum.models;
 
 import javafx.beans.property.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +12,7 @@ public class ProcessSample {
     private final StringProperty mainText;
 
     private final StringProperty group1Color;
+    private final BooleanProperty group1Enable;
     private final IntegerProperty group1Status;
     private final StringProperty group1Value1;
     private final StringProperty group1Value2;
@@ -41,12 +43,12 @@ public class ProcessSample {
     private final StringProperty group6Value2;
     private final StringProperty group6Value3;
 
-
     private List<StringProperty> properties = new ArrayList<>();
 
     public ProcessSample(String mainText, int group1Color, int group2Color, int group3Color, int group4Color, int group5Color, int group6Color) {
         this.mainText = new SimpleStringProperty(mainText);
         this.group1Color = new SimpleStringProperty(Integer.toString(group1Color));
+        this.group1Enable = new SimpleBooleanProperty( false );
         this.group1Status = new SimpleIntegerProperty(3);
         this.group1Value1 = new SimpleStringProperty("0");
         this.group1Value2 = new SimpleStringProperty("0");
@@ -76,7 +78,7 @@ public class ProcessSample {
         this.group6Value1 = new SimpleStringProperty("0");
         this.group6Value2 = new SimpleStringProperty("0");
         this.group6Value3 = new SimpleStringProperty("0");
-        properties.addAll(Arrays.asList(this.mainText, this.group1Color , this.group1Value1 , this.group1Value2 , this.group1Value3 , this.group2Color , this.group2Value1 , this.group2Value2 , this.group2Value3 , 
+        properties.addAll(Arrays.asList(this.mainText, this.group1Color , this.group1Value1 , this.group1Value2 , this.group1Value3 , this.group2Color , this.group2Value1 , this.group2Value2 , this.group2Value3 ,
                                                        this.group3Color , this.group3Value1 , this.group3Value2 , this.group3Value3 , this.group4Color , this.group4Value1 , this.group4Value2 , this.group4Value3 ,
                                                        this.group5Color , this.group5Value1 , this.group5Value2 , this.group5Value3 , this.group6Color , this.group6Value1 , this.group6Value2 , this.group6Value3 ));
     }
@@ -101,6 +103,10 @@ public class ProcessSample {
     public String getGroup1Color() { return group1Color.get(); }
     public StringProperty group1ColorProperty() { return group1Color; }
     public void  setGroup1Color(String group1Color) { this.group1Color.set(group1Color); }
+
+    public Boolean getGroup1Enable() { return group1Enable.get(); }
+    public BooleanProperty group1EnableProperty() { return group1Enable; }
+    public void  setGroup1Enable(Boolean group1Enable) { this.group1Enable.set(group1Enable); }
 
     public Integer getGroup1Status() { return group1Status.get(); }
     public IntegerProperty group1StatusProperty() { return group1Status; }
