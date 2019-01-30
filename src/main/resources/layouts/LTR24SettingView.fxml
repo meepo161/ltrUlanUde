@@ -189,7 +189,7 @@
                   <Insets />
                </GridPane.margin>
             </ComboBox>
-            <StatusBar fx:id="statusBar" style="-fx-font-size: 14px;" text="" GridPane.columnSpan="10" GridPane.rowIndex="20" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="20" />
          </children>
       </GridPane>
    </children>

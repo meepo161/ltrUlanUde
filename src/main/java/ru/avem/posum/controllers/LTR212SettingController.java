@@ -181,7 +181,23 @@ public class LTR212SettingController implements BaseController {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
-        valueOfChannelsButtons.get(channel).setDisable(isDisable);
+
+        toggleInitializeButton();
+    }
+
+    private void toggleInitializeButton() {
+        int disabledChannels = 0;
+        for (CheckBox checkBox : channelsCheckBoxes) {
+            if (checkBox.isSelected()) {
+                initializeButton.setDisable(false);
+            } else {
+                disabledChannels++;
+            }
+        }
+
+        if (disabledChannels == 4) { // 4 - общее количество каналов
+            initializeButton.setDisable(true);
+        }
     }
 
     private void addListOfCrateSlots(ComboBox<String> crateSlot) {
@@ -251,6 +267,16 @@ public class LTR212SettingController implements BaseController {
         }
 
         ltr212.initModule();
+        if (ltr212.getStatus().equals("Четверть-мостовые резисторы должны быть одинаковы для всех каналов АЦП")) {
+            statusBar.setText(ltr212.getStatus());
+            ltr212.stop();
+        } else if (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
+            while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
+                ltr212.stop();
+                ltr212.initModule();
+            }
+        }
+
         statusBar.setText(ltr212.getStatus());
 
         if (ltr212.getStatus().equals("Операция успешно выполнена")) {

@@ -278,6 +278,9 @@ public class LTR34SettingController implements BaseController {
         ltr34.setSlot(selectedSlot);
         ltr34.initModule();
 
+        String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
+        crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
+
         calculateSignal();
 
         ltr34.dataSend(signal);
@@ -288,6 +291,7 @@ public class LTR34SettingController implements BaseController {
             }
         }).start();
 
+        cm.setClosed(false);
         statusBar.setText(ltr34.getStatus());
     }
 
@@ -354,8 +358,8 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-//        cm.setClosed(true);
-//        ltr34.stop();
+        cm.loadItemsForMainTableView();
+        cm.loadItemsForModulesTableView();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 }

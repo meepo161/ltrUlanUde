@@ -20,17 +20,22 @@ public class LTR212 {
         checkStatus();
     }
 
+    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
+
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
         }
     }
 
-    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
-
     public native String fillArray(int slot, double[] data);
 
-    public native String closeModule();
+    public void stop() {
+        status = closeConnection(slot);
+        checkStatus();
+    }
+
+    public native String closeConnection(int slot);
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;

@@ -119,9 +119,9 @@ public class SignalGraphController implements BaseController {
     }
 
     public void handleClear() {
-        graph.getData().clear();
         graphSeries = new XYChart.Series<>();
         intermediateList = new ArrayList<>();
+        graph.getData().clear();
         graph.getData().add(graphSeries);
         seconds = 0;
     }

@@ -175,9 +175,21 @@ public class LTR24SettingController implements BaseController {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
+        toggleInitializeButton();
+    }
 
-        if (!crateSlot.getSelectionModel().isEmpty()) {
-            initializeButton.setDisable(isDisable);
+    private void toggleInitializeButton() {
+        int disabledChannels = 0;
+        for (CheckBox checkBox : channelsCheckBoxes) {
+            if (checkBox.isSelected()) {
+                initializeButton.setDisable(false);
+            } else {
+                disabledChannels++;
+            }
+        }
+
+        if (disabledChannels == 4) { // 4 - общее количество каналов
+            initializeButton.setDisable(true);
         }
     }
 
