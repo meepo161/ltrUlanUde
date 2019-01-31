@@ -54,66 +54,31 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="sampleNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="sampleSerialNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
                               <Label text="Номер документа:" GridPane.rowIndex="4">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="documentNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
                               <Label text="Тип испытаний:" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="experimentTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
                               <Label text="Ведущий инженер:" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
                               <Label text="Комментарии:" GridPane.rowIndex="9">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextArea fx:id="commentsTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="10">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" right="10.0" />
-                                 </GridPane.margin>
-                              </TextArea>
                               <Label text="Название испытания:" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="experimentNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
                               <Label text="Длительность испытаний:" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
@@ -124,18 +89,53 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
+                              <TextField fx:id="experimentNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="sampleNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="sampleSerialNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="documentNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="experimentTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="experimentTimeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
+                              <TextField fx:id="experimentDateTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+                              <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextArea fx:id="commentsTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="10">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </GridPane.margin>
+                              </TextArea>
                               <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveExperimentGeneralSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+                              <Button cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Button>
-                              <TextField fx:id="experimentTimeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
-                              <TextField fx:id="experimentDateTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
                            </children>
                         </GridPane>
                      </children>

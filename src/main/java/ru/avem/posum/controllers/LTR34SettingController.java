@@ -279,7 +279,7 @@ public class LTR34SettingController implements BaseController {
         ltr34.initModule();
 
         String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
-        crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
+        crateModel.getModulesNames(selectedCrate).set(selectedModule, oldName + " (" + crateSlot.getValue() + ")");
 
         calculateSignal();
 

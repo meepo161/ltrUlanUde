@@ -285,7 +285,7 @@ public class LTR212SettingController implements BaseController {
             enableChannelsButtons();
 
             String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
-            crateModel.getModules()[selectedCrate][selectedModule] = oldName + " (" + crateSlot.getValue() + ")";
+            crateModel.getModulesNames(selectedCrate).set(selectedModule, oldName + " (" + crateSlot.getValue() + ")");
         }
     }
 

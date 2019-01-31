@@ -66,25 +66,38 @@ public class SettingsController implements BaseController {
         cratesListView.setItems(crateModel.getCratesNames());
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
-            modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
+            modulesListView.setItems(crateModel.fillModulesNames(selectedCrate));
             cm.createListModulesControllers(crateModel.getModulesNames(selectedCrate));
         }));
     }
 
     public void handleChooseCrate() {
-        cratesListView.setDisable(true);
-        chooseCrateButton.setDisable(true);
-        modulesListView.setDisable(false);
-        setupModuleButton.setDisable(false);
+        ObservableList<String> crates = crateModel.getCratesNames();
+
+        for (int i = 0; i < crates.size(); i++) {
+            if (cratesListView.getSelectionModel().isSelected(i)) {
+                cratesListView.setDisable(true);
+                chooseCrateButton.setDisable(true);
+                modulesListView.setDisable(false);
+                setupModuleButton.setDisable(false);
+            }
+        }
     }
 
     public void handleSetupModule() {
         ObservableList<String> modulesNames = crateModel.getModulesNames(selectedCrate);
-        selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
-        String module = modulesNames.get(selectedModule);
-        showModuleSettings(module);
 
-        cm.refreshLTR24Settings();
+        for (int i = 0; i < modulesNames.size(); i++) {
+            if (modulesListView.getSelectionModel().isSelected(i)) {
+                selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
+                String module = modulesNames.get(selectedModule);
+                showModuleSettings(module);
+
+                cm.refreshLTR24Settings();
+
+                break;
+            }
+        }
     }
 
     public void handleSaveSetup() {
@@ -123,6 +136,18 @@ public class SettingsController implements BaseController {
         modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
     }
 
+    public void clearSettingsView() {
+        experimentNameTextField.setText("");
+        sampleNameTextField.setText("");
+        sampleSerialNumberTextField.setText("");
+        documentNumberTextField.setText("");
+        experimentTypeTextField.setText("");
+        experimentTimeTextField.setText("");
+        experimentDateTextField.setText("");
+        leadEngineerTextField.setText("");
+        commentsTextArea.setText("");
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -143,5 +168,17 @@ public class SettingsController implements BaseController {
 
     public CrateModel getCrateModel() {
         return crateModel;
+    }
+
+    public void setupProtocol(Protocol protocol) {
+        experimentNameTextField.setText(protocol.getExperimentName());
+        sampleNameTextField.setText(protocol.getSampleName());
+        sampleSerialNumberTextField.setText(protocol.getSampleSerialNumber());
+        documentNumberTextField.setText(protocol.getDocumentNumber());
+        experimentTypeTextField.setText(protocol.getExperimentType());
+        experimentTimeTextField.setText(protocol.getExperimentTime());
+        experimentDateTextField.setText(protocol.getExperimentDate());
+        leadEngineerTextField.setText(protocol.getLeadEngineer());
+        commentsTextArea.setText(protocol.getComments());
     }
 }

@@ -26,7 +26,7 @@
                 <Menu mnemonicParsing="false" text="Редактировать">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAdd" text="Добавить" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSettings" text="Настроить" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSetup" text="Настроить" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDelete" text="Удалить" />
                     </items>

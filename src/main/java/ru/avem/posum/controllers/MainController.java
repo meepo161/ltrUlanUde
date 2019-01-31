@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -85,13 +86,20 @@ public class MainController implements BaseController {
     }
 
     public void handleMenuItemExit() {
+        Platform.exit();
     }
 
     public void handleMenuItemAdd() {
+        cm.clearSettingsView();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
-    public void handleMenuItemSettings() {
+    public void handleMenuItemSetup() {
+        if (getSelectedItemIndex() != -1) {
+            List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
+            cm.setupProtocol(allProtocols.get(getSelectedItemIndex()));
+            cm.loadItemsForMainTableView();
+        }
     }
 
     public void handleMenuItemDelete() {

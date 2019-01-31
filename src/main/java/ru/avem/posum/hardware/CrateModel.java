@@ -28,6 +28,7 @@ public class CrateModel {
     private List<LTR24> ltr24ModulesList = new ArrayList<>();
     private List<LTR34> ltr34modules = new ArrayList<>();
     private List<LTR212> ltr212modules = new ArrayList<>();
+    ObservableList<String> modulesNames = FXCollections.observableArrayList();
 
     public CrateModel() {
         initCratesList();
@@ -106,8 +107,8 @@ public class CrateModel {
         return cratesNames;
     }
 
-    public ObservableList<String> getModulesNames(int crate) {
-        ObservableList<String> modulesNames = FXCollections.observableArrayList();
+    public ObservableList<String> fillModulesNames(int crate) {
+        modulesNames = FXCollections.observableArrayList();
 
         for (String name : modules[crate]) {
             if (!name.isEmpty()) {
@@ -115,6 +116,10 @@ public class CrateModel {
             }
         }
 
+        return modulesNames;
+    }
+
+    public ObservableList<String> getModulesNames(int crate) {
         return modulesNames;
     }
 

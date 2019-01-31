@@ -1,5 +1,6 @@
 package ru.avem.posum;
 
+import ru.avem.posum.db.models.Protocol;
 import ru.avem.posum.hardware.CrateModel;
 
 import java.util.List;
@@ -24,4 +25,8 @@ public interface ControllerManager {
     boolean isClosed();
 
     void setClosed(boolean closed);
+
+    void clearSettingsView();
+
+    void setupProtocol(Protocol protocol);
 }

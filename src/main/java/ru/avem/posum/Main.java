@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
+import ru.avem.posum.db.models.Protocol;
 import ru.avem.posum.hardware.CrateModel;
 
 import java.awt.*;
@@ -299,6 +300,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void setClosed(boolean cl) {
         this.closed = cl;
+    }
+
+    @Override
+    public void clearSettingsView() {
+        settingsController.clearSettingsView();
+    }
+
+    @Override
+    public void setupProtocol(Protocol protocol) {
+        settingsController.setupProtocol(protocol);
+        setScene(Scenes.SETTINGS_SCENE);
     }
 
     @Override
