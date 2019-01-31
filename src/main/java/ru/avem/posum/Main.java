@@ -314,7 +314,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void setupProtocol(Protocol protocol) {
         settingsController.setupProtocol(protocol);
-        setScene(Scenes.SETTINGS_SCENE);
+    }
+
+    @Override
+    public void setEditMode(boolean editMode) {
+        settingsController.setEditMode(editMode);
     }
 
     @Override

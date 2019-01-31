@@ -32,4 +32,6 @@ public interface ControllerManager {
     void clearSettingsView();
 
     void setupProtocol(Protocol protocol);
+
+    void setEditMode(boolean editMode);
 }

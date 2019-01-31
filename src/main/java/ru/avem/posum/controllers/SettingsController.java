@@ -56,6 +56,8 @@ public class SettingsController implements BaseController {
     private CrateModel crateModel = new CrateModel();
     private int selectedCrate;
     private int selectedModule;
+    private Protocol protocol;
+    private boolean editMode;
 
     @FXML
     private void initialize() {
@@ -106,8 +108,22 @@ public class SettingsController implements BaseController {
 
     public void handleSaveExperimentGeneralSettings() {
         parseGeneralSettingsData();
-        Protocol protocol = new Protocol(experimentName, sampleName, sampleSerialNumber, documentNumber, experimentType, experimentTime, experimentDate, leadEngineer, comments);
-        ProtocolRepository.insertProtocol(protocol);
+
+        if (editMode) {
+            protocol.setExperimentName(experimentName);
+            protocol.setSampleName(sampleName);
+            protocol.setSampleSerialNumber(sampleSerialNumber);
+            protocol.setDocumentNumber(documentNumber);
+            protocol.setExperimentType(experimentType);
+            protocol.setExperimentTime(experimentTime);
+            protocol.setExperimentDate(experimentDate);
+            protocol.setLeadEngineer(leadEngineer);
+            protocol.setComments(comments);
+            ProtocolRepository.updateProtocol(protocol);
+        } else {
+            protocol = new Protocol(experimentName, sampleName, sampleSerialNumber, documentNumber, experimentType, experimentTime, experimentDate, leadEngineer, comments);
+            ProtocolRepository.insertProtocol(protocol);
+        }
     }
 
     private void parseGeneralSettingsData() {
@@ -148,6 +164,24 @@ public class SettingsController implements BaseController {
         commentsTextArea.setText("");
     }
 
+    public void setupProtocol(Protocol protocol) {
+        experimentNameTextField.setText(protocol.getExperimentName());
+        sampleNameTextField.setText(protocol.getSampleName());
+        sampleSerialNumberTextField.setText(protocol.getSampleSerialNumber());
+        documentNumberTextField.setText(protocol.getDocumentNumber());
+        experimentTypeTextField.setText(protocol.getExperimentType());
+        experimentTimeTextField.setText(protocol.getExperimentTime());
+        experimentDateTextField.setText(protocol.getExperimentDate());
+        leadEngineerTextField.setText(protocol.getLeadEngineer());
+        commentsTextArea.setText(protocol.getComments());
+
+        this.protocol = protocol;
+    }
+
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -168,17 +202,5 @@ public class SettingsController implements BaseController {
 
     public CrateModel getCrateModel() {
         return crateModel;
-    }
-
-    public void setupProtocol(Protocol protocol) {
-        experimentNameTextField.setText(protocol.getExperimentName());
-        sampleNameTextField.setText(protocol.getSampleName());
-        sampleSerialNumberTextField.setText(protocol.getSampleSerialNumber());
-        documentNumberTextField.setText(protocol.getDocumentNumber());
-        experimentTypeTextField.setText(protocol.getExperimentType());
-        experimentTimeTextField.setText(protocol.getExperimentTime());
-        experimentDateTextField.setText(protocol.getExperimentDate());
-        leadEngineerTextField.setText(protocol.getLeadEngineer());
-        commentsTextArea.setText(protocol.getComments());
     }
 }

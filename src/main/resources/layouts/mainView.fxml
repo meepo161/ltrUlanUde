@@ -27,6 +27,7 @@
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAdd" text="Добавить" />
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSetup" text="Настроить" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleMenuItemCopy" text="Копировать" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDelete" text="Удалить" />
                     </items>

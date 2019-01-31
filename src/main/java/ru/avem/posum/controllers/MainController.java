@@ -92,6 +92,7 @@ public class MainController implements BaseController {
 
     public void handleMenuItemAdd() {
         cm.clearSettingsView();
+        cm.setEditMode(false);
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -99,6 +100,17 @@ public class MainController implements BaseController {
         if (getSelectedItemIndex() != -1) {
             List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
             cm.setupProtocol(allProtocols.get(getSelectedItemIndex()));
+            cm.loadItemsForMainTableView();
+            cm.setEditMode(true);
+            wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        }
+    }
+
+    public void handleMenuItemCopy() {
+        if (getSelectedItemIndex() != -1) {
+            List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
+            Protocol protocol = allProtocols.get(getSelectedItemIndex());
+            ProtocolRepository.insertProtocol(protocol);
             cm.loadItemsForMainTableView();
         }
     }
