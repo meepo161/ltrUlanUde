@@ -14,6 +14,7 @@ import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.Protocol;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.models.ExperimentModel;
 
 import java.awt.*;
 import java.io.IOException;
@@ -291,6 +292,9 @@ public class Main extends Application implements WindowsManager, ControllerManag
         primaryStage.setTitle("Настройки модуля " + moduleName);
         primaryStage.setScene(modulesPairs.get(id).getValue());
     }
+
+    @Override
+    public ExperimentModel getExperimentModel() { return processController.getExperimentModel(); }
 
     @Override
     public boolean isClosed() {

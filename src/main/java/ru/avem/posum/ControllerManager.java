@@ -2,6 +2,7 @@ package ru.avem.posum;
 
 import ru.avem.posum.db.models.Protocol;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.models.ExperimentModel;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public interface ControllerManager {
     void createListModulesControllers(List<String> modulesNames);
 
     void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
+
+    ExperimentModel getExperimentModel();
 
     boolean isClosed();
 
