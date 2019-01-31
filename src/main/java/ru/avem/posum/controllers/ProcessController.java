@@ -9,10 +9,7 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.models.Events;
-import ru.avem.posum.models.EventsModel;
-import ru.avem.posum.models.ProcessSample;
-import ru.avem.posum.models.ProcessSampleModel;
+import ru.avem.posum.models.*;
 
 
 import java.util.Optional;
@@ -66,6 +63,7 @@ public class ProcessController implements BaseController {
     @FXML
     private VBox topPanel;
 
+    private ExperimentModel experimentModel = new ExperimentModel();
     private EventsModel eventModel = new EventsModel();
     private ProcessSampleModel processSampleModel = new ProcessSampleModel();
 
@@ -111,6 +109,10 @@ public class ProcessController implements BaseController {
         processSampleModel.chart(processLineChart);
     }
 
+    public ExperimentModel getExperimentModel() {
+        return experimentModel;
+    }
+
     public void showSettingsPanel(boolean hide) {
         double needHeight = mainPanel.getMaxHeight();
         toolbarSettings.setVisible(!hide);
@@ -125,36 +127,40 @@ public class ProcessController implements BaseController {
 
     public void handleInitButton() {
         showSettingsPanel(true);
+        experimentModel.Init();
     }
 
     public void handleRunButton() {
-        processSampleModel.loadData(0);
-        processSampleModel.fitTable(tableSample);
+        experimentModel.Run();
     }
 
     public void handleSmoothStopButton() {
-        processSampleModel.testData();
+        experimentModel.SmoothStop();
     }
 
     public void handleStopButton() {
-        processSampleModel.resetData();
+        experimentModel.Stop();
     }
 
     public void handleToProgrammButton() {
+        experimentModel.ChangeParam();
         showSettingsPanel(false);
     }
 
     public void handleSavePointButton() {
-        processSampleModel.chartAdd();
+        experimentModel.SavePoint();
     }
 
     public void handleSaveWaveformButton() {
+        experimentModel.SaveWaveform();
     }
 
     public void handleSaveProtocolButton() {
+        experimentModel.SaveProtocol();
     }
 
     public void handleBackButton() {
+        experimentModel.Terminate();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 

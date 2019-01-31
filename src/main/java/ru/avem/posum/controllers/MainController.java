@@ -14,6 +14,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.ProtocolRepository;
 import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
@@ -104,7 +105,21 @@ public class MainController implements BaseController {
     }
 
     public void handleOpenExpirement() {
-        wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
+        //проверка выбрана ли позиция в таблице и существует ли она
+        if(protocols.size() > 0) {
+            Protocol protocolItem = experimentsTableView.getSelectionModel().getSelectedItem();
+            if(protocolItem == null) {
+                Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
+                return;
+            }
+            //TODO передать данные в класс проведения эксперемента
+            cm.getExperimentModel().SetTestId(protocolItem.getId());
+            //TODO вызвать окно проведения эксперемента
+            wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
+        } else {
+            Toast.makeText("Отсутствуют настроенные испытания").show(Toast.ToastType.WARNING);
+            return;
+        }
     }
 
     @Override

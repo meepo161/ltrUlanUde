@@ -37,7 +37,8 @@ public class ProcessSampleModel {
     }
 
     public void loadData(long idTest) {
-        processSampleData.add(new ProcessSample("ADC* DAC*"));
+        int index = processSampleData.size() + 1;
+        processSampleData.add(new ProcessSample("АЦП"+String.valueOf(index) +" ЦАП"+String.valueOf(index)));
     }
 
     public void testData() {
