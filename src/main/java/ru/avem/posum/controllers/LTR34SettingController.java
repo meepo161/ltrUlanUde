@@ -22,6 +22,8 @@ public class LTR34SettingController implements BaseController {
     @FXML
     private Button generateSignalButton;
     @FXML
+    private Button stopSignalButton;
+    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -278,20 +280,24 @@ public class LTR34SettingController implements BaseController {
         ltr34.setSlot(selectedSlot);
         ltr34.initModule();
 
-        String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
-        crateModel.getModulesNames(selectedCrate).set(selectedModule, oldName + " (" + crateSlot.getValue() + ")");
+        if (ltr34.getStatus().equals("Операция успешно выполнена")) {
+            String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
+            crateModel.getModulesNames(selectedCrate).set(selectedModule, oldName + " (" + crateSlot.getValue() + ")");
 
-        calculateSignal();
+            calculateSignal();
 
-        ltr34.dataSend(signal);
-        ltr34.start();
-        new Thread(() -> {
-            while (!cm.isClosed()) {
-                ltr34.dataSend(signal);
-            }
-        }).start();
+            ltr34.dataSend(signal);
+            ltr34.start();
+            new Thread(() -> {
+                while (!cm.isClosed()) {
+                    ltr34.dataSend(signal);
+                }
+            }).start();
 
-        cm.setClosed(false);
+            cm.setClosed(false);
+            stopSignalButton.setDisable(false);
+        }
+
         statusBar.setText(ltr34.getStatus());
     }
 
@@ -355,6 +361,11 @@ public class LTR34SettingController implements BaseController {
         }
 
         return resultArray;
+    }
+
+    public void handleStopSignal() {
+        cm.setClosed(true);
+        ltr34.stop();
     }
 
     public void handleBackButton() {
