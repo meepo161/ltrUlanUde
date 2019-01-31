@@ -112,9 +112,9 @@ public class MainController implements BaseController {
                 Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
                 return;
             }
-            //TODO передать данные в класс проведения эксперемента
+            // передать данные в класс проведения эксперемента
             cm.getExperimentModel().SetTestId(protocolItem.getId());
-            //TODO вызвать окно проведения эксперемента
+            // вызвать окно проведения эксперемента
             wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
         } else {
             Toast.makeText("Отсутствуют настроенные испытания").show(Toast.ToastType.WARNING);

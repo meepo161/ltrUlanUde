@@ -3,8 +3,9 @@ package ru.avem.posum.models;
 public class ExperimentModel {
     long testId = 0;
 
-    public void SetTestId( long TestId){
+    public void SetTestId( long testId){
         this.DeInit();
+        this.testId = testId;
         //TODO получаем TestId и выбираем параметры для теста из БД.
 
 
@@ -18,9 +19,26 @@ public class ExperimentModel {
 
     public void DeInit(){
 
+
+
+
+
+
+
+
+
     }
 
     public void Init(){
+
+
+
+
+
+
+
+
+
 
     }
 
