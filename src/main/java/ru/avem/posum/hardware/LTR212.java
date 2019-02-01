@@ -1,6 +1,5 @@
 package ru.avem.posum.hardware;
 
-import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 public class LTR212 {
@@ -10,8 +9,6 @@ public class LTR212 {
     private String[] channelsDescription = new String[4];
     private String crate;
     private int slot;
-    private double[] data = new double[128];
-    private RingBuffer ringBuffer = new RingBuffer(data.length * 10);
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
 
@@ -31,11 +28,11 @@ public class LTR212 {
     public native String fillArray(int slot, double[] data);
 
     public void stop() {
-        status = closeConnection(slot);
+        status = stop(slot);
         checkStatus();
     }
 
-    public native String closeConnection(int slot);
+    public native String stop(int slot);
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
@@ -51,10 +48,6 @@ public class LTR212 {
 
     public int[] getMeasuringRanges() {
         return measuringRanges;
-    }
-
-    public RingBuffer getRingBuffer() {
-        return ringBuffer;
     }
 
     public String getStatus() {

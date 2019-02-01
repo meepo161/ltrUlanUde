@@ -19,6 +19,8 @@ public interface ControllerManager {
 
     void refreshLTR24Settings();
 
+    void refreshLTR212Settings();
+
     void createListModulesControllers(List<String> modulesNames);
 
     void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);

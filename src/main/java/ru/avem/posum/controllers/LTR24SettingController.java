@@ -274,7 +274,7 @@ public class LTR24SettingController implements BaseController {
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
-                ltr24.getCheckedChannels()[i] = true; // 1 - канал выбран
+                ltr24.getCheckedChannels()[i] = true; // true - канал выбран
                 ltr24.getChannelsDescription()[i] = channelsDescription.get(i).getText();
                 ltr24.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
@@ -291,8 +291,7 @@ public class LTR24SettingController implements BaseController {
             disableUiElements();
             enableChannelsButtons();
 
-            String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
-            crateModel.getModulesNames(selectedCrate).set(selectedModule, oldName + " (" + crateSlot.getValue() + ")");
+            crateModel.getModulesNames(selectedCrate).set(selectedModule, "LTR24 (" + crateSlot.getValue() + ")");
         }
     }
 

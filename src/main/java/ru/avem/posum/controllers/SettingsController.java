@@ -96,6 +96,7 @@ public class SettingsController implements BaseController {
                 showModuleSettings(module);
 
                 cm.refreshLTR24Settings();
+//                cm.refreshLTR212Settings();
 
                 break;
             }

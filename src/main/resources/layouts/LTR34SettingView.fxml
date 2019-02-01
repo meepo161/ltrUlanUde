@@ -52,7 +52,7 @@
                   <Insets left="140.0" />
                </GridPane.margin>
             </Button>
-            <LineChart fx:id="setupTabGraph" animated="false" createSymbols="false" disable="true" legendVisible="false" title="Управляющий сигнал" GridPane.columnSpan="10" GridPane.rowIndex="2">
+            <LineChart fx:id="graph" animated="false" createSymbols="false" disable="true" legendSide="RIGHT" title="Управляющий сигнал" GridPane.columnSpan="10" GridPane.rowIndex="2">
                <xAxis>
                   <NumberAxis animated="false" autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                </xAxis>

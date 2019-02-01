@@ -258,6 +258,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void refreshLTR212Settings() {
+        ltr212SettingController.refreshView();
+    }
+
+    @Override
     public void createListModulesControllers(List<String> modulesNames) {
         modulesPairs.clear();
         for (String module : modulesNames) {

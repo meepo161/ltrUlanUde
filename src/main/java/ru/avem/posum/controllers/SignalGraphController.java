@@ -11,9 +11,6 @@ import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.LTR24;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SignalGraphController implements BaseController {
     @FXML
     private LineChart<Number, Number> graph;
@@ -30,7 +27,6 @@ public class SignalGraphController implements BaseController {
     private double averageValue;
     private int seconds;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private CrateModel.Moudules moduleType;
     private int channel;
 
@@ -52,8 +48,6 @@ public class SignalGraphController implements BaseController {
                 chooseLTR24Slot();
                 ltr24.fillArray(ltr24.getSlot(), buffer);
                 break;
-            case LTR34:
-                break;
             case LTR212:
                 chooseLTR212Slot();
                 ltr212.fillArray(ltr212.getSlot(), buffer);
@@ -61,9 +55,9 @@ public class SignalGraphController implements BaseController {
         }
 
         averageValue = 0;
-        for (int i = 0; i < buffer.length; i += 4) {
-            averageValue += buffer[channel] / (buffer.length / 4);
-
+        for (int i = channel; i < buffer.length; i += 4) {
+        averageValue += buffer[i] / ((double) buffer.length / 4);
+//        System.out.println(averageValue + " " + System.currentTimeMillis());
         }
 
         Platform.runLater(() -> {
@@ -120,7 +114,6 @@ public class SignalGraphController implements BaseController {
 
     public void handleClear() {
         graphSeries = new XYChart.Series<>();
-        intermediateList = new ArrayList<>();
         graph.getData().clear();
         graph.getData().add(graphSeries);
         seconds = 0;

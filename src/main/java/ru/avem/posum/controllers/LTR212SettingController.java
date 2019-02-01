@@ -181,7 +181,6 @@ public class LTR212SettingController implements BaseController {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
-
         toggleInitializeButton();
     }
 
@@ -257,7 +256,7 @@ public class LTR212SettingController implements BaseController {
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
-                ltr212.getCheckedChannels()[i] = true; // 1 - канал выбран
+                ltr212.getCheckedChannels()[i] = true; // true - канал выбран
                 ltr212.getChannelsDescription()[i] = channelsDescription.get(i).getText();
                 ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
@@ -284,8 +283,7 @@ public class LTR212SettingController implements BaseController {
             disableUiElements();
             enableChannelsButtons();
 
-            String oldName = (crateModel.getModulesNames(selectedCrate).get(selectedModule));
-            crateModel.getModulesNames(selectedCrate).set(selectedModule, oldName + " (" + crateSlot.getValue() + ")");
+            crateModel.getModulesNames(selectedCrate).set(selectedModule, "LTR212 (" + crateSlot.getValue() + ")");
         }
     }
 
