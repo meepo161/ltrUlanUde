@@ -91,7 +91,7 @@ public class LTR34SettingController implements BaseController {
     private int selectedSlot;
     private int channels;
 
-    private List<Pair<Integer, Integer>> signalParameters = new ArrayList<>();
+    private List<Pair<Integer, Integer>> signalParameters;
     double signal[] = new double[500_000]; // массив данных для генерации сигнала для каждого канала
 
 
@@ -186,34 +186,58 @@ public class LTR34SettingController implements BaseController {
             } else {
                 ltr34.getCheckedChannels()[channel] = false;
                 toggleUiElements(channel, true);
+                frequencyTextFields.get(channel).setText("");
+                amplitudeTextFields.get(channel).setText("");
             }
+            enableGenerateButton();
+            disableGenerateButton();
+        });
+
+        frequencyTextFields.get(channel).textProperty().addListener(observable -> {
+            enableGenerateButton();
+            disableGenerateButton();
+        });
+
+        amplitudeTextFields.get(channel).textProperty().addListener(observable -> {
+            enableGenerateButton();
+            disableGenerateButton();
         });
     }
 
     private void toggleUiElements(int channel, boolean isDisable) {
         frequencyTextFields.get(channel).setDisable(isDisable);
         amplitudeTextFields.get(channel).setDisable(isDisable);
-        toggleInitializeButton(isDisable);
     }
 
 
-    private void toggleInitializeButton(boolean isDisable) {
+    private void enableGenerateButton() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            listenTextField(frequencyTextFields.get(i), i);
-            listenTextField(amplitudeTextFields.get(i), i);
+            if (channelsCheckBoxes.get(i).isSelected() &
+                    !frequencyTextFields.get(i).getText().isEmpty() &
+                    !amplitudeTextFields.get(i).getText().isEmpty()) {
+                generateSignalButton.setDisable(false);
+            }
         }
     }
 
-    private void listenTextField(TextField textField, int channel) {
-        textField.textProperty().addListener(observable -> {
-            for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-                if (!frequencyTextFields.get(channel).getText().isEmpty() & !amplitudeTextFields.get(channel).getText().isEmpty()) {
-                    generateSignalButton.setDisable(false);
-                } else {
-                    generateSignalButton.setDisable(true);
-                }
+    private void disableGenerateButton() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (channelsCheckBoxes.get(i).isSelected() &
+                    (frequencyTextFields.get(i).getText().isEmpty() ||
+                            amplitudeTextFields.get(i).getText().isEmpty())) {
+                generateSignalButton.setDisable(true);
             }
-        });
+        }
+
+        int disabledChannelsCounter = 0;
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (!channelsCheckBoxes.get(i).isSelected()) {
+                disabledChannelsCounter++;
+            }
+            if (disabledChannelsCounter == channelsCheckBoxes.size()) {
+                generateSignalButton.setDisable(true);
+            }
+        }
     }
 
     private void setDigitFilter() {
@@ -288,13 +312,9 @@ public class LTR34SettingController implements BaseController {
 
             ltr34.dataSend(signal);
             ltr34.start();
-            new Thread(() -> {
-                while (!cm.isClosed()) {
-                    ltr34.dataSend(signal);
-                }
-            }).start();
 
-            cm.setClosed(false);
+            disableChannelsUiElements();
+            generateSignalButton.setDisable(true);
             stopSignalButton.setDisable(false);
         }
 
@@ -302,6 +322,8 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void calculateSignal() {
+        signalParameters = new ArrayList<>();
+
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             int frequency = parse(frequencyTextFields.get(i));
             int amplitude = parse(amplitudeTextFields.get(i));
@@ -363,9 +385,42 @@ public class LTR34SettingController implements BaseController {
         return resultArray;
     }
 
-    public void handleStopSignal() {
-        cm.setClosed(true);
+    private void disableChannelsUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setDisable(true);
+            frequencyTextFields.get(i).setDisable(true);
+            amplitudeTextFields.get(i).setDisable(true);
+            crateSlot.setDisable(true);
+        }
+    }
+
+    public void handleStopSignal() throws InterruptedException {
         ltr34.stop();
+
+        for (int i = 0; i < signal.length; i++) {
+            signal[i] = 0;
+        }
+        ltr34.initModule();
+        ltr34.dataSend(signal);
+        ltr34.start();
+        Thread.sleep(1000);
+        ltr34.stop();
+
+
+        enableChannelsUiElements();
+        generateSignalButton.setDisable(false);
+        stopSignalButton.setDisable(true);
+    }
+
+    private void enableChannelsUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setDisable(false);
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                frequencyTextFields.get(i).setDisable(false);
+                amplitudeTextFields.get(i).setDisable(false);
+            }
+        }
+        crateSlot.setDisable(false);
     }
 
     public void handleBackButton() {
