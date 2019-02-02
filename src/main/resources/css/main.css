@@ -1,0 +1,75 @@
+.root {
+	-fx-font-size: 16px;
+	-fx-font-family: Arial;
+	}
+
+.context-menu {
+    -fx-min-width: 100px;
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+.status-bar {
+	-fx-background-color: none;
+	-fx-border-radius: 3px;
+}
+
+.chart-title, .axis-label {
+    -fx-font-size: 16px;
+}
+
+.processTable {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.processTable .scroll-bar:vertical > .increment-button,
+.processTable .scroll-bar:vertical > .decrement-button {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.programTable {
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+}
+
+.eventTable {
+    -fx-font-weight: normal;
+    -fx-font-size: 12px;
+}
+
+.wrapper {
+    -fx-border-radius: 3px;
+    -fx-border-color: #7D7D7D;
+}
+
+.title {
+    -fx-font-weight: bold;
+}
+
+.table-view:focused, .list-view:focused{
+    -fx-background-color: c8c8c8;
+    -fx-background-insets: 0;
+}
+
+.table-view:focused:row-selection > .virtual-flow > .clipped-container > .sheet > .table-row-cell:focused,
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused
+{
+    -fx-background-insets: 0;
+}
+
+/* Selected when control is not focused */
+.list-cell:filled:selected,
+.tree-cell:filled:selected,
+.table-row-cell:filled:selected,
+.tree-table-row-cell:filled:selected,
+.table-row-cell:filled > .table-cell:selected,
+.tree-table-row-cell:filled > .tree-table-cell:selected {
+    -fx-background: -fx-selection-bar;
+    -fx-table-cell-border-color: derive(-fx-selection-bar, 20%);
+}
