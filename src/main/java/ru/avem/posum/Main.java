@@ -248,6 +248,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public int getSlot() {
+        return settingsController.getSlot();
+    }
+
+    @Override
     public CrateModel getCrateModelInstance() {
         return settingsController.getCrateModel();
     }
@@ -258,20 +263,15 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void refreshLTR212Settings() {
-        ltr212SettingController.refreshView();
-    }
-
-    @Override
     public void createListModulesControllers(List<String> modulesNames) {
         modulesPairs.clear();
         for (String module : modulesNames) {
             String layoutPath = null;
-            switch (module) {
+            switch (module.split(" ")[0]) {
                 case CrateModel.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
                     break;
-                case CrateModel.LTR34:
+                case CrateModel.LTR34 :
                     layoutPath = "/layouts/LTR34SettingView.fxml";
                     break;
                 case CrateModel.LTR212:
@@ -299,7 +299,9 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public ExperimentModel getExperimentModel() { return processController.getExperimentModel(); }
+    public ExperimentModel getExperimentModel() {
+        return processController.getExperimentModel();
+    }
 
     @Override
     public boolean isClosed() {

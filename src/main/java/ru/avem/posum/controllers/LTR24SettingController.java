@@ -34,8 +34,6 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private CheckBox checkChannelN4;
     @FXML
-    private ComboBox<String> crateSlot;
-    @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
     private ComboBox<String> typeOfChannelN2;
@@ -51,8 +49,6 @@ public class LTR24SettingController implements BaseController {
     private ComboBox<String> measuringRangeOfChannelN3;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
-    @FXML
-    private Label crateSlotLabel;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -78,7 +74,6 @@ public class LTR24SettingController implements BaseController {
     private int selectedCrate;
     private String[] cratesSN;
     private int selectedModule;
-    private int selectedSlot;
 
     @FXML
     private void initialize() {
@@ -90,7 +85,6 @@ public class LTR24SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
-        addListOfCrateSlots(crateSlot);
         checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
         setDefaultParameters();
     }
@@ -193,28 +187,6 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    private void addListOfCrateSlots(ComboBox<String> crateSlot) {
-        ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("Слот 1");
-        strings.add("Слот 2");
-        strings.add("Слот 3");
-        strings.add("Слот 4");
-        strings.add("Слот 5");
-        strings.add("Слот 6");
-        strings.add("Слот 7");
-        strings.add("Слот 8");
-        strings.add("Слот 9");
-        strings.add("Слот 10");
-        strings.add("Слот 11");
-        strings.add("Слот 12");
-        strings.add("Слот 13");
-        strings.add("Слот 14");
-        strings.add("Слот 15");
-        strings.add("Слот 16");
-
-        crateSlot.getItems().setAll(strings);
-    }
-
     private void checkChannelType(List<ComboBox<String>> channelsTypesComboBoxes, List<ComboBox<String>> measuringRangesComboBoxes) {
         for (int i = 0; i < channelsTypesComboBoxes.size(); i++) {
             toggleICPChannels(channelsTypesComboBoxes.get(i), measuringRangesComboBoxes.get(i));
@@ -262,15 +234,13 @@ public class LTR24SettingController implements BaseController {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsTypesComboBoxes.get(i).getSelectionModel().select(0);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(1);
-            crateSlot.getSelectionModel().select(0);
         }
     }
 
     public void handleInitialize() {
         selectedCrate = cm.getSelectedCrate();
         cratesSN = crateModel.getCrates()[0];
-        selectedModule = cm.getSelectedModule();
-        selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
+        selectedModule = cm.getSlot();
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
@@ -279,7 +249,7 @@ public class LTR24SettingController implements BaseController {
                 ltr24.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.setCrate(cratesSN[selectedCrate]);
-                ltr24.setSlot(selectedSlot);
+                ltr24.setSlot(selectedModule);
             }
         }
 
@@ -290,8 +260,6 @@ public class LTR24SettingController implements BaseController {
             crateModel.getLtr24ModulesList().add(ltr24);
             disableUiElements();
             enableChannelsButtons();
-
-            crateModel.getModulesNames(selectedCrate).set(selectedModule, "LTR24 (" + crateSlot.getValue() + ")");
         }
     }
 
@@ -304,8 +272,6 @@ public class LTR24SettingController implements BaseController {
         }
 
         initializeButton.setDisable(true);
-        crateSlotLabel.setDisable(true);
-        crateSlot.setDisable(true);
     }
 
     private void enableChannelsButtons() {
@@ -331,7 +297,6 @@ public class LTR24SettingController implements BaseController {
                 channelsDescription.get(channel).setText(module.getChannelsDescription()[channel]);
                 channelsTypesComboBoxes.get(channel).getSelectionModel().select(module.getChannelsTypes()[channel]);
                 measuringRangesComboBoxes.get(channel).getSelectionModel().select(module.getMeasuringRanges()[channel]);
-                crateSlot.getSelectionModel().select(module.getSlot() - 1);
 
                 if (module.getCheckedChannels()[channel]) {
                     channelsDescription.get(channel).setDisable(false);

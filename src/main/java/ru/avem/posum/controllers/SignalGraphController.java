@@ -3,6 +3,7 @@ package ru.avem.posum.controllers;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
@@ -10,6 +11,10 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.LTR24;
+import ru.avem.posum.utils.RingBuffer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignalGraphController implements BaseController {
     @FXML
@@ -23,12 +28,13 @@ public class SignalGraphController implements BaseController {
     private int slot;
     private LTR24 ltr24;
     private LTR212 ltr212;
-    private double[] buffer = new double[128];
-    private double averageValue;
+    private double[] buffer = new double[4096];
+    private RingBuffer ringBuffer = new RingBuffer(buffer.length * 10);
     private int seconds;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private CrateModel.Moudules moduleType;
     private int channel;
+    private boolean isDone = true;
 
     @FXML
     private void initialize() {
@@ -37,6 +43,8 @@ public class SignalGraphController implements BaseController {
     }
 
     private Runnable startShow = () -> {
+        chooseLTR24Slot();
+        chooseLTR212Slot();
         while (!cm.isClosed()) {
             showData(moduleType);
         }
@@ -45,24 +53,51 @@ public class SignalGraphController implements BaseController {
     private void showData(CrateModel.Moudules moduleType) {
         switch (moduleType) {
             case LTR24:
-                chooseLTR24Slot();
                 ltr24.fillArray(ltr24.getSlot(), buffer);
+                ringBuffer.put(buffer);
+                fillSeries();
+                setGraphBounds(-5, 10, 1);
+
                 break;
             case LTR212:
-                chooseLTR212Slot();
                 ltr212.fillArray(ltr212.getSlot(), buffer);
+                System.out.println(buffer[0]);
+                ringBuffer.put(buffer);
+                fillSeries();
+                setGraphBounds(-0.1, 0.1, 0.01);
                 break;
         }
+    }
 
-        averageValue = 0;
-        for (int i = channel; i < buffer.length; i += 4) {
-        averageValue += buffer[i] / ((double) buffer.length / 4);
-//        System.out.println(averageValue + " " + System.currentTimeMillis());
+    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+    }
+
+    public void fillSeries() {
+        List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+        double[] data = new double[buffer.length];
+
+        ringBuffer.take(data, data.length);
+
+        for (int i = channel; i < data.length; i += 4) {
+            intermediateList.add(new XYChart.Data<>((double) i / (data.length / 4), data[i]));
+        }
+
+        while (!isDone) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ignored) {
+            }
         }
 
         Platform.runLater(() -> {
-            graphSeries.getData().add(new XYChart.Data<>(seconds++, averageValue));
-            valueTextField.setText(String.valueOf(Math.ceil(averageValue * 100) / 100));
+            isDone = false;
+            graphSeries.getData().clear();
+            graphSeries.getData().addAll(intermediateList);
+            isDone = true;
         });
     }
 
@@ -89,6 +124,7 @@ public class SignalGraphController implements BaseController {
         cm.setClosed(false);
         handleClear();
         new Thread(startShow).start();
+        isDone = true;
     }
 
     public void handleCalibrate() {
