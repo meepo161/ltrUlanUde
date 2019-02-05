@@ -56,6 +56,7 @@ public class SettingsController implements BaseController {
     private CrateModel crateModel = new CrateModel();
     private int selectedCrate;
     private int selectedModule;
+    private int slot;
     private Protocol protocol;
     private boolean editMode;
 
@@ -93,18 +94,15 @@ public class SettingsController implements BaseController {
             if (modulesListView.getSelectionModel().isSelected(i)) {
                 selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
                 String module = modulesNames.get(selectedModule);
+
+                slot = Integer.parseInt(module.split("Слот ")[1].split("\\)")[0]);
+
                 showModuleSettings(module);
 
                 cm.refreshLTR24Settings();
-//                cm.refreshLTR212Settings();
-
                 break;
             }
         }
-    }
-
-    public void handleSaveSetup() {
-
     }
 
     public void handleSaveExperimentGeneralSettings() {
@@ -201,7 +199,15 @@ public class SettingsController implements BaseController {
         return selectedModule;
     }
 
+    public int getSlot() {
+        return slot;
+    }
+
     public CrateModel getCrateModel() {
         return crateModel;
+    }
+
+    public void handleSaveSetup() {
+
     }
 }

@@ -1,6 +1,5 @@
 package ru.avem.posum.hardware;
 
-import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 {
@@ -10,10 +9,9 @@ public class LTR24 {
     private String[] channelsDescription = new String[4];
     private String crate;
     private int slot;
-    private double[] data = new double[128];
-    private RingBuffer ringBuffer = new RingBuffer(data.length * 10);
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
+    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
     public void initModule() {
         status = initialize(crate, slot, channelsTypes, measuringRanges);
@@ -24,6 +22,11 @@ public class LTR24 {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
         }
+    }
+
+    public void receiveData(double[] data) {
+        status = fillArray(slot, data);
+        checkStatus();
     }
 
     public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
@@ -48,12 +51,8 @@ public class LTR24 {
         return measuringRanges;
     }
 
-    public RingBuffer getRingBuffer() {
-        return ringBuffer;
-    }
-
-    public String getStatus() {
-        return status;
+    public void setCrate(String crate) {
+        this.crate = crate;
     }
 
     public int getSlot() {
@@ -64,8 +63,12 @@ public class LTR24 {
         this.slot = slot;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public String getStatus() {
+        return status;
+    }
+
+    public boolean isBusy() {
+        return busy;
     }
 
     static {

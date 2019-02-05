@@ -11,6 +11,7 @@ public class LTR212 {
     private int slot;
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
+    private boolean busy;
 
     public void initModule() {
         status = initialize(crate, slot, channelsTypes, measuringRanges);
@@ -23,6 +24,11 @@ public class LTR212 {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
         }
+    }
+
+    public void receiveData(double[] data) {
+        status = fillArray(slot, data);
+        checkStatus();
     }
 
     public native String fillArray(int slot, double[] data);
@@ -38,10 +44,6 @@ public class LTR212 {
         return checkedChannels;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
-    }
-
     public int[] getChannelsTypes() {
         return channelsTypes;
     }
@@ -50,8 +52,12 @@ public class LTR212 {
         return measuringRanges;
     }
 
-    public String getStatus() {
-        return status;
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
     }
 
     public int getSlot() {
@@ -62,8 +68,12 @@ public class LTR212 {
         this.slot = slot;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public String getStatus() {
+        return status;
+    }
+
+    public boolean isBusy() {
+        return busy;
     }
 
     static {
