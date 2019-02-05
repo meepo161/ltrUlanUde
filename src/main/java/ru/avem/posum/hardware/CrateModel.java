@@ -109,10 +109,11 @@ public class CrateModel {
 
     public ObservableList<String> fillModulesNames(int crate) {
         modulesNames = FXCollections.observableArrayList();
+        String[] names = modules[crate];
 
-        for (String name : modules[crate]) {
-            if (!name.isEmpty()) {
-                modulesNames.addAll(name);
+        for (int i = 0; i < names.length; i++) {
+            if (!names[i].isEmpty()) {
+                modulesNames.addAll(names[i] + " (Слот " + (i + 1) + ")");
             }
         }
 

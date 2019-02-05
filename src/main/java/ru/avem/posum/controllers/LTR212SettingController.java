@@ -34,8 +34,6 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private CheckBox checkChannelN4;
     @FXML
-    private ComboBox<String> crateSlot;
-    @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
     private ComboBox<String> typeOfChannelN2;
@@ -51,8 +49,6 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> measuringRangeOfChannelN3;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
-    @FXML
-    private Label crateSlotLabel;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -77,8 +73,7 @@ public class LTR212SettingController implements BaseController {
     private CrateModel crateModel;
     private int selectedCrate;
     private String[] cratesSN;
-    private int selectedModule;
-    private int selectedSlot;
+    private int slot;
 
     @FXML
     private void initialize() {
@@ -90,7 +85,6 @@ public class LTR212SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
-        addListOfCrateSlots(crateSlot);
         addListOfMeasuringRanges(measuringRangesComboBoxes);
         setDefaultParameters();
     }
@@ -199,28 +193,6 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
-    private void addListOfCrateSlots(ComboBox<String> crateSlot) {
-        ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("Слот 1");
-        strings.add("Слот 2");
-        strings.add("Слот 3");
-        strings.add("Слот 4");
-        strings.add("Слот 5");
-        strings.add("Слот 6");
-        strings.add("Слот 7");
-        strings.add("Слот 8");
-        strings.add("Слот 9");
-        strings.add("Слот 10");
-        strings.add("Слот 11");
-        strings.add("Слот 12");
-        strings.add("Слот 13");
-        strings.add("Слот 14");
-        strings.add("Слот 15");
-        strings.add("Слот 16");
-
-        crateSlot.getItems().setAll(strings);
-    }
-
     private void addListOfMeasuringRanges(List<ComboBox<String>> measuringRangesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-10 мВ/+10 мВ");
@@ -244,15 +216,13 @@ public class LTR212SettingController implements BaseController {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsTypesComboBoxes.get(i).getSelectionModel().select(1);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(3);
-            crateSlot.getSelectionModel().select(0);
         }
     }
 
     public void handleInitialize() {
         selectedCrate = cm.getSelectedCrate();
         cratesSN = crateModel.getCrates()[0];
-        selectedModule = cm.getSelectedModule();
-        selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
+        slot = cm.getSlot();
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
@@ -261,7 +231,7 @@ public class LTR212SettingController implements BaseController {
                 ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr212.setCrate(cratesSN[selectedCrate]);
-                ltr212.setSlot(selectedSlot);
+                ltr212.setSlot(slot);
             }
         }
 
@@ -282,8 +252,6 @@ public class LTR212SettingController implements BaseController {
             crateModel.getLtr212ModulesList().add(ltr212);
             disableUiElements();
             enableChannelsButtons();
-
-            crateModel.getModulesNames(selectedCrate).set(selectedModule, "LTR212 (" + crateSlot.getValue() + ")");
         }
     }
 
@@ -296,8 +264,6 @@ public class LTR212SettingController implements BaseController {
         }
 
         initializeButton.setDisable(true);
-        crateSlotLabel.setDisable(true);
-        crateSlot.setDisable(true);
     }
 
     private void enableChannelsButtons() {
@@ -312,27 +278,6 @@ public class LTR212SettingController implements BaseController {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
-    }
-
-    public void refreshView() {
-        if (!crateModel.getLtr24ModulesList().isEmpty()) {
-            for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
-                LTR212 module = crateModel.getLtr212ModulesList().get(0);
-
-                channelsCheckBoxes.get(channel).setSelected(module.getCheckedChannels()[channel]);
-                channelsDescription.get(channel).setText(module.getChannelsDescription()[channel]);
-                channelsTypesComboBoxes.get(channel).getSelectionModel().select(module.getChannelsTypes()[channel]);
-                measuringRangesComboBoxes.get(channel).getSelectionModel().select(module.getMeasuringRanges()[channel]);
-                crateSlot.getSelectionModel().select(module.getSlot() - 1);
-
-                if (module.getCheckedChannels()[channel]) {
-                    channelsDescription.get(channel).setDisable(false);
-                    channelsTypesComboBoxes.get(channel).setDisable(false);
-                    measuringRangesComboBoxes.get(channel).setDisable(false);
-                    channelsCheckBoxes.get(channel).setDisable(false);
-                }
-            }
-        }
     }
 
     public void handleValueOfChannelN1() {

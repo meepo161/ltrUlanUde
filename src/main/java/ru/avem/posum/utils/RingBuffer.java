@@ -1,10 +1,10 @@
 package ru.avem.posum.utils;
 
 public class RingBuffer {
-    public double[] elements = null;
+    public double[] elements;
 
-    public int capacity  = 0;
-    public int writePos  = 0;
+    public int capacity = 0;
+    public int writePos = 0;
     public int available = 0;
 
     public RingBuffer(int capacity) {
@@ -17,14 +17,13 @@ public class RingBuffer {
         this.available = 0;
     }
 
-    public boolean put(double[] element){
-
-        if(available < capacity){
-            if(writePos >= capacity){
+    public boolean put(double[] element) {
+        if (available < capacity) {
+            if (writePos >= capacity) {
                 writePos = 0;
             }
-            for (int i = 0; i < element.length; i++) {
-                elements[writePos] = element[i];
+            for (double v : element) {
+                elements[writePos] = v;
                 writePos++;
                 available++;
             }
@@ -34,14 +33,14 @@ public class RingBuffer {
         return false;
     }
 
-    public int take(double[] into, int length){
+    public int take(double[] into, int length) {
         int intoPos = 0;
 
-        if(available <= writePos){
-            int nextPos= writePos - available;
-            int endPos   = nextPos + Math.min(available, length);
+        if (available <= writePos) {
+            int nextPos = writePos - available;
+            int endPos = nextPos + Math.min(available, length);
 
-            for(;nextPos < endPos; nextPos++){
+            for (; nextPos < endPos; nextPos++) {
                 into[intoPos++] = this.elements[nextPos];
             }
             this.available -= intoPos;
@@ -50,9 +49,9 @@ public class RingBuffer {
             int nextPos = writePos - available + capacity;
 
             int leftInTop = capacity - nextPos;
-            if(length <= leftInTop){
+            if (length <= leftInTop) {
                 //copy directly
-                for(; intoPos < length; intoPos++){
+                for (; intoPos < length; intoPos++) {
                     into[intoPos] = this.elements[nextPos++];
                 }
                 this.available -= length;
@@ -60,7 +59,7 @@ public class RingBuffer {
 
             } else {
                 //copy top
-                for(; nextPos < capacity; nextPos++){
+                for (; nextPos < capacity; nextPos++) {
                     into[intoPos++] = this.elements[nextPos];
                 }
 
@@ -69,7 +68,7 @@ public class RingBuffer {
                 int leftToCopy = length - intoPos;
                 int endPos = Math.min(writePos, leftToCopy);
 
-                for(;nextPos < endPos; nextPos++){
+                for (; nextPos < endPos; nextPos++) {
                     into[intoPos++] = this.elements[nextPos];
                 }
 

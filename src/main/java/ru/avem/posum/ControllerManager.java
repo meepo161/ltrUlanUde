@@ -15,11 +15,11 @@ public interface ControllerManager {
 
     int getSelectedModule();
 
+    int getSlot();
+
     CrateModel getCrateModelInstance();
 
     void refreshLTR24Settings();
-
-    void refreshLTR212Settings();
 
     void createListModulesControllers(List<String> modulesNames);
 
@@ -36,4 +36,6 @@ public interface ControllerManager {
     void setupProtocol(Protocol protocol);
 
     void setEditMode(boolean editMode);
+
+    int getLTR34ChannelsCounter();
 }
