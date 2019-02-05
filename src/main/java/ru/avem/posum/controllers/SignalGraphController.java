@@ -1,6 +1,7 @@
 package ru.avem.posum.controllers;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -16,6 +17,8 @@ import ru.avem.posum.utils.RingBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.avem.posum.utils.Utils.sleep;
+
 public class SignalGraphController implements BaseController {
     @FXML
     private LineChart<Number, Number> graph;
@@ -25,117 +28,142 @@ public class SignalGraphController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
 
-    private int slot;
     private LTR24 ltr24;
     private LTR212 ltr212;
-    private double[] buffer = new double[4096];
-    private RingBuffer ringBuffer = new RingBuffer(buffer.length * 10);
-    private int seconds;
-    private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private CrateModel.Moudules moduleType;
-    private int channel;
-    private boolean isDone = true;
+    private double[] data;
+    private double average;
+    private RingBuffer ringBuffer;
+    private volatile XYChart.Series<Number, Number> graphSeries;
+    private volatile boolean isDone;
 
-    @FXML
-    private void initialize() {
-        graphSeries.setName("Канал 1");
-        graph.getData().add(graphSeries);
+    public  void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
+        System.out.println("initializeView");
+        cm.setClosed(false);
+        clear();
+
+        initializeModuleType(selectedSlot);
+
+        new Thread(() -> {
+            while (!cm.isClosed()) {
+                showData(moduleType, channel - 1);
+                while (!isDone && !cm.isClosed()) {
+                    sleep(10);
+                }
+            }
+            isDone = true;
+        }).start();
     }
 
-    private Runnable startShow = () -> {
-        chooseLTR24Slot();
-        chooseLTR212Slot();
-        while (!cm.isClosed()) {
-            showData(moduleType);
-        }
-    };
+    private void clear() {
+        ObservableList<XYChart.Series<Number, Number>> graphData = graph.getData();
+        graphData.clear();
+        graphSeries = new XYChart.Series<>();
+        graphData.add(graphSeries);
+    }
 
-    private void showData(CrateModel.Moudules moduleType) {
-        switch (moduleType) {
-            case LTR24:
-                ltr24.fillArray(ltr24.getSlot(), buffer);
-                ringBuffer.put(buffer);
-                fillSeries();
-                setGraphBounds(-5, 10, 1);
-
-                break;
-            case LTR212:
-                ltr212.fillArray(ltr212.getSlot(), buffer);
-                System.out.println(buffer[0]);
-                ringBuffer.put(buffer);
-                fillSeries();
-                setGraphBounds(-0.1, 0.1, 0.01);
-                break;
+    private void initializeModuleType(int selectedSlot) {
+        if (isDefineLTR24Slot(selectedSlot)) {
+            data = new double[8192];
+            ringBuffer = new RingBuffer(data.length * 100);
+            setGraphBounds(-5, 10, 1, false);
+        } else if (isDefineLTR212Slot(selectedSlot)) {
+            data = new double[2048];
+            ringBuffer = new RingBuffer(data.length * 10);
+            setGraphBounds(-0.1, 0.1, 0.01, false);
+        } else {
+            System.out.println("Module was not defined");
         }
     }
 
-    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit) {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        yAxis.setLowerBound(lowerBound);
-        yAxis.setUpperBound(upperBound);
-        yAxis.setTickUnit(tickUnit);
-    }
-
-    public void fillSeries() {
-        List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-        double[] data = new double[buffer.length];
-
-        ringBuffer.take(data, data.length);
-
-        for (int i = channel; i < data.length; i += 4) {
-            intermediateList.add(new XYChart.Data<>((double) i / (data.length / 4), data[i]));
-        }
-
-        while (!isDone) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ignored) {
+    private boolean isDefineLTR24Slot(int slot) {
+        for (LTR24 module : cm.getCrateModelInstance().getLtr24ModulesList()) {
+            if (module.getSlot() == slot) {
+                ltr24 = module;
+                return true;
             }
         }
+        return false;
+    }
 
+    private boolean isDefineLTR212Slot(int slot) {
+        for (LTR212 module : cm.getCrateModelInstance().getLtr212ModulesList()) {
+            if (module.getSlot() == slot) {
+                ltr212 = module;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void showData(CrateModel.Moudules moduleType, int channelIndex) {
+        switch (moduleType) {
+            case LTR24:
+                if (!ltr24.isBusy()) {
+                    ltr24.receiveData(data);
+                    System.out.println(ltr24.getStatus());
+                    ringBuffer.put(data);
+                    fillSeries(moduleType, channelIndex);
+                }
+                break;
+            case LTR212:
+                if (!ltr212.isBusy()) {
+                    ltr212.receiveData(data);
+                    System.out.println(ltr212.getStatus());
+                    ringBuffer.put(data);
+                    fillSeries(moduleType, channelIndex);
+                }
+                break;
+        }
+    }
+
+    private void fillSeries(CrateModel.Moudules moduleType, int channelIndex) {
+        List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+        double[] buffer = new double[2048];
+        if (moduleType.name().equals("LTR24")) {
+            buffer = new double[29100];
+        }
+
+        ringBuffer.take(buffer, buffer.length);
+        average = 0;
+
+        for (int i = channelIndex; i < buffer.length; i += 4) {
+            intermediateList.add(new XYChart.Data<>((double) i / (buffer.length / 4), buffer[i]));
+            average += buffer[i] / ((double) buffer.length / 4);
+        }
+
+        isDone = false;
         Platform.runLater(() -> {
-            isDone = false;
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
+            valueTextField.setText(Double.toString( (double) (Math.round(average * 100)) / 100));
             isDone = true;
         });
     }
 
-    private void chooseLTR24Slot() {
-        for (LTR24 module : cm.getCrateModelInstance().getLtr24ModulesList()) {
-            if (module.getSlot() == slot) {
-                ltr24 = module;
-            }
-        }
+    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+        yAxis.setAutoRanging(isAutoRangeEnabled);
     }
 
-    private void chooseLTR212Slot() {
-        for (LTR212 module : cm.getCrateModelInstance().getLtr212ModulesList()) {
-            if (module.getSlot() == slot) {
-                ltr212 = module;
-            }
-        }
+    @FXML
+    private void handleClear() {
+        clear();
     }
 
-    public void showValue(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
-        this.moduleType = moduleType;
-        this.slot = selectedSlot;
-        this.channel = channel - 1;
-        cm.setClosed(false);
-        handleClear();
-        new Thread(startShow).start();
-        isDone = true;
-    }
-
-    public void handleCalibrate() {
+    @FXML
+    private void handleCalibrate() {
 
     }
 
-    public void handleBackButton() {
-        cm.setClosed(true);
+    @FXML
+    private void handleBackButton() {
         String module = cm.getCrateModelInstance().getModulesNames(cm.getSelectedCrate()).get(cm.getSelectedModule());
         wm.setModuleScene(module, cm.getSelectedModule());
         cm.loadItemsForModulesTableView();
+        cm.setClosed(true);
     }
 
     @Override
@@ -146,12 +174,5 @@ public class SignalGraphController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    public void handleClear() {
-        graphSeries = new XYChart.Series<>();
-        graph.getData().clear();
-        graph.getData().add(graphSeries);
-        seconds = 0;
     }
 }

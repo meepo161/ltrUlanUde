@@ -417,4 +417,8 @@ public class LTR34SettingController implements BaseController {
         this.cm = cm;
         crateModel = cm.getCrateModelInstance();
     }
+
+    public LTR34 getLtr34() {
+        return ltr34;
+    }
 }

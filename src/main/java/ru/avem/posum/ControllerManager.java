@@ -36,4 +36,6 @@ public interface ControllerManager {
     void setupProtocol(Protocol protocol);
 
     void setEditMode(boolean editMode);
+
+    int getLTR34ChannelsCounter();
 }
