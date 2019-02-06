@@ -21,8 +21,6 @@ import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
-    private TableView<Protocol> experimentsTableView;
-    @FXML
     private TableColumn<Protocol, Integer> columnProtocolId;
     @FXML
     private TableColumn<Protocol, String> columnExperimentName;
@@ -36,10 +34,12 @@ public class MainController implements BaseController {
     private TableColumn<Protocol, String> columnExperimentType;
     @FXML
     private TableColumn<Protocol, String> columnTestingSample;
+    @FXML
+    private TableView<Protocol> experimentsTableView;
 
-    private ObservableList<Protocol> protocols;
     private WindowsManager wm;
     private ControllerManager cm;
+    private ObservableList<Protocol> protocols;
 
     @FXML
     private void initialize() {
@@ -61,8 +61,11 @@ public class MainController implements BaseController {
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
     }
 
-    private int getSelectedItemIndex() {
-         return experimentsTableView.getSelectionModel().getSelectedIndex();
+    public void showPotocols() {
+        ProtocolRepository.updateProtocolIndex();
+        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
+        protocols = FXCollections.observableArrayList(allProtocols);
+        experimentsTableView.setItems(protocols);
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -77,13 +80,6 @@ public class MainController implements BaseController {
         stack.prefWidthProperty().bind(col.widthProperty().subtract(5));
         label.prefWidthProperty().bind(stack.prefWidthProperty());
         col.setGraphic(stack);
-    }
-
-    public void showPotocols() {
-        ProtocolRepository.updateProtocolIndex();
-        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-        protocols = FXCollections.observableArrayList(allProtocols);
-        experimentsTableView.setItems(protocols);
     }
 
     public void handleMenuItemExit() {
@@ -104,6 +100,10 @@ public class MainController implements BaseController {
             cm.setEditMode(true);
             wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         }
+    }
+
+    private int getSelectedItemIndex() {
+        return experimentsTableView.getSelectionModel().getSelectedIndex();
     }
 
     public void handleMenuItemCopy() {

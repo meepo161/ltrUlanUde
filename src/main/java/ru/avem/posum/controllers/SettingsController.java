@@ -40,6 +40,8 @@ public class SettingsController implements BaseController {
     @FXML
     private TextField leadEngineerTextField;
 
+    private WindowsManager wm;
+    private ControllerManager cm;
     private String experimentName;
     private String sampleName;
     private String sampleSerialNumber;
@@ -49,10 +51,6 @@ public class SettingsController implements BaseController {
     private String experimentDate;
     private String leadEngineer;
     private String comments;
-
-    private WindowsManager wm;
-    private ControllerManager cm;
-
     private CrateModel crateModel = new CrateModel();
     private int selectedCrate;
     private int selectedModule;
@@ -105,6 +103,11 @@ public class SettingsController implements BaseController {
         }
     }
 
+    private void showModuleSettings(String module) {
+        String moduleName = (module + " ").substring(0, 6).trim();
+        wm.setModuleScene(moduleName, selectedModule);
+    }
+
     public void handleSaveExperimentGeneralSettings() {
         parseGeneralSettingsData();
 
@@ -142,11 +145,6 @@ public class SettingsController implements BaseController {
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
-    private void showModuleSettings(String module) {
-        String moduleName = (module + " ").substring(0, 6).trim();
-        wm.setModuleScene(moduleName, selectedModule);
-    }
-
     public void refreshModulesList() {
         modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
     }
@@ -177,18 +175,12 @@ public class SettingsController implements BaseController {
         this.protocol = protocol;
     }
 
-    public void setEditMode(boolean editMode) {
-        this.editMode = editMode;
+    public void handleSaveSetup() {
+
     }
 
-    @Override
-    public void setWindowManager(WindowsManager wm) {
-        this.wm = wm;
-    }
-
-    @Override
-    public void setControllerManager(ControllerManager cm) {
-        this.cm = cm;
+    public CrateModel getCrateModel() {
+        return crateModel;
     }
 
     public int getSelectedCrate() {
@@ -203,11 +195,17 @@ public class SettingsController implements BaseController {
         return slot;
     }
 
-    public CrateModel getCrateModel() {
-        return crateModel;
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
     }
 
-    public void handleSaveSetup() {
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
+    }
 
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
     }
 }

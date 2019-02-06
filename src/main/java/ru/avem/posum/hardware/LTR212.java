@@ -11,7 +11,7 @@ public class LTR212 {
     private int slot;
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
-    private boolean busy;
+    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
     public void initModule() {
         status = initialize(crate, slot, channelsTypes, measuringRanges);

@@ -1,6 +1,5 @@
 package ru.avem.posum.hardware;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.avem.posum.utils.TextEncoder;
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class CrateModel {
     public enum Moudules {
-        LTR24, LTR34, LTR212
+        LTR24, LTR212
     }
 
     public static final String LTR24 = "LTR24";
@@ -21,14 +20,13 @@ public class CrateModel {
     private final int LTR_MODULES_PER_CRATE_MAX = 16;
     private String[][] crates = new String[LTR_CRATES_MAX][LTR_CRATES_MAX]; // массив хранит серийные номера, имена и интерфейс подключения крейтов
     private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX];
-    private boolean wasError;
     private String status;
-    private String error;
     private TextEncoder textEncoder = new TextEncoder();
     private List<LTR24> ltr24ModulesList = new ArrayList<>();
     private List<LTR34> ltr34modules = new ArrayList<>();
     private List<LTR212> ltr212modules = new ArrayList<>();
     ObservableList<String> modulesNames = FXCollections.observableArrayList();
+    private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public CrateModel() {
         initCratesList();
@@ -70,6 +68,15 @@ public class CrateModel {
 
     public native String fillCratesList(String[] crates);
 
+    private void checkStatus() {
+        String error;
+
+        if (wasError) {
+            status = textEncoder.cp2utf(status);
+            error = status;
+        }
+    }
+
     public native String getCratesInfo(String[] names, String[] connectionInterfaces);
 
     private void initModulesList() {
@@ -84,16 +91,6 @@ public class CrateModel {
     public native String fillListOfModules(String crate, String[] modules);
 
     public native String stop();
-
-    private void checkStatus() {
-        if (wasError) {
-            status = textEncoder.cp2utf(status);
-            error = status;
-            Platform.runLater(() -> {
-//                baseController.setMainStatusBarText(error);
-            });
-        }
-    }
 
     public ObservableList<String> getCratesNames() {
         ObservableList<String> cratesNames = FXCollections.observableArrayList();
@@ -126,10 +123,6 @@ public class CrateModel {
 
     public String[][] getCrates() {
         return crates;
-    }
-
-    public String[][] getModules() {
-        return modules;
     }
 
     public List<LTR24> getLtr24ModulesList() {

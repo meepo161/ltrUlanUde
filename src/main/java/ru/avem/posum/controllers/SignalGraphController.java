@@ -27,7 +27,6 @@ public class SignalGraphController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
-
     private LTR24 ltr24;
     private LTR212 ltr212;
     private double[] data;
@@ -85,6 +84,14 @@ public class SignalGraphController implements BaseController {
         return false;
     }
 
+    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+        yAxis.setAutoRanging(isAutoRangeEnabled);
+    }
+
     private boolean isDefineLTR212Slot(int slot) {
         for (LTR212 module : cm.getCrateModelInstance().getLtr212ModulesList()) {
             if (module.getSlot() == slot) {
@@ -138,14 +145,6 @@ public class SignalGraphController implements BaseController {
             valueTextField.setText(Double.toString( (double) (Math.round(average * 100)) / 100));
             isDone = true;
         });
-    }
-
-    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        yAxis.setLowerBound(lowerBound);
-        yAxis.setUpperBound(upperBound);
-        yAxis.setTickUnit(tickUnit);
-        yAxis.setAutoRanging(isAutoRangeEnabled);
     }
 
     @FXML
