@@ -75,21 +75,15 @@ public class LTR34SettingController implements BaseController {
     @FXML
     private TextField amplitudeOfChannelN8;
 
-    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
-    private List<TextField> frequencyTextFields = new ArrayList<>();
-    private List<TextField> amplitudeTextFields = new ArrayList<>();
-
     private WindowsManager wm;
     private ControllerManager cm;
+    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
+    private List<TextField> amplitudeTextFields = new ArrayList<>();
+    private List<TextField> frequencyTextFields = new ArrayList<>();
     private LTR34 ltr34 = new LTR34();
-
     private CrateModel crateModel;
-    private int selectedCrate;
-    private String[] cratesSN;
-    private int selectedSlot;
-
     private List<Pair<Integer, Integer>> signalParameters;
-    double signal[] = new double[500_000]; // массив данных для генерации сигнала для каждого канала
+    private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
 
 
     @FXML
@@ -251,6 +245,10 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleGenerateSignal() {
+        int selectedCrate;
+        String[] cratesSN;
+        int selectedSlot;
+
         selectedCrate = cm.getSelectedCrate();
         cratesSN = crateModel.getCrates()[0];
         selectedSlot = cm.getSlot();

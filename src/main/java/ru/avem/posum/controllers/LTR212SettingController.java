@@ -60,20 +60,15 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private TextField descriptionOfChannelN4;
 
+    private WindowsManager wm;
+    private ControllerManager cm;
     private List<TextField> channelsDescription = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private List<Button> valueOfChannelsButtons = new ArrayList<>();
-
-    private WindowsManager wm;
-    private ControllerManager cm;
     private LTR212 ltr212 = new LTR212();
-
     private CrateModel crateModel;
-    private int selectedCrate;
-    private String[] cratesSN;
-    private int slot;
 
     @FXML
     private void initialize() {
@@ -220,6 +215,10 @@ public class LTR212SettingController implements BaseController {
     }
 
     public void handleInitialize() {
+        int selectedCrate;
+        String[] cratesSN;
+        int slot;
+
         selectedCrate = cm.getSelectedCrate();
         cratesSN = crateModel.getCrates()[0];
         slot = cm.getSlot();

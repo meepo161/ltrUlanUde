@@ -14,27 +14,12 @@ import java.util.List;
 
 public class LoginController implements BaseController {
     @FXML
-    private TextField userLogin;
-    @FXML
     private PasswordField userPassword;
+    @FXML
+    private TextField userLogin;
 
     private Main main;
     private WindowsManager wm;
-
-
-    @Override
-    public void setWindowManager(WindowsManager wm) {
-        this.wm = wm;
-    }
-
-    @Override
-    public void setControllerManager(ControllerManager cm) {
-
-    }
-
-    public void showScene() {
-        wm.setScene(WindowsManager.Scenes.LOGIN_SCENE);
-    }
 
     @FXML
     private void handleLogIn() {
@@ -66,6 +51,20 @@ public class LoginController implements BaseController {
                 }
             }
         }
+    }
+
+    public void showScene() {
+        wm.setScene(WindowsManager.Scenes.LOGIN_SCENE);
+    }
+
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+
     }
 
     public void setMainApp(Main main) {

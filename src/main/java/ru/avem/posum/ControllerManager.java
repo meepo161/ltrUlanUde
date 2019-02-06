@@ -11,6 +11,14 @@ public interface ControllerManager {
 
     void loadItemsForModulesTableView();
 
+    void refreshLTR24Settings();
+
+    void clearSettingsView();
+
+    void createListModulesControllers(List<String> modulesNames);
+
+    void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
+
     int getSelectedCrate();
 
     int getSelectedModule();
@@ -19,23 +27,13 @@ public interface ControllerManager {
 
     CrateModel getCrateModelInstance();
 
-    void refreshLTR24Settings();
-
-    void createListModulesControllers(List<String> modulesNames);
-
-    void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
-
     ExperimentModel getExperimentModel();
-
-    boolean isClosed();
-
-    void setClosed(boolean closed);
-
-    void clearSettingsView();
 
     void setupProtocol(Protocol protocol);
 
     void setEditMode(boolean editMode);
 
-    int getLTR34ChannelsCounter();
+    boolean isClosed();
+
+    void setClosed(boolean closed);
 }

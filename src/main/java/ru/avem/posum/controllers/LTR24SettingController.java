@@ -60,20 +60,15 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private TextField descriptionOfChannelN4;
 
-    private List<TextField> channelsDescription = new ArrayList<>();
+    private WindowsManager wm;
+    private ControllerManager cm;
+    private List<Button> valueOfChannelsButtons = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
-    private List<Button> valueOfChannelsButtons = new ArrayList<>();
-
-    private WindowsManager wm;
-    private ControllerManager cm;
+    private List<TextField> channelsDescription = new ArrayList<>();
     private LTR24 ltr24 = new LTR24();
-
     private CrateModel crateModel;
-    private int selectedCrate;
-    private String[] cratesSN;
-    private int selectedModule;
 
     @FXML
     private void initialize() {
@@ -238,6 +233,10 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleInitialize() {
+        int selectedCrate;
+        String[] cratesSN;
+        int selectedModule;
+
         selectedCrate = cm.getSelectedCrate();
         cratesSN = crateModel.getCrates()[0];
         selectedModule = cm.getSlot();
