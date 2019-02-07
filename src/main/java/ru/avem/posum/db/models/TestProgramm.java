@@ -7,8 +7,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 @XmlRootElement
-@DatabaseTable(tableName = "protocols")
-public class Protocol{
+@DatabaseTable(tableName = "testProgramms")
+public class TestProgramm {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
@@ -32,19 +32,21 @@ public class Protocol{
     @DatabaseField
     private String comments;
 
-    public Protocol() {
+    private Crate crate;
+
+    public TestProgramm() {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public Protocol(String experimentName,
-                    String sampleName,
-                    String sampleSerialNumber,
-                    String documentNumber,
-                    String experimentType,
-                    String experimentTime,
-                    String experimentDate,
-                    String leadEngineer,
-                    String comments) {
+    public TestProgramm(String experimentName,
+                        String sampleName,
+                        String sampleSerialNumber,
+                        String documentNumber,
+                        String experimentType,
+                        String experimentTime,
+                        String experimentDate,
+                        String leadEngineer,
+                        String comments) {
         index++;
         this.experimentName = experimentName;
         this.sampleName = sampleName;
@@ -147,7 +149,7 @@ public class Protocol{
 
     @Override
     public String toString() {
-        return "Protocol{" +
+        return "TestProgramm{" +
                 "id=" + id +
                 ", experimentName='" + experimentName + '\'' +
                 ", sampleName='" + sampleName + '\'' +
@@ -165,17 +167,17 @@ public class Protocol{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Protocol protocol = (Protocol) o;
-        return id == protocol.id &&
-                Objects.equals(experimentName, protocol.experimentName) &&
-                Objects.equals(sampleName, protocol.sampleName) &&
-                Objects.equals(sampleSerialNumber, protocol.sampleSerialNumber) &&
-                Objects.equals(documentNumber, protocol.documentNumber) &&
-                Objects.equals(experimentType, protocol.experimentType) &&
-                Objects.equals(experimentTime, protocol.experimentTime) &&
-                Objects.equals(experimentDate, protocol.experimentDate) &&
-                Objects.equals(leadEngineer, protocol.leadEngineer) &&
-                Objects.equals(comments, protocol.comments);
+        TestProgramm testProgramm = (TestProgramm) o;
+        return id == testProgramm.id &&
+                Objects.equals(experimentName, testProgramm.experimentName) &&
+                Objects.equals(sampleName, testProgramm.sampleName) &&
+                Objects.equals(sampleSerialNumber, testProgramm.sampleSerialNumber) &&
+                Objects.equals(documentNumber, testProgramm.documentNumber) &&
+                Objects.equals(experimentType, testProgramm.experimentType) &&
+                Objects.equals(experimentTime, testProgramm.experimentTime) &&
+                Objects.equals(experimentDate, testProgramm.experimentDate) &&
+                Objects.equals(leadEngineer, testProgramm.leadEngineer) &&
+                Objects.equals(comments, testProgramm.comments);
     }
 
     @Override

@@ -24,11 +24,24 @@ public class LTR34 {
         }
     }
 
+    public void closeConnection() {
+        try {
+            close();
+            initModule();
+            dataSend(new double[500_000]);
+            start();
+            Thread.sleep(100);
+            close();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public native void dataSend(double[] data);
 
     public native String start();
 
-    public native String stop();
+    public native String close();
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
@@ -63,6 +76,6 @@ public class LTR34 {
     }
 
     static {
-        System.loadLibrary("LTR34Library");
+        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR34Library.dll");
     }
 }

@@ -12,6 +12,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR34;
+import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,6 +85,7 @@ public class LTR34SettingController implements BaseController {
     private CrateModel crateModel;
     private List<Pair<Integer, Integer>> signalParameters;
     private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
+    private StatusBarLine statusBarLine = new StatusBarLine();
 
 
     @FXML
@@ -259,6 +261,8 @@ public class LTR34SettingController implements BaseController {
         ltr34.initModule();
 
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
+            crateModel.getLtr34ModulesList().add(ltr34);
+
             calculateSignal();
 
             ltr34.dataSend(signal);
@@ -269,7 +273,7 @@ public class LTR34SettingController implements BaseController {
             disableUiElements();
         }
 
-        statusBar.setText(ltr34.getStatus());
+        statusBarLine.setStatus(ltr34.getStatus(), statusBar);
     }
 
     private void calculateSignal() {
@@ -369,18 +373,8 @@ public class LTR34SettingController implements BaseController {
         }
     }
 
-    public void handleStopSignal() throws InterruptedException {
-        ltr34.stop();
-
-        for (int i = 0; i < signal.length; i++) {
-            signal[i] = 0;
-        }
-        ltr34.initModule();
-        ltr34.dataSend(signal);
-        ltr34.start();
-        Thread.sleep(1000);
-        ltr34.stop();
-
+    public void handleStopSignal() {
+        ltr34.closeConnection();
 
         enableChannelsUiElements();
         graph.getData().clear();

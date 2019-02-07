@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
 
@@ -181,7 +181,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setScene(processScene);
                 break;
             case LTR24_SCENE:
-                primaryStage.setTitle("Настройки модуля LTR24");
+                primaryStage.setTitle("Настройки модуля LTR24Table");
                 primaryStage.setScene(ltr24Scene);
                 break;
             case LTR34_SCENE:
@@ -233,8 +233,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void clearSettingsView() {
-        settingsController.clearSettingsView();
+    public void loadDefaultSettings() {
+        settingsController.loadDefaultSettings();
     }
 
     @Override
@@ -304,8 +304,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void setupProtocol(Protocol protocol) {
-        settingsController.setupProtocol(protocol);
+    public void setupProtocol(TestProgramm testProgramm) {
+        settingsController.setupProtocol(testProgramm);
     }
 
     @Override

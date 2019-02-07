@@ -25,7 +25,7 @@ public class CrateModel {
     private List<LTR24> ltr24ModulesList = new ArrayList<>();
     private List<LTR34> ltr34modules = new ArrayList<>();
     private List<LTR212> ltr212modules = new ArrayList<>();
-    ObservableList<String> modulesNames = FXCollections.observableArrayList();
+    private ObservableList<String> modulesNames = FXCollections.observableArrayList();
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public CrateModel() {
@@ -69,11 +69,8 @@ public class CrateModel {
     public native String fillCratesList(String[] crates);
 
     private void checkStatus() {
-        String error;
-
         if (wasError) {
             status = textEncoder.cp2utf(status);
-            error = status;
         }
     }
 
@@ -117,7 +114,7 @@ public class CrateModel {
         return modulesNames;
     }
 
-    public ObservableList<String> getModulesNames(int crate) {
+    public ObservableList<String> getModulesNames() {
         return modulesNames;
     }
 
@@ -138,6 +135,6 @@ public class CrateModel {
     }
 
     static {
-        System.loadLibrary("CrateLibrary");
+        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\CrateLibrary.dll");
     }
 }

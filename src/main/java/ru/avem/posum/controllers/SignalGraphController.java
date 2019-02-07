@@ -126,7 +126,7 @@ public class SignalGraphController implements BaseController {
     private void fillSeries(CrateModel.Moudules moduleType, int channelIndex) {
         List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
         double[] buffer = new double[2048];
-        if (moduleType.name().equals("LTR24")) {
+        if (moduleType.name().equals("LTR24Table")) {
             buffer = new double[29100];
         }
 
@@ -159,7 +159,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleBackButton() {
-        String module = cm.getCrateModelInstance().getModulesNames(cm.getSelectedCrate()).get(cm.getSelectedModule());
+        String module = cm.getCrateModelInstance().getModulesNames().get(cm.getSelectedModule());
         wm.setModuleScene(module, cm.getSelectedModule());
         cm.loadItemsForModulesTableView();
         cm.setClosed(true);

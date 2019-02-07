@@ -18,9 +18,11 @@ public class DataBaseRepository {
             Account user = new Account("user", "user");
             AccountRepository.insertAccount(user);
 
+            CrateRepository.createTable(Crate.class);
+
             TestingSampleRepository.createTable(TestingSample.class);
 
-            ProtocolRepository.createTable(Protocol.class);
+            ProtocolRepository.createTable(TestProgramm.class);
 
             EventRepository.createTable(Event.class);
 

@@ -14,32 +14,32 @@ import javafx.scene.text.TextAlignment;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.ProtocolRepository;
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
-    private TableColumn<Protocol, Integer> columnProtocolId;
+    private TableColumn<TestProgramm, Integer> columnProtocolId;
     @FXML
-    private TableColumn<Protocol, String> columnExperimentName;
+    private TableColumn<TestProgramm, String> columnExperimentName;
     @FXML
-    private TableColumn<Protocol, String> columnProtocolCreatingDate;
+    private TableColumn<TestProgramm, String> columnProtocolCreatingDate;
     @FXML
-    private TableColumn<Protocol, String> columnProtocolChangingDate;
+    private TableColumn<TestProgramm, String> columnProtocolChangingDate;
     @FXML
-    private TableColumn<Protocol, String> columnExperimentTime;
+    private TableColumn<TestProgramm, String> columnExperimentTime;
     @FXML
-    private TableColumn<Protocol, String> columnExperimentType;
+    private TableColumn<TestProgramm, String> columnExperimentType;
     @FXML
-    private TableColumn<Protocol, String> columnTestingSample;
+    private TableColumn<TestProgramm, String> columnTestingSample;
     @FXML
-    private TableView<Protocol> experimentsTableView;
+    private TableView<TestProgramm> experimentsTableView;
 
     private WindowsManager wm;
     private ControllerManager cm;
-    private ObservableList<Protocol> protocols;
+    private ObservableList<TestProgramm> testProgramms;
 
     @FXML
     private void initialize() {
@@ -63,9 +63,9 @@ public class MainController implements BaseController {
 
     public void showPotocols() {
         ProtocolRepository.updateProtocolIndex();
-        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-        protocols = FXCollections.observableArrayList(allProtocols);
-        experimentsTableView.setItems(protocols);
+        List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
+        testProgramms = FXCollections.observableArrayList(allTestProgramms);
+        experimentsTableView.setItems(testProgramms);
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -87,15 +87,15 @@ public class MainController implements BaseController {
     }
 
     public void handleMenuItemAdd() {
-        cm.clearSettingsView();
+        cm.loadDefaultSettings();
         cm.setEditMode(false);
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
     public void handleMenuItemSetup() {
         if (getSelectedItemIndex() != -1) {
-            List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-            cm.setupProtocol(allProtocols.get(getSelectedItemIndex()));
+            List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
+            cm.setupProtocol(allTestProgramms.get(getSelectedItemIndex()));
             cm.loadItemsForMainTableView();
             cm.setEditMode(true);
             wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
@@ -108,16 +108,16 @@ public class MainController implements BaseController {
 
     public void handleMenuItemCopy() {
         if (getSelectedItemIndex() != -1) {
-            List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-            Protocol protocol = allProtocols.get(getSelectedItemIndex());
-            ProtocolRepository.insertProtocol(protocol);
+            List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
+            TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
+            ProtocolRepository.insertProtocol(testProgramm);
             cm.loadItemsForMainTableView();
         }
     }
 
     public void handleMenuItemDelete() {
-        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-        ProtocolRepository.deleteProtocol(allProtocols.get(getSelectedItemIndex()));
+        List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
+        ProtocolRepository.deleteProtocol(allTestProgramms.get(getSelectedItemIndex()));
         cm.loadItemsForMainTableView();
     }
 
@@ -126,14 +126,14 @@ public class MainController implements BaseController {
 
     public void handleOpenExpirement() {
         //проверка выбрана ли позиция в таблице и существует ли она
-        if(protocols.size() > 0) {
-            Protocol protocolItem = experimentsTableView.getSelectionModel().getSelectedItem();
-            if(protocolItem == null) {
+        if(testProgramms.size() > 0) {
+            TestProgramm testProgrammItem = experimentsTableView.getSelectionModel().getSelectedItem();
+            if(testProgrammItem == null) {
                 Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
                 return;
             }
             // передать данные в класс проведения эксперемента
-            cm.getExperimentModel().SetTestId(protocolItem.getId());
+            cm.getExperimentModel().SetTestId(testProgrammItem.getId());
             // вызвать окно проведения эксперемента
             wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
         } else {

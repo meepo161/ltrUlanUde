@@ -33,12 +33,12 @@ public class LTR212 {
 
     public native String fillArray(int slot, double[] data);
 
-    public void stop() {
-        status = stop(slot);
+    public void closeConnection() {
+        status = close(slot);
         checkStatus();
     }
 
-    public native String stop(int slot);
+    public native String close(int slot);
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
@@ -77,6 +77,6 @@ public class LTR212 {
     }
 
     static {
-        System.loadLibrary("LTR212Library");
+        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR212Library.dll");
     }
 }

@@ -3,12 +3,17 @@ package ru.avem.posum.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.db.models.LTR24Table;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR24;
+import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +74,7 @@ public class LTR24SettingController implements BaseController {
     private List<TextField> channelsDescription = new ArrayList<>();
     private LTR24 ltr24 = new LTR24();
     private CrateModel crateModel;
+    private StatusBarLine statusBarLine = new StatusBarLine();
 
     @FXML
     private void initialize() {
@@ -253,10 +259,12 @@ public class LTR24SettingController implements BaseController {
         }
 
         ltr24.initModule();
-        statusBar.setText(ltr24.getStatus());
+        statusBarLine.setStatus(ltr24.getStatus(), statusBar);
 
         if (ltr24.getStatus().equals("Операция успешно выполнена")) {
             crateModel.getLtr24ModulesList().add(ltr24);
+            LTR24Table ltr24Table = new LTR24Table(ltr24.getCheckedChannels(), ltr24.getChannelsTypes(), ltr24.getMeasuringRanges(), ltr24.getChannelsDescription(), ltr24.getCrate(), ltr24.getSlot());
+
             disableUiElements();
             enableChannelsButtons();
         }

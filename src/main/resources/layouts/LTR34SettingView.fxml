@@ -45,12 +45,7 @@
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="5" />
-            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="12" />
-            <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="11">
-               <GridPane.margin>
-                  <Insets left="140.0" />
-               </GridPane.margin>
-            </Button>
+            <Label styleClass="title" text="Настройки модуля LTR34" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <LineChart fx:id="graph" animated="false" createSymbols="false" disable="true" legendSide="RIGHT" title="Управляющий сигнал" GridPane.columnSpan="10" GridPane.rowIndex="2">
                <xAxis>
                   <NumberAxis animated="false" autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
@@ -75,6 +70,26 @@
                </GridPane.margin>
             </CheckBox>
             <CheckBox fx:id="checkChannelN4" mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="4" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN5" mnemonicParsing="false" text="Канал 5" GridPane.columnIndex="5" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN6" mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="6" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN7" mnemonicParsing="false" text="Канал 7" GridPane.columnIndex="7" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN8" mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="8" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
@@ -119,11 +134,6 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox fx:id="checkChannelN5" mnemonicParsing="false" text="Канал 5" GridPane.columnIndex="5" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
             <TextField fx:id="frequencyOfChannelN5" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="5" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -134,11 +144,6 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox fx:id="checkChannelN6" mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="6" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
             <TextField fx:id="frequencyOfChannelN6" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="6" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -149,11 +154,6 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox fx:id="checkChannelN7" mnemonicParsing="false" text="Канал 7" GridPane.columnIndex="7" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
             <TextField fx:id="frequencyOfChannelN7" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="7" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -164,11 +164,6 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <CheckBox fx:id="checkChannelN8" mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="8" GridPane.rowIndex="3">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
             <TextField fx:id="frequencyOfChannelN8" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="8" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -179,13 +174,18 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <Label styleClass="title" text="Настройки модуля LTR34" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <Button fx:id="generateSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleGenerateSignal" text="Генерировать сигнал" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
                <GridPane.margin>
                   <Insets right="140.0" />
                </GridPane.margin>
             </Button>
             <Button fx:id="stopSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleStopSignal" text="Остановить" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="11">
+               <GridPane.margin>
+                  <Insets left="140.0" />
+               </GridPane.margin>
+            </Button>
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="12" />
          </children>
       </GridPane>
    </children>

@@ -3,12 +3,16 @@ package ru.avem.posum.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +73,7 @@ public class LTR212SettingController implements BaseController {
     private List<Button> valueOfChannelsButtons = new ArrayList<>();
     private LTR212 ltr212 = new LTR212();
     private CrateModel crateModel;
+    private StatusBarLine statusBarLine = new StatusBarLine();
 
     @FXML
     private void initialize() {
@@ -236,16 +241,16 @@ public class LTR212SettingController implements BaseController {
 
         ltr212.initModule();
         if (ltr212.getStatus().equals("Четверть-мостовые резисторы должны быть одинаковы для всех каналов АЦП")) {
-            statusBar.setText(ltr212.getStatus());
-            ltr212.stop();
+            statusBarLine.setStatus(ltr212.getStatus(), statusBar);
+            ltr212.closeConnection();
         } else if (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
             while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
-                ltr212.stop();
+                ltr212.closeConnection();
                 ltr212.initModule();
             }
         }
 
-        statusBar.setText(ltr212.getStatus());
+        statusBarLine.setStatus(ltr212.getStatus(), statusBar);
 
         if (ltr212.getStatus().equals("Операция успешно выполнена")) {
             crateModel.getLtr212ModulesList().add(ltr212);

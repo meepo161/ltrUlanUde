@@ -18,6 +18,8 @@ public class LTR24 {
         checkStatus();
     }
 
+    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
+
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
@@ -29,11 +31,14 @@ public class LTR24 {
         checkStatus();
     }
 
-    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
-
     public native String fillArray(int slot, double[] data);
 
-    public native String closeModule();
+    public void closeConnection() {
+        status = close(slot);
+        checkStatus();
+    }
+
+    public native String close(int slot);
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
@@ -55,6 +60,10 @@ public class LTR24 {
         this.crate = crate;
     }
 
+    public String getCrate() {
+        return crate;
+    }
+
     public int getSlot() {
         return slot;
     }
@@ -72,6 +81,6 @@ public class LTR24 {
     }
 
     static {
-        System.loadLibrary("LTR24Library");
+        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR24Library.dll");
     }
 }

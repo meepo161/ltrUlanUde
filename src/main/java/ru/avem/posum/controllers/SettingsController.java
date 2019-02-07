@@ -8,13 +8,23 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.db.CrateRepository;
 import ru.avem.posum.db.ProtocolRepository;
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.Crate;
+import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
+import ru.avem.posum.hardware.LTR34;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsController implements BaseController {
     @FXML
     private Button chooseCrateButton;
+    @FXML
+    private Button saveSetupButton;
     @FXML
     private Button setupModuleButton;
     @FXML
@@ -55,7 +65,8 @@ public class SettingsController implements BaseController {
     private int selectedCrate;
     private int selectedModule;
     private int slot;
-    private Protocol protocol;
+    private TestProgramm testProgramm;
+    private Crate crate;
     private boolean editMode;
 
     @FXML
@@ -63,12 +74,32 @@ public class SettingsController implements BaseController {
         initCrate();
     }
 
+    public void loadDefaultSettings() {
+        experimentNameTextField.setText("");
+        sampleNameTextField.setText("");
+        sampleSerialNumberTextField.setText("");
+        documentNumberTextField.setText("");
+        experimentTypeTextField.setText("");
+        experimentTimeTextField.setText("");
+        experimentDateTextField.setText("");
+        leadEngineerTextField.setText("");
+        commentsTextArea.setText("");
+
+        cratesListView.getSelectionModel().clearSelection();
+        modulesListView.getSelectionModel().clearSelection();
+
+        cratesListView.setDisable(false);
+        modulesListView.setDisable(true);
+        chooseCrateButton.setDisable(false);
+        setupModuleButton.setDisable(true);
+    }
+
     private void initCrate() {
         cratesListView.setItems(crateModel.getCratesNames());
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
             modulesListView.setItems(crateModel.fillModulesNames(selectedCrate));
-            cm.createListModulesControllers(crateModel.getModulesNames(selectedCrate));
+            cm.createListModulesControllers(crateModel.getModulesNames());
         }));
     }
 
@@ -80,13 +111,14 @@ public class SettingsController implements BaseController {
                 cratesListView.setDisable(true);
                 chooseCrateButton.setDisable(true);
                 modulesListView.setDisable(false);
+                saveSetupButton.setDisable(false);
                 setupModuleButton.setDisable(false);
             }
         }
     }
 
     public void handleSetupModule() {
-        ObservableList<String> modulesNames = crateModel.getModulesNames(selectedCrate);
+        ObservableList<String> modulesNames = crateModel.getModulesNames();
 
         for (int i = 0; i < modulesNames.size(); i++) {
             if (modulesListView.getSelectionModel().isSelected(i)) {
@@ -112,19 +144,19 @@ public class SettingsController implements BaseController {
         parseGeneralSettingsData();
 
         if (editMode) {
-            protocol.setExperimentName(experimentName);
-            protocol.setSampleName(sampleName);
-            protocol.setSampleSerialNumber(sampleSerialNumber);
-            protocol.setDocumentNumber(documentNumber);
-            protocol.setExperimentType(experimentType);
-            protocol.setExperimentTime(experimentTime);
-            protocol.setExperimentDate(experimentDate);
-            protocol.setLeadEngineer(leadEngineer);
-            protocol.setComments(comments);
-            ProtocolRepository.updateProtocol(protocol);
+            testProgramm.setExperimentName(experimentName);
+            testProgramm.setSampleName(sampleName);
+            testProgramm.setSampleSerialNumber(sampleSerialNumber);
+            testProgramm.setDocumentNumber(documentNumber);
+            testProgramm.setExperimentType(experimentType);
+            testProgramm.setExperimentTime(experimentTime);
+            testProgramm.setExperimentDate(experimentDate);
+            testProgramm.setLeadEngineer(leadEngineer);
+            testProgramm.setComments(comments);
+            ProtocolRepository.updateProtocol(testProgramm);
         } else {
-            protocol = new Protocol(experimentName, sampleName, sampleSerialNumber, documentNumber, experimentType, experimentTime, experimentDate, leadEngineer, comments);
-            ProtocolRepository.insertProtocol(protocol);
+            testProgramm = new TestProgramm(experimentName, sampleName, sampleSerialNumber, documentNumber, experimentType, experimentTime, experimentDate, leadEngineer, comments);
+            ProtocolRepository.insertProtocol(testProgramm);
         }
     }
 
@@ -141,42 +173,65 @@ public class SettingsController implements BaseController {
     }
 
     public void handleBackButton() {
+        stopModules();
+
         cm.loadItemsForMainTableView();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
+    private void stopModules() {
+        for (LTR24 ltr24 : crateModel.getLtr24ModulesList()) {
+            ltr24.closeConnection();
+        }
+
+        for (LTR34 ltr34 : crateModel.getLtr34ModulesList()) {
+            ltr34.closeConnection();
+        }
+
+        for (LTR212 ltr212 : crateModel.getLtr212ModulesList()) {
+            ltr212.closeConnection();
+        }
+    }
+
     public void refreshModulesList() {
-        modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
+        modulesListView.setItems(crateModel.getModulesNames());
     }
 
-    public void clearSettingsView() {
-        experimentNameTextField.setText("");
-        sampleNameTextField.setText("");
-        sampleSerialNumberTextField.setText("");
-        documentNumberTextField.setText("");
-        experimentTypeTextField.setText("");
-        experimentTimeTextField.setText("");
-        experimentDateTextField.setText("");
-        leadEngineerTextField.setText("");
-        commentsTextArea.setText("");
-    }
+    public void setupProtocol(TestProgramm testProgramm) {
+        experimentNameTextField.setText(testProgramm.getExperimentName());
+        sampleNameTextField.setText(testProgramm.getSampleName());
+        sampleSerialNumberTextField.setText(testProgramm.getSampleSerialNumber());
+        documentNumberTextField.setText(testProgramm.getDocumentNumber());
+        experimentTypeTextField.setText(testProgramm.getExperimentType());
+        experimentTimeTextField.setText(testProgramm.getExperimentTime());
+        experimentDateTextField.setText(testProgramm.getExperimentDate());
+        leadEngineerTextField.setText(testProgramm.getLeadEngineer());
+        commentsTextArea.setText(testProgramm.getComments());
 
-    public void setupProtocol(Protocol protocol) {
-        experimentNameTextField.setText(protocol.getExperimentName());
-        sampleNameTextField.setText(protocol.getSampleName());
-        sampleSerialNumberTextField.setText(protocol.getSampleSerialNumber());
-        documentNumberTextField.setText(protocol.getDocumentNumber());
-        experimentTypeTextField.setText(protocol.getExperimentType());
-        experimentTimeTextField.setText(protocol.getExperimentTime());
-        experimentDateTextField.setText(protocol.getExperimentDate());
-        leadEngineerTextField.setText(protocol.getLeadEngineer());
-        commentsTextArea.setText(protocol.getComments());
-
-        this.protocol = protocol;
+        this.testProgramm = testProgramm;
     }
 
     public void handleSaveSetup() {
+        List<String> LTR24List = new ArrayList<>();
+        List<String> LTR34List = new ArrayList<>();
+        List<String> LTR212List = new ArrayList<>();
 
+        for (String module : crateModel.getModulesNames()) {
+            switch (module.split(" ")[0]) {
+                case CrateModel.LTR24:
+                    LTR24List.add(module);
+                    break;
+                case CrateModel.LTR34 :
+                    LTR34List.add(module);
+                    break;
+                case CrateModel.LTR212:
+                    LTR212List.add(module);
+                    break;
+            }
+        }
+
+        crate = new Crate(crateModel.getCrates()[0][selectedCrate], LTR24List, LTR34List, LTR212List);
+        CrateRepository.insertCrate(crate);
     }
 
     public CrateModel getCrateModel() {

@@ -1,6 +1,6 @@
 package ru.avem.posum;
 
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
 
@@ -13,7 +13,7 @@ public interface ControllerManager {
 
     void refreshLTR24Settings();
 
-    void clearSettingsView();
+    void loadDefaultSettings();
 
     void createListModulesControllers(List<String> modulesNames);
 
@@ -29,7 +29,7 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    void setupProtocol(Protocol protocol);
+    void setupProtocol(TestProgramm testProgramm);
 
     void setEditMode(boolean editMode);
 
