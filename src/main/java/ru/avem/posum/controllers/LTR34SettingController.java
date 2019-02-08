@@ -247,44 +247,41 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleGenerateSignal() {
-        int selectedCrate;
-        String[] cratesSN;
-        int selectedSlot;
-
-        selectedCrate = cm.getSelectedCrate();
-        cratesSN = crateModel.getCrates()[0];
-        selectedSlot = cm.getSlot();
+        parseChannelsSettings();
 
         ltr34.countChannels();
-        ltr34.setCrate(cratesSN[selectedCrate]);
-        ltr34.setSlot(selectedSlot);
         ltr34.initModule();
 
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
-            crateModel.getLtr34ModulesList().add(ltr34);
-
-            calculateSignal();
-
+            createChannelsData();
             ltr34.dataSend(signal);
             ltr34.start();
-
             drawGraph();
-
             disableUiElements();
         }
 
         statusBarLine.setStatus(ltr34.getStatus(), statusBar);
     }
 
-    private void calculateSignal() {
+    private void parseChannelsSettings() {
+        int selectedCrate = cm.getSelectedCrate();
+        String[] cratesSN = crateModel.getCrates()[0];
+        int selectedSlot = cm.getSlot();
+
+        ltr34.countChannels();
+        ltr34.setCrate(cratesSN[selectedCrate]);
+        ltr34.setSlot(selectedSlot);
+
         signalParameters = new ArrayList<>();
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            ltr34.getCheckedChannels()[i] = true; // true - канал выбран
             int frequency = parse(frequencyTextFields.get(i));
             int amplitude = parse(amplitudeTextFields.get(i));
             signalParameters.add(new Pair<>(frequency, amplitude));
+            ltr34.getChannelsParameters()[0][i] = frequency;
+            ltr34.getChannelsParameters()[1][i] = amplitude;
         }
-        createChannelsData();
     }
 
     private int parse(TextField textField) {
@@ -394,9 +391,22 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleBackButton() {
+        searchLTR34Instance();
+        parseChannelsSettings();
+
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    private void searchLTR34Instance() {
+        int selectedModule = cm.getSelectedModule();
+
+        for (Pair<Integer, LTR34> module : crateModel.getLtr34ModulesList()) {
+            if (module.getKey() == selectedModule) {
+                ltr34 = module.getValue();
+            }
+        }
     }
 
     @Override

@@ -55,8 +55,16 @@ public class LTR34 {
         return channelsCounter;
     }
 
+    public String getCrate() {
+        return crate;
+    }
+
     public void setCrate(String crate) {
         this.crate = crate;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     public void setSlot(int slot) {

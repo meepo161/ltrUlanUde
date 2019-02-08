@@ -56,6 +56,10 @@ public class LTR212 {
         return channelsDescription;
     }
 
+    public String getCrate() {
+        return crate;
+    }
+
     public void setCrate(String crate) {
         this.crate = crate;
     }

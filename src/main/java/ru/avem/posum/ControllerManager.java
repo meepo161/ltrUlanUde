@@ -11,8 +11,6 @@ public interface ControllerManager {
 
     void loadItemsForModulesTableView();
 
-    void refreshLTR24Settings();
-
     void loadDefaultSettings();
 
     void createListModulesControllers(List<String> modulesNames);
@@ -29,7 +27,7 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    void setupProtocol(TestProgramm testProgramm);
+    void loadTestProgramm(TestProgramm testProgramm);
 
     void setEditMode(boolean editMode);
 

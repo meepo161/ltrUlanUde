@@ -26,7 +26,7 @@
                 <Menu mnemonicParsing="false" text="Редактировать">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAdd" text="Добавить" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleMenuItemSetup" text="Настроить" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuItemEdit" text="Настроить" />
                   <MenuItem mnemonicParsing="false" onAction="#handleMenuItemCopy" text="Копировать" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDelete" text="Удалить" />
@@ -54,12 +54,12 @@
                     <children>
                         <TableView fx:id="experimentsTableView">
                             <columns>
-                                <TableColumn fx:id="columnProtocolId" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: center;" text="ID" />
-                                <TableColumn fx:id="columnExperimentName" minWidth="80.0" text="Название испытания" />
-                                <TableColumn fx:id="columnProtocolCreatingDate" minWidth="80.0" text="Дата создания" />
-                                <TableColumn fx:id="columnProtocolChangingDate" minWidth="80.0" text="Дата изменения" />
-                                <TableColumn fx:id="columnExperimentTime" minWidth="80.0" text="Длительность испытания" />
-                                <TableColumn fx:id="columnExperimentType" minWidth="80.0" text="Тип испытаний" />
+                                <TableColumn fx:id="columnTableViewIndex" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: center;" text="ID" />
+                                <TableColumn fx:id="columnTestProgrammName" minWidth="80.0" text="Название испытания" />
+                                <TableColumn fx:id="columnTestProgrammCreatingDate" minWidth="80.0" text="Дата создания" />
+                                <TableColumn fx:id="columnTestProgrammChangingDate" minWidth="80.0" text="Дата изменения" />
+                                <TableColumn fx:id="columnTestProgrammTime" minWidth="80.0" text="Длительность испытания" />
+                                <TableColumn fx:id="columnTestProgrammType" minWidth="80.0" text="Тип испытаний" />
                                 <TableColumn fx:id="columnTestingSample" minWidth="80.0" text="Объект испытаний" />
                             </columns>
                             <GridPane.margin>

@@ -13,29 +13,32 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.ProtocolRepository;
+import ru.avem.posum.db.TestProgrammRepository;
 import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
+import static ru.avem.posum.utils.View.showConfirmDialog;
+
 public class MainController implements BaseController {
     @FXML
-    private TableColumn<TestProgramm, Integer> columnProtocolId;
+    private TableColumn<TestProgramm, Integer> columnTableViewIndex;
     @FXML
-    private TableColumn<TestProgramm, String> columnExperimentName;
+    private TableColumn<TestProgramm, String> columnTestProgrammName;
     @FXML
-    private TableColumn<TestProgramm, String> columnProtocolCreatingDate;
+    private TableColumn<TestProgramm, String> columnTestProgrammCreatingDate;
     @FXML
-    private TableColumn<TestProgramm, String> columnProtocolChangingDate;
+    private TableColumn<TestProgramm, String> columnTestProgrammChangingDate;
     @FXML
-    private TableColumn<TestProgramm, String> columnExperimentTime;
+    private TableColumn<TestProgramm, String> columnTestProgrammTime;
     @FXML
-    private TableColumn<TestProgramm, String> columnExperimentType;
+    private TableColumn<TestProgramm, String> columnTestProgrammType;
     @FXML
     private TableColumn<TestProgramm, String> columnTestingSample;
     @FXML
     private TableView<TestProgramm> experimentsTableView;
+
 
     private WindowsManager wm;
     private ControllerManager cm;
@@ -43,27 +46,27 @@ public class MainController implements BaseController {
 
     @FXML
     private void initialize() {
-        showPotocols();
+        showTestProgramms();
 
-        makeColumnTitleWrapper(columnExperimentName);
-        makeColumnTitleWrapper(columnProtocolCreatingDate);
-        makeColumnTitleWrapper(columnProtocolChangingDate);
-        makeColumnTitleWrapper(columnExperimentTime);
-        makeColumnTitleWrapper(columnExperimentType);
+        makeColumnTitleWrapper(columnTestProgrammName);
+        makeColumnTitleWrapper(columnTestProgrammCreatingDate);
+        makeColumnTitleWrapper(columnTestProgrammChangingDate);
+        makeColumnTitleWrapper(columnTestProgrammTime);
+        makeColumnTitleWrapper(columnTestProgrammType);
         makeColumnTitleWrapper(columnTestingSample);
 
-        columnProtocolId.setCellValueFactory(new PropertyValueFactory<>("index"));
-        columnExperimentName.setCellValueFactory(new PropertyValueFactory<>("experimentName"));
-        columnProtocolCreatingDate.setCellValueFactory(new PropertyValueFactory<>("experimentDate"));
-        columnProtocolChangingDate.setCellValueFactory(new PropertyValueFactory<>("experimentDate"));
-        columnExperimentTime.setCellValueFactory(new PropertyValueFactory<>("experimentTime"));
-        columnExperimentType.setCellValueFactory(new PropertyValueFactory<>("experimentType"));
+        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("testProgrammId"));
+        columnTestProgrammName.setCellValueFactory(new PropertyValueFactory<>("testProgrammName"));
+        columnTestProgrammCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgrammDate"));
+        columnTestProgrammChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgrammDate"));
+        columnTestProgrammTime.setCellValueFactory(new PropertyValueFactory<>("testProgrammTime"));
+        columnTestProgrammType.setCellValueFactory(new PropertyValueFactory<>("testProgrammType"));
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
     }
 
-    public void showPotocols() {
-        ProtocolRepository.updateProtocolIndex();
-        List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
+    public void showTestProgramms() {
+        TestProgrammRepository.updateTestProgrammId();
+        List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
         testProgramms = FXCollections.observableArrayList(allTestProgramms);
         experimentsTableView.setItems(testProgramms);
     }
@@ -92,11 +95,11 @@ public class MainController implements BaseController {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
-    public void handleMenuItemSetup() {
+    public void handleMenuItemEdit() {
         if (getSelectedItemIndex() != -1) {
-            List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
-            cm.setupProtocol(allTestProgramms.get(getSelectedItemIndex()));
-            cm.loadItemsForMainTableView();
+            List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+            cm.loadTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
+            showTestProgramms();
             cm.setEditMode(true);
             wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         }
@@ -108,16 +111,17 @@ public class MainController implements BaseController {
 
     public void handleMenuItemCopy() {
         if (getSelectedItemIndex() != -1) {
-            List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
+            List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
             TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
-            ProtocolRepository.insertProtocol(testProgramm);
+            TestProgrammRepository.insertTestProgramm(testProgramm);
             cm.loadItemsForMainTableView();
         }
     }
 
     public void handleMenuItemDelete() {
-        List<TestProgramm> allTestProgramms = ProtocolRepository.getAllProtocols();
-        ProtocolRepository.deleteProtocol(allTestProgramms.get(getSelectedItemIndex()));
+        showConfirmDialog("Вы действительно хотите удалить?", ()->{}, ()->{});
+        List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+        TestProgrammRepository.deleteTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
         cm.loadItemsForMainTableView();
     }
 

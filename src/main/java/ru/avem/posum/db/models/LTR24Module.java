@@ -6,10 +6,12 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.Objects;
 import java.util.Optional;
 
-@DatabaseTable(tableName = "ltr24")
-public class LTR24Table {
+@DatabaseTable(tableName = "ltr24Modules")
+public class LTR24Module {
     @DatabaseField(generatedId = true)
     private long id;
+    @DatabaseField
+    private long testProgrammId;
     @DatabaseField
     private String checkedChannels = "";
     @DatabaseField
@@ -21,13 +23,15 @@ public class LTR24Table {
     @DatabaseField
     private String crate = "";
     @DatabaseField
-    private String slot = "";
+    private int slot;
 
-    public LTR24Table() {
+    public LTR24Module() {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public LTR24Table(boolean[] checkedChannels, int[] channelsTypes, int[] measuringRanges, String[] channelsDescription, String crate, int slot) {
+    public LTR24Module(long testProgrammId, boolean[] checkedChannels, int[] channelsTypes, int[] measuringRanges, String[] channelsDescription, String crate, int slot) {
+        this.testProgrammId = testProgrammId;
+
         for (boolean checked : checkedChannels) {
             if (checked) {
                 this.checkedChannels += "1, ";
@@ -55,25 +59,33 @@ public class LTR24Table {
         }
 
         this.crate = crate;
-        this.slot = String.valueOf(slot);
+        this.slot = slot;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LTR24Table ltr24Table = (LTR24Table) o;
-        return  id == ltr24Table.id &&
-                Objects.equals(checkedChannels, ltr24Table.checkedChannels) &&
-                Objects.equals(channelsTypes, ltr24Table.channelsTypes) &&
-                Objects.equals(measuringRanges, ltr24Table.measuringRanges) &&
-                Objects.equals(channelsDescription, ltr24Table.channelsDescription) &&
-                Objects.equals(crate, ltr24Table.crate) &&
-                Objects.equals(slot, ltr24Table.slot);
+        LTR24Module ltr24Module = (LTR24Module) o;
+        return  id == ltr24Module.id &&
+                Objects.equals(checkedChannels, ltr24Module.checkedChannels) &&
+                Objects.equals(channelsTypes, ltr24Module.channelsTypes) &&
+                Objects.equals(measuringRanges, ltr24Module.measuringRanges) &&
+                Objects.equals(channelsDescription, ltr24Module.channelsDescription) &&
+                Objects.equals(crate, ltr24Module.crate) &&
+                Objects.equals(slot, ltr24Module.slot);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, checkedChannels, channelsTypes, measuringRanges, channelsDescription, crate, slot);
+    }
+
+    public long getTestProgrammId() {
+        return testProgrammId;
+    }
+
+    public void setTestProgrammId(int testProgrammId) {
+        this.testProgrammId = testProgrammId;
     }
 }

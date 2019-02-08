@@ -12,9 +12,11 @@ public class TestProgramm {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
-    private int index;
+    private int testProgrammId;
     @DatabaseField
-    private String experimentName;
+    private String crate;
+    @DatabaseField
+    private String testProgrammName;
     @DatabaseField
     private String sampleName;
     @DatabaseField
@@ -32,13 +34,12 @@ public class TestProgramm {
     @DatabaseField
     private String comments;
 
-    private Crate crate;
-
     public TestProgramm() {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public TestProgramm(String experimentName,
+    public TestProgramm(String crate,
+                        String testProgrammName,
                         String sampleName,
                         String sampleSerialNumber,
                         String documentNumber,
@@ -47,8 +48,9 @@ public class TestProgramm {
                         String experimentDate,
                         String leadEngineer,
                         String comments) {
-        index++;
-        this.experimentName = experimentName;
+        testProgrammId++;
+        this.crate = crate;
+        this.testProgrammName = testProgrammName;
         this.sampleName = sampleName;
         this.sampleSerialNumber = sampleSerialNumber;
         this.documentNumber = documentNumber;
@@ -67,20 +69,28 @@ public class TestProgramm {
         this.id = id;
     }
 
-    public int getIndex() {
-        return index;
+    public int getTestProgrammId() {
+        return testProgrammId;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setTestProgrammId(int testProgrammId) {
+        this.testProgrammId = testProgrammId;
     }
 
-    public String getExperimentName() {
-        return experimentName;
+    public String getCrate() {
+        return crate;
     }
 
-    public void setExperimentName(String experimentName) {
-        this.experimentName = experimentName;
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public String getTestProgrammName() {
+        return testProgrammName;
+    }
+
+    public void setTestProgrammName(String testProgrammName) {
+        this.testProgrammName = testProgrammName;
     }
 
     public String getSampleName() {
@@ -150,14 +160,14 @@ public class TestProgramm {
     @Override
     public String toString() {
         return "TestProgramm{" +
-                "id=" + id +
-                ", experimentName='" + experimentName + '\'' +
+                "testProgrammId=" + id +
+                ", testProgrammName='" + testProgrammName + '\'' +
                 ", sampleName='" + sampleName + '\'' +
                 ", sampleSerialNumber='" + sampleSerialNumber + '\'' +
                 ", documentNumber='" + documentNumber + '\'' +
-                ", experimentType='" + experimentType + '\'' +
-                ", experimentTime='" + experimentTime + '\'' +
-                ", experimentDate='" + experimentDate + '\'' +
+                ", testProgrammType='" + experimentType + '\'' +
+                ", testProgrammTime='" + experimentTime + '\'' +
+                ", testProgrammDate='" + experimentDate + '\'' +
                 ", leadEngineer='" + leadEngineer + '\'' +
                 ", comments='" + comments + '\'' +
                 '}';
@@ -169,7 +179,7 @@ public class TestProgramm {
         if (o == null || getClass() != o.getClass()) return false;
         TestProgramm testProgramm = (TestProgramm) o;
         return id == testProgramm.id &&
-                Objects.equals(experimentName, testProgramm.experimentName) &&
+                Objects.equals(testProgrammName, testProgramm.testProgrammName) &&
                 Objects.equals(sampleName, testProgramm.sampleName) &&
                 Objects.equals(sampleSerialNumber, testProgramm.sampleSerialNumber) &&
                 Objects.equals(documentNumber, testProgramm.documentNumber) &&
@@ -183,7 +193,8 @@ public class TestProgramm {
     @Override
     public int hashCode() {
         return Objects.hash(id,
-                experimentName,
+
+                testProgrammName,
                 sampleName,
                 sampleSerialNumber,
                 documentNumber,

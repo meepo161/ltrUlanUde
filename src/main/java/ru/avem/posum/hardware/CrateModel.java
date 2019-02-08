@@ -2,6 +2,7 @@ package ru.avem.posum.hardware;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.util.Pair;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
@@ -22,9 +23,9 @@ public class CrateModel {
     private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX];
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
-    private List<LTR24> ltr24ModulesList = new ArrayList<>();
-    private List<LTR34> ltr34modules = new ArrayList<>();
-    private List<LTR212> ltr212modules = new ArrayList<>();
+    private List<Pair<Integer, LTR24>> ltr24ModulesList = new ArrayList<>();
+    private List<Pair<Integer, LTR34>> ltr34ModulesList = new ArrayList<>();
+    private List<Pair<Integer, LTR212>> ltr212ModulesList = new ArrayList<>();
     private ObservableList<String> modulesNames = FXCollections.observableArrayList();
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
@@ -122,16 +123,16 @@ public class CrateModel {
         return crates;
     }
 
-    public List<LTR24> getLtr24ModulesList() {
+    public List<Pair<Integer, LTR24>> getLtr24ModulesList() {
         return ltr24ModulesList;
     }
 
-    public List<LTR34> getLtr34ModulesList() {
-        return ltr34modules;
+    public List<Pair<Integer, LTR34>> getLtr34ModulesList() {
+        return ltr34ModulesList;
     }
 
-    public List<LTR212> getLtr212ModulesList() {
-        return ltr212modules;
+    public List<Pair<Integer, LTR212>> getLtr212ModulesList() {
+        return ltr212ModulesList;
     }
 
     static {
