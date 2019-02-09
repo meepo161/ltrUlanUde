@@ -161,6 +161,9 @@ public class LTR24SettingController implements BaseController {
                 toggleUiElements(channel, false);
             } else {
                 toggleUiElements(channel, true);
+                channelsDescription.get(channel).setText("");
+                channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
+                measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
             }
         });
     }
@@ -300,6 +303,13 @@ public class LTR24SettingController implements BaseController {
                 ltr24.getChannelsDescription()[i] = channelsDescription.get(i).getText();
                 ltr24.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr24.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr24.setCrate(cratesSN[selectedCrate]);
+                ltr24.setSlot(selectedModule);
+            } else {
+                ltr24.getCheckedChannels()[i] = false; // false - канал не выбран
+                ltr24.getChannelsDescription()[i] = "";
+                ltr24.getChannelsTypes()[i] = 0;
+                ltr24.getMeasuringRanges()[i] = 0;
                 ltr24.setCrate(cratesSN[selectedCrate]);
                 ltr24.setSlot(selectedModule);
             }

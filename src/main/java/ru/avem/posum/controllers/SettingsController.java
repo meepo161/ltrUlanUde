@@ -181,6 +181,13 @@ public class SettingsController implements BaseController {
     }
 
     private void saveSettings() {
+        saveGeneralSettings();
+        saveHardwareSettings();
+
+        handleBackButton();
+    }
+
+    private void saveGeneralSettings() {
         /* сохранение общих данных */
         String testProgrammName = testProgrammNameTextField.getText();
         String sampleName = sampleNameTextField.getText();
@@ -207,8 +214,11 @@ public class SettingsController implements BaseController {
             testProgramm = new TestProgramm(crate, testProgrammName, sampleName, sampleSerialNumber, documentNumber, testProgrammType, testProgrammTime, testProgrammDate, leadEngineer, comments);
             TestProgrammRepository.insertTestProgramm(testProgramm);
         }
+    }
 
+    private void saveHardwareSettings() {
         /* сохранение настроек оборудования */
+        int testProgrammId = testProgramm.getTestProgrammId();
         int ltr24Index = 0; // индексы сохраняют номер последнего взятого объекта
         int ltr212Index = 0;
         int ltr34Index = 0;
@@ -216,24 +226,69 @@ public class SettingsController implements BaseController {
         for (String modulesName : modulesNames) {
             switch (modulesName.split(" ")[0]) {
                 case CrateModel.LTR24:
-                    LTR24 ltr24 = crateModel.getLtr24ModulesList().get(ltr24Index++).getValue();
-                    LTR24Module ltr24Module = new LTR24Module(testProgramm.getId(), ltr24.getCheckedChannels(), ltr24.getChannelsTypes(), ltr24.getMeasuringRanges(), ltr24.getChannelsDescription(), ltr24.getCrate(), ltr24.getSlot());
-                    LTR24ModuleRepository.insertLTR24Module(ltr24Module);
+                    updateLTR24Settings(testProgrammId, ltr24Index);
                     break;
                 case CrateModel.LTR34:
                     LTR34 ltr34 = crateModel.getLtr34ModulesList().get(ltr212Index++).getValue();
                     LTR34Module ltr34Module = new LTR34Module(testProgramm.getId(), ltr34.getCheckedChannels(), ltr34.getChannelsParameters(), ltr34.getCrate(), ltr34.getSlot());
-                    LTR34ModuleRepository.insertLTR34Module(ltr34Module);
+                    if (editMode) {
+                        LTR34ModuleRepository.updateLTR34Module(ltr34Module);
+                    } else {
+                        LTR34ModuleRepository.insertLTR34Module(ltr34Module);
+                    }
                     break;
                 case CrateModel.LTR212:
                     LTR212 ltr212 = crateModel.getLtr212ModulesList().get(ltr34Index++).getValue();
                     LTR212Module ltr212Module = new LTR212Module(testProgramm.getId(), ltr212.getCheckedChannels(), ltr212.getChannelsTypes(), ltr212.getMeasuringRanges(), ltr212.getChannelsDescription(), ltr212.getCrate(), ltr212.getSlot());
-                    LTR212ModuleRepository.insertLTR212Module(ltr212Module);
+                    if (editMode) {
+                        LTR212ModuleRepository.updateLTR212Module(ltr212Module);
+                    } else {
+                        LTR212ModuleRepository.insertLTR212Module(ltr212Module);
+                    }
                     break;
             }
         }
+    }
 
-        handleBackButton();
+    private void updateLTR24Settings(int testProgrammId, int ltr24Index) {
+        LTR24 ltr24 = crateModel.getLtr24ModulesList().get(ltr24Index++).getValue();
+        boolean[] checkedChannels = ltr24.getCheckedChannels();
+
+        if (editMode) {
+            for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
+                if (ltr24Module.getTestProgrammId() == testProgrammId) {
+                    String channels = "";
+                    String types = "";
+                    String ranges = "";
+                    String descriptions = "";
+
+                    for (int i = 0; i < ltr24.getCheckedChannels().length; i++) {
+                        if (checkedChannels[i]) {
+                            channels += 1 + ", ";
+                            types += ltr24.getChannelsTypes()[i] + ", ";
+                            ranges += ltr24.getMeasuringRanges()[i] + ", ";
+                            descriptions += ltr24.getChannelsDescription()[i] + ", ";
+                        } else {
+                            channels += 0 + ", ";
+                            types += 0 + ", ";
+                            ranges += 0 + ", ";
+                            descriptions += ", ";
+                        }
+                    }
+                    ltr24Module.setCheckedChannels(channels);
+                    ltr24Module.setChannelsTypes(types);
+                    ltr24Module.setMeasuringRanges(ranges);
+                    ltr24Module.setChannelsDescription(descriptions);
+                    ltr24Module.setCrate(ltr24.getCrate());
+                    ltr24Module.setSlot(ltr24.getSlot());
+
+                    LTR24ModuleRepository.updateLTR24Module(ltr24Module);
+                }
+            }
+        } else {
+            LTR24Module ltr24Module = new LTR24Module(testProgramm.getId(), ltr24.getCheckedChannels(), ltr24.getChannelsTypes(), ltr24.getMeasuringRanges(), ltr24.getChannelsDescription(), ltr24.getCrate(), ltr24.getSlot());
+            LTR24ModuleRepository.insertLTR24Module(ltr24Module);
+        }
     }
 
     public void handleBackButton() {

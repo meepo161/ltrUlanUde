@@ -167,6 +167,9 @@ public class LTR212SettingController implements BaseController {
                 toggleUiElements(channel, false);
             } else {
                 toggleUiElements(channel, true);
+                channelsDescription.get(channel).setText("");
+                channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
+                measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
             }
         });
     }
@@ -300,6 +303,13 @@ public class LTR212SettingController implements BaseController {
                 ltr212.getChannelsDescription()[i] = channelsDescription.get(i).getText();
                 ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
                 ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr212.setCrate(cratesSN[selectedCrate]);
+                ltr212.setSlot(slot);
+            } else {
+                ltr212.getCheckedChannels()[i] = false; // false - канал не выбран
+                ltr212.getChannelsDescription()[i] = "";
+                ltr212.getChannelsTypes()[i] = 0;
+                ltr212.getMeasuringRanges()[i] = 0;
                 ltr212.setCrate(cratesSN[selectedCrate]);
                 ltr212.setSlot(slot);
             }

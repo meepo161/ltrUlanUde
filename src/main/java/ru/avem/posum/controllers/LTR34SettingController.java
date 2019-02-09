@@ -281,6 +281,10 @@ public class LTR34SettingController implements BaseController {
                 signalParameters.add(new Pair<>(frequency, amplitude));
                 ltr34.getChannelsParameters()[0][i] = frequency;
                 ltr34.getChannelsParameters()[1][i] = amplitude;
+            } else {
+                ltr34.getCheckedChannels()[i] = false; // false - канал не выбран
+                ltr34.getChannelsParameters()[0][i] = 0;
+                ltr34.getChannelsParameters()[1][i] = 0;
             }
         }
     }
