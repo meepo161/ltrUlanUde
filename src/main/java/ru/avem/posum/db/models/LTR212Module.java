@@ -81,11 +81,67 @@ public class LTR212Module {
         return Objects.hash(id, checkedChannels, channelsTypes, measuringRanges, channelsDescription, crate, slot);
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getTestProgrammId() {
         return testProgrammId;
     }
 
-    public void setTestProgrammId(int testProgrammId) {
+    public void setTestProgrammId(long testProgrammId) {
         this.testProgrammId = testProgrammId;
+    }
+
+    public String getCheckedChannels() {
+        return checkedChannels;
+    }
+
+    public void setCheckedChannels(String checkedChannels) {
+        this.checkedChannels = checkedChannels;
+    }
+
+    public String getChannelsTypes() {
+        return channelsTypes;
+    }
+
+    public void setChannelsTypes(String channelsTypes) {
+        this.channelsTypes = channelsTypes;
+    }
+
+    public String getMeasuringRanges() {
+        return measuringRanges;
+    }
+
+    public void setMeasuringRanges(String measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
+    public String getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    public void setChannelsDescription(String channelsDescription) {
+        this.channelsDescription = channelsDescription;
+    }
+
+    public String getCrate() {
+        return crate;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 }

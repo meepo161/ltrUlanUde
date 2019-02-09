@@ -43,16 +43,36 @@ public class LTR34 {
 
     public native String close();
 
+    public void countChannels() {
+        for (int i = 0; i < checkedChannels.length; i++) {
+            if (checkedChannels[i]) {
+                channelsCounter = i + 1;
+            }
+        }
+    }
+
     public boolean[] getCheckedChannels() {
         return checkedChannels;
+    }
+
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
     }
 
     public int[][] getChannelsParameters() {
         return channelsParameters;
     }
 
+    public void setChannelsParameters(int[][] channelsParameters) {
+        this.channelsParameters = channelsParameters;
+    }
+
     public int getChannelsCounter() {
         return channelsCounter;
+    }
+
+    public void setChannelsCounter(int channelsCounter) {
+        this.channelsCounter = channelsCounter;
     }
 
     public String getCrate() {
@@ -75,12 +95,16 @@ public class LTR34 {
         return status;
     }
 
-    public void countChannels() {
-        for (int i = 0; i < checkedChannels.length; i++) {
-            if (checkedChannels[i]) {
-                channelsCounter = i + 1;
-            }
-        }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public TextEncoder getTextEncoder() {
+        return textEncoder;
+    }
+
+    public void setTextEncoder(TextEncoder textEncoder) {
+        this.textEncoder = textEncoder;
     }
 
     static {

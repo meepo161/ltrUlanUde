@@ -46,7 +46,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void init() throws IOException {
-        DataBaseRepository.init(true);
+        DataBaseRepository.init(false);
 
         crateLoginScene();
         createMainScene();
@@ -219,7 +219,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadItemsForMainTableView() {
-        mainController.showTestProgramms();
+        mainController.showTestProgramm();
     }
 
     @Override
@@ -230,6 +230,24 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void loadDefaultSettings() {
         settingsController.loadDefaultSettings();
+    }
+
+    @Override
+    public void loadLTR24Settings(int id) {
+        ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
+        ltr24SettingController.loadSettings();
+    }
+
+    @Override
+    public void loadLTR34Settings(int id) {
+        ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
+        ltr34SettingController.loadSettings();
+    }
+
+    @Override
+    public void loadLTR212Settings(int id) {
+        ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
+        ltr212SettingController.loadSettings();
     }
 
     @Override
@@ -299,8 +317,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadTestProgramm(TestProgramm testProgramm) {
-        settingsController.loadTestProgramm(testProgramm);
+    public void showTestProgramm(TestProgramm testProgramm) {
+        settingsController.showTestProgramm(testProgramm);
     }
 
     @Override

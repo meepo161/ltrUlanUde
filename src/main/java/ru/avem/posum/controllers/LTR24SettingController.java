@@ -67,14 +67,14 @@ public class LTR24SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private CrateModel crateModel;
+    private LTR24 ltr24 = new LTR24();
+    private StatusBarLine statusBarLine = new StatusBarLine();
     private List<Button> valueOfChannelsButtons = new ArrayList<>();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
+    private List<TextField> channelsDescription = new ArrayList<>();
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
-    private List<TextField> channelsDescription = new ArrayList<>();
-    private LTR24 ltr24 = new LTR24();
-    private CrateModel crateModel;
-    private StatusBarLine statusBarLine = new StatusBarLine();
 
     @FXML
     private void initialize() {
@@ -87,7 +87,6 @@ public class LTR24SettingController implements BaseController {
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
         checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
-        setDefaultParameters();
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -206,14 +205,6 @@ public class LTR24SettingController implements BaseController {
         });
     }
 
-    private void addListOfDifferentialMeasuringRanges(ComboBox<String> measuringRange) {
-        ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("-2 В/+2 В");
-        strings.add("-10 В/+10 В");
-
-        measuringRange.getItems().setAll(strings);
-    }
-
     private void addListOfICPMeasuringRanges(ComboBox<String> measuringRange) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("~1 В");
@@ -222,19 +213,40 @@ public class LTR24SettingController implements BaseController {
         measuringRange.getItems().setAll(strings);
     }
 
-    /**
-     * Для каналов измерения виброускорения выбраны:
-     * 0 - Режим ICP-вход
-     * 1 - ~5 В
-     * <p>
-     * Для каналов измерения перемещения выбраны:
-     * 0 - Дифференциальный вход без отсечки постоянной составляющей
-     * 1 - -10 В/+10 В
-     */
-    private void setDefaultParameters() {
+    private void addListOfDifferentialMeasuringRanges(ComboBox<String> measuringRange) {
+        ObservableList<String> strings = FXCollections.observableArrayList();
+        strings.add("-2 В/+2 В");
+        strings.add("-10 В/+10 В");
+
+        measuringRange.getItems().setAll(strings);
+    }
+
+    public void loadSettings() {
+        findLTR24Module();
+        loadChannelsSettings();
+    }
+
+    private void findLTR24Module() {
+        int slot = cm.getSlot();
+
+        for (Pair<Integer, LTR24> module : crateModel.getLtr24ModulesList()) {
+            if (module.getValue().getSlot() == slot) {
+                ltr24 = module.getValue();
+            }
+        }
+    }
+
+    private void loadChannelsSettings() {
+        boolean[] checkedChannels = ltr24.getCheckedChannels();
+        int[] channelsTypes = ltr24.getChannelsTypes();
+        int[] measuringRanges = ltr24.getMeasuringRanges();
+        String[] descriptions = ltr24.getChannelsDescription();
+
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(0);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(1);
+            channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
+            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
+            measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
+            channelsDescription.get(i).setText(descriptions[i]);
         }
     }
 
@@ -269,22 +281,12 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        searchLTR24Instance();
+        findLTR24Module();
         saveChannelsSettings();
 
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
-    }
-
-    private void searchLTR24Instance() {
-        int selectedModule = cm.getSelectedModule();
-
-        for (Pair<Integer, LTR24> module : crateModel.getLtr24ModulesList()) {
-            if (module.getKey() == selectedModule) {
-                ltr24 = module.getValue();
-            }
-        }
     }
 
     private void saveChannelsSettings() {

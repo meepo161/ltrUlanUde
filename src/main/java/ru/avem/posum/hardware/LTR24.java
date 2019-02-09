@@ -4,9 +4,9 @@ import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 {
     private boolean[] checkedChannels = new boolean[4];
-    private int[] channelsTypes = new int[4];
-    private int[] measuringRanges = new int[4];
-    private String[] channelsDescription = new String[4];
+    private int[] channelsTypes = {0, 0, 0, 0};
+    private int[] measuringRanges = {1, 1, 1, 1};
+    private String[] channelsDescription = {"", "", "", ""};
     private String crate;
     private int slot;
     private String status;
@@ -44,24 +44,40 @@ public class LTR24 {
         return checkedChannels;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
     }
 
     public int[] getChannelsTypes() {
         return channelsTypes;
     }
 
+    public void setChannelsTypes(int[] channelsTypes) {
+        this.channelsTypes = channelsTypes;
+    }
+
     public int[] getMeasuringRanges() {
         return measuringRanges;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    public void setChannelsDescription(String[] channelsDescription) {
+        this.channelsDescription = channelsDescription;
     }
 
     public String getCrate() {
         return crate;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
     }
 
     public int getSlot() {
@@ -72,12 +88,16 @@ public class LTR24 {
         this.slot = slot;
     }
 
+    public boolean isBusy() {
+        return busy;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public boolean isBusy() {
-        return busy;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     static {

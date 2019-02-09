@@ -67,11 +67,59 @@ public class LTR34Module {
         return Objects.hash(id, checkedChannels, channelsFrequency, channelsAmplitude, crate, slot);
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public long getTestProgrammId() {
         return testProgrammId;
     }
 
-    public void setTestProgrammId(int testProgrammId) {
+    public void setTestProgrammId(long testProgrammId) {
         this.testProgrammId = testProgrammId;
+    }
+
+    public String getCheckedChannels() {
+        return checkedChannels;
+    }
+
+    public void setCheckedChannels(String checkedChannels) {
+        this.checkedChannels = checkedChannels;
+    }
+
+    public String getChannelsFrequency() {
+        return channelsFrequency;
+    }
+
+    public void setChannelsFrequency(String channelsFrequency) {
+        this.channelsFrequency = channelsFrequency;
+    }
+
+    public String getChannelsAmplitude() {
+        return channelsAmplitude;
+    }
+
+    public void setChannelsAmplitude(String channelsAmplitude) {
+        this.channelsAmplitude = channelsAmplitude;
+    }
+
+    public String getCrate() {
+        return crate;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 }

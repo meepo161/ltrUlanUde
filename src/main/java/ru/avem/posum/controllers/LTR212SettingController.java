@@ -67,14 +67,14 @@ public class LTR212SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
-    private List<TextField> channelsDescription = new ArrayList<>();
+    private CrateModel crateModel;
+    private LTR212 ltr212 = new LTR212();
+    private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
+    private List<Button> valueOfChannelsButtons = new ArrayList<>();
+    private List<TextField> channelsDescription = new ArrayList<>();
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
-    private List<Button> valueOfChannelsButtons = new ArrayList<>();
-    private LTR212 ltr212 = new LTR212();
-    private CrateModel crateModel;
-    private StatusBarLine statusBarLine = new StatusBarLine();
 
     @FXML
     private void initialize() {
@@ -87,7 +87,6 @@ public class LTR212SettingController implements BaseController {
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
         addListOfMeasuringRanges(measuringRangesComboBoxes);
-        setDefaultParameters();
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -208,15 +207,32 @@ public class LTR212SettingController implements BaseController {
         setComboBox(measuringRangesComboBoxes, strings);
     }
 
-    /**
-     * Для каналов измерения виброускорения выбраны:
-     * 0 - Сбалансированный мост (350 Ом)
-     * 1 - -10 мВ/+10 мВ
-     */
-    private void setDefaultParameters() {
+    public void loadSettings() {
+        findLTR212Module();
+        loadChannelsSettings();
+    }
+
+    private void findLTR212Module() {
+        int slot = cm.getSlot();
+
+        for (Pair<Integer, LTR212> module : crateModel.getLtr212ModulesList()) {
+            if (module.getValue().getSlot() == slot) {
+                ltr212 = module.getValue();
+            }
+        }
+    }
+
+    private void loadChannelsSettings() {
+        boolean[] checkedChannels = ltr212.getCheckedChannels();
+        int[] channelsTypes = ltr212.getChannelsTypes();
+        int[] measuringRanges = ltr212.getMeasuringRanges();
+        String[] descriptions = ltr212.getChannelsDescription();
+
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(1);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(3);
+            channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
+            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
+            measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
+            channelsDescription.get(i).setText(descriptions[i]);
         }
     }
 
@@ -265,22 +281,12 @@ public class LTR212SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        searchLTR212Instance();
+        findLTR212Module();
         saveChannelsSettings();
 
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
-    }
-
-    private void searchLTR212Instance() {
-        int selectedModule = cm.getSelectedModule();
-
-        for (Pair<Integer, LTR212> module : crateModel.getLtr212ModulesList()) {
-            if (module.getKey() == selectedModule) {
-                ltr212 = module.getValue();
-            }
-        }
     }
 
     private void saveChannelsSettings() {

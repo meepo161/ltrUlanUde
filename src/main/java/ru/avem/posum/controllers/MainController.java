@@ -15,6 +15,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.TestProgrammRepository;
 import ru.avem.posum.db.models.TestProgramm;
+import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.Toast;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class MainController implements BaseController {
 
     @FXML
     private void initialize() {
-        showTestProgramms();
+        showTestProgramm();
 
         makeColumnTitleWrapper(columnTestProgrammName);
         makeColumnTitleWrapper(columnTestProgrammCreatingDate);
@@ -64,7 +65,7 @@ public class MainController implements BaseController {
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
     }
 
-    public void showTestProgramms() {
+    public void showTestProgramm() {
         TestProgrammRepository.updateTestProgrammId();
         List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
         testProgramms = FXCollections.observableArrayList(allTestProgramms);
@@ -90,16 +91,25 @@ public class MainController implements BaseController {
     }
 
     public void handleMenuItemAdd() {
+        clearModulesList();
         cm.loadDefaultSettings();
         cm.setEditMode(false);
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
+    private void clearModulesList() {
+        CrateModel crateModel = cm.getCrateModelInstance();
+        crateModel.getLtr24ModulesList().clear();
+        crateModel.getLtr34ModulesList().clear();
+        crateModel.getLtr212ModulesList().clear();
+    }
+
     public void handleMenuItemEdit() {
         if (getSelectedItemIndex() != -1) {
+            clearModulesList();
             List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-            cm.loadTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
-            showTestProgramms();
+            cm.showTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
+            showTestProgramm();
             cm.setEditMode(true);
             wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         }

@@ -78,15 +78,14 @@ public class LTR34SettingController implements BaseController {
 
     private WindowsManager wm;
     private ControllerManager cm;
+    private CrateModel crateModel;
+    private LTR34 ltr34 = new LTR34();
+    private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
+    private List<Pair<Integer, Integer>> signalParameters;
+    private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<TextField> amplitudeTextFields = new ArrayList<>();
     private List<TextField> frequencyTextFields = new ArrayList<>();
-    private LTR34 ltr34 = new LTR34();
-    private CrateModel crateModel;
-    private List<Pair<Integer, Integer>> signalParameters;
-    private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
-    private StatusBarLine statusBarLine = new StatusBarLine();
-
 
     @FXML
     private void initialize() {
@@ -275,12 +274,14 @@ public class LTR34SettingController implements BaseController {
         signalParameters = new ArrayList<>();
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            ltr34.getCheckedChannels()[i] = true; // true - канал выбран
-            int frequency = parse(frequencyTextFields.get(i));
-            int amplitude = parse(amplitudeTextFields.get(i));
-            signalParameters.add(new Pair<>(frequency, amplitude));
-            ltr34.getChannelsParameters()[0][i] = frequency;
-            ltr34.getChannelsParameters()[1][i] = amplitude;
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                ltr34.getCheckedChannels()[i] = true; // true - канал выбран
+                int frequency = parse(frequencyTextFields.get(i));
+                int amplitude = parse(amplitudeTextFields.get(i));
+                signalParameters.add(new Pair<>(frequency, amplitude));
+                ltr34.getChannelsParameters()[0][i] = frequency;
+                ltr34.getChannelsParameters()[1][i] = amplitude;
+            }
         }
     }
 
@@ -391,7 +392,7 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        searchLTR34Instance();
+        findLTR34Module();
         parseChannelsSettings();
 
         cm.loadItemsForMainTableView();
@@ -399,13 +400,29 @@ public class LTR34SettingController implements BaseController {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
-    private void searchLTR34Instance() {
-        int selectedModule = cm.getSelectedModule();
+    public void loadSettings() {
+        findLTR34Module();
+        loadChannelsSettings();
+    }
+
+    private void findLTR34Module() {
+        int slot = cm.getSlot();
 
         for (Pair<Integer, LTR34> module : crateModel.getLtr34ModulesList()) {
-            if (module.getKey() == selectedModule) {
+            if (module.getValue().getSlot() == slot) {
                 ltr34 = module.getValue();
             }
+        }
+    }
+
+    private void loadChannelsSettings() {
+        boolean[] checkedChannels = ltr34.getCheckedChannels();
+        int[][] channelsParameters = ltr34.getChannelsParameters();
+
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
+            frequencyTextFields.get(i).setText(String.valueOf(channelsParameters[0][i]));
+            amplitudeTextFields.get(i).setText(String.valueOf(channelsParameters[1][i]));
         }
     }
 
@@ -418,9 +435,5 @@ public class LTR34SettingController implements BaseController {
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
         crateModel = cm.getCrateModelInstance();
-    }
-
-    public LTR34 getLtr34() {
-        return ltr34;
     }
 }

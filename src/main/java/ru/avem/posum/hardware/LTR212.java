@@ -44,16 +44,32 @@ public class LTR212 {
         return checkedChannels;
     }
 
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
+    }
+
     public int[] getChannelsTypes() {
         return channelsTypes;
+    }
+
+    public void setChannelsTypes(int[] channelsTypes) {
+        this.channelsTypes = channelsTypes;
     }
 
     public int[] getMeasuringRanges() {
         return measuringRanges;
     }
 
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
     public String[] getChannelsDescription() {
         return channelsDescription;
+    }
+
+    public void setChannelsDescription(String[] channelsDescription) {
+        this.channelsDescription = channelsDescription;
     }
 
     public String getCrate() {
@@ -76,8 +92,24 @@ public class LTR212 {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public TextEncoder getTextEncoder() {
+        return textEncoder;
+    }
+
+    public void setTextEncoder(TextEncoder textEncoder) {
+        this.textEncoder = textEncoder;
+    }
+
     public boolean isBusy() {
         return busy;
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 
     static {

@@ -13,6 +13,12 @@ public interface ControllerManager {
 
     void loadDefaultSettings();
 
+    void loadLTR24Settings(int id);
+
+    void loadLTR34Settings(int id);
+
+    void loadLTR212Settings(int id);
+
     void createListModulesControllers(List<String> modulesNames);
 
     void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
@@ -27,7 +33,7 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    void loadTestProgramm(TestProgramm testProgramm);
+    void showTestProgramm(TestProgramm testProgramm);
 
     void setEditMode(boolean editMode);
 
