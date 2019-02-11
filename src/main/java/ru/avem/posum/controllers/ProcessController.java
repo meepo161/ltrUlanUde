@@ -2,25 +2,26 @@ package ru.avem.posum.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.models.*;
 
-
 import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
-    private StatusBar processStatusBar;
+    private AnchorPane mainPanel;
     @FXML
     private LineChart<Number, Number> processLineChart;
     @FXML
-    private TableView<Events> tableEvent;
+    private StatusBar processStatusBar;
     @FXML
     private TableColumn<Events, String> eventTimeColumn;
     @FXML
@@ -55,19 +56,17 @@ public class ProcessController implements BaseController {
     private TableColumn<ProcessSample, String> group4Value1SampleColumn;
     @FXML
     private TableColumn<ProcessSample, String> group4Value2SampleColumn;
-
+    @FXML
+    private TableView<Events> tableEvent;
     @FXML
     private ToolBar toolbarSettings;
     @FXML
-    private AnchorPane mainPanel;
-    @FXML
     private VBox topPanel;
 
+    private WindowsManager wm;
     private ExperimentModel experimentModel = new ExperimentModel();
     private EventsModel eventModel = new EventsModel();
     private ProcessSampleModel processSampleModel = new ProcessSampleModel();
-
-    private WindowsManager wm;
 
     @FXML
     private void initialize() {
@@ -109,11 +108,7 @@ public class ProcessController implements BaseController {
         processSampleModel.chart(processLineChart);
     }
 
-    public ExperimentModel getExperimentModel() {
-        return experimentModel;
-    }
-
-    public void showSettingsPanel(boolean hide) {
+    private void showSettingsPanel(boolean hide) {
         double needHeight = mainPanel.getMaxHeight();
         toolbarSettings.setVisible(!hide);
         if(!hide) {
@@ -190,5 +185,9 @@ public class ProcessController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
 
+    }
+
+    public ExperimentModel getExperimentModel() {
+        return experimentModel;
     }
 }

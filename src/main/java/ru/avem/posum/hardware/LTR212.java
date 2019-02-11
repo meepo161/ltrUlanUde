@@ -11,7 +11,7 @@ public class LTR212 {
     private int slot;
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
-    private boolean busy;
+    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
     public void initModule() {
         status = initialize(crate, slot, channelsTypes, measuringRanges);
@@ -33,27 +33,47 @@ public class LTR212 {
 
     public native String fillArray(int slot, double[] data);
 
-    public void stop() {
-        status = stop(slot);
+    public void closeConnection() {
+        status = close(slot);
         checkStatus();
     }
 
-    public native String stop(int slot);
+    public native String close(int slot);
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
+    }
+
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
     }
 
     public int[] getChannelsTypes() {
         return channelsTypes;
     }
 
+    public void setChannelsTypes(int[] channelsTypes) {
+        this.channelsTypes = channelsTypes;
+    }
+
     public int[] getMeasuringRanges() {
         return measuringRanges;
     }
 
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
     public String[] getChannelsDescription() {
         return channelsDescription;
+    }
+
+    public void setChannelsDescription(String[] channelsDescription) {
+        this.channelsDescription = channelsDescription;
+    }
+
+    public String getCrate() {
+        return crate;
     }
 
     public void setCrate(String crate) {
@@ -72,11 +92,27 @@ public class LTR212 {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public TextEncoder getTextEncoder() {
+        return textEncoder;
+    }
+
+    public void setTextEncoder(TextEncoder textEncoder) {
+        this.textEncoder = textEncoder;
+    }
+
     public boolean isBusy() {
         return busy;
     }
 
+    public void setBusy(boolean busy) {
+        this.busy = busy;
+    }
+
     static {
-        System.loadLibrary("LTR212Library");
+        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR212Library.dll");
     }
 }

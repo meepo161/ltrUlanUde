@@ -1,6 +1,6 @@
 package ru.avem.posum;
 
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
 
@@ -11,6 +11,18 @@ public interface ControllerManager {
 
     void loadItemsForModulesTableView();
 
+    void loadDefaultSettings();
+
+    void loadLTR24Settings(int id);
+
+    void loadLTR34Settings(int id);
+
+    void loadLTR212Settings(int id);
+
+    void createListModulesControllers(List<String> modulesNames);
+
+    void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
+
     int getSelectedCrate();
 
     int getSelectedModule();
@@ -19,23 +31,13 @@ public interface ControllerManager {
 
     CrateModel getCrateModelInstance();
 
-    void refreshLTR24Settings();
-
-    void createListModulesControllers(List<String> modulesNames);
-
-    void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
-
     ExperimentModel getExperimentModel();
+
+    void showTestProgramm(TestProgramm testProgramm);
+
+    void setEditMode(boolean editMode);
 
     boolean isClosed();
 
     void setClosed(boolean closed);
-
-    void clearSettingsView();
-
-    void setupProtocol(Protocol protocol);
-
-    void setEditMode(boolean editMode);
-
-    int getLTR34ChannelsCounter();
 }

@@ -4,9 +4,9 @@ import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 {
     private boolean[] checkedChannels = new boolean[4];
-    private int[] channelsTypes = new int[4];
-    private int[] measuringRanges = new int[4];
-    private String[] channelsDescription = new String[4];
+    private int[] channelsTypes = {0, 0, 0, 0};
+    private int[] measuringRanges = {1, 1, 1, 1};
+    private String[] channelsDescription = {"", "", "", ""};
     private String crate;
     private int slot;
     private String status;
@@ -17,6 +17,8 @@ public class LTR24 {
         status = initialize(crate, slot, channelsTypes, measuringRanges);
         checkStatus();
     }
+
+    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
@@ -29,26 +31,49 @@ public class LTR24 {
         checkStatus();
     }
 
-    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
-
     public native String fillArray(int slot, double[] data);
 
-    public native String closeModule();
+    public void closeConnection() {
+        status = close(slot);
+        checkStatus();
+    }
+
+    public native String close(int slot);
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
     }
 
     public int[] getChannelsTypes() {
         return channelsTypes;
     }
 
+    public void setChannelsTypes(int[] channelsTypes) {
+        this.channelsTypes = channelsTypes;
+    }
+
     public int[] getMeasuringRanges() {
         return measuringRanges;
+    }
+
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    public void setChannelsDescription(String[] channelsDescription) {
+        this.channelsDescription = channelsDescription;
+    }
+
+    public String getCrate() {
+        return crate;
     }
 
     public void setCrate(String crate) {
@@ -63,15 +88,19 @@ public class LTR24 {
         this.slot = slot;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public boolean isBusy() {
         return busy;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     static {
-        System.loadLibrary("LTR24Library");
+        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR24Library.dll");
     }
 }
