@@ -9,16 +9,23 @@ public class LTR212 {
     private String[] channelsDescription = new String[4];
     private String crate;
     private int slot;
-    private String status;
+    private String status = "";
     private TextEncoder textEncoder = new TextEncoder();
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    public void initModule() {
-        status = initialize(crate, slot, channelsTypes, measuringRanges);
+    public void openConnection() {
+        status = open(crate, slot);
         checkStatus();
     }
 
-    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
+    public native String open(String crate, int slot);
+
+    public void initModule() {
+        status = initialize(slot, channelsTypes, measuringRanges);
+        checkStatus();
+    }
+
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {

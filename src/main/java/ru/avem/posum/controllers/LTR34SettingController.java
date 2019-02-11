@@ -250,6 +250,7 @@ public class LTR34SettingController implements BaseController {
 
         ltr34.countChannels();
         ltr34.initModule();
+        avoidInitializeErrors();
 
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
             createChannelsData();
@@ -283,6 +284,7 @@ public class LTR34SettingController implements BaseController {
                 ltr34.getChannelsParameters()[1][i] = amplitude;
             } else {
                 ltr34.getCheckedChannels()[i] = false; // false - канал не выбран
+                signalParameters.add(new Pair<>(0, 0));
                 ltr34.getChannelsParameters()[0][i] = 0;
                 ltr34.getChannelsParameters()[1][i] = 0;
             }
@@ -294,6 +296,13 @@ public class LTR34SettingController implements BaseController {
             return Integer.parseInt(textField.getText());
         } else {
             return 0;
+        }
+    }
+
+    private void avoidInitializeErrors() {
+        if (ltr34.getStatus().equals("Предупреждение: уже создано активное соединение с данным модулем")) {
+            ltr34.closeConnection();
+            ltr34.initModule();
         }
     }
 

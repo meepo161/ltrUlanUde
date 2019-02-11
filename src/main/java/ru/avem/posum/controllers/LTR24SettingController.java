@@ -68,6 +68,7 @@ public class LTR24SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
+    private boolean connectionOpened;
     private LTR24 ltr24 = new LTR24();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<Button> valueOfChannelsButtons = new ArrayList<>();
@@ -255,13 +256,22 @@ public class LTR24SettingController implements BaseController {
 
     public void handleInitialize() {
         saveChannelsSettings();
-        ltr24.initModule();
+        initializeModule();
         statusBarLine.setStatus(ltr24.getStatus(), statusBar);
 
         if (ltr24.getStatus().equals("Операция успешно выполнена")) {
             disableUiElements();
             enableChannelsButtons();
         }
+    }
+
+    private void initializeModule() {
+        if (!connectionOpened) {
+            ltr24.openConnection();
+            connectionOpened = true;
+        }
+
+        ltr24.initModule();
     }
 
     private void disableUiElements() {

@@ -358,26 +358,26 @@ public class SettingsController implements BaseController {
     }
 
     public void handleBackButton() {
-//        stopModules();
+        stopModules();
         TestProgrammRepository.updateTestProgrammId();
         cm.loadItemsForMainTableView();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
 
-    /*private void stopModules() {
-        for (LTR24 ltr24 : crateModel.getLtr24ModulesList()) {
-            ltr24.closeConnection();
+    private void stopModules() {
+        for (Pair<Integer, LTR24> ltr24 : crateModel.getLtr24ModulesList()) {
+            ltr24.getValue().closeConnection();
         }
 
-        for (LTR34 ltr34 : crateModel.getLtr34ModulesList()) {
-            ltr34.closeConnection();
+        for (Pair<Integer, LTR34> ltr34 : crateModel.getLtr34ModulesList()) {
+            ltr34.getValue().closeConnection();
         }
 
-        for (LTR212 ltr212 : crateModel.getLtr212ModulesList()) {
-            ltr212.closeConnection();
+        for (Pair<Integer, LTR212> ltr212 : crateModel.getLtr212ModulesList()) {
+            ltr212.getValue().closeConnection();
         }
-    }*/
+    }
 
     public void showTestProgramm(TestProgramm testProgramm) {
         loadGeneralSettings(testProgramm);

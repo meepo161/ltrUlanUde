@@ -68,6 +68,7 @@ public class LTR212SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
+    private boolean connectionOpened;
     private LTR212 ltr212 = new LTR212();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
@@ -241,8 +242,7 @@ public class LTR212SettingController implements BaseController {
 
     public void handleInitialize() {
         saveChannelsSettings();
-        ltr212.initModule();
-        avoidInitializeErrors();
+        initializeModule();
 
         statusBarLine.setStatus(ltr212.getStatus(), statusBar);
 
@@ -252,15 +252,26 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
-    private void avoidInitializeErrors() {
-        if (ltr212.getStatus().equals("Четверть-мостовые резисторы должны быть одинаковы для всех каналов АЦП")) {
-            statusBarLine.setStatus(ltr212.getStatus(), statusBar);
-            ltr212.closeConnection();
-        } else if (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
-            while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
-                ltr212.closeConnection();
+    private void initializeModule() {
+        String error = ltr212.getStatus();
+
+        if (!connectionOpened) {
+            ltr212.openConnection();
+            connectionOpened = true;
+        }
+
+        switch (error) {
+            case "Предупреждение: уже создано активное соединение с данным модулем":
                 ltr212.initModule();
-            }
+                break;
+            case "Использование калибровки невозможно для установленных параметров":
+                while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
+                    ltr212.closeConnection();
+                    ltr212.initModule();
+                }
+                break;
+            default:
+                ltr212.initModule();
         }
     }
 
