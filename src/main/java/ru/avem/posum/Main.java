@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
 
@@ -24,7 +24,6 @@ import java.util.List;
 public class Main extends Application implements WindowsManager, ControllerManager {
     private Stage loginStage;
     private Stage primaryStage;
-
     private Scene loginScene;
     private Scene mainScene;
     private Scene settingsScene;
@@ -33,7 +32,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene ltr34Scene;
     private Scene ltr212Scene;
     private Scene signalGraphScene;
-
     private LoginController loginController;
     private MainController mainController;
     private SettingsController settingsController;
@@ -42,11 +40,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private LTR34SettingController ltr34SettingController;
     private LTR212SettingController ltr212SettingController;
     private SignalGraphController signalGraphController;
-
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
-
     private Parent parent;
-
     private volatile boolean closed;
 
     @Override
@@ -84,17 +79,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     private Scene createScene(int width, int height) {
         return new Scene(parent, width, height);
-    }
-
-    private Pair<BaseController, Scene> loadScene(String layoutPath, int width, int height) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource(layoutPath));
-        Parent parent = loader.load();
-        BaseController baseController = loader.getController();
-        baseController.setWindowManager(this);
-        baseController.setControllerManager(this);
-
-        return new Pair<>(baseController, new Scene(parent, width, height));
     }
 
     private void setKeyListener() {
@@ -177,14 +161,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
         loginStage.close();
     }
 
-    private void setMainStageSize() {
-        primaryStage.setMinWidth(1280);
-        primaryStage.setMinHeight(720);
-        primaryStage.setWidth(1280);
-        primaryStage.setHeight(720);
-        primaryStage.setResizable(true);
-    }
-
     @Override
     public void setScene(WindowsManager.Scenes scene) {
         switch (scene) {
@@ -205,7 +181,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setScene(processScene);
                 break;
             case LTR24_SCENE:
-                primaryStage.setTitle("Настройки модуля LTR24");
+                primaryStage.setTitle("Настройки модуля LTR24Table");
                 primaryStage.setScene(ltr24Scene);
                 break;
             case LTR34_SCENE:
@@ -223,13 +199,27 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
+    @Override
+    public void setModuleScene(String moduleName, int id) {
+        primaryStage.setTitle("Настройки модуля " + moduleName);
+        primaryStage.setScene(modulesPairs.get(id).getValue());
+    }
+
+    private void setMainStageSize() {
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
+        primaryStage.setResizable(true);
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void loadItemsForMainTableView() {
-        mainController.showPotocols();
+        mainController.showTestProgramm();
     }
 
     @Override
@@ -238,28 +228,26 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public int getSelectedCrate() {
-        return settingsController.getSelectedCrate();
+    public void loadDefaultSettings() {
+        settingsController.loadDefaultSettings();
     }
 
     @Override
-    public int getSelectedModule() {
-        return settingsController.getSelectedModule();
+    public void loadLTR24Settings(int id) {
+        ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
+        ltr24SettingController.loadSettings();
     }
 
     @Override
-    public CrateModel getCrateModelInstance() {
-        return settingsController.getCrateModel();
+    public void loadLTR34Settings(int id) {
+        ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
+        ltr34SettingController.loadSettings();
     }
 
     @Override
-    public void refreshLTR24Settings() {
-        ltr24SettingController.refreshView();
-    }
-
-    @Override
-    public void refreshLTR212Settings() {
-        ltr212SettingController.refreshView();
+    public void loadLTR212Settings(int id) {
+        ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
+        ltr212SettingController.loadSettings();
     }
 
     @Override
@@ -267,11 +255,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
         modulesPairs.clear();
         for (String module : modulesNames) {
             String layoutPath = null;
-            switch (module) {
+            switch (module.split(" ")[0]) {
                 case CrateModel.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
                     break;
-                case CrateModel.LTR34:
+                case CrateModel.LTR34 :
                     layoutPath = "/layouts/LTR34SettingView.fxml";
                     break;
                 case CrateModel.LTR212:
@@ -287,19 +275,56 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
+    private Pair<BaseController, Scene> loadScene(String layoutPath, int width, int height) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource(layoutPath));
+        Parent parent = loader.load();
+        BaseController baseController = loader.getController();
+        baseController.setWindowManager(this);
+        baseController.setControllerManager(this);
+
+        return new Pair<>(baseController, new Scene(parent, width, height));
+    }
+
     @Override
     public void showChannelData(CrateModel.Moudules moduleType, int slot, int channel) {
-        signalGraphController.showValue(moduleType, slot, channel);
+        signalGraphController.initializeView(moduleType, slot, channel);
     }
 
     @Override
-    public void setModuleScene(String moduleName, int id) {
-        primaryStage.setTitle("Настройки модуля " + moduleName);
-        primaryStage.setScene(modulesPairs.get(id).getValue());
+    public int getSelectedCrate() {
+        return settingsController.getSelectedCrate();
     }
 
     @Override
-    public ExperimentModel getExperimentModel() { return processController.getExperimentModel(); }
+    public int getSelectedModule() {
+        return settingsController.getSelectedModule();
+    }
+
+    @Override
+    public int getSlot() {
+        return settingsController.getSlot();
+    }
+
+    @Override
+    public CrateModel getCrateModelInstance() {
+        return settingsController.getCrateModel();
+    }
+
+    @Override
+    public ExperimentModel getExperimentModel() {
+        return processController.getExperimentModel();
+    }
+
+    @Override
+    public void showTestProgramm(TestProgramm testProgramm) {
+        settingsController.showTestProgramm(testProgramm);
+    }
+
+    @Override
+    public void setEditMode(boolean editMode) {
+        settingsController.setEditMode(editMode);
+    }
 
     @Override
     public boolean isClosed() {
@@ -309,21 +334,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void setClosed(boolean cl) {
         this.closed = cl;
-    }
-
-    @Override
-    public void clearSettingsView() {
-        settingsController.clearSettingsView();
-    }
-
-    @Override
-    public void setupProtocol(Protocol protocol) {
-        settingsController.setupProtocol(protocol);
-    }
-
-    @Override
-    public void setEditMode(boolean editMode) {
-        settingsController.setEditMode(editMode);
     }
 
     @Override

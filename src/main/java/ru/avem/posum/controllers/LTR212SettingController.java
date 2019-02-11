@@ -3,12 +3,17 @@ package ru.avem.posum.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +39,6 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private CheckBox checkChannelN4;
     @FXML
-    private ComboBox<String> crateSlot;
-    @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
     private ComboBox<String> typeOfChannelN2;
@@ -52,8 +55,6 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
     @FXML
-    private Label crateSlotLabel;
-    @FXML
     private StatusBar statusBar;
     @FXML
     private TextField descriptionOfChannelN1;
@@ -64,21 +65,16 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private TextField descriptionOfChannelN4;
 
-    private List<TextField> channelsDescription = new ArrayList<>();
-    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
-    private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
-    private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
-    private List<Button> valueOfChannelsButtons = new ArrayList<>();
-
     private WindowsManager wm;
     private ControllerManager cm;
-    private LTR212 ltr212 = new LTR212();
-
     private CrateModel crateModel;
-    private int selectedCrate;
-    private String[] cratesSN;
-    private int selectedModule;
-    private int selectedSlot;
+    private LTR212 ltr212 = new LTR212();
+    private StatusBarLine statusBarLine = new StatusBarLine();
+    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
+    private List<Button> valueOfChannelsButtons = new ArrayList<>();
+    private List<TextField> channelsDescription = new ArrayList<>();
+    private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
+    private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -90,9 +86,7 @@ public class LTR212SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
-        addListOfCrateSlots(crateSlot);
         addListOfMeasuringRanges(measuringRangesComboBoxes);
-        setDefaultParameters();
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -173,6 +167,9 @@ public class LTR212SettingController implements BaseController {
                 toggleUiElements(channel, false);
             } else {
                 toggleUiElements(channel, true);
+                channelsDescription.get(channel).setText("");
+                channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
+                measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
             }
         });
     }
@@ -199,28 +196,6 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
-    private void addListOfCrateSlots(ComboBox<String> crateSlot) {
-        ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("Слот 1");
-        strings.add("Слот 2");
-        strings.add("Слот 3");
-        strings.add("Слот 4");
-        strings.add("Слот 5");
-        strings.add("Слот 6");
-        strings.add("Слот 7");
-        strings.add("Слот 8");
-        strings.add("Слот 9");
-        strings.add("Слот 10");
-        strings.add("Слот 11");
-        strings.add("Слот 12");
-        strings.add("Слот 13");
-        strings.add("Слот 14");
-        strings.add("Слот 15");
-        strings.add("Слот 16");
-
-        crateSlot.getItems().setAll(strings);
-    }
-
     private void addListOfMeasuringRanges(List<ComboBox<String>> measuringRangesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-10 мВ/+10 мВ");
@@ -235,55 +210,57 @@ public class LTR212SettingController implements BaseController {
         setComboBox(measuringRangesComboBoxes, strings);
     }
 
-    /**
-     * Для каналов измерения виброускорения выбраны:
-     * 0 - Сбалансированный мост (350 Ом)
-     * 1 - -10 мВ/+10 мВ
-     */
-    private void setDefaultParameters() {
+    public void loadSettings() {
+        findLTR212Module();
+        loadChannelsSettings();
+    }
+
+    private void findLTR212Module() {
+        int slot = cm.getSlot();
+
+        for (Pair<Integer, LTR212> module : crateModel.getLtr212ModulesList()) {
+            if (module.getValue().getSlot() == slot) {
+                ltr212 = module.getValue();
+            }
+        }
+    }
+
+    private void loadChannelsSettings() {
+        boolean[] checkedChannels = ltr212.getCheckedChannels();
+        int[] channelsTypes = ltr212.getChannelsTypes();
+        int[] measuringRanges = ltr212.getMeasuringRanges();
+        String[] descriptions = ltr212.getChannelsDescription();
+
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            channelsTypesComboBoxes.get(i).getSelectionModel().select(1);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(3);
-            crateSlot.getSelectionModel().select(0);
+            channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
+            channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
+            measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
+            channelsDescription.get(i).setText(descriptions[i]);
         }
     }
 
     public void handleInitialize() {
-        selectedCrate = cm.getSelectedCrate();
-        cratesSN = crateModel.getCrates()[0];
-        selectedModule = cm.getSelectedModule();
-        selectedSlot = crateSlot.getSelectionModel().getSelectedIndex() + 1;
-
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            if (channelsCheckBoxes.get(i).isSelected()) {
-                ltr212.getCheckedChannels()[i] = true; // true - канал выбран
-                ltr212.getChannelsDescription()[i] = channelsDescription.get(i).getText();
-                ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
-                ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
-                ltr212.setCrate(cratesSN[selectedCrate]);
-                ltr212.setSlot(selectedSlot);
-            }
-        }
-
+        saveChannelsSettings();
         ltr212.initModule();
-        if (ltr212.getStatus().equals("Четверть-мостовые резисторы должны быть одинаковы для всех каналов АЦП")) {
-            statusBar.setText(ltr212.getStatus());
-            ltr212.stop();
-        } else if (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
-            while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
-                ltr212.stop();
-                ltr212.initModule();
-            }
-        }
+        avoidInitializeErrors();
 
-        statusBar.setText(ltr212.getStatus());
+        statusBarLine.setStatus(ltr212.getStatus(), statusBar);
 
         if (ltr212.getStatus().equals("Операция успешно выполнена")) {
-            crateModel.getLtr212ModulesList().add(ltr212);
             disableUiElements();
             enableChannelsButtons();
+        }
+    }
 
-            crateModel.getModulesNames(selectedCrate).set(selectedModule, "LTR212 (" + crateSlot.getValue() + ")");
+    private void avoidInitializeErrors() {
+        if (ltr212.getStatus().equals("Четверть-мостовые резисторы должны быть одинаковы для всех каналов АЦП")) {
+            statusBarLine.setStatus(ltr212.getStatus(), statusBar);
+            ltr212.closeConnection();
+        } else if (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
+            while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
+                ltr212.closeConnection();
+                ltr212.initModule();
+            }
         }
     }
 
@@ -296,8 +273,6 @@ public class LTR212SettingController implements BaseController {
         }
 
         initializeButton.setDisable(true);
-        crateSlotLabel.setDisable(true);
-        crateSlot.setDisable(true);
     }
 
     private void enableChannelsButtons() {
@@ -309,28 +284,34 @@ public class LTR212SettingController implements BaseController {
     }
 
     public void handleBackButton() {
+        findLTR212Module();
+        saveChannelsSettings();
+
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
     }
 
-    public void refreshView() {
-        if (!crateModel.getLtr24ModulesList().isEmpty()) {
-            for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
-                LTR212 module = crateModel.getLtr212ModulesList().get(0);
+    private void saveChannelsSettings() {
+        int selectedCrate = cm.getSelectedCrate();
+        String[] cratesSN = crateModel.getCrates()[0];
+        int slot = cm.getSlot();
 
-                channelsCheckBoxes.get(channel).setSelected(module.getCheckedChannels()[channel]);
-                channelsDescription.get(channel).setText(module.getChannelsDescription()[channel]);
-                channelsTypesComboBoxes.get(channel).getSelectionModel().select(module.getChannelsTypes()[channel]);
-                measuringRangesComboBoxes.get(channel).getSelectionModel().select(module.getMeasuringRanges()[channel]);
-                crateSlot.getSelectionModel().select(module.getSlot() - 1);
-
-                if (module.getCheckedChannels()[channel]) {
-                    channelsDescription.get(channel).setDisable(false);
-                    channelsTypesComboBoxes.get(channel).setDisable(false);
-                    measuringRangesComboBoxes.get(channel).setDisable(false);
-                    channelsCheckBoxes.get(channel).setDisable(false);
-                }
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                ltr212.getCheckedChannels()[i] = true; // true - канал выбран
+                ltr212.getChannelsDescription()[i] = channelsDescription.get(i).getText();
+                ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                ltr212.setCrate(cratesSN[selectedCrate]);
+                ltr212.setSlot(slot);
+            } else {
+                ltr212.getCheckedChannels()[i] = false; // false - канал не выбран
+                ltr212.getChannelsDescription()[i] = "";
+                ltr212.getChannelsTypes()[i] = 0;
+                ltr212.getMeasuringRanges()[i] = 0;
+                ltr212.setCrate(cratesSN[selectedCrate]);
+                ltr212.setSlot(slot);
             }
         }
     }

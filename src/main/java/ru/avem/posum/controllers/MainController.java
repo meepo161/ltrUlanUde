@@ -13,56 +13,63 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.ProtocolRepository;
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.TestProgrammRepository;
+import ru.avem.posum.db.models.TestProgramm;
+import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 
+import static ru.avem.posum.utils.View.showConfirmDialog;
+
 public class MainController implements BaseController {
     @FXML
-    private TableView<Protocol> experimentsTableView;
+    private TableColumn<TestProgramm, Integer> columnTableViewIndex;
     @FXML
-    private TableColumn<Protocol, Integer> columnProtocolId;
+    private TableColumn<TestProgramm, String> columnTestProgrammName;
     @FXML
-    private TableColumn<Protocol, String> columnExperimentName;
+    private TableColumn<TestProgramm, String> columnTestProgrammCreatingDate;
     @FXML
-    private TableColumn<Protocol, String> columnProtocolCreatingDate;
+    private TableColumn<TestProgramm, String> columnTestProgrammChangingDate;
     @FXML
-    private TableColumn<Protocol, String> columnProtocolChangingDate;
+    private TableColumn<TestProgramm, String> columnTestProgrammTime;
     @FXML
-    private TableColumn<Protocol, String> columnExperimentTime;
+    private TableColumn<TestProgramm, String> columnTestProgrammType;
     @FXML
-    private TableColumn<Protocol, String> columnExperimentType;
+    private TableColumn<TestProgramm, String> columnTestingSample;
     @FXML
-    private TableColumn<Protocol, String> columnTestingSample;
+    private TableView<TestProgramm> experimentsTableView;
 
-    private ObservableList<Protocol> protocols;
+
     private WindowsManager wm;
     private ControllerManager cm;
+    private ObservableList<TestProgramm> testProgramms;
 
     @FXML
     private void initialize() {
-        showPotocols();
+        showTestProgramm();
 
-        makeColumnTitleWrapper(columnExperimentName);
-        makeColumnTitleWrapper(columnProtocolCreatingDate);
-        makeColumnTitleWrapper(columnProtocolChangingDate);
-        makeColumnTitleWrapper(columnExperimentTime);
-        makeColumnTitleWrapper(columnExperimentType);
+        makeColumnTitleWrapper(columnTestProgrammName);
+        makeColumnTitleWrapper(columnTestProgrammCreatingDate);
+        makeColumnTitleWrapper(columnTestProgrammChangingDate);
+        makeColumnTitleWrapper(columnTestProgrammTime);
+        makeColumnTitleWrapper(columnTestProgrammType);
         makeColumnTitleWrapper(columnTestingSample);
 
-        columnProtocolId.setCellValueFactory(new PropertyValueFactory<>("index"));
-        columnExperimentName.setCellValueFactory(new PropertyValueFactory<>("experimentName"));
-        columnProtocolCreatingDate.setCellValueFactory(new PropertyValueFactory<>("experimentDate"));
-        columnProtocolChangingDate.setCellValueFactory(new PropertyValueFactory<>("experimentDate"));
-        columnExperimentTime.setCellValueFactory(new PropertyValueFactory<>("experimentTime"));
-        columnExperimentType.setCellValueFactory(new PropertyValueFactory<>("experimentType"));
+        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("testProgrammId"));
+        columnTestProgrammName.setCellValueFactory(new PropertyValueFactory<>("testProgrammName"));
+        columnTestProgrammCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgrammDate"));
+        columnTestProgrammChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgrammDate"));
+        columnTestProgrammTime.setCellValueFactory(new PropertyValueFactory<>("testProgrammTime"));
+        columnTestProgrammType.setCellValueFactory(new PropertyValueFactory<>("testProgrammType"));
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
     }
 
-    private int getSelectedItemIndex() {
-         return experimentsTableView.getSelectionModel().getSelectedIndex();
+    public void showTestProgramm() {
+        TestProgrammRepository.updateTestProgrammId();
+        List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+        testProgramms = FXCollections.observableArrayList(allTestProgramms);
+        experimentsTableView.setItems(testProgramms);
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -79,45 +86,52 @@ public class MainController implements BaseController {
         col.setGraphic(stack);
     }
 
-    public void showPotocols() {
-        ProtocolRepository.updateProtocolIndex();
-        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-        protocols = FXCollections.observableArrayList(allProtocols);
-        experimentsTableView.setItems(protocols);
-    }
-
     public void handleMenuItemExit() {
         Platform.exit();
     }
 
     public void handleMenuItemAdd() {
-        cm.clearSettingsView();
+        clearModulesList();
+        cm.loadDefaultSettings();
         cm.setEditMode(false);
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
-    public void handleMenuItemSetup() {
+    private void clearModulesList() {
+        CrateModel crateModel = cm.getCrateModelInstance();
+        crateModel.getLtr24ModulesList().clear();
+        crateModel.getLtr34ModulesList().clear();
+        crateModel.getLtr212ModulesList().clear();
+    }
+
+    public void handleMenuItemEdit() {
         if (getSelectedItemIndex() != -1) {
-            List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-            cm.setupProtocol(allProtocols.get(getSelectedItemIndex()));
-            cm.loadItemsForMainTableView();
+            clearModulesList();
+            List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+            cm.showTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
+            showTestProgramm();
             cm.setEditMode(true);
             wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         }
     }
 
+    private int getSelectedItemIndex() {
+        return experimentsTableView.getSelectionModel().getSelectedIndex();
+    }
+
     public void handleMenuItemCopy() {
         if (getSelectedItemIndex() != -1) {
-            List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-            Protocol protocol = allProtocols.get(getSelectedItemIndex());
-            ProtocolRepository.insertProtocol(protocol);
+            List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+            TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
+            TestProgrammRepository.insertTestProgramm(testProgramm);
             cm.loadItemsForMainTableView();
         }
     }
 
     public void handleMenuItemDelete() {
-        List<Protocol> allProtocols = ProtocolRepository.getAllProtocols();
-        ProtocolRepository.deleteProtocol(allProtocols.get(getSelectedItemIndex()));
+        showConfirmDialog("Вы действительно хотите удалить?", ()->{}, ()->{});
+        List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+        TestProgrammRepository.deleteTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
         cm.loadItemsForMainTableView();
     }
 
@@ -126,14 +140,14 @@ public class MainController implements BaseController {
 
     public void handleOpenExpirement() {
         //проверка выбрана ли позиция в таблице и существует ли она
-        if(protocols.size() > 0) {
-            Protocol protocolItem = experimentsTableView.getSelectionModel().getSelectedItem();
-            if(protocolItem == null) {
+        if(testProgramms.size() > 0) {
+            TestProgramm testProgrammItem = experimentsTableView.getSelectionModel().getSelectedItem();
+            if(testProgrammItem == null) {
                 Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
                 return;
             }
             // передать данные в класс проведения эксперемента
-            cm.getExperimentModel().SetTestId(protocolItem.getId());
+            cm.getExperimentModel().SetTestId(testProgrammItem.getId());
             // вызвать окно проведения эксперемента
             wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
         } else {
