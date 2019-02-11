@@ -204,9 +204,9 @@ public class SettingsController implements BaseController {
             testProgramm.setSampleName(sampleName);
             testProgramm.setSampleSerialNumber(sampleSerialNumber);
             testProgramm.setDocumentNumber(documentNumber);
-            testProgramm.setExperimentType(testProgrammType);
-            testProgramm.setExperimentTime(testProgrammTime);
-            testProgramm.setExperimentDate(testProgrammDate);
+            testProgramm.setTestProgrammType(testProgrammType);
+            testProgramm.setTestProgrammTime(testProgrammTime);
+            testProgramm.setTestProgrammDate(testProgrammDate);
             testProgramm.setLeadEngineer(leadEngineer);
             testProgramm.setComments(comments);
             TestProgrammRepository.updateTestProgramm(testProgramm);
@@ -229,13 +229,7 @@ public class SettingsController implements BaseController {
                     updateLTR24Settings(testProgrammId, ltr24Index++);
                     break;
                 case CrateModel.LTR34:
-                    LTR34 ltr34 = crateModel.getLtr34ModulesList().get(ltr34Index++).getValue();
-                    LTR34Module ltr34Module = new LTR34Module(testProgramm.getId(), ltr34.getCheckedChannels(), ltr34.getChannelsParameters(), ltr34.getCrate(), ltr34.getSlot());
-                    if (editMode) {
-                        LTR34ModuleRepository.updateLTR34Module(ltr34Module);
-                    } else {
-                        LTR34ModuleRepository.insertLTR34Module(ltr34Module);
-                    }
+                    updateLTR34Settings(testProgrammId, ltr34Index++);
                     break;
                 case CrateModel.LTR212:
                     updateLTR212Settings(testProgrammId, ltr212Index++);
@@ -326,6 +320,43 @@ public class SettingsController implements BaseController {
         }
     }
 
+    private void updateLTR34Settings(int testProgrammId, int ltr34Index) {
+        LTR34 ltr34 = crateModel.getLtr34ModulesList().get(ltr34Index).getValue();
+        boolean[] checkedChannels = ltr34.getCheckedChannels();
+
+        if (editMode) {
+            for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
+                if (ltr34Module.getTestProgrammId() == testProgrammId && ltr34Module.getSlot() == ltr34.getSlot()) {
+                    String channels = "";
+                    String frequencies = "";
+                    String amplitudes = "";
+
+                    for (int i = 0; i < checkedChannels.length; i++) {
+                        if (checkedChannels[i]) {
+                            channels += 1 + ", ";
+                            frequencies += ltr34.getChannelsParameters()[0][i] + ", ";
+                            amplitudes += ltr34.getChannelsParameters()[1][i] + ", ";
+                        } else {
+                            channels += 0 + ", ";
+                            frequencies += 0 + ", ";
+                            amplitudes += 0 + ", ";
+                        }
+                    }
+                    ltr34Module.setCheckedChannels(channels);
+                    ltr34Module.setChannelsFrequency(frequencies);
+                    ltr34Module.setChannelsAmplitude(amplitudes);
+                    ltr34Module.setCrate(ltr34.getCrate());
+                    ltr34Module.setSlot(ltr34.getSlot());
+
+                    LTR34ModuleRepository.updateLTR34Module(ltr34Module);
+                }
+            }
+        } else {
+            LTR34Module ltr34Module = new LTR34Module(testProgramm.getId(), ltr34.getCheckedChannels(), ltr34.getChannelsParameters(), ltr34.getCrate(), ltr34.getSlot());
+            LTR34ModuleRepository.insertLTR34Module(ltr34Module);
+        }
+    }
+
     public void handleBackButton() {
 //        stopModules();
         TestProgrammRepository.updateTestProgrammId();
@@ -360,9 +391,9 @@ public class SettingsController implements BaseController {
         sampleNameTextField.setText(testProgramm.getSampleName());
         sampleSerialNumberTextField.setText(testProgramm.getSampleSerialNumber());
         documentNumberTextField.setText(testProgramm.getDocumentNumber());
-        testProgrammTypeTextField.setText(testProgramm.getExperimentType());
-        testProgrammTimeTextField.setText(testProgramm.getExperimentTime());
-        testProgrammDateTextField.setText(testProgramm.getExperimentDate());
+        testProgrammTypeTextField.setText(testProgramm.getTestProgrammType());
+        testProgrammTimeTextField.setText(testProgramm.getTestProgrammTime());
+        testProgrammDateTextField.setText(testProgramm.getTestProgrammDate());
         leadEngineerTextField.setText(testProgramm.getLeadEngineer());
         commentsTextArea.setText(testProgramm.getComments());
     }

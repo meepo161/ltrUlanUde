@@ -24,11 +24,11 @@ public class TestProgramm {
     @DatabaseField
     private String documentNumber;
     @DatabaseField
-    private String experimentType;
+    private String testProgrammType;
     @DatabaseField
-    private String experimentTime;
+    private String testProgrammTime;
     @DatabaseField
-    private String experimentDate;
+    private String testProgrammDate;
     @DatabaseField
     private String leadEngineer;
     @DatabaseField
@@ -43,9 +43,9 @@ public class TestProgramm {
                         String sampleName,
                         String sampleSerialNumber,
                         String documentNumber,
-                        String experimentType,
-                        String experimentTime,
-                        String experimentDate,
+                        String testProgrammType,
+                        String testProgrammTime,
+                        String testProgrammDate,
                         String leadEngineer,
                         String comments) {
         testProgrammId++;
@@ -54,9 +54,9 @@ public class TestProgramm {
         this.sampleName = sampleName;
         this.sampleSerialNumber = sampleSerialNumber;
         this.documentNumber = documentNumber;
-        this.experimentType = experimentType;
-        this.experimentTime = experimentTime;
-        this.experimentDate = experimentDate;
+        this.testProgrammType = testProgrammType;
+        this.testProgrammTime = testProgrammTime;
+        this.testProgrammDate = testProgrammDate;
         this.leadEngineer = leadEngineer;
         this.comments = comments;
     }
@@ -117,28 +117,28 @@ public class TestProgramm {
         this.documentNumber = documentNumber;
     }
 
-    public String getExperimentType() {
-        return experimentType;
+    public String getTestProgrammType() {
+        return testProgrammType;
     }
 
-    public void setExperimentType(String experimentType) {
-        this.experimentType = experimentType;
+    public void setTestProgrammType(String testProgrammType) {
+        this.testProgrammType = testProgrammType;
     }
 
-    public String getExperimentTime() {
-        return experimentTime;
+    public String getTestProgrammTime() {
+        return testProgrammTime;
     }
 
-    public void setExperimentTime(String experimentTime) {
-        this.experimentTime = experimentTime;
+    public void setTestProgrammTime(String testProgrammTime) {
+        this.testProgrammTime = testProgrammTime;
     }
 
-    public String getExperimentDate() {
-        return experimentDate;
+    public String getTestProgrammDate() {
+        return testProgrammDate;
     }
 
-    public void setExperimentDate(String experimentDate) {
-        this.experimentDate = experimentDate;
+    public void setTestProgrammDate(String testProgrammDate) {
+        this.testProgrammDate = testProgrammDate;
     }
 
     public String getLeadEngineer() {
@@ -165,9 +165,9 @@ public class TestProgramm {
                 ", sampleName='" + sampleName + '\'' +
                 ", sampleSerialNumber='" + sampleSerialNumber + '\'' +
                 ", documentNumber='" + documentNumber + '\'' +
-                ", testProgrammType='" + experimentType + '\'' +
-                ", testProgrammTime='" + experimentTime + '\'' +
-                ", testProgrammDate='" + experimentDate + '\'' +
+                ", testProgrammType='" + testProgrammType + '\'' +
+                ", testProgrammTime='" + testProgrammTime + '\'' +
+                ", testProgrammDate='" + testProgrammDate + '\'' +
                 ", leadEngineer='" + leadEngineer + '\'' +
                 ", comments='" + comments + '\'' +
                 '}';
@@ -183,9 +183,9 @@ public class TestProgramm {
                 Objects.equals(sampleName, testProgramm.sampleName) &&
                 Objects.equals(sampleSerialNumber, testProgramm.sampleSerialNumber) &&
                 Objects.equals(documentNumber, testProgramm.documentNumber) &&
-                Objects.equals(experimentType, testProgramm.experimentType) &&
-                Objects.equals(experimentTime, testProgramm.experimentTime) &&
-                Objects.equals(experimentDate, testProgramm.experimentDate) &&
+                Objects.equals(testProgrammType, testProgramm.testProgrammType) &&
+                Objects.equals(testProgrammTime, testProgramm.testProgrammTime) &&
+                Objects.equals(testProgrammDate, testProgramm.testProgrammDate) &&
                 Objects.equals(leadEngineer, testProgramm.leadEngineer) &&
                 Objects.equals(comments, testProgramm.comments);
     }
@@ -198,9 +198,9 @@ public class TestProgramm {
                 sampleName,
                 sampleSerialNumber,
                 documentNumber,
-                experimentType,
-                experimentTime,
-                experimentDate,
+                testProgrammType,
+                testProgrammTime,
+                testProgrammDate,
                 leadEngineer,
                 comments);
     }

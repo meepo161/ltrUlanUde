@@ -55,7 +55,7 @@
                         <TableView fx:id="experimentsTableView">
                             <columns>
                                 <TableColumn fx:id="columnTableViewIndex" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: center;" text="ID" />
-                                <TableColumn fx:id="columnTestProgrammName" minWidth="80.0" text="Название испытания" />
+                                <TableColumn fx:id="columnTestProgrammName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
                                 <TableColumn fx:id="columnTestProgrammCreatingDate" minWidth="80.0" text="Дата создания" />
                                 <TableColumn fx:id="columnTestProgrammChangingDate" minWidth="80.0" text="Дата изменения" />
                                 <TableColumn fx:id="columnTestProgrammTime" minWidth="80.0" text="Длительность испытания" />
