@@ -68,7 +68,7 @@ public class LTR24SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
-    private boolean connectionOpened;
+    private boolean connectionOpen;
     private LTR24 ltr24 = new LTR24();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<Button> valueOfChannelsButtons = new ArrayList<>();
@@ -152,16 +152,16 @@ public class LTR24SettingController implements BaseController {
 
     private void addListenerForAllChannels() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            toggleChannelsUiElements(channelsCheckBoxes.get(i), i);
+            disableChannelsUiElements(channelsCheckBoxes.get(i), i);
         }
     }
 
-    private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
+    private void disableChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-                toggleUiElements(channel, false);
+                disableChannelsUiElements(channel, false);
             } else {
-                toggleUiElements(channel, true);
+                disableChannelsUiElements(channel, true);
                 channelsDescription.get(channel).setText("");
                 channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
                 measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
@@ -169,7 +169,7 @@ public class LTR24SettingController implements BaseController {
         });
     }
 
-    private void toggleUiElements(int channel, boolean isDisable) {
+    private void disableChannelsUiElements(int channel, boolean isDisable) {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
@@ -260,21 +260,21 @@ public class LTR24SettingController implements BaseController {
         statusBarLine.setStatus(ltr24.getStatus(), statusBar);
 
         if (ltr24.getStatus().equals("Операция успешно выполнена")) {
-            disableUiElements();
+            disableChannelsUiElements();
             enableChannelsButtons();
         }
     }
 
     private void initializeModule() {
-        if (!connectionOpened) {
+        if (!connectionOpen) {
             ltr24.openConnection();
-            connectionOpened = true;
+            connectionOpen = true;
         }
 
         ltr24.initModule();
     }
 
-    private void disableUiElements() {
+    private void disableChannelsUiElements() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
             channelsDescription.get(i).setDisable(true);
@@ -296,10 +296,31 @@ public class LTR24SettingController implements BaseController {
     public void handleBackButton() {
         findLTR24Module();
         saveChannelsSettings();
+        if (connectionOpen) {
+            ltr24.closeConnection();
+            connectionOpen = false;
+        }
 
+        enableChannelsUiElements();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
+    }
+
+    private void enableChannelsUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            CheckBox channel = channelsCheckBoxes.get(i);
+            channel.setDisable(false);
+
+            if (channel.isSelected()) {
+                channelsCheckBoxes.get(i).setDisable(false);
+                channelsDescription.get(i).setDisable(false);
+                channelsTypesComboBoxes.get(i).setDisable(false);
+                measuringRangesComboBoxes.get(i).setDisable(false);
+            }
+        }
+
+        initializeButton.setDisable(false);
     }
 
     private void saveChannelsSettings() {

@@ -68,7 +68,7 @@ public class LTR212SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
-    private boolean connectionOpened;
+    private boolean connectionOpen;
     private LTR212 ltr212 = new LTR212();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
@@ -171,6 +171,7 @@ public class LTR212SettingController implements BaseController {
                 channelsDescription.get(channel).setText("");
                 channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
                 measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
+                valueOfChannelsButtons.get(channel).setDisable(true);
             }
         });
     }
@@ -253,25 +254,21 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void initializeModule() {
-        String error = ltr212.getStatus();
 
-        if (!connectionOpened) {
+        if (!connectionOpen) {
             ltr212.openConnection();
-            connectionOpened = true;
+            connectionOpen = true;
         }
 
-        switch (error) {
-            case "Предупреждение: уже создано активное соединение с данным модулем":
-                ltr212.initModule();
-                break;
-            case "Использование калибровки невозможно для установленных параметров":
-                while (ltr212.getStatus().equals("Использование калибровки невозможно для установленных параметров")) {
-                    ltr212.closeConnection();
-                    ltr212.initModule();
-                }
-                break;
-            default:
-                ltr212.initModule();
+        ltr212.initModule();
+
+        String error = ltr212.getStatus();
+        while (error.equals("Использование калибровки невозможно для установленных параметров") || error.equals("Канал связи с ltrd не был создан или закрыт")) {
+            ltr212.closeConnection();
+            ltr212.openConnection();
+            ltr212.initModule();
+            error = ltr212.getStatus();
+            System.out.println(error);
         }
     }
 
@@ -297,7 +294,12 @@ public class LTR212SettingController implements BaseController {
     public void handleBackButton() {
         findLTR212Module();
         saveChannelsSettings();
+        if (connectionOpen) {
+            ltr212.closeConnection();
+            connectionOpen = false;
+        }
 
+        enableChannelsUiElements();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
@@ -325,6 +327,23 @@ public class LTR212SettingController implements BaseController {
                 ltr212.setSlot(slot);
             }
         }
+    }
+
+    private void enableChannelsUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            CheckBox channel = channelsCheckBoxes.get(i);
+            channel.setDisable(false);
+            valueOfChannelsButtons.get(i).setDisable(true);
+
+            if (channel.isSelected()) {
+                channelsCheckBoxes.get(i).setDisable(false);
+                channelsDescription.get(i).setDisable(false);
+                channelsTypesComboBoxes.get(i).setDisable(false);
+                measuringRangesComboBoxes.get(i).setDisable(false);
+            }
+        }
+
+        initializeButton.setDisable(false);
     }
 
     public void handleValueOfChannelN1() {

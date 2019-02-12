@@ -79,6 +79,7 @@ public class LTR34SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
+    private boolean connectionOpen;
     private LTR34 ltr34 = new LTR34();
     private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
     private List<Pair<Integer, Integer>> signalParameters;
@@ -248,8 +249,13 @@ public class LTR34SettingController implements BaseController {
     public void handleGenerateSignal() {
         parseChannelsSettings();
 
+        if (connectionOpen) {
+            ltr34.openConnection();
+        }
+
         ltr34.countChannels();
         ltr34.initModule();
+
         avoidInitializeErrors();
 
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
@@ -407,6 +413,10 @@ public class LTR34SettingController implements BaseController {
     public void handleBackButton() {
         findLTR34Module();
         parseChannelsSettings();
+
+        if (connectionOpen) {
+            ltr34.closeConnection();
+        }
 
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();

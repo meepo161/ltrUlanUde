@@ -11,18 +11,25 @@ public class LTR34 {
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
 
-    public void initModule() {
-        status = initialize(crate, slot, channelsCounter, checkedChannels);
+    public void openConnection() {
+        status = open(crate, slot);
         checkStatus();
     }
 
-    public native String initialize(String crateSN, int slot, int channelsCounter, boolean[] checkedChannels);
+    public native String open(String crate, int slot);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
         }
     }
+
+    public void initModule() {
+        status = initialize(channelsCounter);
+        checkStatus();
+    }
+
+    public native String initialize(int channelsCounter);
 
     public void closeConnection() {
         try {
