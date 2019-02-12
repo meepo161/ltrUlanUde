@@ -26,7 +26,6 @@ public class DataBaseRepository {
 
             Event event = new Event(0, "База создана");
             EventRepository.insertEvent(event);
-
         }
     }
 }

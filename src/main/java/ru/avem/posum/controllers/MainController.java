@@ -13,7 +13,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.db.LTR212ModuleRepository;
+import ru.avem.posum.db.LTR24ModuleRepository;
+import ru.avem.posum.db.LTR34ModuleRepository;
 import ru.avem.posum.db.TestProgrammRepository;
+import ru.avem.posum.db.models.LTR212Module;
+import ru.avem.posum.db.models.LTR24Module;
+import ru.avem.posum.db.models.LTR34Module;
 import ru.avem.posum.db.models.TestProgramm;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.Toast;
@@ -123,7 +129,34 @@ public class MainController implements BaseController {
         if (getSelectedItemIndex() != -1) {
             List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
             TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
+            long oldTestProgrammId = testProgramm.getId();
             TestProgrammRepository.insertTestProgramm(testProgramm);
+
+            allTestProgramms = TestProgrammRepository.getAllTestProgramms();
+            testProgramm = allTestProgramms.get(allTestProgramms.size() - 1);
+            long newTestProgrammId = testProgramm.getId();
+
+            for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
+                if (oldTestProgrammId == ltr24Module.getTestProgrammId()) {
+                    ltr24Module.setTestProgrammId(newTestProgrammId);
+                    LTR24ModuleRepository.insertLTR24Module(ltr24Module);
+                }
+            }
+
+            for (LTR212Module ltr212Module : LTR212ModuleRepository.getAllLTR212Modules()) {
+                if (oldTestProgrammId == ltr212Module.getTestProgrammId()) {
+                    ltr212Module.setTestProgrammId(newTestProgrammId);
+                    LTR212ModuleRepository.insertLTR212Module(ltr212Module);
+                }
+            }
+
+            for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
+                if (oldTestProgrammId == ltr34Module.getTestProgrammId()) {
+                    ltr34Module.setTestProgrammId(newTestProgrammId);
+                    LTR34ModuleRepository.insertLTR34Module(ltr34Module);
+                }
+            }
+
             cm.loadItemsForMainTableView();
         }
     }
@@ -131,7 +164,28 @@ public class MainController implements BaseController {
     public void handleMenuItemDelete() {
         showConfirmDialog("Вы действительно хотите удалить?", ()->{}, ()->{});
         List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-        TestProgrammRepository.deleteTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
+        TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
+        long testProgrammId = testProgramm.getId();
+        TestProgrammRepository.deleteTestProgramm(testProgramm);
+
+        for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
+            if (testProgrammId == ltr24Module.getTestProgrammId()) {
+                LTR24ModuleRepository.deleteLTR24Module(ltr24Module);
+            }
+        }
+
+        for (LTR212Module ltr212Module : LTR212ModuleRepository.getAllLTR212Modules()) {
+            if (testProgrammId == ltr212Module.getTestProgrammId()) {
+                LTR212ModuleRepository.deleteLTR212Module(ltr212Module);
+            }
+        }
+
+        for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
+            if (testProgrammId == ltr34Module.getTestProgrammId()) {
+                LTR34ModuleRepository.deleteLTR34Module(ltr34Module);
+            }
+        }
+
         cm.loadItemsForMainTableView();
     }
 
