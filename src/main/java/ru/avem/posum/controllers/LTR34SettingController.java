@@ -249,14 +249,13 @@ public class LTR34SettingController implements BaseController {
     public void handleGenerateSignal() {
         parseChannelsSettings();
 
-        if (connectionOpen) {
+        if (!connectionOpen) {
             ltr34.openConnection();
+            connectionOpen = true;
         }
 
         ltr34.countChannels();
         ltr34.initModule();
-
-        avoidInitializeErrors();
 
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
             createChannelsData();
@@ -302,13 +301,6 @@ public class LTR34SettingController implements BaseController {
             return Integer.parseInt(textField.getText());
         } else {
             return 0;
-        }
-    }
-
-    private void avoidInitializeErrors() {
-        if (ltr34.getStatus().equals("Предупреждение: уже создано активное соединение с данным модулем")) {
-            ltr34.closeConnection();
-            ltr34.initModule();
         }
     }
 
@@ -392,6 +384,7 @@ public class LTR34SettingController implements BaseController {
 
     public void handleStopSignal() {
         ltr34.closeConnection();
+        connectionOpen = false;
 
         enableChannelsUiElements();
         graph.getData().clear();
@@ -416,11 +409,27 @@ public class LTR34SettingController implements BaseController {
 
         if (connectionOpen) {
             ltr34.closeConnection();
+            connectionOpen = false;
         }
+
+        clearView();
 
         cm.loadItemsForMainTableView();
         cm.loadItemsForModulesTableView();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    private void clearView() {
+        graph.getData().clear();
+        graph.setDisable(true);
+
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setDisable(false);
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                frequencyTextFields.get(i).setDisable(false);
+                amplitudeTextFields.get(i).setDisable(false);
+            }
+        }
     }
 
     public void loadSettings() {
