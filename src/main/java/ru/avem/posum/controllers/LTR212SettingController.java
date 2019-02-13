@@ -1,12 +1,10 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -54,6 +52,8 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> measuringRangeOfChannelN3;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -242,14 +242,36 @@ public class LTR212SettingController implements BaseController {
     }
 
     public void handleInitialize() {
-        saveChannelsSettings();
-        initializeModule();
+        toggleProgressIndicatorState(false);
+        disableUiElements();
 
-        statusBarLine.setStatus(ltr212.getStatus(), statusBar);
+        new Thread(() -> {
+            saveChannelsSettings();
+            initializeModule();
 
-        if (ltr212.getStatus().equals("Операция успешно выполнена")) {
-            disableUiElements();
-            enableChannelsButtons();
+            Platform.runLater(() -> {
+                statusBarLine.setStatus(ltr212.getStatus(), statusBar);
+            });
+
+            if (ltr212.getStatus().equals("Операция успешно выполнена")) {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsButtons();
+                });
+            } else {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsUiElements();
+                });
+            }
+        }).start();
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
     }
 
@@ -292,17 +314,19 @@ public class LTR212SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        findLTR212Module();
-        saveChannelsSettings();
-        if (connectionOpen) {
-            ltr212.closeConnection();
-            connectionOpen = false;
-        }
+        new Thread(() -> {
+            findLTR212Module();
+            saveChannelsSettings();
+            if (connectionOpen) {
+                ltr212.closeConnection();
+                connectionOpen = false;
+            }
 
-        enableChannelsUiElements();
+            enableChannelsUiElements();
+            cm.loadItemsForMainTableView();
+            cm.loadItemsForModulesTableView();
+        }).start();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
-        cm.loadItemsForMainTableView();
-        cm.loadItemsForModulesTableView();
     }
 
     private void saveChannelsSettings() {

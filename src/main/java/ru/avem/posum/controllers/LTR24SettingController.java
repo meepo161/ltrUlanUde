@@ -1,12 +1,10 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -54,6 +52,8 @@ public class LTR24SettingController implements BaseController {
     private ComboBox<String> measuringRangeOfChannelN3;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -255,14 +255,30 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleInitialize() {
-        saveChannelsSettings();
-        initializeModule();
-        statusBarLine.setStatus(ltr24.getStatus(), statusBar);
+        toggleProgressIndicatorState(false);
+        disableChannelsUiElements();
 
-        if (ltr24.getStatus().equals("Операция успешно выполнена")) {
-            disableChannelsUiElements();
-            enableChannelsButtons();
-        }
+        new Thread(() -> {
+            saveChannelsSettings();
+            initializeModule();
+
+            Platform.runLater(() -> {
+                statusBarLine.setStatus(ltr24.getStatus(), statusBar);
+            });
+
+            if (ltr24.getStatus().equals("Операция успешно выполнена")) {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsButtons();
+                });
+            } else {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsUiElements();
+                });
+            }
+
+        }).start();
     }
 
     private void initializeModule() {
@@ -272,6 +288,14 @@ public class LTR24SettingController implements BaseController {
         }
 
         ltr24.initModule();
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
+        }
     }
 
     private void disableChannelsUiElements() {
@@ -294,17 +318,20 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        findLTR24Module();
-        saveChannelsSettings();
-        if (connectionOpen) {
-            ltr24.closeConnection();
-            connectionOpen = false;
-        }
+        new Thread(() -> {
+            findLTR24Module();
+            saveChannelsSettings();
+            if (connectionOpen) {
+                ltr24.closeConnection();
+                connectionOpen = false;
+            }
 
-        enableChannelsUiElements();
+            enableChannelsUiElements();
+            cm.loadItemsForMainTableView();
+            cm.loadItemsForModulesTableView();
+        }).start();
+
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
-        cm.loadItemsForMainTableView();
-        cm.loadItemsForModulesTableView();
     }
 
     private void enableChannelsUiElements() {

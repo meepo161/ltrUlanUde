@@ -1,11 +1,9 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -36,6 +34,8 @@ public class SettingsController implements BaseController {
     private ListView<String> cratesListView;
     @FXML
     private ListView<String> modulesListView;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -81,9 +81,35 @@ public class SettingsController implements BaseController {
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
             modulesListView.setItems(crateModel.fillModulesNames(selectedCrate));
+            addDoubleClickListener(cratesListView, true);
+            addDoubleClickListener(modulesListView, false);
             modulesNames = crateModel.getModulesNames();
             cm.createListModulesControllers(modulesNames);
         }));
+    }
+
+    private void addDoubleClickListener(ListView<String> listView, boolean isCrate) {
+        listView.setCellFactory(tv -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null) {
+                        setText(item);
+                    }
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!cell.isEmpty())) {
+                    if (isCrate) {
+                        handleChooseCrate();
+                    } else {
+                        handleSetupModule();
+                    }
+                }
+            });
+            return cell;
+        });
     }
 
     public void handleChooseCrate() {
@@ -176,7 +202,16 @@ public class SettingsController implements BaseController {
         if (!chooseCrateButton.isDisabled()) {
             statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт.", statusBar);
         } else {
-            saveSettings();
+            toggleProgressIndicatorState(false);
+            new Thread(this::saveSettings).start();
+        }
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
     }
 
@@ -184,7 +219,9 @@ public class SettingsController implements BaseController {
         saveGeneralSettings();
         saveHardwareSettings();
 
-        handleBackButton();
+        Platform.runLater(() -> {
+            handleBackButton();
+        });
     }
 
     private void saveGeneralSettings() {
@@ -358,8 +395,12 @@ public class SettingsController implements BaseController {
     }
 
     public void handleBackButton() {
-        TestProgrammRepository.updateTestProgrammId();
-        cm.loadItemsForMainTableView();
+        new Thread(() -> {
+            TestProgrammRepository.updateTestProgrammId();
+            cm.loadItemsForMainTableView();
+
+        }).start();
+        toggleProgressIndicatorState(true);
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 

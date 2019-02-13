@@ -1,10 +1,12 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
@@ -41,6 +43,8 @@ public class LTR34SettingController implements BaseController {
     private CheckBox checkChannelN8;
     @FXML
     private LineChart<Number, Number> graph;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -247,25 +251,44 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleGenerateSignal() {
-        parseChannelsSettings();
+        toggleProgressIndicatorState(false);
+        disableUiElements();
 
-        if (!connectionOpen) {
-            ltr34.openConnection();
-            connectionOpen = true;
-        }
+        new Thread(() -> {
+            parseChannelsSettings();
 
-        ltr34.countChannels();
-        ltr34.initModule();
+            if (!connectionOpen) {
+                ltr34.openConnection();
+                connectionOpen = true;
+            }
 
-        if (ltr34.getStatus().equals("Операция успешно выполнена")) {
-            createChannelsData();
-            ltr34.dataSend(signal);
-            ltr34.start();
-            drawGraph();
-            disableUiElements();
-        }
+            ltr34.countChannels();
+            ltr34.initModule();
 
-        statusBarLine.setStatus(ltr34.getStatus(), statusBar);
+            if (ltr34.getStatus().equals("Операция успешно выполнена")) {
+                createChannelsData();
+                ltr34.dataSend(signal);
+                ltr34.start();
+
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    graph.setDisable(false);
+                    stopSignalButton.setDisable(false);
+                    stopSignalButton.requestFocus();
+                    drawGraph();
+                });
+            } else {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsUiElements();
+                });
+            }
+
+
+            Platform.runLater(() -> {
+                statusBarLine.setStatus(ltr34.getStatus(), statusBar);
+            });
+        }).start();
     }
 
     private void parseChannelsSettings() {
@@ -293,6 +316,14 @@ public class LTR34SettingController implements BaseController {
                 ltr34.getChannelsParameters()[0][i] = 0;
                 ltr34.getChannelsParameters()[1][i] = 0;
             }
+        }
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
     }
 
@@ -372,9 +403,7 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void disableUiElements() {
-        graph.setDisable(false);
         generateSignalButton.setDisable(true);
-        stopSignalButton.setDisable(false);
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
             frequencyTextFields.get(i).setDisable(true);
@@ -404,18 +433,21 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        findLTR34Module();
-        parseChannelsSettings();
+        new Thread(() -> {
+            findLTR34Module();
+            parseChannelsSettings();
 
-        if (connectionOpen) {
-            ltr34.closeConnection();
-            connectionOpen = false;
-        }
+            if (connectionOpen) {
+                ltr34.closeConnection();
+                connectionOpen = false;
+            }
 
-        clearView();
+            clearView();
 
-        cm.loadItemsForMainTableView();
-        cm.loadItemsForModulesTableView();
+            cm.loadItemsForMainTableView();
+            cm.loadItemsForModulesTableView();
+        }).start();
+
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
