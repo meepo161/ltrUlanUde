@@ -2,10 +2,7 @@ package ru.avem.posum.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
@@ -101,11 +98,12 @@ public class ProcessController implements BaseController {
         processSampleModel.SetProcessSampleColumnColorFunction(group4ColorSampleColumn);
         processSampleModel.SetProcessSampleColumnFunction(group4Value1SampleColumn);
         processSampleModel.SetProcessSampleColumnFunction(group4Value2SampleColumn);
-
+        processSampleModel.fitTable();
         showSettingsPanel(true);
         processStatusBar.setText("Инициализация произведена!");
 
         processSampleModel.chart(processLineChart);
+        experimentModel.setProcessSampleModel(processSampleModel);
     }
 
     private void showSettingsPanel(boolean hide) {
@@ -117,7 +115,7 @@ public class ProcessController implements BaseController {
         topPanel.setPrefHeight(needHeight);
         topPanel.maxHeight(needHeight);
         topPanel.minHeight(needHeight);
-        processSampleModel.fitTable(tableSample);
+        processSampleModel.fitTable();
     }
 
     public void handleInitButton() {
@@ -155,6 +153,16 @@ public class ProcessController implements BaseController {
     }
 
     public void handleBackButton() {
+        if(experimentModel.getRun()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setHeaderText("Вы уверены что хотите прекратить испытание?");
+            Optional<ButtonType> option = alert.showAndWait();
+            if (option.get() == null) {
+                return;
+            } else if (option.get() == ButtonType.CANCEL) {
+                return;
+            }
+        }
         experimentModel.Terminate();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }

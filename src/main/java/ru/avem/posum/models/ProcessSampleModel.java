@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -18,18 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessSampleModel {
-
+    private TableView<ProcessSample> tableSample;
     private ObservableList<ProcessSample> processSampleData = FXCollections.observableArrayList();
     private XYChart.Series<Number, Number> graphSeries_Channel[] = new XYChart.Series[24];
     private Boolean graphSeries_Channel_Enabled[] = new Boolean[24];
-    private long testId = 0;
     private int  currentIndex = 0;
 
     private LineChart<Number, Number> pLineChart;
 
+    public int getCurrentIndex() {
+        return currentIndex;
+    }
+
     public ProcessSampleModel() {
-        this.testId = 0;
-        loadData(this.testId);
     }
 
     public void resetData() {
@@ -244,16 +246,34 @@ public class ProcessSampleModel {
     }
 
     public void initProcessSampleData(TableView<ProcessSample> newTableProcessSample) {
-        newTableProcessSample.setItems(this.getProcessSampleData());
+        tableSample = newTableProcessSample;
+        tableSample.setItems(this.getProcessSampleData());
     }
-    public void fitTable(TableView<ProcessSample> newTableProcessSample) {
-        int countItems = newTableProcessSample.getItems().size();
-        double heightRow = 24;
-        double heightTable = 49+(countItems*heightRow);
-        newTableProcessSample.setPrefHeight(heightTable);
-        newTableProcessSample.setMaxHeight(heightTable);
-        newTableProcessSample.setMinHeight(heightTable);
+
+    public void fitTable() {
+        if(tableSample != null) {
+            int countItems = tableSample.getItems().size();
+            double heightRow = 24;
+            double heightTable = 49 + (countItems * heightRow);
+            tableSample.setPrefHeight(heightTable);
+            tableSample.setMaxHeight(heightTable);
+            tableSample.setMinHeight(heightTable);
+        }
     }
+
+    public void setXAxis(double xLength) {
+        if(pLineChart != null) {
+            NumberAxis pNumAxis = (NumberAxis)pLineChart.getXAxis();
+            pNumAxis.setAutoRanging(false);
+            pNumAxis.setUpperBound(xLength);
+            pNumAxis.setTickUnit(xLength/10);
+
+            //pLineChart.getXAxis().ra
+
+            //(xLength);
+        }
+    }
+
 
     public void fillSeries(double[] data, XYChart.Series series) {
         List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
@@ -271,6 +291,7 @@ public class ProcessSampleModel {
     public void chart(LineChart<Number, Number> lineChart) {
         pLineChart = lineChart;
         pLineChart.setLegendVisible(false);
+        pLineChart.setAnimated(false);
     }
     // метод для получения номера линии с графика, и инициализация ее.
     private int chartsAdd() {
@@ -297,24 +318,45 @@ public class ProcessSampleModel {
         }
     }
 
+    public void chartClearData(int index){
+        if(graphSeries_Channel_Enabled[index]) {
+            graphSeries_Channel[index].getData().clear();
+        }
+    }
+
     public void chartSetData(int index, double array[]){
         if(graphSeries_Channel_Enabled[index]) {
             fillSeries(array, graphSeries_Channel[index]);
         }
     }
 
+    public void chartAddData(int index, double value, double time ){
+        if(graphSeries_Channel_Enabled[index]) {
+            if(graphSeries_Channel[index].getData() != null) {
+                Platform.runLater(() -> {
+                    graphSeries_Channel[index].getData().add(new XYChart.Data<>(time, value));
+                });
+
+            } else {
+                List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+                intermediateList.add(new XYChart.Data<>(time, value));
+                Platform.runLater(() -> {
+                    graphSeries_Channel[index].getData().clear();
+                    graphSeries_Channel[index].getData().addAll(intermediateList);
+                });
+           }
+        }
+    }
+
+
     public void chartAdd() {
         double arr1[] = new double[255];
         for (int j = 0; j < currentIndex; j++) {
             for (int i = 0; i < 255; i++) {
-                arr1[i] = Math.sin(i + j);
+                arr1[i] = Math.sin((i + j)*0.1);
             }
             chartSetData(j, arr1);
         }
-    }
-
-    public void setTestId(long testId) {
-        this.testId = testId;
     }
 
     public void setLineToProcessSample(String mainText) {
