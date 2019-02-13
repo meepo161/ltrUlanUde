@@ -107,6 +107,6 @@ public class LTR24 {
     }
 
     static {
-        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR24Library.dll");
+        System.loadLibrary( "LTR24Library");
     }
 }

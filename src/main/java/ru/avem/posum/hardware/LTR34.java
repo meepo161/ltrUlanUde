@@ -121,6 +121,6 @@ public class LTR34 {
     }
 
     static {
-        System.load(System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR34Library.dll");
+        System.loadLibrary("LTR34Library");
     }
 }

@@ -14,11 +14,11 @@ public class LTR212 {
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
     public void openConnection() {
-        status = open(crate, slot);
+        status = open(crate, slot, System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
         checkStatus();
     }
 
-    public native String open(String crate, int slot);
+    public native String open(String crate, int slot, String path);
 
     public void initModule() {
         status = initialize(slot, channelsTypes, measuringRanges);
@@ -120,6 +120,6 @@ public class LTR212 {
     }
 
     static {
-        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR212Library.dll");
+        System.loadLibrary( "LTR212Library");
     }
 }
