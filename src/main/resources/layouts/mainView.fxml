@@ -55,14 +55,14 @@
                   <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <TableView fx:id="testProgrammTableView">
+                        <TableView fx:id="testProgramTableView">
                             <columns>
                                 <TableColumn fx:id="columnTableViewIndex" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: center;" text="ID" />
-                                <TableColumn fx:id="columnTestProgrammName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
-                                <TableColumn fx:id="columnTestProgrammCreatingDate" minWidth="80.0" text="Дата создания" />
-                                <TableColumn fx:id="columnTestProgrammChangingDate" minWidth="80.0" text="Дата изменения" />
-                                <TableColumn fx:id="columnTestProgrammTime" minWidth="80.0" text="Длительность испытания" />
-                                <TableColumn fx:id="columnTestProgrammType" minWidth="80.0" text="Тип испытаний" />
+                                <TableColumn fx:id="columnTestProgramName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
+                                <TableColumn fx:id="columnTestProgramCreatingDate" minWidth="80.0" text="Дата создания" />
+                                <TableColumn fx:id="columnTestProgramChangingDate" minWidth="80.0" text="Дата изменения" />
+                                <TableColumn fx:id="columnTestProgramTime" minWidth="80.0" text="Длительность испытания" />
+                                <TableColumn fx:id="columnTestProgramType" minWidth="80.0" text="Тип испытаний" />
                                 <TableColumn fx:id="columnTestingSample" minWidth="80.0" text="Объект испытаний" />
                             </columns>
                             <GridPane.margin>

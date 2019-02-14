@@ -15,11 +15,11 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.LTR212ModuleRepository;
 import ru.avem.posum.db.LTR24ModuleRepository;
 import ru.avem.posum.db.LTR34ModuleRepository;
-import ru.avem.posum.db.TestProgrammRepository;
+import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.LTR212Module;
 import ru.avem.posum.db.models.LTR24Module;
 import ru.avem.posum.db.models.LTR34Module;
-import ru.avem.posum.db.models.TestProgramm;
+import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Toast;
@@ -32,54 +32,54 @@ public class MainController implements BaseController {
     @FXML
     private StatusBar statusBar;
     @FXML
-    private TableView<TestProgramm> testProgrammTableView;
+    private TableView<TestProgram> testProgramTableView;
     @FXML
-    private TableColumn<TestProgramm, Integer> columnTableViewIndex;
+    private TableColumn<TestProgram, Integer> columnTableViewIndex;
     @FXML
-    private TableColumn<TestProgramm, String> columnTestProgrammName;
+    private TableColumn<TestProgram, String> columnTestProgramName;
     @FXML
-    private TableColumn<TestProgramm, String> columnTestProgrammCreatingDate;
+    private TableColumn<TestProgram, String> columnTestProgramCreatingDate;
     @FXML
-    private TableColumn<TestProgramm, String> columnTestProgrammChangingDate;
+    private TableColumn<TestProgram, String> columnTestProgramChangingDate;
     @FXML
-    private TableColumn<TestProgramm, String> columnTestProgrammTime;
+    private TableColumn<TestProgram, String> columnTestProgramTime;
     @FXML
-    private TableColumn<TestProgramm, String> columnTestProgrammType;
+    private TableColumn<TestProgram, String> columnTestProgramType;
     @FXML
-    private TableColumn<TestProgramm, String> columnTestingSample;
+    private TableColumn<TestProgram, String> columnTestingSample;
 
     private WindowsManager wm;
     private ControllerManager cm;
-    private ObservableList<TestProgramm> testProgramms;
+    private ObservableList<TestProgram> testPrograms;
     private StatusBarLine statusBarLine = new StatusBarLine();
 
     @FXML
     private void initialize() {
-        showTestProgramm();
+        showTestProgram();
 
-        makeColumnTitleWrapper(columnTestProgrammName);
-        makeColumnTitleWrapper(columnTestProgrammCreatingDate);
-        makeColumnTitleWrapper(columnTestProgrammChangingDate);
-        makeColumnTitleWrapper(columnTestProgrammTime);
-        makeColumnTitleWrapper(columnTestProgrammType);
+        makeColumnTitleWrapper(columnTestProgramName);
+        makeColumnTitleWrapper(columnTestProgramCreatingDate);
+        makeColumnTitleWrapper(columnTestProgramChangingDate);
+        makeColumnTitleWrapper(columnTestProgramTime);
+        makeColumnTitleWrapper(columnTestProgramType);
         makeColumnTitleWrapper(columnTestingSample);
 
-        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("testProgrammId"));
-        columnTestProgrammName.setCellValueFactory(new PropertyValueFactory<>("testProgrammName"));
-        columnTestProgrammCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgrammDate"));
-        columnTestProgrammChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgrammDate"));
-        columnTestProgrammTime.setCellValueFactory(new PropertyValueFactory<>("testProgrammTime"));
-        columnTestProgrammType.setCellValueFactory(new PropertyValueFactory<>("testProgrammType"));
+        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("testProgramId"));
+        columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("testProgramName"));
+        columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
+        columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
+        columnTestProgramTime.setCellValueFactory(new PropertyValueFactory<>("testProgramTime"));
+        columnTestProgramType.setCellValueFactory(new PropertyValueFactory<>("testProgramType"));
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
 
         addDoubleClickListener();
     }
 
-    public void showTestProgramm() {
-        TestProgrammRepository.updateTestProgrammId();
-        List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-        testProgramms = FXCollections.observableArrayList(allTestProgramms);
-        testProgrammTableView.setItems(testProgramms);
+    public void showTestProgram() {
+        TestProgramRepository.updateTestProgramId();
+        List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
+        testPrograms = FXCollections.observableArrayList(allTestPrograms);
+        testProgramTableView.setItems(testPrograms);
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -97,8 +97,8 @@ public class MainController implements BaseController {
     }
 
     private void addDoubleClickListener() {
-        testProgrammTableView.setRowFactory(tv -> {
-            TableRow<TestProgramm> row = new TableRow<>();
+        testProgramTableView.setRowFactory(tv -> {
+            TableRow<TestProgram> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     handleMenuItemEdit();
@@ -130,9 +130,9 @@ public class MainController implements BaseController {
         if (getSelectedItemIndex() != -1) {
             new Thread(() -> {
                 clearModulesList();
-                List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-                cm.showTestProgramm(allTestProgramms.get(getSelectedItemIndex()));
-                showTestProgramm();
+                List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
+                cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex()));
+                showTestProgram();
                 cm.setEditMode(true);
             }).start();
             wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
@@ -140,21 +140,21 @@ public class MainController implements BaseController {
     }
 
     private int getSelectedItemIndex() {
-        return testProgrammTableView.getSelectionModel().getSelectedIndex();
+        return testProgramTableView.getSelectionModel().getSelectedIndex();
     }
 
     public void handleMenuItemCopy() {
         if (getSelectedItemIndex() != -1) {
             toggleProgressIndicatorState(false);
             new Thread(() -> {
-                List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-                TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
-                long oldTestProgrammId = testProgramm.getId();
-                TestProgrammRepository.insertTestProgramm(testProgramm);
+                List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
+                TestProgram testProgram = allTestPrograms.get(getSelectedItemIndex());
+                long oldTestProgrammId = testProgram.getId();
+                TestProgramRepository.insertTestProgram(testProgram);
 
-                allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-                testProgramm = allTestProgramms.get(allTestProgramms.size() - 1);
-                long newTestProgrammId = testProgramm.getId();
+                allTestPrograms = TestProgramRepository.getAllTestPrograms();
+                testProgram = allTestPrograms.get(allTestPrograms.size() - 1);
+                long newTestProgrammId = testProgram.getId();
 
                 for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
                     if (oldTestProgrammId == ltr24Module.getTestProgrammId()) {
@@ -197,10 +197,10 @@ public class MainController implements BaseController {
     public void handleMenuItemDelete() {
         toggleProgressIndicatorState(false);
         new Thread(() -> {
-            List<TestProgramm> allTestProgramms = TestProgrammRepository.getAllTestProgramms();
-            TestProgramm testProgramm = allTestProgramms.get(getSelectedItemIndex());
-            long testProgrammId = testProgramm.getId();
-            TestProgrammRepository.deleteTestProgramm(testProgramm);
+            List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
+            TestProgram testProgram = allTestPrograms.get(getSelectedItemIndex());
+            long testProgrammId = testProgram.getId();
+            TestProgramRepository.deleteTestProgram(testProgram);
 
             for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
                 if (testProgrammId == ltr24Module.getTestProgrammId()) {
@@ -234,14 +234,14 @@ public class MainController implements BaseController {
 
     public void handleOpenExpirement() {
         //проверка выбрана ли позиция в таблице и существует ли она
-        if (testProgramms.size() > 0) {
-            TestProgramm testProgrammItem = testProgrammTableView.getSelectionModel().getSelectedItem();
-            if (testProgrammItem == null) {
+        if (testPrograms.size() > 0) {
+            TestProgram testProgramItem = testProgramTableView.getSelectionModel().getSelectedItem();
+            if (testProgramItem == null) {
                 Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
                 return;
             }
             // передать данные в класс проведения эксперемента
-            cm.getExperimentModel().SetTestId(testProgrammItem.getId());
+            cm.getExperimentModel().SetTestId(testProgramItem.getId());
             // вызвать окно проведения эксперемента
             wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
         } else {
