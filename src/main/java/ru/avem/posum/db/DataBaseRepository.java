@@ -15,7 +15,7 @@ public class DataBaseRepository {
             LTR24ModuleRepository.createTable(LTR24Module.class);
             LTR212ModuleRepository.createTable(LTR212Module.class);
             LTR34ModuleRepository.createTable(LTR34Module.class);
-            TestProgrammRepository.createTable(TestProgramm.class);
+            TestProgramRepository.createTable(TestProgram.class);
 
             Account admin = new Account("admin", "102030");
             AccountRepository.insertAccount(admin);
@@ -26,7 +26,6 @@ public class DataBaseRepository {
 
             Event event = new Event(0, "База создана");
             EventRepository.insertEvent(event);
-
         }
     }
 }

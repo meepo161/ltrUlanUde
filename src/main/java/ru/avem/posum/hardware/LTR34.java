@@ -10,13 +10,14 @@ public class LTR34 {
     private int slot;
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
+    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    public void initModule() {
-        status = initialize(crate, slot, channelsCounter, checkedChannels);
+    public void openConnection() {
+        status = open(crate, slot);
         checkStatus();
     }
 
-    public native String initialize(String crateSN, int slot, int channelsCounter, boolean[] checkedChannels);
+    public native String open(String crate, int slot);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
@@ -24,22 +25,34 @@ public class LTR34 {
         }
     }
 
+    public void initModule() {
+        status = initialize(channelsCounter);
+        checkStatus();
+    }
+
+    public native String initialize(int channelsCounter);
+
     public void closeConnection() {
-        try {
-            close();
-            initModule();
-            dataSend(new double[500_000]);
-            start();
-            Thread.sleep(100);
-            close();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        new Thread(() -> {
+            try {
+                stop();
+                initModule();
+                dataSend(new double[500_000]);
+                start();
+                Thread.sleep(1000);
+                stop();
+                close();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public native void dataSend(double[] data);
 
     public native String start();
+
+    public native String stop();
 
     public native String close();
 
@@ -108,6 +121,6 @@ public class LTR34 {
     }
 
     static {
-        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR34Library.dll");
+        System.loadLibrary("LTR34Library");
     }
 }

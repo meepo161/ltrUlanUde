@@ -9,16 +9,23 @@ public class LTR24 {
     private String[] channelsDescription = {"", "", "", ""};
     private String crate;
     private int slot;
-    private String status;
+    private String status = "";
     private TextEncoder textEncoder = new TextEncoder();
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    public void initModule() {
-        status = initialize(crate, slot, channelsTypes, measuringRanges);
+    public void openConnection() {
+        status = open(crate, slot);
         checkStatus();
     }
 
-    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
+    public native String open(String crate, int slot);
+
+    public void initModule() {
+        status = initialize(slot, channelsTypes, measuringRanges);
+        checkStatus();
+    }
+
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
@@ -34,8 +41,7 @@ public class LTR24 {
     public native String fillArray(int slot, double[] data);
 
     public void closeConnection() {
-        status = close(slot);
-        checkStatus();
+        close(slot);
     }
 
     public native String close(int slot);
@@ -101,6 +107,6 @@ public class LTR24 {
     }
 
     static {
-        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\LTR24Library.dll");
+        System.loadLibrary( "LTR24Library");
     }
 }

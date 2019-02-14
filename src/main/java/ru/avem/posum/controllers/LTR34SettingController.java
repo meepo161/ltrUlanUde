@@ -1,10 +1,12 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
@@ -41,6 +43,8 @@ public class LTR34SettingController implements BaseController {
     private CheckBox checkChannelN8;
     @FXML
     private LineChart<Number, Number> graph;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -79,6 +83,7 @@ public class LTR34SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
+    private boolean connectionOpen;
     private LTR34 ltr34 = new LTR34();
     private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
     private List<Pair<Integer, Integer>> signalParameters;
@@ -246,20 +251,44 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleGenerateSignal() {
-        parseChannelsSettings();
+        toggleProgressIndicatorState(false);
+        disableUiElements();
 
-        ltr34.countChannels();
-        ltr34.initModule();
+        new Thread(() -> {
+            parseChannelsSettings();
 
-        if (ltr34.getStatus().equals("Операция успешно выполнена")) {
-            createChannelsData();
-            ltr34.dataSend(signal);
-            ltr34.start();
-            drawGraph();
-            disableUiElements();
-        }
+            if (!connectionOpen) {
+                ltr34.openConnection();
+                connectionOpen = true;
+            }
 
-        statusBarLine.setStatus(ltr34.getStatus(), statusBar);
+            ltr34.countChannels();
+            ltr34.initModule();
+
+            if (ltr34.getStatus().equals("Операция успешно выполнена")) {
+                createChannelsData();
+                ltr34.dataSend(signal);
+                ltr34.start();
+
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    graph.setDisable(false);
+                    stopSignalButton.setDisable(false);
+                    stopSignalButton.requestFocus();
+                    drawGraph();
+                });
+            } else {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsUiElements();
+                });
+            }
+
+
+            Platform.runLater(() -> {
+                statusBarLine.setStatus(ltr34.getStatus(), statusBar);
+            });
+        }).start();
     }
 
     private void parseChannelsSettings() {
@@ -283,9 +312,18 @@ public class LTR34SettingController implements BaseController {
                 ltr34.getChannelsParameters()[1][i] = amplitude;
             } else {
                 ltr34.getCheckedChannels()[i] = false; // false - канал не выбран
+                signalParameters.add(new Pair<>(0, 0));
                 ltr34.getChannelsParameters()[0][i] = 0;
                 ltr34.getChannelsParameters()[1][i] = 0;
             }
+        }
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
     }
 
@@ -365,9 +403,7 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void disableUiElements() {
-        graph.setDisable(false);
         generateSignalButton.setDisable(true);
-        stopSignalButton.setDisable(false);
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
             frequencyTextFields.get(i).setDisable(true);
@@ -377,6 +413,7 @@ public class LTR34SettingController implements BaseController {
 
     public void handleStopSignal() {
         ltr34.closeConnection();
+        connectionOpen = false;
 
         enableChannelsUiElements();
         graph.getData().clear();
@@ -396,12 +433,35 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        findLTR34Module();
-        parseChannelsSettings();
+        new Thread(() -> {
+            findLTR34Module();
+            parseChannelsSettings();
 
-        cm.loadItemsForMainTableView();
-        cm.loadItemsForModulesTableView();
+            if (connectionOpen) {
+                ltr34.closeConnection();
+                connectionOpen = false;
+            }
+
+            clearView();
+
+            cm.loadItemsForMainTableView();
+            cm.loadItemsForModulesTableView();
+        }).start();
+
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    private void clearView() {
+        graph.getData().clear();
+        graph.setDisable(true);
+
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            channelsCheckBoxes.get(i).setDisable(false);
+            if (channelsCheckBoxes.get(i).isSelected()) {
+                frequencyTextFields.get(i).setDisable(false);
+                amplitudeTextFields.get(i).setDisable(false);
+            }
+        }
     }
 
     public void loadSettings() {
