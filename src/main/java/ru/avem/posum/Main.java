@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.TestProgramm;
+import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
 
@@ -219,7 +219,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadItemsForMainTableView() {
-        mainController.showTestProgramm();
+        mainController.showTestProgram();
     }
 
     @Override
@@ -317,8 +317,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void showTestProgramm(TestProgramm testProgramm) {
-        settingsController.showTestProgramm(testProgramm);
+    public void showTestProgram(TestProgram testProgram) {
+        settingsController.showTestProgram(testProgram);
     }
 
     @Override

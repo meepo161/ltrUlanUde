@@ -1,6 +1,6 @@
 package ru.avem.posum;
 
-import ru.avem.posum.db.models.TestProgramm;
+import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
 
@@ -33,7 +33,7 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    void showTestProgramm(TestProgramm testProgramm);
+    void showTestProgram(TestProgram testProgram);
 
     void setEditMode(boolean editMode);
 

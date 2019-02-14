@@ -136,6 +136,6 @@ public class CrateModel {
     }
 
     static {
-        System.load( System.getProperty("user.dir") + "\\src\\main\\resources\\libs\\CrateLibrary.dll");
+        System.loadLibrary("CrateLibrary");
     }
 }

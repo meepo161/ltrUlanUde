@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,6 +14,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import org.controlsfx.control.StatusBar?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1260.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.MainController">
     <top>
@@ -49,17 +51,18 @@
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <TableView fx:id="experimentsTableView">
+                        <TableView fx:id="testProgramTableView">
                             <columns>
                                 <TableColumn fx:id="columnTableViewIndex" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: center;" text="ID" />
-                                <TableColumn fx:id="columnTestProgrammName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
-                                <TableColumn fx:id="columnTestProgrammCreatingDate" minWidth="80.0" text="Дата создания" />
-                                <TableColumn fx:id="columnTestProgrammChangingDate" minWidth="80.0" text="Дата изменения" />
-                                <TableColumn fx:id="columnTestProgrammTime" minWidth="80.0" text="Длительность испытания" />
-                                <TableColumn fx:id="columnTestProgrammType" minWidth="80.0" text="Тип испытаний" />
+                                <TableColumn fx:id="columnTestProgramName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
+                                <TableColumn fx:id="columnTestProgramCreatingDate" minWidth="80.0" text="Дата создания" />
+                                <TableColumn fx:id="columnTestProgramChangingDate" minWidth="80.0" text="Дата изменения" />
+                                <TableColumn fx:id="columnTestProgramTime" minWidth="80.0" text="Длительность испытания" />
+                                <TableColumn fx:id="columnTestProgramType" minWidth="80.0" text="Тип испытаний" />
                                 <TableColumn fx:id="columnTestingSample" minWidth="80.0" text="Объект испытаний" />
                             </columns>
                             <GridPane.margin>
@@ -69,11 +72,21 @@
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                             </columnResizePolicy>
                         </TableView>
-                        <Button fx:id="openExperimentButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleOpenExpirement" text="Открыть" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                        <Button fx:id="openExperimentButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleOpenExpirement" text="Открыть" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                             <GridPane.margin>
                                 <Insets right="10.0" />
                             </GridPane.margin>
                         </Button>
+                  <StatusBar fx:id="statusBar" styleClass="status-bar" stylesheets="@../css/main.css" text="" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin>
+                  </StatusBar>
+                  <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin>
+                  </ProgressIndicator>
                     </children>
                 </GridPane>
             </children>

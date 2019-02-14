@@ -1,12 +1,10 @@
 package ru.avem.posum.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -55,6 +53,8 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
     @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
     private StatusBar statusBar;
     @FXML
     private TextField descriptionOfChannelN1;
@@ -68,6 +68,7 @@ public class LTR24SettingController implements BaseController {
     private WindowsManager wm;
     private ControllerManager cm;
     private CrateModel crateModel;
+    private boolean connectionOpen;
     private LTR24 ltr24 = new LTR24();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<Button> valueOfChannelsButtons = new ArrayList<>();
@@ -151,16 +152,16 @@ public class LTR24SettingController implements BaseController {
 
     private void addListenerForAllChannels() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            toggleChannelsUiElements(channelsCheckBoxes.get(i), i);
+            disableChannelsUiElements(channelsCheckBoxes.get(i), i);
         }
     }
 
-    private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
+    private void disableChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-                toggleUiElements(channel, false);
+                disableChannelsUiElements(channel, false);
             } else {
-                toggleUiElements(channel, true);
+                disableChannelsUiElements(channel, true);
                 channelsDescription.get(channel).setText("");
                 channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
                 measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
@@ -168,7 +169,7 @@ public class LTR24SettingController implements BaseController {
         });
     }
 
-    private void toggleUiElements(int channel, boolean isDisable) {
+    private void disableChannelsUiElements(int channel, boolean isDisable) {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
@@ -254,17 +255,50 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleInitialize() {
-        saveChannelsSettings();
-        ltr24.initModule();
-        statusBarLine.setStatus(ltr24.getStatus(), statusBar);
+        toggleProgressIndicatorState(false);
+        disableChannelsUiElements();
 
-        if (ltr24.getStatus().equals("Операция успешно выполнена")) {
-            disableUiElements();
-            enableChannelsButtons();
+        new Thread(() -> {
+            saveChannelsSettings();
+            initializeModule();
+
+            Platform.runLater(() -> {
+                statusBarLine.setStatus(ltr24.getStatus(), statusBar);
+            });
+
+            if (ltr24.getStatus().equals("Операция успешно выполнена")) {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsButtons();
+                });
+            } else {
+                Platform.runLater(() -> {
+                    toggleProgressIndicatorState(true);
+                    enableChannelsUiElements();
+                });
+            }
+
+        }).start();
+    }
+
+    private void initializeModule() {
+        if (!connectionOpen) {
+            ltr24.openConnection();
+            connectionOpen = true;
+        }
+
+        ltr24.initModule();
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
     }
 
-    private void disableUiElements() {
+    private void disableChannelsUiElements() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
             channelsDescription.get(i).setDisable(true);
@@ -284,12 +318,36 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleBackButton() {
-        findLTR24Module();
-        saveChannelsSettings();
+        new Thread(() -> {
+            findLTR24Module();
+            saveChannelsSettings();
+            if (connectionOpen) {
+                ltr24.closeConnection();
+                connectionOpen = false;
+            }
+
+            enableChannelsUiElements();
+            cm.loadItemsForMainTableView();
+            cm.loadItemsForModulesTableView();
+        }).start();
 
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
-        cm.loadItemsForMainTableView();
-        cm.loadItemsForModulesTableView();
+    }
+
+    private void enableChannelsUiElements() {
+        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+            CheckBox channel = channelsCheckBoxes.get(i);
+            channel.setDisable(false);
+
+            if (channel.isSelected()) {
+                channelsCheckBoxes.get(i).setDisable(false);
+                channelsDescription.get(i).setDisable(false);
+                channelsTypesComboBoxes.get(i).setDisable(false);
+                measuringRangesComboBoxes.get(i).setDisable(false);
+            }
+        }
+
+        initializeButton.setDisable(false);
     }
 
     private void saveChannelsSettings() {
