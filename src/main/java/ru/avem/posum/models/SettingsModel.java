@@ -171,8 +171,9 @@ public class SettingsModel {
                         checkedChannels[i] = false;
                     } else {
                         checkedChannels[i] = true;
-                        channelsParameters[0][i] = Integer.parseInt(ltr34Module.getChannelsFrequency().split(", ", 9)[i]);
-                        channelsParameters[1][i] = Integer.parseInt(ltr34Module.getChannelsAmplitude().split(", ", 9)[i]);
+                        channelsParameters[0][i] = Integer.parseInt(ltr34Module.getChannelsAmplitude().split(", ", 9)[i]);
+                        channelsParameters[1][i] = Integer.parseInt(ltr34Module.getChannelsFrequency().split(", ", 9)[i]);
+                        channelsParameters[2][i] = Integer.parseInt(ltr34Module.getChannelsPhase().split(", ", 9)[i]);
                     }
                 }
 
@@ -361,24 +362,29 @@ public class SettingsModel {
     }
 
     private void updateLTR34Data(LTR34 ltr34, boolean[] checkedChannels, LTR34Module ltr34Module) {
+        int[][] channelsParameters = ltr34.getChannelsParameters();
         String channels = "";
-        String frequencies = "";
         String amplitudes = "";
+        String frequencies = "";
+        String phases = "";
 
         for (int i = 0; i < checkedChannels.length; i++) {
             if (checkedChannels[i]) {
                 channels += 1 + ", ";
-                frequencies += ltr34.getChannelsParameters()[0][i] + ", ";
-                amplitudes += ltr34.getChannelsParameters()[1][i] + ", ";
+                frequencies += channelsParameters[0][i] + ", ";
+                amplitudes += channelsParameters[1][i] + ", ";
+                phases += channelsParameters[2][i] + ", ";
             } else {
                 channels += 0 + ", ";
                 frequencies += 0 + ", ";
                 amplitudes += 0 + ", ";
+                phases += 0 + ", ";
             }
         }
         ltr34Module.setCheckedChannels(channels);
-        ltr34Module.setChannelsFrequency(frequencies);
-        ltr34Module.setChannelsAmplitude(amplitudes);
+        ltr34Module.setChannelsAmplitudes(amplitudes);
+        ltr34Module.setChannelsFrequencies(frequencies);
+        ltr34Module.setChannelsPhases(phases);
         ltr34Module.setCrate(ltr34.getCrate());
         ltr34Module.setSlot(ltr34.getSlot());
 

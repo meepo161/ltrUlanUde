@@ -33,19 +33,8 @@ public class LTR34 {
     public native String initialize(int channelsCounter);
 
     public void closeConnection() {
-        new Thread(() -> {
-            try {
-                stop();
-                initModule();
-                dataSend(new double[500_000]);
-                start();
-                Thread.sleep(1000);
-                stop();
-                close();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        stop();
+        close();
     }
 
     public native void dataSend(double[] data);
@@ -118,6 +107,10 @@ public class LTR34 {
 
     public void setTextEncoder(TextEncoder textEncoder) {
         this.textEncoder = textEncoder;
+    }
+
+    public boolean isBusy() {
+        return busy;
     }
 
     static {
