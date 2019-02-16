@@ -104,7 +104,7 @@ public class LTR34SettingController implements BaseController {
     private LTR34 ltr34 = new LTR34();
     private boolean[] checkedChannels;
     private int[][] channelsParameters;
-    private double[] signal = new double[500_000]; // массив данных для генерации сигнала для каждого канала
+    private double[] signal = new double[62_500]; // массив данных для генерации сигнала для каждого канала
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<TextField> amplitudeTextFields = new ArrayList<>();
@@ -301,7 +301,7 @@ public class LTR34SettingController implements BaseController {
     private void setPhaseFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|0|$")) {
+            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -318,48 +318,48 @@ public class LTR34SettingController implements BaseController {
                 ltr34.openConnection();
                 connectionOpen = true;
             }
-
             ltr34.countChannels();
             ltr34.initModule();
-
-            if (ltr34.getStatus().equals("Операция успешно выполнена")) {
-                createChannelsData();
-                ltr34.dataSend(signal);
-                ltr34.start();
-
-                new Thread(() -> {
-                    stopped = false;
-                    while (!stopped) {
-                        if (!ltr34.isBusy()) {
-                            ltr34.dataSend(signal);
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            System.out.println("Sent!");
-                        }
-                    }
-                }).start();
-
-                Platform.runLater(() -> {
-                    toggleProgressIndicatorState(true);
-                    graph.setDisable(false);
-                    stopSignalButton.setDisable(false);
-                    stopSignalButton.requestFocus();
-                    drawGraph();
-                });
-            } else {
-                Platform.runLater(() -> {
-                    toggleProgressIndicatorState(true);
-                    enableChannelsUiElements();
-                });
-            }
+            generate();
 
             Platform.runLater(() -> {
                 statusBarLine.setStatus(ltr34.getStatus(), statusBar);
             });
         }).start();
+    }
+
+    private void generate() {
+        if (ltr34.getStatus().equals("Операция успешно выполнена")) {
+            createChannelsData();
+            ltr34.dataSend(signal);
+            ltr34.start();
+
+            new Thread(() -> {
+                stopped = false;
+                while (!stopped) {
+                    ltr34.dataSend(signal);
+                    try {
+                        Thread.sleep(1000); // пауза подобрана, чтобы ЦАП работал непрерывно
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Sent!");
+                }
+            }).start();
+
+            Platform.runLater(() -> {
+                toggleProgressIndicatorState(true);
+                graph.setDisable(false);
+                stopSignalButton.setDisable(false);
+                stopSignalButton.requestFocus();
+                drawGraph();
+            });
+        } else {
+            Platform.runLater(() -> {
+                toggleProgressIndicatorState(true);
+                enableChannelsUiElements();
+            });
+        }
     }
 
     private void parseChannelsSettings() {
@@ -413,11 +413,11 @@ public class LTR34SettingController implements BaseController {
 
         if (ltr34.getChannelsCounter() <= 4) {
             for (int i = 0; i < 4; i++) {
-                channelsData.add(createSin(125_000, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
+                channelsData.add(createSin(signal.length / 4, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
             }
         } else {
             for (int i = 0; i < 8; i++) {
-                channelsData.add(createSin(62_500, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
+                channelsData.add(createSin(signal.length / 8, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
             }
         }
 
@@ -429,7 +429,7 @@ public class LTR34SettingController implements BaseController {
         double channelPhase = phase / 57.2958; // перевод градусов в радианы
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
+            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length);
         }
 
         return data;
@@ -469,7 +469,7 @@ public class LTR34SettingController implements BaseController {
                     channels = 8;
                 }
 
-                for (int j = i; j < signal.length; j += channels * 100) {
+                for (int j = i; j < signal.length; j += channels * 100) { // коэффициент 100 введен для того, чтобы не отрисовывать все 500_000 точек
                     graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 100 + i), signal[j]));
                 }
             }
@@ -480,8 +480,9 @@ public class LTR34SettingController implements BaseController {
         generateSignalButton.setDisable(true);
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
-            frequencyTextFields.get(i).setDisable(true);
             amplitudeTextFields.get(i).setDisable(true);
+            frequencyTextFields.get(i).setDisable(true);
+            phasesTextFields.get(i).setDisable(true);
         }
     }
 
@@ -502,8 +503,9 @@ public class LTR34SettingController implements BaseController {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(false);
             if (channelsCheckBoxes.get(i).isSelected()) {
-                frequencyTextFields.get(i).setDisable(false);
                 amplitudeTextFields.get(i).setDisable(false);
+                frequencyTextFields.get(i).setDisable(false);
+                phasesTextFields.get(i).setDisable(false);
             }
         }
     }
