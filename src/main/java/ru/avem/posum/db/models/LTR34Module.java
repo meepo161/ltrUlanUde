@@ -14,9 +14,11 @@ public class LTR34Module {
     @DatabaseField
     private String checkedChannels = "";
     @DatabaseField
+    private String channelsAmplitude = "";
+    @DatabaseField
     private String channelsFrequency = "";
     @DatabaseField
-    private String channelsAmplitude = "";
+    private String channelsPhase = "";
     @DatabaseField
     private String crate = "";
     @DatabaseField
@@ -37,12 +39,16 @@ public class LTR34Module {
             }
         }
 
-        for (int frequency : channelsParameters[0]) {
+        for (int amplitude : channelsParameters[0]) {
+            this.channelsAmplitude += amplitude + ", ";
+        }
+
+        for (int frequency : channelsParameters[1]) {
             this.channelsFrequency += frequency + ", ";
         }
 
-        for (int amplitude : channelsParameters[1]) {
-            this.channelsAmplitude += amplitude + ", ";
+        for (int phase : channelsParameters[2]) {
+            this.channelsPhase += phase + ", ";
         }
 
         this.crate = crate;
@@ -91,20 +97,28 @@ public class LTR34Module {
         this.checkedChannels = checkedChannels;
     }
 
-    public String getChannelsFrequency() {
-        return channelsFrequency;
-    }
-
-    public void setChannelsFrequency(String channelsFrequency) {
-        this.channelsFrequency = channelsFrequency;
-    }
-
     public String getChannelsAmplitude() {
         return channelsAmplitude;
     }
 
-    public void setChannelsAmplitude(String channelsAmplitude) {
+    public void setChannelsAmplitudes(String channelsAmplitude) {
         this.channelsAmplitude = channelsAmplitude;
+    }
+
+    public String getChannelsFrequency() {
+        return channelsFrequency;
+    }
+
+    public void setChannelsFrequencies(String channelsFrequency) {
+        this.channelsFrequency = channelsFrequency;
+    }
+
+    public String getChannelsPhase() {
+        return channelsPhase;
+    }
+
+    public void setChannelsPhases(String channelsPhase) {
+        this.channelsPhase = channelsPhase;
     }
 
     public String getCrate() {

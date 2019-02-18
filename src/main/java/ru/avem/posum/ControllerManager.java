@@ -37,6 +37,8 @@ public interface ControllerManager {
 
     void setEditMode(boolean editMode);
 
+    void hideRequiredFieldsSymbols();
+
     boolean isClosed();
 
     void setClosed(boolean closed);

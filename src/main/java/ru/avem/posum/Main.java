@@ -327,6 +327,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void hideRequiredFieldsSymbols() {
+        settingsController.hideReqiredFieldsSymbols();
+    }
+
+    @Override
     public boolean isClosed() {
         return closed;
     }

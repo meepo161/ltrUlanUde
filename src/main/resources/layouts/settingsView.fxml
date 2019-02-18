@@ -90,7 +90,7 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="testProgrammNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                              <TextField fx:id="testProgramNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
@@ -110,13 +110,19 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="testProgrammTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                              <TextField fx:id="testProgramTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="testProgrammTimeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
-                              <TextField fx:id="testProgrammDateTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+                              <TextField fx:id="testProgramTimeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin></TextField>
+                              <TextField fx:id="testProgramDateTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin></TextField>
                               <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
@@ -127,7 +133,7 @@
                                     <Insets left="10.0" right="10.0" />
                                  </GridPane.margin>
                               </TextArea>
-                              <Button fx:id="saveTestProgrammSettingsButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgrammSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+                              <Button fx:id="saveTestProgrammSettingsButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgramSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
@@ -137,6 +143,26 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Button>
+                              <Label fx:id="requiredFieldN1" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN2" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN3" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN4" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>

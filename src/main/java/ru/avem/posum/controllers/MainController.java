@@ -116,6 +116,7 @@ public class MainController implements BaseController {
         clearModulesList();
         cm.loadDefaultSettings();
         cm.setEditMode(false);
+        cm.hideRequiredFieldsSymbols();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
