@@ -252,7 +252,9 @@ public class SettingsModel {
         }
     }
 
-    public void saveHardwareSettings() {
+    public void saveHardwareSettings(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+
         /* сохранение настроек оборудования */
         int testProgramId = testProgram.getTestProgramId();
         int ltr24Index = 0; // индексы сохраняют номер последнего взятого объекта
@@ -371,13 +373,13 @@ public class SettingsModel {
         for (int i = 0; i < checkedChannels.length; i++) {
             if (checkedChannels[i]) {
                 channels += 1 + ", ";
-                frequencies += channelsParameters[0][i] + ", ";
-                amplitudes += channelsParameters[1][i] + ", ";
+                amplitudes += channelsParameters[0][i] + ", ";
+                frequencies += channelsParameters[1][i] + ", ";
                 phases += channelsParameters[2][i] + ", ";
             } else {
                 channels += 0 + ", ";
-                frequencies += 0 + ", ";
                 amplitudes += 0 + ", ";
+                frequencies += 0 + ", ";
                 phases += 0 + ", ";
             }
         }

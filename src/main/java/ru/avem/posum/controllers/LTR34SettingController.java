@@ -104,7 +104,7 @@ public class LTR34SettingController implements BaseController {
     private LTR34 ltr34 = new LTR34();
     private boolean[] checkedChannels;
     private int[][] channelsParameters;
-    private double[] signal = new double[62_500]; // массив данных для генерации сигнала для каждого канала
+    private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<TextField> amplitudeTextFields = new ArrayList<>();
@@ -429,7 +429,7 @@ public class LTR34SettingController implements BaseController {
         double channelPhase = phase / 57.2958; // перевод градусов в радианы
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length);
+            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
         }
 
         return data;
@@ -517,7 +517,6 @@ public class LTR34SettingController implements BaseController {
 
             if (connectionOpen) {
                 ltr34.closeConnection();
-                System.out.println("Closed!");
                 connectionOpen = false;
             }
 

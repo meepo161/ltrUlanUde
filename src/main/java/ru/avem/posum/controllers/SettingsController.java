@@ -211,7 +211,7 @@ public class SettingsController implements BaseController {
 
         if (requiredFieldsFilled) {
             if (!chooseCrateButton.isDisabled()) {
-                statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт.", statusBar);
+                statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт", statusBar);
             } else {
                 new Thread(this::saveSettings).start();
             }
@@ -219,9 +219,12 @@ public class SettingsController implements BaseController {
     }
 
     private void checkRequiredFields() {
+        int filledFields = 0;
+
         for (int i = 0; i < requiredFields.size(); i++) {
             TextField textField = requiredFields.get(i).getValue();
             Label label = requiredFields.get(i).getKey();
+
             if (textField.getText().isEmpty()) {
                 label.setVisible(true);
                 requiredFieldsFilled = false;
@@ -229,9 +232,11 @@ public class SettingsController implements BaseController {
                 Platform.runLater(() -> {
                     statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля", statusBar);
                 });
+            } else {
+                filledFields++;
             }
 
-            if (i == requiredFields.size() - 1) {
+            if (filledFields == requiredFields.size()) {
                 requiredFieldsFilled = true;
             }
         }
@@ -247,7 +252,7 @@ public class SettingsController implements BaseController {
         }
 
         settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
-        settingsModel.saveHardwareSettings();
+        settingsModel.saveHardwareSettings(editMode);
 
         Platform.runLater(this::handleBackButton);
     }
@@ -359,6 +364,12 @@ public class SettingsController implements BaseController {
         modulesListView.getSelectionModel().clearSelection();
 
         toggleUiElements(false, true);
+    }
+
+    public void hideReqiredFieldsSymbols() {
+        for (Pair<Label, TextField> pair : requiredFields) {
+            pair.getKey().setVisible(false);
+        }
     }
 
     public void refreshModulesList() {
