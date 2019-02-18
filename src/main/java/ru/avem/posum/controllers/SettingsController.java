@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
+import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -16,6 +18,7 @@ import ru.avem.posum.models.SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +27,14 @@ public class SettingsController implements BaseController {
     private Button chooseCrateButton;
     @FXML
     private Button setupModuleButton;
+    @FXML
+    private Label requiredFieldN1;
+    @FXML
+    private Label requiredFieldN2;
+    @FXML
+    private Label requiredFieldN3;
+    @FXML
+    private Label requiredFieldN4;
     @FXML
     private ListView<String> cratesListView;
     @FXML
@@ -35,7 +46,7 @@ public class SettingsController implements BaseController {
     @FXML
     private TextArea commentsTextArea;
     @FXML
-    private TextField testProgrammNameTextField;
+    private TextField testProgramNameTextField;
     @FXML
     private TextField sampleNameTextField;
     @FXML
@@ -43,11 +54,11 @@ public class SettingsController implements BaseController {
     @FXML
     private TextField documentNumberTextField;
     @FXML
-    private TextField testProgrammTimeTextField;
+    private TextField testProgramTimeTextField;
     @FXML
-    private TextField testProgrammDateTextField;
+    private TextField testProgramDateTextField;
     @FXML
-    private TextField testProgrammTypeTextField;
+    private TextField testProgramTypeTextField;
     @FXML
     private TextField leadEngineerTextField;
 
@@ -59,17 +70,52 @@ public class SettingsController implements BaseController {
     private int selectedModule;
     private ControllerManager cm;
     private TestProgram testProgram;
+    private boolean requiredFieldsFilled;
     private ObservableList<String> crates;
     private ObservableList<String> modulesNames;
     private CrateModel crateModel = new CrateModel();
+    private List<Pair<Label, TextField>> requiredFields = new ArrayList<>();
+    private List<TextField> textFields = new ArrayList<>();
     private SettingsModel settingsModel = new SettingsModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
 
     @FXML
     private void initialize() {
+        fillListOfTextFields();
+        fillListOfRequiredSymbols();
+        initRequiredFieldsSymbols();
         crates = crateModel.getCratesNames();
         cratesListView.setItems(crates);
         showCrateModules();
+    }
+
+    private void fillListOfTextFields() {
+        textFields.addAll(Arrays.asList(
+                testProgramNameTextField,
+                sampleNameTextField,
+                sampleSerialNumberTextField,
+                documentNumberTextField,
+                testProgramTimeTextField,
+                testProgramDateTextField,
+                testProgramTypeTextField,
+                leadEngineerTextField
+        ));
+    }
+
+    private void fillListOfRequiredSymbols() {
+        requiredFields.addAll(Arrays.asList(
+                new Pair<>(requiredFieldN1, testProgramNameTextField),
+                new Pair<>(requiredFieldN2, sampleNameTextField),
+                new Pair<>(requiredFieldN3, testProgramTypeTextField),
+                new Pair<>(requiredFieldN4, testProgramTimeTextField)
+        ));
+    }
+
+    private void initRequiredFieldsSymbols() {
+        for (Pair<Label, TextField> pair : requiredFields) {
+            pair.getKey().setTextFill(Color.web("#D30303"));
+            pair.getKey().setVisible(false);
+        }
     }
 
     private void showCrateModules() {
@@ -160,13 +206,50 @@ public class SettingsController implements BaseController {
         }
     }
 
-    public void handleSaveTestProgrammSettings() {
-        if (!chooseCrateButton.isDisabled()) {
-            statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт.", statusBar);
-        } else {
-            toggleProgressIndicatorState(false);
-            new Thread(this::saveSettings).start();
+    public void handleSaveTestProgramSettings() {
+        checkRequiredFields();
+
+        if (requiredFieldsFilled) {
+            if (!chooseCrateButton.isDisabled()) {
+                statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт.", statusBar);
+            } else {
+                new Thread(this::saveSettings).start();
+            }
         }
+    }
+
+    private void checkRequiredFields() {
+        for (int i = 0; i < requiredFields.size(); i++) {
+            TextField textField = requiredFields.get(i).getValue();
+            Label label = requiredFields.get(i).getKey();
+            if (textField.getText().isEmpty()) {
+                label.setVisible(true);
+                requiredFieldsFilled = false;
+
+                Platform.runLater(() -> {
+                    statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля", statusBar);
+                });
+            }
+
+            if (i == requiredFields.size() - 1) {
+                requiredFieldsFilled = true;
+            }
+        }
+    }
+
+    private void saveSettings() {
+        Platform.runLater(() -> {
+            toggleProgressIndicatorState(false);
+        });
+
+        for (Pair<Label, TextField> pair : requiredFields) {
+            pair.getKey().setVisible(false);
+        }
+
+        settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
+        settingsModel.saveHardwareSettings();
+
+        Platform.runLater(this::handleBackButton);
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
@@ -177,23 +260,16 @@ public class SettingsController implements BaseController {
         }
     }
 
-    private void saveSettings() {
-        settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
-        settingsModel.saveHardwareSettings();
-
-        Platform.runLater(this::handleBackButton);
-    }
-
     private HashMap<String, String> parseGeneralSettingsData() {
         HashMap<String, String> generalSettings = new HashMap<>();
 
-        generalSettings.put("Test Program Name", testProgrammNameTextField.getText());
+        generalSettings.put("Test Program Name", testProgramNameTextField.getText());
         generalSettings.put("Sample Name", sampleNameTextField.getText());
         generalSettings.put("Sample Serial Number", sampleSerialNumberTextField.getText());
         generalSettings.put("Document Number", documentNumberTextField.getText());
-        generalSettings.put("Test Program Type", testProgrammTypeTextField.getText());
-        generalSettings.put("Test Program Time", testProgrammTimeTextField.getText());
-        generalSettings.put("Test Program Date", testProgrammDateTextField.getText());
+        generalSettings.put("Test Program Type", testProgramTypeTextField.getText());
+        generalSettings.put("Test Program Time", testProgramTimeTextField.getText());
+        generalSettings.put("Test Program Date", testProgramDateTextField.getText());
         generalSettings.put("Lead Engineer", leadEngineerTextField.getText());
         generalSettings.put("Comments", commentsTextArea.getText());
         generalSettings.put("Crate Serial Number", crate);
@@ -220,13 +296,13 @@ public class SettingsController implements BaseController {
     }
 
     private void loadGeneralSettings(TestProgram testProgram) {
-        testProgrammNameTextField.setText(testProgram.getTestProgramName());
+        testProgramNameTextField.setText(testProgram.getTestProgramName());
         sampleNameTextField.setText(testProgram.getSampleName());
         sampleSerialNumberTextField.setText(testProgram.getSampleSerialNumber());
         documentNumberTextField.setText(testProgram.getDocumentNumber());
-        testProgrammTypeTextField.setText(testProgram.getTestProgramType());
-        testProgrammTimeTextField.setText(testProgram.getTestProgramTime());
-        testProgrammDateTextField.setText(testProgram.getTestProgramDate());
+        testProgramTypeTextField.setText(testProgram.getTestProgramType());
+        testProgramTimeTextField.setText(testProgram.getTestProgramTime());
+        testProgramDateTextField.setText(testProgram.getTestProgramDate());
         leadEngineerTextField.setText(testProgram.getLeadEngineer());
         commentsTextArea.setText(testProgram.getComments());
     }
@@ -269,13 +345,13 @@ public class SettingsController implements BaseController {
     }
 
     public void loadDefaultSettings() {
-        testProgrammNameTextField.setText("");
+        testProgramNameTextField.setText("");
         sampleNameTextField.setText("");
         sampleSerialNumberTextField.setText("");
         documentNumberTextField.setText("");
-        testProgrammTypeTextField.setText("");
-        testProgrammTimeTextField.setText("");
-        testProgrammDateTextField.setText("");
+        testProgramTypeTextField.setText("");
+        testProgramTimeTextField.setText("");
+        testProgramDateTextField.setText("");
         leadEngineerTextField.setText("");
         commentsTextArea.setText("");
 
