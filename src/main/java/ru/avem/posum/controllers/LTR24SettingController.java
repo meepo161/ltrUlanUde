@@ -338,6 +338,7 @@ public class LTR24SettingController implements BaseController {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             CheckBox channel = channelsCheckBoxes.get(i);
             channel.setDisable(false);
+            valueOfChannelsButtons.get(i).setDisable(true);
 
             if (channel.isSelected()) {
                 channelsCheckBoxes.get(i).setDisable(false);
@@ -393,6 +394,8 @@ public class LTR24SettingController implements BaseController {
         cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 4);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
+
+
 
     @Override
     public void setWindowManager(WindowsManager wm) {

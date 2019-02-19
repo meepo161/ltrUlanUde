@@ -9,9 +9,7 @@ import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.LTR24ModuleRepository;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.LTR24Module;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.SettingsModel;
@@ -337,18 +335,6 @@ public class SettingsController implements BaseController {
         }
     }
 
-
-    private List<LTR24Module> fillLTR24ModulesList(TestProgram testProgram) {
-        List<LTR24Module> ltr24Modules = new ArrayList<>();
-
-        for (LTR24Module module : LTR24ModuleRepository.getAllLTR24Modules()) {
-            if (module.getTestProgrammId() == testProgram.getTestProgramId()) {
-                ltr24Modules.add(module);
-            }
-        }
-        return ltr24Modules;
-    }
-
     public void loadDefaultSettings() {
         testProgramNameTextField.setText("");
         sampleNameTextField.setText("");
@@ -366,7 +352,7 @@ public class SettingsController implements BaseController {
         toggleUiElements(false, true);
     }
 
-    public void hideReqiredFieldsSymbols() {
+    public void hideRequiredFieldsSymbols() {
         for (Pair<Label, TextField> pair : requiredFields) {
             pair.getKey().setVisible(false);
         }

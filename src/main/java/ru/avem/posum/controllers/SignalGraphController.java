@@ -31,7 +31,7 @@ public class SignalGraphController implements BaseController {
     private LTR24 ltr24;
     private LTR212 ltr212;
     private double[] data;
-    private double average;
+    private double maxValue;
     private RingBuffer ringBuffer;
     private volatile XYChart.Series<Number, Number> graphSeries;
     private volatile boolean isDone;
@@ -130,18 +130,20 @@ public class SignalGraphController implements BaseController {
         }
 
         ringBuffer.take(buffer, buffer.length);
-        average = 0;
+        maxValue = -999;
 
         for (int i = channelIndex; i < buffer.length; i += 4 * scale) {
             intermediateList.add(new XYChart.Data<>((double) i / (buffer.length / 4), buffer[i]));
-            average += buffer[i] / ((double) buffer.length / (4 * scale));
+            if (buffer[i] > maxValue) {
+                maxValue = (double) Math.round(buffer[i] * 100) / 100;
+            }
         }
 
         isDone = false;
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            valueTextField.setText(Double.toString( (double) (Math.round(average * 100)) / 100));
+            valueTextField.setText(Double.toString(maxValue));
             isDone = true;
         });
     }
@@ -153,6 +155,8 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleCalibrate() {
+        cm.setCalibrationStopped();
+        cm.showChannelValue();
         wm.setScene(WindowsManager.Scenes.CALIBRATION_SCENE);
     }
 
@@ -162,6 +166,10 @@ public class SignalGraphController implements BaseController {
         wm.setModuleScene(module, cm.getSelectedModule());
         cm.loadItemsForModulesTableView();
         cm.setClosed(true);
+    }
+
+    public double getMaxValue() {
+        return maxValue;
     }
 
     @Override

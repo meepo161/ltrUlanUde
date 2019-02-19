@@ -33,6 +33,12 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
+    double getMaxValue();
+
+    void showChannelValue();
+
+    void setCalibrationStopped();
+
     void showTestProgram(TestProgram testProgram);
 
     void setEditMode(boolean editMode);

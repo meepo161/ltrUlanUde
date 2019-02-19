@@ -24,6 +24,14 @@ public class LTR24Module {
     private String crate = "";
     @DatabaseField
     private int slot;
+    @DatabaseField
+    private String channelN1 = "";
+    @DatabaseField
+    private String channelN2 = "";
+    @DatabaseField
+    private String channelN3 = "";
+    @DatabaseField
+    private String channelN4 = "";
 
     public LTR24Module() {
         // ORMLite and XML binder need a no-arg constructor

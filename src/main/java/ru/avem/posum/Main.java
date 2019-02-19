@@ -329,6 +329,21 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public double getMaxValue() {
+        return signalGraphController.getMaxValue();
+    }
+
+    @Override
+    public void showChannelValue() {
+        calibrationController.showChannelValue();
+    }
+
+    @Override
+    public void setCalibrationStopped() {
+        calibrationController.loadDefaults();
+    }
+
+    @Override
     public void showTestProgram(TestProgram testProgram) {
         settingsController.showTestProgram(testProgram);
     }
@@ -340,7 +355,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void hideRequiredFieldsSymbols() {
-        settingsController.hideReqiredFieldsSymbols();
+        settingsController.hideRequiredFieldsSymbols();
     }
 
     @Override
