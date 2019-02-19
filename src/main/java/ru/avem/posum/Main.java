@@ -22,26 +22,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
-    private Stage loginStage;
-    private Stage primaryStage;
-    private Scene loginScene;
+    private LoginController loginController;
+    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
+    private LTR24SettingController ltr24SettingController;
+    private LTR34SettingController ltr34SettingController;
+    private LTR212SettingController ltr212SettingController;
+    private CalibrationController calibrationController;
+    private MainController mainController;
+    private Parent parent;
+    private ProcessController processController;
+    private SettingsController settingsController;
     private Scene mainScene;
+    private Scene loginScene;
     private Scene settingsScene;
     private Scene processScene;
     private Scene ltr24Scene;
     private Scene ltr34Scene;
     private Scene ltr212Scene;
     private Scene signalGraphScene;
-    private LoginController loginController;
-    private MainController mainController;
-    private SettingsController settingsController;
-    private ProcessController processController;
-    private LTR24SettingController ltr24SettingController;
-    private LTR34SettingController ltr34SettingController;
-    private LTR212SettingController ltr212SettingController;
+    private Scene calibrationScene;
     private SignalGraphController signalGraphController;
-    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
-    private Parent parent;
+    private Stage loginStage;
+    private Stage primaryStage;
     private volatile boolean closed;
 
     @Override
@@ -56,6 +58,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createLTR34Scene();
         createLTR212Scene();
         createSignalGraphScene();
+        createCalibrationScene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -124,6 +127,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createSignalGraphScene() throws IOException {
         signalGraphController = (SignalGraphController) getController("/layouts/signalGraphView.fxml");
         signalGraphScene = createScene(1280, 720);
+    }
+
+    private void createCalibrationScene() throws IOException {
+        calibrationController = (CalibrationController) getController("/layouts/calibrationView.fxml");
+        calibrationScene = createScene(1280, 720);
     }
 
     @Override
@@ -195,6 +203,10 @@ public class Main extends Application implements WindowsManager, ControllerManag
             case SIGNAL_GRAPH_SCENE:
                 primaryStage.setTitle("Настройки канала");
                 primaryStage.setScene(signalGraphScene);
+                break;
+            case CALIBRATION_SCENE:
+                primaryStage.setTitle("Тарировка канала");
+                primaryStage.setScene(calibrationScene);
                 break;
         }
     }

@@ -37,7 +37,6 @@ public class SignalGraphController implements BaseController {
     private volatile boolean isDone;
 
     public  void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
-        System.out.println("initializeView");
         cm.setClosed(false);
         clear();
 
@@ -70,8 +69,6 @@ public class SignalGraphController implements BaseController {
             data = new double[2048];
             ringBuffer = new RingBuffer(data.length * 10);
             setGraphBounds(-0.1, 0.1, 0.01, false);
-        } else {
-            System.out.println("Module was not defined");
         }
     }
 
@@ -108,7 +105,6 @@ public class SignalGraphController implements BaseController {
             case LTR24:
                 if (!ltr24.isBusy()) {
                     ltr24.receiveData(data);
-                    System.out.println(ltr24.getStatus());
                     ringBuffer.put(data);
                     fillSeries(moduleType, channelIndex);
                 }
@@ -116,7 +112,6 @@ public class SignalGraphController implements BaseController {
             case LTR212:
                 if (!ltr212.isBusy()) {
                     ltr212.receiveData(data);
-                    System.out.println(ltr212.getStatus());
                     ringBuffer.put(data);
                     fillSeries(moduleType, channelIndex);
                 }
@@ -158,7 +153,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleCalibrate() {
-
+        wm.setScene(WindowsManager.Scenes.CALIBRATION_SCENE);
     }
 
     @FXML

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
@@ -16,7 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import org.controlsfx.control.StatusBar?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.CalibrationController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.CalibrationController">
    <children>
       <GridPane layoutX="114.0" layoutY="123.0" prefHeight="843.0" prefWidth="1394.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -50,24 +49,19 @@
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="7" GridPane.rowIndex="10" />
             <Label styleClass="title" text="Тарировка канала" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-            </Button>
-            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="11" />
-            <Label text="Значение на канале:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
-               <GridPane.margin>
-                  <Insets right="10.0" />
-               </GridPane.margin>
-            </Label>
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="12" />
             <Label text="Величина нагрузки:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="channelValueTextField" maxWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label text="Значение на канале:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin>
+            </Label>
             <TextField fx:id="loadValueTextField" maxWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <TextField fx:id="channelValueTextField" maxWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
             <Button fx:id="addToTableButton" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleAddToTable" text="Добавить в таблицу" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
             <TableView fx:id="calibrationTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.columnSpan="4" GridPane.rowIndex="3" GridPane.rowSpan="4">
                 <placeholder>
@@ -81,15 +75,20 @@
                   <Insets left="20.0" right="10.0" top="4.0" />
                </GridPane.margin>
             </TableView>
-            <LineChart fx:id="calibrationGraph" GridPane.columnSpan="6" GridPane.rowIndex="10">
+            <Label styleClass="title" text="Тарировочный график" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+            <LineChart fx:id="calibrationGraph" legendVisible="false" GridPane.columnSpan="6" GridPane.rowIndex="10">
               <xAxis>
-                <CategoryAxis label="Значение на канале" side="BOTTOM" />
+                <NumberAxis label="Величина нагрузки" side="BOTTOM" />
               </xAxis>
               <yAxis>
-                <NumberAxis label="Величина нагрузки" side="LEFT" />
+                <NumberAxis label="Значение на канале" side="LEFT" />
               </yAxis>
             </LineChart>
-            <Label styleClass="title" text="Тарировочный график" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Button>
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="6" GridPane.rowIndex="12" />
          </children>
       </GridPane>
