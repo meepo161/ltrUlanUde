@@ -3,15 +3,27 @@ package ru.avem.posum.hardware;
 import ru.avem.posum.utils.TextEncoder;
 
 public class LTR24 {
-    private boolean[] checkedChannels = new boolean[4];
-    private int[] channelsTypes = {0, 0, 0, 0};
-    private int[] measuringRanges = {1, 1, 1, 1};
-    private String[] channelsDescription = {"", "", "", ""};
     private String crate;
     private int slot;
-    private String status = "";
+    private final int CHANNELS = 4;
+    private boolean[] checkedChannels = new boolean[CHANNELS];
+    private int[] channelsTypes = new int[CHANNELS];
+    private int[] measuringRanges = new int[CHANNELS];
+    private String[] channelsDescription = new String[CHANNELS];
+    private String[] calibrationSettings = new String[CHANNELS];
+    private String status;
     private TextEncoder textEncoder = new TextEncoder();
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
+
+    public LTR24() {
+        String defaultCalibrationSettings = "0.0, 0.0, 0.0, 0.0, В";
+        status = "";
+
+        for (int i = 0; i < CHANNELS; i++) {
+            channelsDescription[i] = "";
+            calibrationSettings[i] = defaultCalibrationSettings;
+        }
+    }
 
     public void openConnection() {
         status = open(crate, slot);
@@ -46,6 +58,22 @@ public class LTR24 {
 
     public native String close(int slot);
 
+    public String getCrate() {
+        return crate;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
     public boolean[] getCheckedChannels() {
         return checkedChannels;
     }
@@ -78,24 +106,12 @@ public class LTR24 {
         this.channelsDescription = channelsDescription;
     }
 
-    public String getCrate() {
-        return crate;
+    public String[] getCalibrationSettings() {
+        return calibrationSettings;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
-    }
-
-    public int getSlot() {
-        return slot;
-    }
-
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
-
-    public boolean isBusy() {
-        return busy;
+    public void setCalibrationSettings(String[] calibrationSettings) {
+        this.calibrationSettings = calibrationSettings;
     }
 
     public String getStatus() {
@@ -104,6 +120,22 @@ public class LTR24 {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public TextEncoder getTextEncoder() {
+        return textEncoder;
+    }
+
+    public void setTextEncoder(TextEncoder textEncoder) {
+        this.textEncoder = textEncoder;
+    }
+
+    public boolean isBusy() {
+        return busy;
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 
     static {

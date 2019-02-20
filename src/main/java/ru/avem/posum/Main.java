@@ -14,6 +14,8 @@ import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
 
 import java.awt.*;
@@ -279,7 +281,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                     break;
             }
             try {
-                Pair<BaseController, Scene> pair = loadScene(layoutPath, 1280, 720);
+                Pair<BaseController, Scene> pair = loadScene(layoutPath);
                 modulesPairs.add(pair);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -287,7 +289,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
-    private Pair<BaseController, Scene> loadScene(String layoutPath, int width, int height) throws IOException {
+    private Pair<BaseController, Scene> loadScene(String layoutPath) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource(layoutPath));
         Parent parent = loader.load();
@@ -295,7 +297,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         baseController.setWindowManager(this);
         baseController.setControllerManager(this);
 
-        return new Pair<>(baseController, new Scene(parent, width, height));
+        return new Pair<>(baseController, new Scene(parent, 1280, 720));
     }
 
     @Override
@@ -339,11 +341,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void setCalibrationStopped() {
-        calibrationController.loadDefaults();
-    }
-
-    @Override
     public void showTestProgram(TestProgram testProgram) {
         settingsController.showTestProgram(testProgram);
     }
@@ -356,6 +353,21 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void hideRequiredFieldsSymbols() {
         settingsController.hideRequiredFieldsSymbols();
+    }
+
+    @Override
+    public LTR24 getLTR24Instance() {
+        return signalGraphController.getLtr24();
+    }
+
+    @Override
+    public LTR212 getLTR212Instance() {
+        return signalGraphController.getLtr212();
+    }
+
+    @Override
+    public void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel) {
+        calibrationController.loadDefaults(moduleType, channel);
     }
 
     @Override

@@ -2,6 +2,8 @@ package ru.avem.posum;
 
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
 
 import java.util.List;
@@ -37,13 +39,17 @@ public interface ControllerManager {
 
     void showChannelValue();
 
-    void setCalibrationStopped();
-
     void showTestProgram(TestProgram testProgram);
 
     void setEditMode(boolean editMode);
 
     void hideRequiredFieldsSymbols();
+
+    LTR24 getLTR24Instance();
+
+    LTR212 getLTR212Instance();
+
+    void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel);
 
     boolean isClosed();
 

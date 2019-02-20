@@ -31,12 +31,16 @@ public class SignalGraphController implements BaseController {
     private LTR24 ltr24;
     private LTR212 ltr212;
     private double[] data;
+    private CrateModel.Moudules moduleType;
+    private int channel;
     private double maxValue;
     private RingBuffer ringBuffer;
     private volatile XYChart.Series<Number, Number> graphSeries;
     private volatile boolean isDone;
 
     public  void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
+        this.moduleType = moduleType;
+        this.channel = channel;
         cm.setClosed(false);
         clear();
 
@@ -44,7 +48,7 @@ public class SignalGraphController implements BaseController {
 
         new Thread(() -> {
             while (!cm.isClosed()) {
-                showData(moduleType, channel - 1);
+                showData();
                 while (!isDone && !cm.isClosed()) {
                     sleep(10);
                 }
@@ -100,26 +104,26 @@ public class SignalGraphController implements BaseController {
         return false;
     }
 
-    private void showData(CrateModel.Moudules moduleType, int channelIndex) {
+    private void showData() {
         switch (moduleType) {
             case LTR24:
                 if (!ltr24.isBusy()) {
                     ltr24.receiveData(data);
                     ringBuffer.put(data);
-                    fillSeries(moduleType, channelIndex);
+                    fillSeries();
                 }
                 break;
             case LTR212:
                 if (!ltr212.isBusy()) {
                     ltr212.receiveData(data);
                     ringBuffer.put(data);
-                    fillSeries(moduleType, channelIndex);
+                    fillSeries();
                 }
                 break;
         }
     }
 
-    private void fillSeries(CrateModel.Moudules moduleType, int channelIndex) {
+    private void fillSeries() {
         List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
         int scale = 1;
         double[] buffer = new double[2048];
@@ -132,7 +136,7 @@ public class SignalGraphController implements BaseController {
         ringBuffer.take(buffer, buffer.length);
         maxValue = -999;
 
-        for (int i = channelIndex; i < buffer.length; i += 4 * scale) {
+        for (int i = channel; i < buffer.length; i += 4 * scale) {
             intermediateList.add(new XYChart.Data<>((double) i / (buffer.length / 4), buffer[i]));
             if (buffer[i] > maxValue) {
                 maxValue = (double) Math.round(buffer[i] * 100) / 100;
@@ -155,7 +159,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleCalibrate() {
-        cm.setCalibrationStopped();
+        cm.loadDefaultCalibrationSettings(moduleType, channel);
         cm.showChannelValue();
         wm.setScene(WindowsManager.Scenes.CALIBRATION_SCENE);
     }
@@ -166,6 +170,14 @@ public class SignalGraphController implements BaseController {
         wm.setModuleScene(module, cm.getSelectedModule());
         cm.loadItemsForModulesTableView();
         cm.setClosed(true);
+    }
+
+    public LTR24 getLtr24() {
+        return ltr24;
+    }
+
+    public LTR212 getLtr212() {
+        return ltr212;
     }
 
     public double getMaxValue() {

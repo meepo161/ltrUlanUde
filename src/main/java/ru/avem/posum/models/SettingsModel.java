@@ -3,11 +3,11 @@ package ru.avem.posum.models;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import ru.avem.posum.db.LTR212ModuleRepository;
-import ru.avem.posum.db.LTR24ModuleRepository;
+import ru.avem.posum.db.LTR24TablesRepository;
 import ru.avem.posum.db.LTR34ModuleRepository;
 import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.LTR212Module;
-import ru.avem.posum.db.models.LTR24Module;
+import ru.avem.posum.db.models.LTR24Table;
 import ru.avem.posum.db.models.LTR34Module;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
@@ -70,7 +70,7 @@ public class SettingsModel {
     }
 
     private void saveModulesSettings(CrateModel crateModel) {
-        List<LTR24Module> ltr24Modules = fillLTR24ModulesList();
+        List<LTR24Table> ltr24Tables = fillLTR24ModulesList();
         List<LTR34Module> ltr34Modules = fillLTR34ModulesList();
         List<LTR212Module> ltr212Modules = fillLTR212ModulesList();
 
@@ -78,7 +78,7 @@ public class SettingsModel {
             switch (modulesNames.get(i).split(" ")[0]) {
                 case CrateModel.LTR24:
                     LTR24 ltr24 = new LTR24();
-                    setLTR24ChannelsSettings(ltr24, ltr24Modules, parseSlotNumber(modulesNames.get(i)));
+                    setLTR24ChannelsSettings(ltr24, ltr24Tables, parseSlotNumber(modulesNames.get(i)));
                     Pair<Integer, LTR24> ltr24Pair = new Pair<>(i, ltr24);
                     crateModel.getLtr24ModulesList().add(ltr24Pair);
                     break;
@@ -98,15 +98,15 @@ public class SettingsModel {
         }
     }
 
-    private List<LTR24Module> fillLTR24ModulesList() {
-        List<LTR24Module> ltr24Modules = new ArrayList<>();
+    private List<LTR24Table> fillLTR24ModulesList() {
+        List<LTR24Table> ltr24Tables = new ArrayList<>();
 
-        for (LTR24Module module : LTR24ModuleRepository.getAllLTR24Modules()) {
-            if (module.getTestProgrammId() == testProgram.getTestProgramId()) {
-                ltr24Modules.add(module);
+        for (LTR24Table module : LTR24TablesRepository.getAllLTR24Tables()) {
+            if (module.getTestProgramId() == testProgram.getTestProgramId()) {
+                ltr24Tables.add(module);
             }
         }
-        return ltr24Modules;
+        return ltr24Tables;
     }
 
     private List<LTR34Module> fillLTR34ModulesList() {
@@ -135,27 +135,29 @@ public class SettingsModel {
         return Integer.parseInt(module.split("Слот ")[1].split("\\)")[0]); // номер слота
     }
 
-    private void setLTR24ChannelsSettings(LTR24 ltr24, List<LTR24Module> ltr24Modules, int slot) {
+    private void setLTR24ChannelsSettings(LTR24 ltr24, List<LTR24Table> ltr24Tables, int slot) {
         boolean[] checkedChannels = ltr24.getCheckedChannels();
+        int parsedSlot;
         int[] channelsTypes = ltr24.getChannelsTypes();
         int[] measuringRanges = ltr24.getMeasuringRanges();
         String[] channelsDescription = ltr24.getChannelsDescription();
 
-        for (LTR24Module ltr24Module : ltr24Modules) {
-            if (slot == ltr24Module.getSlot()) {
+        for (LTR24Table ltr24Table : ltr24Tables) {
+            parsedSlot = Integer.parseInt(ltr24Table.getSlot());
+            if (slot == parsedSlot) {
                 for (int i = 0; i < checkedChannels.length; i++) {
-                    if (ltr24Module.getCheckedChannels().split(", ", 5)[i].equals("0")) { // 0 - канал не был отмечен
+                    if (ltr24Table.getCheckedChannels().split(", ", 5)[i].equals("0")) { // 0 - канал не был отмечен
                         checkedChannels[i] = false;
                     } else {
                         checkedChannels[i] = true;
-                        channelsTypes[i] = Integer.parseInt(ltr24Module.getChannelsTypes().split(", ", 5)[i]);
-                        measuringRanges[i] = Integer.parseInt(ltr24Module.getMeasuringRanges().split(", ", 5)[i]);
-                        channelsDescription[i] = ltr24Module.getChannelsDescription().split(", ", 5)[i];
+                        channelsTypes[i] = Integer.parseInt(ltr24Table.getChannelsTypes().split(", ", 5)[i]);
+                        measuringRanges[i] = Integer.parseInt(ltr24Table.getMeasuringRanges().split(", ", 5)[i]);
+                        channelsDescription[i] = ltr24Table.getChannelsDescription().split(", ", 5)[i];
                     }
                 }
 
-                ltr24.setCrate(ltr24Module.getCrate());
-                ltr24.setSlot(ltr24Module.getSlot());
+                ltr24.setCrate(ltr24Table.getCrate());
+                ltr24.setSlot(parsedSlot);
             }
         }
     }
@@ -254,8 +256,6 @@ public class SettingsModel {
 
     public void saveHardwareSettings(boolean isEditMode) {
         this.isEditMode = isEditMode;
-
-        /* сохранение настроек оборудования */
         int testProgramId = testProgram.getTestProgramId();
         int ltr24Index = 0; // индексы сохраняют номер последнего взятого объекта
         int ltr212Index = 0;
@@ -264,7 +264,7 @@ public class SettingsModel {
         for (String modulesName : modulesNames) {
             switch (modulesName.split(" ")[0]) {
                 case CrateModel.LTR24:
-                    updateLTR24Settings(testProgramId, ltr24Index++);
+                    updateLTR24Table(testProgramId, ltr24Index++);
                     break;
                 case CrateModel.LTR34:
                     updateLTR34Settings(testProgramId, ltr34Index++);
@@ -276,61 +276,55 @@ public class SettingsModel {
         }
     }
 
-    private void updateLTR24Settings(int testProgramId, int ltr24Index) {
+    private void updateLTR24Table(int testProgramId, int ltr24Index) {
         LTR24 ltr24 = crateModel.getLtr24ModulesList().get(ltr24Index).getValue();
+        int channels = 4; // количество каналов
+        String[][] moduleSettings = new String[7][channels];
+        String[] calibrationSettings = ltr24.getCalibrationSettings();
         boolean[] checkedChannels = ltr24.getCheckedChannels();
+        int[] channelsTypes = ltr24.getChannelsTypes();
+        int[] measuringRanges = ltr24.getMeasuringRanges();
+        String[] channelsDescription = ltr24.getChannelsDescription();
+
+        moduleSettings[0][0] = ltr24.getCrate(); // серийный номер крейта
+        moduleSettings[1][0] = String.valueOf(ltr24.getSlot()); // номер слота
+        for (int i = 0; i < channels; i++) {
+            if (checkedChannels[i]) {
+                moduleSettings[2][i] = "1"; // канал отмечен
+                moduleSettings[3][i] = String.valueOf(channelsTypes[i]);
+                moduleSettings[4][i] = String.valueOf(measuringRanges[i]);
+                moduleSettings[5][i] = String.valueOf(channelsDescription[i]);
+                moduleSettings[6][i] = calibrationSettings[i];
+            } else {
+                moduleSettings[2][i] = "0"; // канал не отмечен
+                moduleSettings[3][i] = "0";
+                moduleSettings[4][i] = "0";
+                moduleSettings[5][i] = "0";
+                moduleSettings[6][i] = "0.0, 0.0, 0.0, 0.0, В";
+            }
+        }
 
         if (isEditMode) {
-            for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
-                if (ltr24Module.getTestProgrammId() == testProgramId && ltr24Module.getSlot() == ltr24.getSlot()) {
-                    updateLTR24Data(ltr24, checkedChannels, ltr24Module);
+            for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
+                if (ltr24Table.getTestProgramId() == testProgramId && Integer.parseInt(ltr24Table.getSlot()) == ltr24.getSlot()) {
+                    ltr24Table.setCrate(moduleSettings[0][0]);
+                    ltr24Table.setSlot(moduleSettings[1][0]);
+                    ltr24Table.setCheckedChannels(LTR24Table.settingsToString(moduleSettings[2]));
+                    ltr24Table.setChannelsTypes(LTR24Table.settingsToString(moduleSettings[3]));
+                    ltr24Table.setMeasuringRanges(LTR24Table.settingsToString(moduleSettings[4]));
+                    ltr24Table.setChannelsDescription(LTR24Table.settingsToString(moduleSettings[5]));
+                    ltr24Table.setCalibrationOfChannelN1(ltr24.getCalibrationSettings()[0]);
+                    ltr24Table.setCalibrationOfChannelN2(ltr24.getCalibrationSettings()[1]);
+                    ltr24Table.setCalibrationOfChannelN3(ltr24.getCalibrationSettings()[2]);
+                    ltr24Table.setCalibrationOfChannelN4(ltr24.getCalibrationSettings()[3]);
+                    LTR24TablesRepository.updateLTR24Module(ltr24Table);
                 }
             }
         } else {
-            createNewLTR24Module(ltr24);
+            LTR24Table newLTR24Table = new LTR24Table(testProgramId, moduleSettings);
+            LTR24TablesRepository.insertLTR24Table(newLTR24Table);
         }
-    }
 
-    private void updateLTR24Data(LTR24 ltr24, boolean[] checkedChannels, LTR24Module ltr24Module) {
-        String channels = "";
-        String types = "";
-        String ranges = "";
-        String descriptions = "";
-
-        for (int i = 0; i < checkedChannels.length; i++) {
-            if (checkedChannels[i]) {
-                channels += 1 + ", ";
-                types += ltr24.getChannelsTypes()[i] + ", ";
-                ranges += ltr24.getMeasuringRanges()[i] + ", ";
-                descriptions += ltr24.getChannelsDescription()[i] + ", ";
-            } else {
-                channels += 0 + ", ";
-                types += 0 + ", ";
-                ranges += 0 + ", ";
-                descriptions += ", ";
-            }
-        }
-        ltr24Module.setCheckedChannels(channels);
-        ltr24Module.setChannelsTypes(types);
-        ltr24Module.setMeasuringRanges(ranges);
-        ltr24Module.setChannelsDescription(descriptions);
-        ltr24Module.setCrate(ltr24.getCrate());
-        ltr24Module.setSlot(ltr24.getSlot());
-
-        LTR24ModuleRepository.updateLTR24Module(ltr24Module);
-    }
-
-    private void createNewLTR24Module(LTR24 ltr24) {
-        LTR24Module ltr24Module = new LTR24Module(
-                testProgram.getId(),
-                ltr24.getCheckedChannels(),
-                ltr24.getChannelsTypes(),
-                ltr24.getMeasuringRanges(),
-                ltr24.getChannelsDescription(),
-                ltr24.getCrate(),
-                ltr24.getSlot());
-
-        LTR24ModuleRepository.insertLTR24Module(ltr24Module);
     }
 
     private void updateLTR212Settings(int testProgramId, int ltr212Index) {

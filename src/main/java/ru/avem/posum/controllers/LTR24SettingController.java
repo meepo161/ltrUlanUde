@@ -201,10 +201,10 @@ public class LTR24SettingController implements BaseController {
         channelType.valueProperty().addListener(observable -> {
             if (channelType.getSelectionModel().isSelected(2)) {
                 addListOfICPMeasuringRanges(measuringRange);
-                measuringRange.getSelectionModel().select(1);
+                measuringRange.getSelectionModel().select(0);
             } else {
                 addListOfDifferentialMeasuringRanges(measuringRange);
-                measuringRange.getSelectionModel().select(1);
+                measuringRange.getSelectionModel().select(0);
             }
         });
     }
@@ -366,7 +366,7 @@ public class LTR24SettingController implements BaseController {
                 ltr24.setSlot(selectedModule);
             } else {
                 ltr24.getCheckedChannels()[i] = false; // false - канал не выбран
-                ltr24.getChannelsDescription()[i] = "";
+                ltr24.getChannelsDescription()[i] = ", ";
                 ltr24.getChannelsTypes()[i] = 0;
                 ltr24.getMeasuringRanges()[i] = 0;
                 ltr24.setCrate(cratesSN[selectedCrate]);
@@ -376,22 +376,22 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void handleValueOfChannelN1() {
-        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 1);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 0);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN2() {
-        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 2);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 1);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN3() {
-        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 3);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 2);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN4() {
-        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 4);
+        cm.showChannelData(CrateModel.Moudules.LTR24, ltr24.getSlot(), 3);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 

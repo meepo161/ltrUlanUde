@@ -13,11 +13,11 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.LTR212ModuleRepository;
-import ru.avem.posum.db.LTR24ModuleRepository;
+import ru.avem.posum.db.LTR24TablesRepository;
 import ru.avem.posum.db.LTR34ModuleRepository;
 import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.LTR212Module;
-import ru.avem.posum.db.models.LTR24Module;
+import ru.avem.posum.db.models.LTR24Table;
 import ru.avem.posum.db.models.LTR34Module;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
@@ -157,10 +157,10 @@ public class MainController implements BaseController {
                 testProgram = allTestPrograms.get(allTestPrograms.size() - 1);
                 long newTestProgrammId = testProgram.getId();
 
-                for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
-                    if (oldTestProgrammId == ltr24Module.getTestProgrammId()) {
-                        ltr24Module.setTestProgrammId(newTestProgrammId);
-                        LTR24ModuleRepository.insertLTR24Module(ltr24Module);
+                for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
+                    if (oldTestProgrammId == ltr24Table.getTestProgramId()) {
+                        ltr24Table.setTestProgramId(newTestProgrammId);
+                        LTR24TablesRepository.insertLTR24Table(ltr24Table);
                     }
                 }
 
@@ -203,9 +203,9 @@ public class MainController implements BaseController {
             long testProgrammId = testProgram.getId();
             TestProgramRepository.deleteTestProgram(testProgram);
 
-            for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
-                if (testProgrammId == ltr24Module.getTestProgrammId()) {
-                    LTR24ModuleRepository.deleteLTR24Module(ltr24Module);
+            for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
+                if (testProgrammId == ltr24Table.getTestProgramId()) {
+                    LTR24TablesRepository.deleteLTR24Module(ltr24Table);
                 }
             }
 

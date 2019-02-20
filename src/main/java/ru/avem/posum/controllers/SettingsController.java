@@ -348,6 +348,7 @@ public class SettingsController implements BaseController {
 
         cratesListView.getSelectionModel().clearSelection();
         modulesListView.getSelectionModel().clearSelection();
+        modulesListView.getItems().clear();
 
         toggleUiElements(false, true);
     }
@@ -378,6 +379,10 @@ public class SettingsController implements BaseController {
         return slot;
     }
 
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -386,9 +391,5 @@ public class SettingsController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    public void setEditMode(boolean editMode) {
-        this.editMode = editMode;
     }
 }

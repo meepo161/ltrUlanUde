@@ -11,6 +11,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.CalibrationModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
@@ -50,7 +53,11 @@ public class CalibrationController implements BaseController {
     private CalibrationModel calibrationModel;
     private ObservableList<CalibrationModel> calibrationModels = FXCollections.observableArrayList();
     private StatusBarLine statusBarLine = new StatusBarLine();
+    private CrateModel.Moudules moduleType;
     private boolean stopped;
+    private int channel;
+    private LTR24 ltr24;
+    private LTR212 ltr212;
     private ControllerManager cm;
     private WindowsManager wm;
 
@@ -60,6 +67,7 @@ public class CalibrationController implements BaseController {
         channelValueColumn.setCellValueFactory(new PropertyValueFactory<>("channelValue"));
         valueNameColumn.setCellValueFactory(new PropertyValueFactory<>("valueName"));
         calibrationTableView.setItems(calibrationModels);
+        calibrationGraph.getData().add(graphSeries);
         setDigitFilter();
         checkEmptyFields(loadValueTextField);
         checkEmptyFields(valueNameTextField);
@@ -85,8 +93,8 @@ public class CalibrationController implements BaseController {
     }
 
     public void handleAddToTable() {
-        addCalibraionDataToTable();
-        addPointToGraph();
+        addCalibrationDataToTable();
+        graphSeries.getData().add(new XYChart.Data<>(calibrationModel.getLoadValue(), calibrationModel.getChannelValue()));
     }
 
     public void showChannelValue() {
@@ -100,14 +108,17 @@ public class CalibrationController implements BaseController {
         }).start();
     }
 
-    private void addCalibraionDataToTable() {
+    private void addCalibrationDataToTable() {
         double loadValue = Double.parseDouble(loadValueTextField.getText());
         double channelValue = Double.parseDouble(channelValueTextField.getText());
         String valueName = valueNameTextField.getText();
         calibrationModel = new CalibrationModel(loadValue, channelValue, valueName);
 
         calibrationModels.add(calibrationModel);
+        ToggleUiElements();
+    }
 
+    private void ToggleUiElements() {
         if (calibrationModels.size() == 2) {
             loadValueLabel.setDisable(true);
             channelValueLabel.setDisable(true);
@@ -116,12 +127,9 @@ public class CalibrationController implements BaseController {
             channelValueTextField.setDisable(true);
             valueNameTextField.setDisable(true);
             addToTableButton.setDisable(true);
+            saveButton.setDisable(false);
+            saveButton.requestFocus();
         }
-    }
-
-    private void addPointToGraph() {
-        graphSeries.getData().add(new XYChart.Data<>(calibrationModel.getLoadValue(), calibrationModel.getChannelValue()));
-        calibrationGraph.getData().add(graphSeries);
     }
 
     public void handleBackButton() {
@@ -136,10 +144,13 @@ public class CalibrationController implements BaseController {
         valueNameTextField.setText("");
         calibrationModels.clear();
         graphSeries.getData().clear();
-        calibrationGraph.getData().clear();
     }
 
-    public void loadDefaults() {
+    public void loadDefaults(CrateModel.Moudules moduleType, int channel) {
+        this.moduleType = moduleType;
+        this.channel = channel;
+
+
         this.stopped = false;
         loadValueLabel.setDisable(false);
         channelValueLabel.setDisable(false);
@@ -147,7 +158,7 @@ public class CalibrationController implements BaseController {
         loadValueTextField.setDisable(false);
         channelValueTextField.setDisable(false);
         valueNameTextField.setDisable(false);
-        saveButton.setDisable(false);
+        saveButton.setDisable(true);
     }
 
     @Override
@@ -161,6 +172,18 @@ public class CalibrationController implements BaseController {
     }
 
     public void handleSaveButton() {
+        String firstPoint = calibrationModels.get(0).getLoadValue() + ", " + calibrationModels.get(0).getChannelValue() + ", " ;
+        String secondPoint = calibrationModels.get(1).getLoadValue() + ", " + calibrationModels.get(1).getChannelValue() + ", " + calibrationModels.get(1).getValueName();
+        StringBuffer calibrationSettings = new StringBuffer();
+
+        calibrationSettings.append(firstPoint).append(secondPoint);
+        if (moduleType == CrateModel.Moudules.LTR24) {
+            ltr24 = cm.getLTR24Instance();
+            ltr24.getCalibrationSettings()[channel] = calibrationSettings.toString();
+        } else {
+            ltr212 = cm.getLTR212Instance();
+        }
+
         saveButton.setDisable(true);
         statusBarLine.setStatus("Настройки успешно сохранены", statusBar);
     }
