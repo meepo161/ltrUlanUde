@@ -29,7 +29,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private Label channelValueLabel;
     @FXML
-    private Label valueNameLabel;
+    private Label loadValueNameLabel;
     @FXML
     private LineChart<Number, Number> calibrationGraph;
     @FXML
@@ -47,7 +47,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField channelValueTextField;
     @FXML
-    private TextField valueNameTextField;
+    private TextField loadValueNameTextField;
 
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private CalibrationModel calibrationModel;
@@ -58,6 +58,10 @@ public class CalibrationController implements BaseController {
     private int channel;
     private LTR24 ltr24;
     private LTR212 ltr212;
+    private String moduleCalibrationSettings;
+    private double loadValue;
+    private double channelValue;
+    private String valueName;
     private ControllerManager cm;
     private WindowsManager wm;
 
@@ -68,23 +72,23 @@ public class CalibrationController implements BaseController {
         valueNameColumn.setCellValueFactory(new PropertyValueFactory<>("valueName"));
         calibrationTableView.setItems(calibrationModels);
         calibrationGraph.getData().add(graphSeries);
-        setDigitFilter();
-        checkEmptyFields(loadValueTextField);
-        checkEmptyFields(valueNameTextField);
+        setDigitFilterToLoadValueTextField();
+        toggleUiElementsIfEmptyField(loadValueTextField);
+        toggleUiElementsIfEmptyField(loadValueNameTextField);
     }
 
-    private void setDigitFilter() {
+    private void setDigitFilterToLoadValueTextField() {
         loadValueTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            loadValueTextField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("^[0-9]+|$")) {
+            loadValueTextField.setText(newValue.replaceAll("[^\\d.]", ""));
+            if (!newValue.matches("(^[0-9]{1,5}\\.[0-9]{1,2}|$)|^[0-9]+\\.|([0-9]{1,5})")) {
                 loadValueTextField.setText(oldValue);
             }
         });
     }
 
-    private void checkEmptyFields(TextField textField) {
+    private void toggleUiElementsIfEmptyField(TextField textField) {
         textField.textProperty().addListener((observable) -> {
-            if (!loadValueTextField.getText().isEmpty() & !channelValueTextField.getText().isEmpty() & !valueNameTextField.getText().isEmpty()) {
+            if (!loadValueTextField.getText().isEmpty() & !channelValueTextField.getText().isEmpty() & !loadValueNameTextField.getText().isEmpty()) {
                 addToTableButton.setDisable(false);
             } else {
                 addToTableButton.setDisable(true);
@@ -97,35 +101,24 @@ public class CalibrationController implements BaseController {
         graphSeries.getData().add(new XYChart.Data<>(calibrationModel.getLoadValue(), calibrationModel.getChannelValue()));
     }
 
-    public void showChannelValue() {
-        new Thread(() -> {
-            while (!stopped) {
-                Platform.runLater(() -> {
-                    channelValueTextField.setText(String.valueOf(cm.getMaxValue()));
-                });
-                Utils.sleep(100);
-            }
-        }).start();
-    }
-
     private void addCalibrationDataToTable() {
-        double loadValue = Double.parseDouble(loadValueTextField.getText());
-        double channelValue = Double.parseDouble(channelValueTextField.getText());
-        String valueName = valueNameTextField.getText();
-        calibrationModel = new CalibrationModel(loadValue, channelValue, valueName);
+        loadValue = Double.parseDouble(loadValueTextField.getText());
+        channelValue = Double.parseDouble(channelValueTextField.getText());
+        valueName = loadValueNameTextField.getText();
 
+        calibrationModel = new CalibrationModel(loadValue, channelValue, valueName);
         calibrationModels.add(calibrationModel);
-        ToggleUiElements();
+        toggleUiElementsIfHaveTwoPoints();
     }
 
-    private void ToggleUiElements() {
+    private void toggleUiElementsIfHaveTwoPoints() {
         if (calibrationModels.size() == 2) {
             loadValueLabel.setDisable(true);
             channelValueLabel.setDisable(true);
-            valueNameLabel.setDisable(true);
+            loadValueNameLabel.setDisable(true);
             loadValueTextField.setDisable(true);
             channelValueTextField.setDisable(true);
-            valueNameTextField.setDisable(true);
+            loadValueNameTextField.setDisable(true);
             addToTableButton.setDisable(true);
             saveButton.setDisable(false);
             saveButton.requestFocus();
@@ -141,7 +134,7 @@ public class CalibrationController implements BaseController {
     private void clearCalibrationData() {
         loadValueTextField.setText("");
         channelValueTextField.setText("");
-        valueNameTextField.setText("");
+        loadValueNameTextField.setText("");
         calibrationModels.clear();
         graphSeries.getData().clear();
     }
@@ -149,16 +142,75 @@ public class CalibrationController implements BaseController {
     public void loadDefaults(CrateModel.Moudules moduleType, int channel) {
         this.moduleType = moduleType;
         this.channel = channel;
-
-
         this.stopped = false;
+
+        loadDefaultUiElementsState();
+
+        if (moduleType == CrateModel.Moudules.LTR24) {
+            ltr24 = cm.getLTR24Instance();
+            loadCalibrationSettings();
+        } else {
+            ltr212 = cm.getLTR212Instance();
+            loadCalibrationSettings();
+        }
+    }
+
+    private void loadDefaultUiElementsState() {
         loadValueLabel.setDisable(false);
         channelValueLabel.setDisable(false);
-        valueNameLabel.setDisable(false);
+        loadValueNameLabel.setDisable(false);
         loadValueTextField.setDisable(false);
         channelValueTextField.setDisable(false);
-        valueNameTextField.setDisable(false);
+        loadValueNameTextField.setDisable(false);
         saveButton.setDisable(true);
+    }
+
+    private void loadCalibrationSettings() {
+        moduleCalibrationSettings = ltr24.getCalibrationSettings()[channel];
+        String[] separatedSettings = moduleCalibrationSettings.split(", ", 6);
+        if (separatedSettings[0].equals("setted")) {
+            addPoint(Double.parseDouble(separatedSettings[1]), Double.parseDouble(separatedSettings[2]), separatedSettings[5]);
+            addPoint(Double.parseDouble(separatedSettings[3]), Double.parseDouble(separatedSettings[4]), separatedSettings[5]);
+            loadValueTextField.setText(separatedSettings[3]);
+            loadValueNameTextField.setText(separatedSettings[5]);
+            toggleUiElementsIfHaveTwoPoints();
+            saveButton.setDisable(true);
+        }
+    }
+
+    private void addPoint(double loadValue, double channelValue, String loadValueName) {
+        graphSeries.getData().add(new XYChart.Data<>(loadValue, channelValue));
+        calibrationModel = new CalibrationModel(loadValue, channelValue, loadValueName);
+        calibrationModels.add(calibrationModel);
+    }
+
+    public void handleSaveButton() {
+        String firstPoint = "setted, " + calibrationModels.get(0).getLoadValue() + ", " + calibrationModels.get(0).getChannelValue() + ", " ;
+        String secondPoint = calibrationModels.get(1).getLoadValue() + ", " + calibrationModels.get(1).getChannelValue() + ", " + calibrationModels.get(1).getValueName();
+        StringBuilder calibrationSettings = new StringBuilder();
+        calibrationSettings.append(firstPoint).append(secondPoint);
+
+        if (moduleType == CrateModel.Moudules.LTR24) {
+            ltr24 = cm.getLTR24Instance();
+            ltr24.getCalibrationSettings()[channel] = calibrationSettings.toString();
+        } else {
+            ltr212 = cm.getLTR212Instance();
+            // TODO: добавить сохранение настроек калибровки
+        }
+
+        saveButton.setDisable(true);
+        statusBarLine.setStatus("Настройки успешно сохранены", statusBar);
+    }
+
+    public void showChannelValue() {
+        new Thread(() -> {
+            while (!stopped) {
+                Platform.runLater(() -> {
+                    channelValueTextField.setText(String.valueOf(cm.getMaxValue()));
+                });
+                Utils.sleep(100);
+            }
+        }).start();
     }
 
     @Override
@@ -169,22 +221,5 @@ public class CalibrationController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    public void handleSaveButton() {
-        String firstPoint = calibrationModels.get(0).getLoadValue() + ", " + calibrationModels.get(0).getChannelValue() + ", " ;
-        String secondPoint = calibrationModels.get(1).getLoadValue() + ", " + calibrationModels.get(1).getChannelValue() + ", " + calibrationModels.get(1).getValueName();
-        StringBuffer calibrationSettings = new StringBuffer();
-
-        calibrationSettings.append(firstPoint).append(secondPoint);
-        if (moduleType == CrateModel.Moudules.LTR24) {
-            ltr24 = cm.getLTR24Instance();
-            ltr24.getCalibrationSettings()[channel] = calibrationSettings.toString();
-        } else {
-            ltr212 = cm.getLTR212Instance();
-        }
-
-        saveButton.setDisable(true);
-        statusBarLine.setStatus("Настройки успешно сохранены", statusBar);
     }
 }

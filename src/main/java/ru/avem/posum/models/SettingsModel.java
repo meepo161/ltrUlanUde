@@ -141,6 +141,7 @@ public class SettingsModel {
         int[] channelsTypes = ltr24.getChannelsTypes();
         int[] measuringRanges = ltr24.getMeasuringRanges();
         String[] channelsDescription = ltr24.getChannelsDescription();
+        String[] calibrationSettings = ltr24.getCalibrationSettings();
 
         for (LTR24Table ltr24Table : ltr24Tables) {
             parsedSlot = Integer.parseInt(ltr24Table.getSlot());
@@ -155,6 +156,11 @@ public class SettingsModel {
                         channelsDescription[i] = ltr24Table.getChannelsDescription().split(", ", 5)[i];
                     }
                 }
+
+                calibrationSettings[0] = ltr24Table.getCalibrationOfChannelN1();
+                calibrationSettings[1] = ltr24Table.getCalibrationOfChannelN2();
+                calibrationSettings[2] = ltr24Table.getCalibrationOfChannelN3();
+                calibrationSettings[3] = ltr24Table.getCalibrationOfChannelN4();
 
                 ltr24.setCrate(ltr24Table.getCrate());
                 ltr24.setSlot(parsedSlot);
