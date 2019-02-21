@@ -395,8 +395,6 @@ public class LTR24SettingController implements BaseController {
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
-
-
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;

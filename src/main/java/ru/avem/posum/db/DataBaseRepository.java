@@ -13,8 +13,8 @@ public class DataBaseRepository {
             AccountRepository.createTable(Account.class);
             EventRepository.createTable(Event.class);
             LTR24TablesRepository.createTable(LTR24Table.class);
-            LTR212ModuleRepository.createTable(LTR212Module.class);
-            LTR34ModuleRepository.createTable(LTR34Module.class);
+            LTR212TablesRepository.createTable(LTR212Table.class);
+            LTR34TableRepository.createTable(LTR34Table.class);
             TestProgramRepository.createTable(TestProgram.class);
 
             Account admin = new Account("admin", "102030");

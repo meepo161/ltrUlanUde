@@ -12,13 +12,13 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.LTR212ModuleRepository;
+import ru.avem.posum.db.LTR212TablesRepository;
 import ru.avem.posum.db.LTR24TablesRepository;
-import ru.avem.posum.db.LTR34ModuleRepository;
+import ru.avem.posum.db.LTR34TableRepository;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.LTR212Module;
+import ru.avem.posum.db.models.LTR212Table;
 import ru.avem.posum.db.models.LTR24Table;
-import ru.avem.posum.db.models.LTR34Module;
+import ru.avem.posum.db.models.LTR34Table;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -164,17 +164,17 @@ public class MainController implements BaseController {
                     }
                 }
 
-                for (LTR212Module ltr212Module : LTR212ModuleRepository.getAllLTR212Modules()) {
-                    if (oldTestProgrammId == ltr212Module.getTestProgrammId()) {
-                        ltr212Module.setTestProgrammId(newTestProgrammId);
-                        LTR212ModuleRepository.insertLTR212Module(ltr212Module);
+                for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
+                    if (oldTestProgrammId == ltr212Table.getTestProgramId()) {
+                        ltr212Table.setTestProgramId(newTestProgrammId);
+                        LTR212TablesRepository.insertLTR212Table(ltr212Table);
                     }
                 }
 
-                for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
-                    if (oldTestProgrammId == ltr34Module.getTestProgrammId()) {
-                        ltr34Module.setTestProgrammId(newTestProgrammId);
-                        LTR34ModuleRepository.insertLTR34Module(ltr34Module);
+                for (LTR34Table ltr34Table : LTR34TableRepository.getAllLTR34Tables()) {
+                    if (oldTestProgrammId == ltr34Table.getTestProgramId()) {
+                        ltr34Table.setTestProgramId(newTestProgrammId);
+                        LTR34TableRepository.insertLTR34Module(ltr34Table);
                     }
                 }
 
@@ -205,19 +205,19 @@ public class MainController implements BaseController {
 
             for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
                 if (testProgrammId == ltr24Table.getTestProgramId()) {
-                    LTR24TablesRepository.deleteLTR24Module(ltr24Table);
+                    LTR24TablesRepository.deleteLTR24Table(ltr24Table);
                 }
             }
 
-            for (LTR212Module ltr212Module : LTR212ModuleRepository.getAllLTR212Modules()) {
-                if (testProgrammId == ltr212Module.getTestProgrammId()) {
-                    LTR212ModuleRepository.deleteLTR212Module(ltr212Module);
+            for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
+                if (testProgrammId == ltr212Table.getTestProgramId()) {
+                    LTR212TablesRepository.deleteLTR212Table(ltr212Table);
                 }
             }
 
-            for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
-                if (testProgrammId == ltr34Module.getTestProgrammId()) {
-                    LTR34ModuleRepository.deleteLTR34Module(ltr34Module);
+            for (LTR34Table ltr34Table : LTR34TableRepository.getAllLTR34Tables()) {
+                if (testProgrammId == ltr34Table.getTestProgramId()) {
+                    LTR34TableRepository.deleteLTR34Table(ltr34Table);
                 }
             }
 

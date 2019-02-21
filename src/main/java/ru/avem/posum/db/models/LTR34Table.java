@@ -3,14 +3,12 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.Objects;
-
 @DatabaseTable(tableName = "ltr34Modules")
-public class LTR34Module {
+public class LTR34Table {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
-    private long testProgrammId;
+    private long testProgramId;
     @DatabaseField
     private String checkedChannels = "";
     @DatabaseField
@@ -24,12 +22,12 @@ public class LTR34Module {
     @DatabaseField
     private int slot;
 
-    public LTR34Module() {
+    public LTR34Table() {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public LTR34Module(long testProgrammId, boolean[] checkedChannels, int[][] channelsParameters, String crate, int slot) {
-        this.testProgrammId = testProgrammId;
+    public LTR34Table(long testProgramId, boolean[] checkedChannels, int[][] channelsParameters, String crate, int slot) {
+        this.testProgramId = testProgramId;
 
         for (boolean checked : checkedChannels) {
             if (checked) {
@@ -55,24 +53,6 @@ public class LTR34Module {
         this.slot = slot;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LTR34Module ltr34Module = (LTR34Module) o;
-        return  id == ltr34Module.id &&
-                Objects.equals(checkedChannels, ltr34Module.checkedChannels) &&
-                Objects.equals(channelsFrequency, ltr34Module.channelsFrequency) &&
-                Objects.equals(channelsAmplitude, ltr34Module.channelsAmplitude) &&
-                Objects.equals(crate, ltr34Module.crate) &&
-                Objects.equals(slot, ltr34Module.slot);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, checkedChannels, channelsFrequency, channelsAmplitude, crate, slot);
-    }
-
     public long getId() {
         return id;
     }
@@ -81,12 +61,12 @@ public class LTR34Module {
         this.id = id;
     }
 
-    public long getTestProgrammId() {
-        return testProgrammId;
+    public long getTestProgramId() {
+        return testProgramId;
     }
 
-    public void setTestProgrammId(long testProgrammId) {
-        this.testProgrammId = testProgrammId;
+    public void setTestProgramId(long testProgramId) {
+        this.testProgramId = testProgramId;
     }
 
     public String getCheckedChannels() {

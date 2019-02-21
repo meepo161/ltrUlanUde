@@ -2,7 +2,7 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-public class LTR24 {
+public class LTR24 implements ADC {
     private String crate;
     private int slot;
     private final int CHANNELS = 4;
@@ -58,6 +58,7 @@ public class LTR24 {
 
     public native String close(int slot);
 
+    @Override
     public String getCrate() {
         return crate;
     }
@@ -66,6 +67,7 @@ public class LTR24 {
         this.crate = crate;
     }
 
+    @Override
     public int getSlot() {
         return slot;
     }
@@ -74,44 +76,29 @@ public class LTR24 {
         this.slot = slot;
     }
 
+    @Override
     public boolean[] getCheckedChannels() {
         return checkedChannels;
     }
 
-    public void setCheckedChannels(boolean[] checkedChannels) {
-        this.checkedChannels = checkedChannels;
-    }
-
+    @Override
     public int[] getChannelsTypes() {
         return channelsTypes;
     }
 
-    public void setChannelsTypes(int[] channelsTypes) {
-        this.channelsTypes = channelsTypes;
-    }
-
+    @Override
     public int[] getMeasuringRanges() {
         return measuringRanges;
     }
 
-    public void setMeasuringRanges(int[] measuringRanges) {
-        this.measuringRanges = measuringRanges;
-    }
-
+    @Override
     public String[] getChannelsDescription() {
         return channelsDescription;
     }
 
-    public void setChannelsDescription(String[] channelsDescription) {
-        this.channelsDescription = channelsDescription;
-    }
-
+    @Override
     public String[] getCalibrationSettings() {
         return calibrationSettings;
-    }
-
-    public void setCalibrationSettings(String[] calibrationSettings) {
-        this.calibrationSettings = calibrationSettings;
     }
 
     public String getStatus() {
@@ -122,20 +109,8 @@ public class LTR24 {
         this.status = status;
     }
 
-    public TextEncoder getTextEncoder() {
-        return textEncoder;
-    }
-
-    public void setTextEncoder(TextEncoder textEncoder) {
-        this.textEncoder = textEncoder;
-    }
-
     public boolean isBusy() {
         return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
     }
 
     static {

@@ -148,9 +148,11 @@ public class CalibrationController implements BaseController {
 
         if (moduleType == CrateModel.Moudules.LTR24) {
             ltr24 = cm.getLTR24Instance();
+            moduleCalibrationSettings = ltr24.getCalibrationSettings()[channel];
             loadCalibrationSettings();
         } else {
             ltr212 = cm.getLTR212Instance();
+            moduleCalibrationSettings = ltr212.getCalibrationSettings()[channel];
             loadCalibrationSettings();
         }
     }
@@ -166,7 +168,6 @@ public class CalibrationController implements BaseController {
     }
 
     private void loadCalibrationSettings() {
-        moduleCalibrationSettings = ltr24.getCalibrationSettings()[channel];
         String[] separatedSettings = moduleCalibrationSettings.split(", ", 6);
         if (separatedSettings[0].equals("setted")) {
             addPoint(Double.parseDouble(separatedSettings[1]), Double.parseDouble(separatedSettings[2]), separatedSettings[5]);
@@ -195,7 +196,7 @@ public class CalibrationController implements BaseController {
             ltr24.getCalibrationSettings()[channel] = calibrationSettings.toString();
         } else {
             ltr212 = cm.getLTR212Instance();
-            // TODO: добавить сохранение настроек калибровки
+            ltr212.getCalibrationSettings()[channel] = calibrationSettings.toString();
         }
 
         saveButton.setDisable(true);

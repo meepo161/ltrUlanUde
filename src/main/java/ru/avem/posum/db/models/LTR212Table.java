@@ -3,8 +3,8 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable(tableName = "ltr24Modules")
-public class LTR24Table {
+@DatabaseTable(tableName = "ltr212Modules")
+public class LTR212Table {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
@@ -30,11 +30,11 @@ public class LTR24Table {
     @DatabaseField
     private String calibrationOfChannelN4;
 
-    public LTR24Table() {
+    public LTR212Table() {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public LTR24Table(long testProgramId, String[][] moduleSettings) {
+    public LTR212Table(long testProgramId, String[][] moduleSettings) {
         this.testProgramId = testProgramId;
         this.crate = moduleSettings[0][0];
         this.slot = moduleSettings[1][0];

@@ -301,7 +301,7 @@ public class LTR34SettingController implements BaseController {
     private void setPhaseFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|$")) {
+            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|0|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -567,7 +567,14 @@ public class LTR34SettingController implements BaseController {
             channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
             amplitudeTextFields.get(i).setText(String.valueOf(channelsParameters[0][i]));
             frequencyTextFields.get(i).setText(String.valueOf(channelsParameters[1][i]));
-            phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
+
+            if (channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
+                phasesTextFields.get(i).setText("0");
+            } else if (!channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
+                phasesTextFields.get(i).setText("");
+            } else {
+                phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
+            }
         }
     }
 
