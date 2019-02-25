@@ -82,6 +82,7 @@ public class SettingsController implements BaseController {
         fillListOfTextFields();
         fillListOfRequiredSymbols();
         initRequiredFieldsSymbols();
+        setTextFieldTimeFormat();
         crates = crateModel.getCratesNames();
         cratesListView.setItems(crates);
         showCrateModules();
@@ -114,6 +115,17 @@ public class SettingsController implements BaseController {
             pair.getKey().setTextFill(Color.web("#D30303"));
             pair.getKey().setVisible(false);
         }
+    }
+
+    private void setTextFieldTimeFormat() {
+        testProgramTimeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            testProgramTimeTextField.setText(testProgramTimeTextField.getText().replaceAll("[^\\d:]", ""));
+            if (testProgramTimeTextField.getText().length() == 2 || testProgramTimeTextField.getText().length() == 5) {
+                testProgramTimeTextField.setText(testProgramTimeTextField.getText() + ":");
+            } else if (testProgramTimeTextField.getText().length() > 8) {
+                testProgramTimeTextField.setText(oldValue);
+            }
+        });
     }
 
     private void showCrateModules() {

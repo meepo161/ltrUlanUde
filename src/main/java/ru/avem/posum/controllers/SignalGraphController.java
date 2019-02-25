@@ -66,7 +66,7 @@ public class SignalGraphController implements BaseController {
 
     private void initializeModuleType(int selectedSlot) {
         if (isDefineLTR24Slot(selectedSlot)) {
-            data = new double[50000];
+            data = new double[39064];
             ringBuffer = new RingBuffer(data.length * 100);
             setGraphBounds(-5, 10, 1, false);
         } else if (isDefineLTR212Slot(selectedSlot)) {
@@ -125,19 +125,18 @@ public class SignalGraphController implements BaseController {
 
     private void fillSeries() {
         List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-        int scale = 1;
+        final int CHANNELS = 4;
         double[] buffer = new double[2048];
 
         if (moduleType.name().equals("LTR24")) {
-            buffer = new double[150000];
-            scale = 10;
+            buffer = new double[39064];
         }
 
         ringBuffer.take(buffer, buffer.length);
         maxValue = -999;
 
-        for (int i = channel; i < buffer.length; i += 4 * scale) {
-            intermediateList.add(new XYChart.Data<>((double) i / (buffer.length / 4), buffer[i]));
+        for (int i = channel; i < buffer.length; i += CHANNELS) {
+            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
             if (buffer[i] > maxValue) {
                 maxValue = (double) Math.round(buffer[i] * 100) / 100;
             }

@@ -515,13 +515,13 @@ public class LTR34SettingController implements BaseController {
             findLTR34Module();
             parseChannelsSettings();
 
-            if (connectionOpen) {
-                ltr34.closeConnection();
-                connectionOpen = false;
-            }
+//            if (connectionOpen) {
+//                ltr34.closeConnection();
+//                connectionOpen = false;
+//            }
 
             clearView();
-            stopped = true;
+//            stopped = true;
 
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
