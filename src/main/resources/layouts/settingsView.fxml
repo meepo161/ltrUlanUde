@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import org.controlsfx.control.StatusBar?>
+
 <AnchorPane minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.SettingsController">
     <children>
         <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -104,11 +115,12 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="testProgramTimeTextField" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                              <TextField fx:id="testProgramTimeTextField" onKeyPressed="#listenBackSpaceKey" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
-                                 </GridPane.margin></TextField>
-                              <TextField fx:id="testProgramDateTextField" promptText="дд:мм:гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд:мм:гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin></TextField>

@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
@@ -65,6 +67,7 @@ public class SettingsController implements BaseController {
     private boolean editMode;
     private int selectedCrate;
     private WindowsManager wm;
+    private boolean didBackSpacePressed;
     private int selectedModule;
     private ControllerManager cm;
     private TestProgram testProgram;
@@ -82,7 +85,8 @@ public class SettingsController implements BaseController {
         fillListOfTextFields();
         fillListOfRequiredSymbols();
         initRequiredFieldsSymbols();
-        setTextFieldTimeFormat();
+        setTextFieldTimeFormat(testProgramTimeTextField, 8);
+        setTextFieldTimeFormat(testProgramDateTextField, 10);
         crates = crateModel.getCratesNames();
         cratesListView.setItems(crates);
         showCrateModules();
@@ -117,15 +121,32 @@ public class SettingsController implements BaseController {
         }
     }
 
-    private void setTextFieldTimeFormat() {
-        testProgramTimeTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            testProgramTimeTextField.setText(testProgramTimeTextField.getText().replaceAll("[^\\d:]", ""));
-            if (testProgramTimeTextField.getText().length() == 2 || testProgramTimeTextField.getText().length() == 5) {
-                testProgramTimeTextField.setText(testProgramTimeTextField.getText() + ":");
-            } else if (testProgramTimeTextField.getText().length() > 8) {
-                testProgramTimeTextField.setText(oldValue);
+    private void setTextFieldTimeFormat(TextField textField, int limitOfNumbers) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String text = textField.getText();
+
+            textField.setText(text.replaceAll("[^\\d:]", ""));
+            addColons(textField, text);
+
+            if (text.length() > limitOfNumbers) {
+                textField.setText(oldValue);
             }
         });
+    }
+
+    private void addColons(TextField textField, String text) {
+        int charactersCounter = text.length();
+
+        if (!didBackSpacePressed) {
+            if (charactersCounter == 2 || charactersCounter == 5) {
+                textField.setText(text + ":");
+            }
+        }
+    }
+
+    @FXML
+    public void listenBackSpaceKey(KeyEvent keyEvent) {
+        didBackSpacePressed = keyEvent.getCode() == KeyCode.BACK_SPACE;
     }
 
     private void showCrateModules() {

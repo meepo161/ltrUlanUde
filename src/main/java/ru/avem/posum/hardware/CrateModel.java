@@ -32,11 +32,11 @@ public class CrateModel {
     public CrateModel() {
         initCratesList();
 
-        status = fillCratesList(crates[0]);
+//        status = fillCratesList(crates[0]);
         checkStatus();
 
         if (!wasError) {
-            status = getCratesInfo(crates[1], crates[2]);
+//            status = getCratesInfo(crates[1], crates[2]);
             checkStatus();
         }
 
@@ -45,14 +45,14 @@ public class CrateModel {
 
             for (int i = 0; i < crates[0].length; i++) {
                 if (!crates[0][i].isEmpty()) {
-                    status = fillListOfModules(crates[0][i], modules[i]);
+//                    status = fillListOfModules(crates[0][i], modules[i]);
                     checkStatus();
                 }
             }
         }
 
         if (!wasError) {
-            status = stop();
+//            status = stop();
             checkStatus();
         }
 
@@ -136,6 +136,6 @@ public class CrateModel {
     }
 
     static {
-        System.loadLibrary("CrateLibrary");
+//        System.loadLibrary("CrateLibrary");
     }
 }

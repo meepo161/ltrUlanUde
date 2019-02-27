@@ -238,7 +238,7 @@ public class MainController implements BaseController {
         if (testPrograms.size() > 0) {
             TestProgram testProgramItem = testProgramTableView.getSelectionModel().getSelectedItem();
             if (testProgramItem == null) {
-                Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
+                Toast.makeText("Программа испытаний не выбрана").show(Toast.ToastType.WARNING);
                 return;
             }
             // передать данные в класс проведения эксперемента
@@ -246,7 +246,7 @@ public class MainController implements BaseController {
             // вызвать окно проведения эксперемента
             wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
         } else {
-            Toast.makeText("Отсутствуют настроенные испытания").show(Toast.ToastType.WARNING);
+            Toast.makeText("Отсутствуют программы испытаний").show(Toast.ToastType.WARNING);
             return;
         }
     }
