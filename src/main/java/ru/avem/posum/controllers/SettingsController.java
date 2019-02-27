@@ -73,7 +73,6 @@ public class SettingsController implements BaseController {
     private int selectedModule;
     private ControllerManager cm;
     private TestProgram testProgram;
-    private boolean isRequiredSettingsSetted;
     private ObservableList<String> crates;
     private ObservableList<String> modulesNames;
     private CrateModel crateModel = new CrateModel();
@@ -241,16 +240,14 @@ public class SettingsController implements BaseController {
     }
 
     public void handleSaveTestProgramSettings() {
-        isRequiredSettingsSetted = checkRequiredFields();
-        isRequiredSettingsSetted = checkDateAndTimeFields();
-        isRequiredSettingsSetted = checkHardwareSettings();
+        boolean isRequiredSettingsSet = checkHardwareSettings() && checkRequiredTextFields() && checkTimeAndDateFormat();
 
-        if (isRequiredSettingsSetted) {
+        if (isRequiredSettingsSet) {
             new Thread(this::saveSettings).start();
         }
     }
 
-    private boolean checkRequiredFields() {
+    private boolean checkRequiredTextFields() {
         int filledFields = 0;
         boolean isRequiredFieldsFilled = false;
 
@@ -277,7 +274,7 @@ public class SettingsController implements BaseController {
         return isRequiredFieldsFilled;
     }
 
-    private boolean checkDateAndTimeFields() {
+    private boolean checkTimeAndDateFormat() {
         String time = testProgramTimeTextField.getText();
         String date = testProgramDateTextField.getText();
         boolean isTextFormatCorrect = true;
