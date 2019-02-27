@@ -73,7 +73,7 @@ public class SettingsController implements BaseController {
     private int selectedModule;
     private ControllerManager cm;
     private TestProgram testProgram;
-    private boolean requiredFieldsFilled;
+    private boolean isRequiredSettingsSetted;
     private ObservableList<String> crates;
     private ObservableList<String> modulesNames;
     private CrateModel crateModel = new CrateModel();
@@ -241,20 +241,18 @@ public class SettingsController implements BaseController {
     }
 
     public void handleSaveTestProgramSettings() {
-        checkRequiredFields();
-        checkDateAndTimeFields();
+        isRequiredSettingsSetted = checkRequiredFields();
+        isRequiredSettingsSetted = checkDateAndTimeFields();
+        isRequiredSettingsSetted = checkHardwareSettings();
 
-        if (requiredFieldsFilled) {
-            if (!chooseCrateButton.isDisabled()) {
-                statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт", statusBar);
-            } else {
-                new Thread(this::saveSettings).start();
-            }
+        if (isRequiredSettingsSetted) {
+            new Thread(this::saveSettings).start();
         }
     }
 
-    private void checkRequiredFields() {
+    private boolean checkRequiredFields() {
         int filledFields = 0;
+        boolean isRequiredFieldsFilled = false;
 
         for (int i = 0; i < requiredFields.size(); i++) {
             TextField textField = requiredFields.get(i).getValue();
@@ -262,7 +260,7 @@ public class SettingsController implements BaseController {
 
             if (textField.getText().isEmpty()) {
                 label.setVisible(true);
-                requiredFieldsFilled = false;
+                isRequiredFieldsFilled = false;
 
                 Platform.runLater(() -> {
                     statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля", statusBar);
@@ -272,25 +270,41 @@ public class SettingsController implements BaseController {
             }
 
             if (filledFields == requiredFields.size()) {
-                requiredFieldsFilled = true;
+                isRequiredFieldsFilled = true;
             }
         }
+
+        return isRequiredFieldsFilled;
     }
 
-    private void checkDateAndTimeFields() {
+    private boolean checkDateAndTimeFields() {
         String time = testProgramTimeTextField.getText();
         String date = testProgramDateTextField.getText();
+        boolean isTextFormatCorrect = true;
 
         if (!time.matches("^[\\d]{2}:[\\d]{2}:[\\d]{2}")) {
             statusBarLine.setStatus("Неверно задано время испытаний (необходимый формат - чч:мм:сс)", statusBar);
-            requiredFieldsFilled = false;
+            isTextFormatCorrect = false;
         }
 
         if (!date.matches("^[\\d]{2}:[\\d]{2}:[\\d]{4}")) {
             statusBarLine.setStatus("Неверно задана дата испытаний (необходимый формат - дд:мм:гггг)", statusBar);
-            requiredFieldsFilled = false;
+            isTextFormatCorrect = false;
         }
 
+        return isTextFormatCorrect;
+    }
+
+    private boolean checkHardwareSettings() {
+        boolean isCrateChosen = false;
+
+        if (!chooseCrateButton.isDisabled()) {
+            statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт", statusBar);
+        } else {
+            isCrateChosen = true;
+        }
+
+        return isCrateChosen;
     }
 
     private void saveSettings() {
