@@ -36,6 +36,8 @@ public class SettingsController implements BaseController {
     @FXML
     private Label requiredFieldN4;
     @FXML
+    private Label requiredFieldN5;
+    @FXML
     private ListView<String> cratesListView;
     @FXML
     private ListView<String> modulesListView;
@@ -110,7 +112,8 @@ public class SettingsController implements BaseController {
                 new Pair<>(requiredFieldN1, testProgramNameTextField),
                 new Pair<>(requiredFieldN2, sampleNameTextField),
                 new Pair<>(requiredFieldN3, testProgramTypeTextField),
-                new Pair<>(requiredFieldN4, testProgramTimeTextField)
+                new Pair<>(requiredFieldN4, testProgramTimeTextField),
+                new Pair<>(requiredFieldN5, testProgramDateTextField)
         ));
     }
 
@@ -239,6 +242,7 @@ public class SettingsController implements BaseController {
 
     public void handleSaveTestProgramSettings() {
         checkRequiredFields();
+        checkDateAndTimeFields();
 
         if (requiredFieldsFilled) {
             if (!chooseCrateButton.isDisabled()) {
@@ -271,6 +275,22 @@ public class SettingsController implements BaseController {
                 requiredFieldsFilled = true;
             }
         }
+    }
+
+    private void checkDateAndTimeFields() {
+        String time = testProgramTimeTextField.getText();
+        String date = testProgramDateTextField.getText();
+
+        if (!time.matches("^[\\d]{2}:[\\d]{2}:[\\d]{2}")) {
+            statusBarLine.setStatus("Неверно задано время испытаний (необходимый формат - чч:мм:сс)", statusBar);
+            requiredFieldsFilled = false;
+        }
+
+        if (!date.matches("^[\\d]{2}:[\\d]{2}:[\\d]{4}")) {
+            statusBarLine.setStatus("Неверно задана дата испытаний (необходимый формат - дд:мм:гггг)", statusBar);
+            requiredFieldsFilled = false;
+        }
+
     }
 
     private void saveSettings() {

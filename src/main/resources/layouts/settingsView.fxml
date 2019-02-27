@@ -164,6 +164,11 @@
                                     <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
+                              <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>
