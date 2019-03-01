@@ -2,16 +2,28 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-public class LTR212 {
-    private boolean[] checkedChannels = new boolean[4];
-    private int[] channelsTypes = new int[4];
-    private int[] measuringRanges = new int[4];
-    private String[] channelsDescription = new String[4];
+public class LTR212 implements ADC {
     private String crate;
     private int slot;
-    private String status = "";
+    private final int CHANNELS = 4;
+    private boolean[] checkedChannels = new boolean[CHANNELS];
+    private int[] channelsTypes = new int[CHANNELS];
+    private int[] measuringRanges = new int[CHANNELS];
+    private String[] channelsDescription = new String[CHANNELS];
+    private String[] calibrationSettings = new String[CHANNELS];
+    private String status;
     private TextEncoder textEncoder = new TextEncoder();
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
+
+    public LTR212() {
+        String defaultCalibrationSettings = "notSetted, 0.0, 0.0, 0.0, 0.0, В";
+        status = "";
+
+        for (int i = 0; i < CHANNELS; i++) {
+            channelsDescription[i] = "";
+            calibrationSettings[i] = defaultCalibrationSettings;
+        }
+    }
 
     public void openConnection() {
         status = open(crate, slot, System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
@@ -47,38 +59,7 @@ public class LTR212 {
 
     public native String close(int slot);
 
-    public boolean[] getCheckedChannels() {
-        return checkedChannels;
-    }
-
-    public void setCheckedChannels(boolean[] checkedChannels) {
-        this.checkedChannels = checkedChannels;
-    }
-
-    public int[] getChannelsTypes() {
-        return channelsTypes;
-    }
-
-    public void setChannelsTypes(int[] channelsTypes) {
-        this.channelsTypes = channelsTypes;
-    }
-
-    public int[] getMeasuringRanges() {
-        return measuringRanges;
-    }
-
-    public void setMeasuringRanges(int[] measuringRanges) {
-        this.measuringRanges = measuringRanges;
-    }
-
-    public String[] getChannelsDescription() {
-        return channelsDescription;
-    }
-
-    public void setChannelsDescription(String[] channelsDescription) {
-        this.channelsDescription = channelsDescription;
-    }
-
+    @Override
     public String getCrate() {
         return crate;
     }
@@ -87,12 +68,38 @@ public class LTR212 {
         this.crate = crate;
     }
 
+    @Override
     public int getSlot() {
         return slot;
     }
 
     public void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    @Override
+    public boolean[] getCheckedChannels() {
+        return checkedChannels;
+    }
+
+    @Override
+    public int[] getChannelsTypes() {
+        return channelsTypes;
+    }
+
+    @Override
+    public int[] getMeasuringRanges() {
+        return measuringRanges;
+    }
+
+    @Override
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    @Override
+    public String[] getCalibrationSettings() {
+        return calibrationSettings;
     }
 
     public String getStatus() {
@@ -103,20 +110,8 @@ public class LTR212 {
         this.status = status;
     }
 
-    public TextEncoder getTextEncoder() {
-        return textEncoder;
-    }
-
-    public void setTextEncoder(TextEncoder textEncoder) {
-        this.textEncoder = textEncoder;
-    }
-
     public boolean isBusy() {
         return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
     }
 
     static {

@@ -104,7 +104,7 @@ public class LTR34SettingController implements BaseController {
     private LTR34 ltr34 = new LTR34();
     private boolean[] checkedChannels;
     private int[][] channelsParameters;
-    private double[] signal = new double[62_500]; // массив данных для генерации сигнала для каждого канала
+    private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
     private StatusBarLine statusBarLine = new StatusBarLine();
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private List<TextField> amplitudeTextFields = new ArrayList<>();
@@ -301,7 +301,7 @@ public class LTR34SettingController implements BaseController {
     private void setPhaseFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|$")) {
+            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|0|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -429,7 +429,7 @@ public class LTR34SettingController implements BaseController {
         double channelPhase = phase / 57.2958; // перевод градусов в радианы
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length);
+            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
         }
 
         return data;
@@ -469,8 +469,8 @@ public class LTR34SettingController implements BaseController {
                     channels = 8;
                 }
 
-                for (int j = i; j < signal.length; j += channels * 100) { // коэффициент 100 введен для того, чтобы не отрисовывать все 500_000 точек
-                    graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 100 + i), signal[j]));
+                for (int j = i; j < signal.length; j += channels * 10) { // коэффициент 10 введен для того, чтобы не отрисовывать все 500_000 точек
+                    graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 10 + i), signal[j]));
                 }
             }
         }
@@ -515,13 +515,13 @@ public class LTR34SettingController implements BaseController {
             findLTR34Module();
             parseChannelsSettings();
 
-            if (connectionOpen) {
-                ltr34.closeConnection();
-                System.out.println("Closed!");
-                connectionOpen = false;
-            }
+//            if (connectionOpen) {
+//                ltr34.closeConnection();
+//                connectionOpen = false;
+//            }
 
             clearView();
+//            stopped = true;
 
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
@@ -539,6 +539,7 @@ public class LTR34SettingController implements BaseController {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 frequencyTextFields.get(i).setDisable(false);
                 amplitudeTextFields.get(i).setDisable(false);
+                phasesTextFields.get(i).setDisable(false);
             }
         }
     }
@@ -566,7 +567,14 @@ public class LTR34SettingController implements BaseController {
             channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
             amplitudeTextFields.get(i).setText(String.valueOf(channelsParameters[0][i]));
             frequencyTextFields.get(i).setText(String.valueOf(channelsParameters[1][i]));
-            phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
+
+            if (channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
+                phasesTextFields.get(i).setText("0");
+            } else if (!channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
+                phasesTextFields.get(i).setText("");
+            } else {
+                phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
+            }
         }
     }
 

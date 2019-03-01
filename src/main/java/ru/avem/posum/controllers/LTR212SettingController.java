@@ -371,22 +371,22 @@ public class LTR212SettingController implements BaseController {
     }
 
     public void handleValueOfChannelN1() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 1);
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 0);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN2() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 2);
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 1);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN3() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 3);
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 2);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN4() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 4);
+        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 3);
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 

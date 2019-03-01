@@ -12,13 +12,13 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.LTR212ModuleRepository;
-import ru.avem.posum.db.LTR24ModuleRepository;
-import ru.avem.posum.db.LTR34ModuleRepository;
+import ru.avem.posum.db.LTR212TablesRepository;
+import ru.avem.posum.db.LTR24TablesRepository;
+import ru.avem.posum.db.LTR34TablesRepository;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.LTR212Module;
-import ru.avem.posum.db.models.LTR24Module;
-import ru.avem.posum.db.models.LTR34Module;
+import ru.avem.posum.db.models.LTR212Table;
+import ru.avem.posum.db.models.LTR24Table;
+import ru.avem.posum.db.models.LTR34Table;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -64,7 +64,7 @@ public class MainController implements BaseController {
         makeColumnTitleWrapper(columnTestProgramType);
         makeColumnTitleWrapper(columnTestingSample);
 
-        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("testProgramId"));
+        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("index"));
         columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("testProgramName"));
         columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
         columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
@@ -79,7 +79,9 @@ public class MainController implements BaseController {
         TestProgramRepository.updateTestProgramId();
         List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
         testPrograms = FXCollections.observableArrayList(allTestPrograms);
-        testProgramTableView.setItems(testPrograms);
+        Platform.runLater(() -> {
+            testProgramTableView.setItems(testPrograms);
+        });
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -116,6 +118,7 @@ public class MainController implements BaseController {
         clearModulesList();
         cm.loadDefaultSettings();
         cm.setEditMode(false);
+        cm.hideRequiredFieldsSymbols();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -156,24 +159,24 @@ public class MainController implements BaseController {
                 testProgram = allTestPrograms.get(allTestPrograms.size() - 1);
                 long newTestProgrammId = testProgram.getId();
 
-                for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
-                    if (oldTestProgrammId == ltr24Module.getTestProgrammId()) {
-                        ltr24Module.setTestProgrammId(newTestProgrammId);
-                        LTR24ModuleRepository.insertLTR24Module(ltr24Module);
+                for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
+                    if (oldTestProgrammId == ltr24Table.getTestProgramId()) {
+                        ltr24Table.setTestProgramId(newTestProgrammId);
+                        LTR24TablesRepository.insertLTR24Table(ltr24Table);
                     }
                 }
 
-                for (LTR212Module ltr212Module : LTR212ModuleRepository.getAllLTR212Modules()) {
-                    if (oldTestProgrammId == ltr212Module.getTestProgrammId()) {
-                        ltr212Module.setTestProgrammId(newTestProgrammId);
-                        LTR212ModuleRepository.insertLTR212Module(ltr212Module);
+                for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
+                    if (oldTestProgrammId == ltr212Table.getTestProgramId()) {
+                        ltr212Table.setTestProgramId(newTestProgrammId);
+                        LTR212TablesRepository.insertLTR212Table(ltr212Table);
                     }
                 }
 
-                for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
-                    if (oldTestProgrammId == ltr34Module.getTestProgrammId()) {
-                        ltr34Module.setTestProgrammId(newTestProgrammId);
-                        LTR34ModuleRepository.insertLTR34Module(ltr34Module);
+                for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
+                    if (oldTestProgrammId == ltr34Table.getTestProgramId()) {
+                        ltr34Table.setTestProgramId(newTestProgrammId);
+                        LTR34TablesRepository.insertLTR34Module(ltr34Table);
                     }
                 }
 
@@ -199,24 +202,24 @@ public class MainController implements BaseController {
         new Thread(() -> {
             List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
             TestProgram testProgram = allTestPrograms.get(getSelectedItemIndex());
-            long testProgrammId = testProgram.getId();
+            long testProgramId = testProgram.getId();
             TestProgramRepository.deleteTestProgram(testProgram);
 
-            for (LTR24Module ltr24Module : LTR24ModuleRepository.getAllLTR24Modules()) {
-                if (testProgrammId == ltr24Module.getTestProgrammId()) {
-                    LTR24ModuleRepository.deleteLTR24Module(ltr24Module);
+            for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
+                if (testProgramId == ltr24Table.getTestProgramId()) {
+                    LTR24TablesRepository.deleteLTR24Table(ltr24Table);
                 }
             }
 
-            for (LTR212Module ltr212Module : LTR212ModuleRepository.getAllLTR212Modules()) {
-                if (testProgrammId == ltr212Module.getTestProgrammId()) {
-                    LTR212ModuleRepository.deleteLTR212Module(ltr212Module);
+            for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
+                if (testProgramId == ltr212Table.getTestProgramId()) {
+                    LTR212TablesRepository.deleteLTR212Table(ltr212Table);
                 }
             }
 
-            for (LTR34Module ltr34Module : LTR34ModuleRepository.getAllLTR34Modules()) {
-                if (testProgrammId == ltr34Module.getTestProgrammId()) {
-                    LTR34ModuleRepository.deleteLTR34Module(ltr34Module);
+            for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
+                if (testProgramId == ltr34Table.getTestProgramId()) {
+                    LTR34TablesRepository.deleteLTR34Table(ltr34Table);
                 }
             }
 
@@ -237,7 +240,7 @@ public class MainController implements BaseController {
         if (testPrograms.size() > 0) {
             TestProgram testProgramItem = testProgramTableView.getSelectionModel().getSelectedItem();
             if (testProgramItem == null) {
-                Toast.makeText("Испытание не выбрано").show(Toast.ToastType.WARNING);
+                Toast.makeText("Программа испытаний не выбрана").show(Toast.ToastType.WARNING);
                 return;
             }
             // передать данные в класс проведения эксперемента
@@ -245,7 +248,7 @@ public class MainController implements BaseController {
             // вызвать окно проведения эксперемента
             wm.setScene(WindowsManager.Scenes.PROCESS_SCENE);
         } else {
-            Toast.makeText("Отсутствуют настроенные испытания").show(Toast.ToastType.WARNING);
+            Toast.makeText("Отсутствуют программы испытаний").show(Toast.ToastType.WARNING);
             return;
         }
     }
