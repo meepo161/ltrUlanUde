@@ -4,7 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import ru.avem.posum.db.LTR212TablesRepository;
 import ru.avem.posum.db.LTR24TablesRepository;
-import ru.avem.posum.db.LTR34TableRepository;
+import ru.avem.posum.db.LTR34TablesRepository;
 import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.LTR212Table;
 import ru.avem.posum.db.models.LTR24Table;
@@ -109,7 +109,7 @@ public class SettingsModel {
     private List<LTR34Table> fillLTR34ModulesList() {
         List<LTR34Table> ltr34Tables = new ArrayList<>();
 
-        for (LTR34Table module : LTR34TableRepository.getAllLTR34Tables()) {
+        for (LTR34Table module : LTR34TablesRepository.getAllLTR34Tables()) {
             if (module.getTestProgramId() == testProgram.getTestProgramId()) {
                 ltr34Tables.add(module);
             }
@@ -275,13 +275,13 @@ public class SettingsModel {
         for (String modulesName : modulesNames) {
             switch (modulesName.split(" ")[0]) {
                 case CrateModel.LTR24:
-                    updateLTR24Table(crateModel.getLtr24ModulesList().get(ltr24Index).getValue(), testProgramId);
+                    updateLTR24Table(crateModel.getLtr24ModulesList().get(ltr24Index++).getValue(), testProgramId);
                     break;
                 case CrateModel.LTR34:
                     updateLTR34Settings(crateModel.getLtr34ModulesList().get(ltr34Index).getValue(), testProgramId);
                     break;
                 case CrateModel.LTR212:
-                    updateLTR212Table(crateModel.getLtr212ModulesList().get(ltr212Index).getValue(), testProgramId);
+                    updateLTR212Table(crateModel.getLtr212ModulesList().get(ltr212Index++).getValue(), testProgramId);
                     break;
             }
         }
@@ -346,7 +346,7 @@ public class SettingsModel {
         boolean[] checkedChannels = ltr34.getCheckedChannels();
 
         if (isEditMode) {
-            for (LTR34Table ltr34Table : LTR34TableRepository.getAllLTR34Tables()) {
+            for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
                 if (ltr34Table.getTestProgramId() == testProgramId && ltr34Table.getSlot() == ltr34.getSlot()) {
                     updateLTR34Data(ltr34, checkedChannels, ltr34Table);
                 }
@@ -408,7 +408,7 @@ public class SettingsModel {
         ltr34Table.setCrate(ltr34.getCrate());
         ltr34Table.setSlot(ltr34.getSlot());
 
-        LTR34TableRepository.updateLTR34Table(ltr34Table);
+        LTR34TablesRepository.updateLTR34Table(ltr34Table);
     }
 
     private void createLTR34Module(LTR34 ltr34) {
@@ -419,7 +419,7 @@ public class SettingsModel {
                 ltr34.getCrate(),
                 ltr34.getSlot());
 
-        LTR34TableRepository.insertLTR34Module(ltr34Table);
+        LTR34TablesRepository.insertLTR34Module(ltr34Table);
     }
 
     public String getCrate() {

@@ -114,6 +114,6 @@ public class LTR24 implements ADC {
     }
 
     static {
-//        System.loadLibrary( "LTR24Library");
+        System.loadLibrary( "LTR24Library");
     }
 }

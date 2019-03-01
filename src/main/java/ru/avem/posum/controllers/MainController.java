@@ -14,7 +14,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.LTR212TablesRepository;
 import ru.avem.posum.db.LTR24TablesRepository;
-import ru.avem.posum.db.LTR34TableRepository;
+import ru.avem.posum.db.LTR34TablesRepository;
 import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.LTR212Table;
 import ru.avem.posum.db.models.LTR24Table;
@@ -171,10 +171,10 @@ public class MainController implements BaseController {
                     }
                 }
 
-                for (LTR34Table ltr34Table : LTR34TableRepository.getAllLTR34Tables()) {
+                for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
                     if (oldTestProgrammId == ltr34Table.getTestProgramId()) {
                         ltr34Table.setTestProgramId(newTestProgrammId);
-                        LTR34TableRepository.insertLTR34Module(ltr34Table);
+                        LTR34TablesRepository.insertLTR34Module(ltr34Table);
                     }
                 }
 
@@ -215,9 +215,9 @@ public class MainController implements BaseController {
                 }
             }
 
-            for (LTR34Table ltr34Table : LTR34TableRepository.getAllLTR34Tables()) {
+            for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
                 if (testProgrammId == ltr34Table.getTestProgramId()) {
-                    LTR34TableRepository.deleteLTR34Table(ltr34Table);
+                    LTR34TablesRepository.deleteLTR34Table(ltr34Table);
                 }
             }
 

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class LTR34TableRepository extends DataBaseRepository {
+public class LTR34TablesRepository extends DataBaseRepository {
     public static void createTable(Class dataClass) {
         try (ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL)) {
             TableUtils.dropTable(connectionSource, dataClass, true);
@@ -52,7 +52,7 @@ public class LTR34TableRepository extends DataBaseRepository {
         void onAction(Dao<LTR34Table, Long> ltr34ModulesDao) throws SQLException;
     }
 
-    private static void sendAction(LTR34TableRepository.Actionable actionable) {
+    private static void sendAction(LTR34TablesRepository.Actionable actionable) {
         try (ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL)) {
             Dao<LTR34Table, Long> ltr34ModuleDao = DaoManager.createDao(connectionSource, LTR34Table.class);
 

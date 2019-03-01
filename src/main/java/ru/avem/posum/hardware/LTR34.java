@@ -114,6 +114,6 @@ public class LTR34 {
     }
 
     static {
-//        System.loadLibrary("LTR34Library");
+        System.loadLibrary("LTR34Library");
     }
 }

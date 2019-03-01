@@ -115,6 +115,6 @@ public class LTR212 implements ADC {
     }
 
     static {
-//        System.loadLibrary( "LTR212Library");
+        System.loadLibrary( "LTR212Library");
     }
 }

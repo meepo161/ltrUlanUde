@@ -86,8 +86,8 @@ public class SettingsController implements BaseController {
         fillListOfTextFields();
         fillListOfRequiredSymbols();
         initRequiredFieldsSymbols();
-        setTextFieldTimeFormat(testProgramTimeTextField, 8);
-        setTextFieldTimeFormat(testProgramDateTextField, 10);
+        setTextFormat(testProgramTimeTextField, 8, ":");
+        setTextFormat(testProgramDateTextField, 10, ".");
         crates = crateModel.getCratesNames();
         cratesListView.setItems(crates);
         showCrateModules();
@@ -123,12 +123,12 @@ public class SettingsController implements BaseController {
         }
     }
 
-    private void setTextFieldTimeFormat(TextField textField, int limitOfNumbers) {
+    private void setTextFormat(TextField textField, int limitOfNumbers, String separator) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             String text = textField.getText();
 
-            textField.setText(text.replaceAll("[^\\d:]", ""));
-            addColons(textField, text);
+            textField.setText(text.replaceAll("[^\\d" + separator + "]", ""));
+            addColons(textField, text, separator);
 
             if (text.length() > limitOfNumbers) {
                 textField.setText(oldValue);
@@ -136,12 +136,12 @@ public class SettingsController implements BaseController {
         });
     }
 
-    private void addColons(TextField textField, String text) {
+    private void addColons(TextField textField, String text, String separator) {
         int charactersCounter = text.length();
 
         if (!didBackSpacePressed) {
             if (charactersCounter == 2 || charactersCounter == 5) {
-                textField.setText(text + ":");
+                textField.setText(text + separator);
             }
         }
     }
@@ -284,8 +284,8 @@ public class SettingsController implements BaseController {
             isTextFormatCorrect = false;
         }
 
-        if (!date.matches("^[\\d]{2}:[\\d]{2}:[\\d]{4}")) {
-            statusBarLine.setStatus("Неверно задана дата испытаний (необходимый формат - дд:мм:гггг)", statusBar);
+        if (!date.matches("^[\\d]{2}\\.[\\d]{2}\\.[\\d]{4}")) {
+            statusBarLine.setStatus("Неверно задана дата испытаний (необходимый формат - дд.мм.гггг)", statusBar);
             isTextFormatCorrect = false;
         }
 

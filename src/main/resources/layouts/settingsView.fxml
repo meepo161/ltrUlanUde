@@ -120,7 +120,7 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд:мм:гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin></TextField>
