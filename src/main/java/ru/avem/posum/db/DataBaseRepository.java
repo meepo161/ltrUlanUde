@@ -12,9 +12,9 @@ public class DataBaseRepository {
         if (!new File(DATABASE_NAME).exists() || forceInit) {
             AccountRepository.createTable(Account.class);
             EventRepository.createTable(Event.class);
-            LTR24ModuleRepository.createTable(LTR24Module.class);
-            LTR212ModuleRepository.createTable(LTR212Module.class);
-            LTR34ModuleRepository.createTable(LTR34Module.class);
+            LTR24TablesRepository.createTable(LTR24Table.class);
+            LTR212TablesRepository.createTable(LTR212Table.class);
+            LTR34TablesRepository.createTable(LTR34Table.class);
             TestProgramRepository.createTable(TestProgram.class);
 
             Account admin = new Account("admin", "102030");

@@ -4,14 +4,14 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.LTR24ModuleRepository;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.LTR24Module;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.SettingsModel;
@@ -24,7 +24,11 @@ import java.util.List;
 
 public class SettingsController implements BaseController {
     @FXML
+    private Button backButton;
+    @FXML
     private Button chooseCrateButton;
+    @FXML
+    private Button saveTestProgrammSettingsButton;
     @FXML
     private Button setupModuleButton;
     @FXML
@@ -35,6 +39,8 @@ public class SettingsController implements BaseController {
     private Label requiredFieldN3;
     @FXML
     private Label requiredFieldN4;
+    @FXML
+    private Label requiredFieldN5;
     @FXML
     private ListView<String> cratesListView;
     @FXML
@@ -67,10 +73,10 @@ public class SettingsController implements BaseController {
     private boolean editMode;
     private int selectedCrate;
     private WindowsManager wm;
+    private boolean didBackSpacePressed;
     private int selectedModule;
     private ControllerManager cm;
     private TestProgram testProgram;
-    private boolean requiredFieldsFilled;
     private ObservableList<String> crates;
     private ObservableList<String> modulesNames;
     private CrateModel crateModel = new CrateModel();
@@ -84,6 +90,8 @@ public class SettingsController implements BaseController {
         fillListOfTextFields();
         fillListOfRequiredSymbols();
         initRequiredFieldsSymbols();
+        setTextFormat(testProgramTimeTextField, 8, ":");
+        setTextFormat(testProgramDateTextField, 10, ".");
         crates = crateModel.getCratesNames();
         cratesListView.setItems(crates);
         showCrateModules();
@@ -107,7 +115,8 @@ public class SettingsController implements BaseController {
                 new Pair<>(requiredFieldN1, testProgramNameTextField),
                 new Pair<>(requiredFieldN2, sampleNameTextField),
                 new Pair<>(requiredFieldN3, testProgramTypeTextField),
-                new Pair<>(requiredFieldN4, testProgramTimeTextField)
+                new Pair<>(requiredFieldN4, testProgramTimeTextField),
+                new Pair<>(requiredFieldN5, testProgramDateTextField)
         ));
     }
 
@@ -116,6 +125,34 @@ public class SettingsController implements BaseController {
             pair.getKey().setTextFill(Color.web("#D30303"));
             pair.getKey().setVisible(false);
         }
+    }
+
+    private void setTextFormat(TextField textField, int limitOfNumbers, String separator) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String text = textField.getText();
+
+            textField.setText(text.replaceAll("[^\\d" + separator + "]", ""));
+            addColons(textField, text, separator);
+
+            if (text.length() > limitOfNumbers) {
+                textField.setText(oldValue);
+            }
+        });
+    }
+
+    private void addColons(TextField textField, String text, String separator) {
+        int charactersCounter = text.length();
+
+        if (!didBackSpacePressed) {
+            if (charactersCounter == 2 || charactersCounter == 5) {
+                textField.setText(text + separator);
+            }
+        }
+    }
+
+    @FXML
+    public void listenBackSpaceKey(KeyEvent keyEvent) {
+        didBackSpacePressed = keyEvent.getCode() == KeyCode.BACK_SPACE;
     }
 
     private void showCrateModules() {
@@ -207,19 +244,16 @@ public class SettingsController implements BaseController {
     }
 
     public void handleSaveTestProgramSettings() {
-        checkRequiredFields();
+        boolean isRequiredSettingsSet = checkHardwareSettings() && checkRequiredTextFields() && checkTimeAndDateFormat();
 
-        if (requiredFieldsFilled) {
-            if (!chooseCrateButton.isDisabled()) {
-                statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт", statusBar);
-            } else {
-                new Thread(this::saveSettings).start();
-            }
+        if (isRequiredSettingsSet) {
+            new Thread(this::save).start();
         }
     }
 
-    private void checkRequiredFields() {
+    private boolean checkRequiredTextFields() {
         int filledFields = 0;
+        boolean isRequiredFieldsFilled = false;
 
         for (int i = 0; i < requiredFields.size(); i++) {
             TextField textField = requiredFields.get(i).getValue();
@@ -227,7 +261,7 @@ public class SettingsController implements BaseController {
 
             if (textField.getText().isEmpty()) {
                 label.setVisible(true);
-                requiredFieldsFilled = false;
+                isRequiredFieldsFilled = false;
 
                 Platform.runLater(() -> {
                     statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля", statusBar);
@@ -237,24 +271,61 @@ public class SettingsController implements BaseController {
             }
 
             if (filledFields == requiredFields.size()) {
-                requiredFieldsFilled = true;
+                isRequiredFieldsFilled = true;
             }
         }
+
+        return isRequiredFieldsFilled;
     }
 
-    private void saveSettings() {
+    private boolean checkTimeAndDateFormat() {
+        String time = testProgramTimeTextField.getText();
+        String date = testProgramDateTextField.getText();
+        boolean isTextFormatCorrect = true;
+
+        if (!time.matches("^[\\d]{2}:[\\d]{2}:[\\d]{2}")) {
+            statusBarLine.setStatus("Неверно задано время испытаний (необходимый формат - чч:мм:сс)", statusBar);
+            isTextFormatCorrect = false;
+        }
+
+        if (!date.matches("^[\\d]{2}\\.[\\d]{2}\\.[\\d]{4}")) {
+            statusBarLine.setStatus("Неверно задана дата испытаний (необходимый формат - дд.мм.гггг)", statusBar);
+            isTextFormatCorrect = false;
+        }
+
+        return isTextFormatCorrect;
+    }
+
+    private boolean checkHardwareSettings() {
+        boolean isCrateChosen = false;
+
+        if (!chooseCrateButton.isDisabled()) {
+            statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт", statusBar);
+        } else {
+            isCrateChosen = true;
+        }
+
+        return isCrateChosen;
+    }
+
+    private void save() {
+        toggleUiElements();
+        saveSettings();
+        Platform.runLater(this::handleBackButton);
+    }
+
+    private void toggleUiElements() {
+        toggleButtons(true);
+        hideRequiredFieldsSymbols();
+
         Platform.runLater(() -> {
             toggleProgressIndicatorState(false);
         });
+    }
 
-        for (Pair<Label, TextField> pair : requiredFields) {
-            pair.getKey().setVisible(false);
-        }
-
-        settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
-        settingsModel.saveHardwareSettings(editMode);
-
-        Platform.runLater(this::handleBackButton);
+    private void toggleButtons(boolean isDisable) {
+        saveTestProgrammSettingsButton.setDisable(isDisable);
+        backButton.setDisable(isDisable);
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
@@ -263,6 +334,17 @@ public class SettingsController implements BaseController {
         } else {
             progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
+    }
+
+    public void hideRequiredFieldsSymbols() {
+        for (Pair<Label, TextField> pair : requiredFields) {
+            pair.getKey().setVisible(false);
+        }
+    }
+
+    private void saveSettings() {
+        settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
+        settingsModel.saveHardwareSettings(editMode);
     }
 
     private HashMap<String, String> parseGeneralSettingsData() {
@@ -286,7 +368,6 @@ public class SettingsController implements BaseController {
         new Thread(() -> {
             TestProgramRepository.updateTestProgramId();
             cm.loadItemsForMainTableView();
-
         }).start();
         toggleProgressIndicatorState(true);
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
@@ -337,18 +418,6 @@ public class SettingsController implements BaseController {
         }
     }
 
-
-    private List<LTR24Module> fillLTR24ModulesList(TestProgram testProgram) {
-        List<LTR24Module> ltr24Modules = new ArrayList<>();
-
-        for (LTR24Module module : LTR24ModuleRepository.getAllLTR24Modules()) {
-            if (module.getTestProgrammId() == testProgram.getTestProgramId()) {
-                ltr24Modules.add(module);
-            }
-        }
-        return ltr24Modules;
-    }
-
     public void loadDefaultSettings() {
         testProgramNameTextField.setText("");
         sampleNameTextField.setText("");
@@ -362,14 +431,10 @@ public class SettingsController implements BaseController {
 
         cratesListView.getSelectionModel().clearSelection();
         modulesListView.getSelectionModel().clearSelection();
+        modulesListView.getItems().clear();
 
         toggleUiElements(false, true);
-    }
-
-    public void hideReqiredFieldsSymbols() {
-        for (Pair<Label, TextField> pair : requiredFields) {
-            pair.getKey().setVisible(false);
-        }
+        toggleButtons(false);
     }
 
     public void refreshModulesList() {
@@ -392,6 +457,10 @@ public class SettingsController implements BaseController {
         return slot;
     }
 
+    public void setEditMode(boolean editMode) {
+        this.editMode = editMode;
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -400,9 +469,5 @@ public class SettingsController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-    }
-
-    public void setEditMode(boolean editMode) {
-        this.editMode = editMode;
     }
 }

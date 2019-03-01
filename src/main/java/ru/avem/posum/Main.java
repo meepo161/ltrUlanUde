@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -14,34 +15,37 @@ import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
-    private Stage loginStage;
-    private Stage primaryStage;
-    private Scene loginScene;
+    private LoginController loginController;
+    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
+    private LTR24SettingController ltr24SettingController;
+    private LTR34SettingController ltr34SettingController;
+    private LTR212SettingController ltr212SettingController;
+    private CalibrationController calibrationController;
+    private MainController mainController;
+    private Parent parent;
+    private ProcessController processController;
+    private SettingsController settingsController;
     private Scene mainScene;
+    private Scene loginScene;
     private Scene settingsScene;
     private Scene processScene;
     private Scene ltr24Scene;
     private Scene ltr34Scene;
     private Scene ltr212Scene;
     private Scene signalGraphScene;
-    private LoginController loginController;
-    private MainController mainController;
-    private SettingsController settingsController;
-    private ProcessController processController;
-    private LTR24SettingController ltr24SettingController;
-    private LTR34SettingController ltr34SettingController;
-    private LTR212SettingController ltr212SettingController;
+    private Scene calibrationScene;
     private SignalGraphController signalGraphController;
-    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
-    private Parent parent;
+    private Stage loginStage;
+    private Stage primaryStage;
     private volatile boolean closed;
 
     @Override
@@ -56,6 +60,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createLTR34Scene();
         createLTR212Scene();
         createSignalGraphScene();
+        createCalibrationScene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -124,6 +129,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createSignalGraphScene() throws IOException {
         signalGraphController = (SignalGraphController) getController("/layouts/signalGraphView.fxml");
         signalGraphScene = createScene(1280, 720);
+    }
+
+    private void createCalibrationScene() throws IOException {
+        calibrationController = (CalibrationController) getController("/layouts/calibrationView.fxml");
+        calibrationScene = createScene(1280, 720);
     }
 
     @Override
@@ -196,6 +206,10 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Настройки канала");
                 primaryStage.setScene(signalGraphScene);
                 break;
+            case CALIBRATION_SCENE:
+                primaryStage.setTitle("Тарировка канала");
+                primaryStage.setScene(calibrationScene);
+                break;
         }
     }
 
@@ -267,7 +281,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                     break;
             }
             try {
-                Pair<BaseController, Scene> pair = loadScene(layoutPath, 1280, 720);
+                Pair<BaseController, Scene> pair = loadScene(layoutPath);
                 modulesPairs.add(pair);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -275,7 +289,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
-    private Pair<BaseController, Scene> loadScene(String layoutPath, int width, int height) throws IOException {
+    private Pair<BaseController, Scene> loadScene(String layoutPath) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource(layoutPath));
         Parent parent = loader.load();
@@ -283,7 +297,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         baseController.setWindowManager(this);
         baseController.setControllerManager(this);
 
-        return new Pair<>(baseController, new Scene(parent, width, height));
+        return new Pair<>(baseController, new Scene(parent, 1280, 720));
     }
 
     @Override
@@ -317,6 +331,16 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public double getMaxValue() {
+        return signalGraphController.getMaxValue();
+    }
+
+    @Override
+    public void showChannelValue() {
+        calibrationController.showChannelValue();
+    }
+
+    @Override
     public void showTestProgram(TestProgram testProgram) {
         settingsController.showTestProgram(testProgram);
     }
@@ -328,7 +352,22 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void hideRequiredFieldsSymbols() {
-        settingsController.hideReqiredFieldsSymbols();
+        settingsController.hideRequiredFieldsSymbols();
+    }
+
+    @Override
+    public LTR24 getLTR24Instance() {
+        return signalGraphController.getLtr24();
+    }
+
+    @Override
+    public LTR212 getLTR212Instance() {
+        return signalGraphController.getLtr212();
+    }
+
+    @Override
+    public void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel) {
+        calibrationController.loadDefaults(moduleType, channel);
     }
 
     @Override

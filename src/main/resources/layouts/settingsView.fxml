@@ -115,11 +115,12 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="testProgramTimeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                              <TextField fx:id="testProgramTimeTextField" onKeyPressed="#listenBackSpaceKey" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
-                                 </GridPane.margin></TextField>
-                              <TextField fx:id="testProgramDateTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin></TextField>
@@ -138,7 +139,7 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Button cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+                              <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
@@ -159,6 +160,11 @@
                                  </GridPane.margin>
                               </Label>
                               <Label fx:id="requiredFieldN4" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets left="235.0" />
                                  </GridPane.margin>

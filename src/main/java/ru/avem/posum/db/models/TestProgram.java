@@ -12,7 +12,7 @@ public class TestProgram {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
-    private int testProgramId;
+    private int index;
     @DatabaseField
     private String crate;
     @DatabaseField
@@ -48,7 +48,7 @@ public class TestProgram {
                        String testProgramDate,
                        String leadEngineer,
                        String comments) {
-        testProgramId++;
+        index++;
         this.crate = crate;
         this.testProgramName = testProgramName;
         this.sampleName = sampleName;
@@ -69,12 +69,12 @@ public class TestProgram {
         this.id = id;
     }
 
-    public int getTestProgramId() {
-        return testProgramId;
+    public int getIndex() {
+        return index;
     }
 
-    public void setTestProgramId(int testProgramId) {
-        this.testProgramId = testProgramId;
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public String getCrate() {

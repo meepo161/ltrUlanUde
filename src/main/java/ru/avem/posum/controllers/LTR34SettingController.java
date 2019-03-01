@@ -301,7 +301,7 @@ public class LTR34SettingController implements BaseController {
     private void setPhaseFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|$")) {
+            if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|0|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -469,8 +469,8 @@ public class LTR34SettingController implements BaseController {
                     channels = 8;
                 }
 
-                for (int j = i; j < signal.length; j += channels * 100) { // коэффициент 100 введен для того, чтобы не отрисовывать все 500_000 точек
-                    graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 100 + i), signal[j]));
+                for (int j = i; j < signal.length; j += channels * 10) { // коэффициент 10 введен для того, чтобы не отрисовывать все 500_000 точек
+                    graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 10 + i), signal[j]));
                 }
             }
         }
@@ -515,12 +515,13 @@ public class LTR34SettingController implements BaseController {
             findLTR34Module();
             parseChannelsSettings();
 
-            if (connectionOpen) {
-                ltr34.closeConnection();
-                connectionOpen = false;
-            }
+//            if (connectionOpen) {
+//                ltr34.closeConnection();
+//                connectionOpen = false;
+//            }
 
             clearView();
+//            stopped = true;
 
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
@@ -538,6 +539,7 @@ public class LTR34SettingController implements BaseController {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 frequencyTextFields.get(i).setDisable(false);
                 amplitudeTextFields.get(i).setDisable(false);
+                phasesTextFields.get(i).setDisable(false);
             }
         }
     }
@@ -565,7 +567,14 @@ public class LTR34SettingController implements BaseController {
             channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
             amplitudeTextFields.get(i).setText(String.valueOf(channelsParameters[0][i]));
             frequencyTextFields.get(i).setText(String.valueOf(channelsParameters[1][i]));
-            phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
+
+            if (channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
+                phasesTextFields.get(i).setText("0");
+            } else if (!channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
+                phasesTextFields.get(i).setText("");
+            } else {
+                phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
+            }
         }
     }
 

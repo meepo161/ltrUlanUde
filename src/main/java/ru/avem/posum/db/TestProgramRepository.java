@@ -35,7 +35,7 @@ public class TestProgramRepository extends DataBaseRepository {
         List<TestProgram> testPrograms = getAllTestPrograms();
 
         for (int i = 0; i < testPrograms.size(); i++) {
-            testPrograms.get(i).setTestProgramId(i + 1);
+            testPrograms.get(i).setIndex(i + 1);
             updateTestProgram(testPrograms.get(i));
         }
     }
