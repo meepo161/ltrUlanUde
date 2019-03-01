@@ -13,6 +13,7 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.LTR24;
+import ru.avem.posum.utils.LinearApproximation;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.ArrayList;
@@ -26,38 +27,37 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField valueTextField;
 
+    private LTR24 ltr24;
+    private int channel;
+    private double[] data;
+    private LTR212 ltr212;
+    private double maxValue;
     private WindowsManager wm;
     private ControllerManager cm;
-    private LTR24 ltr24;
-    private LTR212 ltr212;
-    private double[] data;
-    private CrateModel.Moudules moduleType;
-    private int channel;
-    private double maxValue;
     private RingBuffer ringBuffer;
-    private volatile XYChart.Series<Number, Number> graphSeries;
     private volatile boolean isDone;
+    private CrateModel.Moudules moduleType;
+    private String calibrationState;
+    private String[] calibrationSettings;
+    private String moduleCalibrationSettings;
+    private LinearApproximation linearApproximation;
+    private volatile XYChart.Series<Number, Number> graphSeries;
 
-    public  void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
+    public void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
+        setFields(moduleType, channel);
+        clearGraphData();
+        initializeModuleType(selectedSlot);
+        checkCalibration();
+        startShow();
+    }
+
+    private void setFields(CrateModel.Moudules moduleType, int channel) {
         this.moduleType = moduleType;
         this.channel = channel;
         cm.setClosed(false);
-        clear();
-
-        initializeModuleType(selectedSlot);
-
-        new Thread(() -> {
-            while (!cm.isClosed()) {
-                showData();
-                while (!isDone && !cm.isClosed()) {
-                    sleep(10);
-                }
-            }
-            isDone = true;
-        }).start();
     }
 
-    private void clear() {
+    private void clearGraphData() {
         ObservableList<XYChart.Series<Number, Number>> graphData = graph.getData();
         graphData.clear();
         graphSeries = new XYChart.Series<>();
@@ -72,7 +72,7 @@ public class SignalGraphController implements BaseController {
         } else if (isDefineLTR212Slot(selectedSlot)) {
             data = new double[2048];
             ringBuffer = new RingBuffer(data.length * 10);
-            setGraphBounds(-0.1, 0.1, 0.01, false);
+            setGraphBounds(-0.1, 0.1, 0.01, true);
         }
     }
 
@@ -104,27 +104,99 @@ public class SignalGraphController implements BaseController {
         return false;
     }
 
-    private void showData() {
+    private void checkCalibration() {
+        if (moduleType == CrateModel.Moudules.LTR24) {
+            ltr24 = cm.getLTR24Instance();
+            moduleCalibrationSettings = ltr24.getCalibrationSettings()[channel];
+            loadCalibrationSettings();
+        } else {
+            ltr212 = cm.getLTR212Instance();
+            moduleCalibrationSettings = ltr212.getCalibrationSettings()[channel];
+            loadCalibrationSettings();
+        }
+    }
+
+    private void loadCalibrationSettings() {
+        parseCalibrationSettings();
+
+        if (calibrationState.equals("setted")) {
+            setNewYaxisLabel();
+            approximate();
+        }
+    }
+
+    private void parseCalibrationSettings() {
+        calibrationSettings = moduleCalibrationSettings.split(", ", 6);
+        calibrationState = calibrationSettings[0];
+    }
+
+    private void setNewYaxisLabel() {
+        String yAxisLabel = calibrationSettings[5];
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+
+        yAxis.setLabel(yAxisLabel);
+    }
+
+    private void approximate() {
+        linearApproximation = new LinearApproximation(getPoints());
+        linearApproximation.createEquationSystem();
+        linearApproximation.calculateRoots();
+
+        linearApproximation.approximate(maxValue);
+    }
+
+    private List<XYChart.Data<Double, Double>> getPoints() {
+        List<XYChart.Data<Double, Double>> points = new ArrayList<>();
+        XYChart.Data<Double, Double> firstPoint = new XYChart.Data<>(Double.parseDouble(calibrationSettings[1]), Double.parseDouble(calibrationSettings[2]));
+        XYChart.Data<Double, Double> secondPoint = new XYChart.Data<>(Double.parseDouble(calibrationSettings[3]), Double.parseDouble(calibrationSettings[4]));
+
+        points.add(firstPoint);
+        points.add(secondPoint);
+
+        return points;
+    }
+
+    private void startShow() {
+        new Thread(() -> {
+            while (!cm.isClosed()) {
+                prepareDataForShow();
+                pause();
+            }
+            isDone = true;
+        }).start();
+    }
+
+    private void prepareDataForShow() {
         switch (moduleType) {
             case LTR24:
                 if (!ltr24.isBusy()) {
-                    ltr24.receiveData(data);
-                    ringBuffer.put(data);
-                    fillSeries();
+                    getLTR24Data();
+                    processData();
                 }
                 break;
             case LTR212:
                 if (!ltr212.isBusy()) {
-                    ltr212.receiveData(data);
-                    ringBuffer.put(data);
-                    fillSeries();
+                    getLTR212Data();
+                    processData();
                 }
                 break;
         }
     }
 
-    private void fillSeries() {
+    private void getLTR24Data() {
+        ltr24.receiveData(data);
+        ringBuffer.put(data);
+    }
+
+    private void processData() {
         List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+
+        calculateData(intermediateList);
+        showData(intermediateList);
+    }
+
+    private void calculateData(List<XYChart.Data<Number, Number>> intermediateList) {
+        maxValue = -999;
         final int CHANNELS = 4;
         double[] buffer = new double[2048];
 
@@ -133,15 +205,27 @@ public class SignalGraphController implements BaseController {
         }
 
         ringBuffer.take(buffer, buffer.length);
-        maxValue = -999;
 
         for (int i = channel; i < buffer.length; i += CHANNELS) {
-            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
             if (buffer[i] > maxValue) {
                 maxValue = (double) Math.round(buffer[i] * 100) / 100;
             }
+
+            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
         }
 
+        if (calibrationState.equals("setted")) {
+            linearApproximation.approximate(maxValue);
+            maxValue = (double) Math.round(linearApproximation.getApproximatedValue() * 100) / 100;
+            intermediateList.clear();
+
+            for (int i = channel; i < buffer.length; i += CHANNELS) {
+                intermediateList.add(new XYChart.Data<>((double) i / buffer.length, maxValue));
+            }
+        }
+    }
+
+    private void showData(List<XYChart.Data<Number, Number>> intermediateList) {
         isDone = false;
         Platform.runLater(() -> {
             graphSeries.getData().clear();
@@ -151,9 +235,20 @@ public class SignalGraphController implements BaseController {
         });
     }
 
+    private void pause() {
+        while (!isDone && !cm.isClosed()) {
+            sleep(10);
+        }
+    }
+
+    private void getLTR212Data() {
+        ltr212.receiveData(data);
+        ringBuffer.put(data);
+    }
+
     @FXML
     private void handleClear() {
-        clear();
+        clearGraphData();
     }
 
     @FXML

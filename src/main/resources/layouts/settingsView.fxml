@@ -139,7 +139,7 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Button cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+                              <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
