@@ -24,7 +24,11 @@ import java.util.List;
 
 public class SettingsController implements BaseController {
     @FXML
+    private Button backButton;
+    @FXML
     private Button chooseCrateButton;
+    @FXML
+    private Button saveTestProgrammSettingsButton;
     @FXML
     private Button setupModuleButton;
     @FXML
@@ -243,7 +247,7 @@ public class SettingsController implements BaseController {
         boolean isRequiredSettingsSet = checkHardwareSettings() && checkRequiredTextFields() && checkTimeAndDateFormat();
 
         if (isRequiredSettingsSet) {
-            new Thread(this::saveSettings).start();
+            new Thread(this::save).start();
         }
     }
 
@@ -304,19 +308,24 @@ public class SettingsController implements BaseController {
         return isCrateChosen;
     }
 
-    private void saveSettings() {
+    private void save() {
+        toggleUiElements();
+        saveSettings();
+        Platform.runLater(this::handleBackButton);
+    }
+
+    private void toggleUiElements() {
+        toggleButtons(true);
+        hideRequiredFieldsSymbols();
+
         Platform.runLater(() -> {
             toggleProgressIndicatorState(false);
         });
+    }
 
-        for (Pair<Label, TextField> pair : requiredFields) {
-            pair.getKey().setVisible(false);
-        }
-
-        settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
-        settingsModel.saveHardwareSettings(editMode);
-
-        Platform.runLater(this::handleBackButton);
+    private void toggleButtons(boolean isDisable) {
+        saveTestProgrammSettingsButton.setDisable(isDisable);
+        backButton.setDisable(isDisable);
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
@@ -325,6 +334,17 @@ public class SettingsController implements BaseController {
         } else {
             progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
+    }
+
+    public void hideRequiredFieldsSymbols() {
+        for (Pair<Label, TextField> pair : requiredFields) {
+            pair.getKey().setVisible(false);
+        }
+    }
+
+    private void saveSettings() {
+        settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
+        settingsModel.saveHardwareSettings(editMode);
     }
 
     private HashMap<String, String> parseGeneralSettingsData() {
@@ -414,12 +434,7 @@ public class SettingsController implements BaseController {
         modulesListView.getItems().clear();
 
         toggleUiElements(false, true);
-    }
-
-    public void hideRequiredFieldsSymbols() {
-        for (Pair<Label, TextField> pair : requiredFields) {
-            pair.getKey().setVisible(false);
-        }
+        toggleButtons(false);
     }
 
     public void refreshModulesList() {

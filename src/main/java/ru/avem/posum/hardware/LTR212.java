@@ -16,7 +16,7 @@ public class LTR212 implements ADC {
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
     public LTR212() {
-        String defaultCalibrationSettings = "0.0, 0.0, 0.0, 0.0, В";
+        String defaultCalibrationSettings = "notSetted, 0.0, 0.0, 0.0, 0.0, В";
         status = "";
 
         for (int i = 0; i < CHANNELS; i++) {

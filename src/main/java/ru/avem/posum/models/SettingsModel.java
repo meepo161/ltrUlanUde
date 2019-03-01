@@ -336,7 +336,7 @@ public class SettingsModel {
                 moduleSettings[3][i] = "0";
                 moduleSettings[4][i] = "0";
                 moduleSettings[5][i] = "0";
-                moduleSettings[6][i] = "0.0, 0.0, 0.0, 0.0, В";
+                moduleSettings[6][i] = "notSetted, 0.0, 0.0, 0.0, 0.0, В";
             }
         }
         return moduleSettings;
