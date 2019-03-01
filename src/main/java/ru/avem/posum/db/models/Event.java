@@ -4,9 +4,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.text.SimpleDateFormat;
-import java.util.Objects;
 
-@DatabaseTable(tableName = "event")
+@DatabaseTable(tableName = "events")
 public class Event {
     @DatabaseField(generatedId = true)
     private long id;

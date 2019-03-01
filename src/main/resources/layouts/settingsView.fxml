@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
@@ -89,7 +90,7 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="experimentNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                              <TextField fx:id="testProgramNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
@@ -109,13 +110,20 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="experimentTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                              <TextField fx:id="testProgramTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="experimentTimeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6" />
-                              <TextField fx:id="experimentDateTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7" />
+                              <TextField fx:id="testProgramTimeTextField" onKeyPressed="#listenBackSpaceKey" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin></TextField>
                               <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
@@ -126,7 +134,7 @@
                                     <Insets left="10.0" right="10.0" />
                                  </GridPane.margin>
                               </TextArea>
-                              <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveExperimentGeneralSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+                              <Button fx:id="saveTestProgrammSettingsButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgramSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
@@ -136,6 +144,31 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Button>
+                              <Label fx:id="requiredFieldN1" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN2" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN3" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN4" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>
@@ -164,14 +197,16 @@
                                     <Insets />
                                  </GridPane.margin>
                               </AnchorPane>
-                              <Button fx:id="chooseCrateButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleChooseCrate" text="Выбрать" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                              <Button fx:id="chooseCrateButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleChooseCrate" text="Выбрать" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
 
                                  <GridPane.margin>
-                                    <Insets />
+                                    <Insets right="10.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Button fx:id="setupModuleButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSetupModule" text="Настроить" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-                              </Button>
+                              <Button fx:id="setupModuleButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSetupModule" text="Настроить" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin></Button>
                               <ListView fx:id="cratesListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                  <GridPane.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" />
@@ -192,8 +227,6 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Button fx:id="saveSetupButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveSetup" text="Сохранить" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-                              </Button>
                            </children>
                         </GridPane>
                      </children>
@@ -202,6 +235,7 @@
             </Tab>
             </tabs>
         </TabPane>
-        <StatusBar fx:id="mainStatusBar" maxHeight="30.0" minWidth="30.0" styleClass="status-bar" stylesheets="@../css/main.css" text="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+        <StatusBar fx:id="statusBar" maxHeight="30.0" minWidth="30.0" styleClass="status-bar" stylesheets="@../css/main.css" text="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+      <ProgressIndicator fx:id="progressIndicator" layoutX="4.0" layoutY="683.0" maxHeight="30.0" maxWidth="20.0" style="-fx-opacity: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" />
     </children>
 </AnchorPane>

@@ -47,9 +47,9 @@
                         <TableColumn fx:id="group4ColorSampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП" />
                     </columns>
                   </TableView>
-                  <LineChart fx:id="processLineChart" animated="false" createSymbols="false">
+                  <LineChart fx:id="processLineChart" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308">
                       <xAxis>
-                           <NumberAxis animated="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
+                           <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                         </xAxis>
                         <yAxis>
                            <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />

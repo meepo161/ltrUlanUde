@@ -2,21 +2,42 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-public class LTR24 {
-    private boolean[] checkedChannels = new boolean[4];
-    private int[] channelsTypes = new int[4];
-    private int[] measuringRanges = new int[4];
-    private String[] channelsDescription = new String[4];
+public class LTR24 implements ADC {
     private String crate;
     private int slot;
+    private final int CHANNELS = 4;
+    private boolean[] checkedChannels = new boolean[CHANNELS];
+    private int[] channelsTypes = new int[CHANNELS];
+    private int[] measuringRanges = new int[CHANNELS];
+    private String[] channelsDescription = new String[CHANNELS];
+    private String[] calibrationSettings = new String[CHANNELS];
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    public void initModule() {
-        status = initialize(crate, slot, channelsTypes, measuringRanges);
+    public LTR24() {
+        String defaultCalibrationSettings = "0.0, 0.0, 0.0, 0.0, В";
+        status = "";
+
+        for (int i = 0; i < CHANNELS; i++) {
+            channelsDescription[i] = "";
+            calibrationSettings[i] = defaultCalibrationSettings;
+        }
+    }
+
+    public void openConnection() {
+        status = open(crate, slot);
         checkStatus();
     }
+
+    public native String open(String crate, int slot);
+
+    public void initModule() {
+        status = initialize(slot, channelsTypes, measuringRanges);
+        checkStatus();
+    }
+
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
@@ -29,32 +50,24 @@ public class LTR24 {
         checkStatus();
     }
 
-    public native String initialize(String crate, int slot, int[] channelsTypes, int[] measuringRanges);
-
     public native String fillArray(int slot, double[] data);
 
-    public native String closeModule();
-
-    public boolean[] getCheckedChannels() {
-        return checkedChannels;
+    public void closeConnection() {
+        close(slot);
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
-    }
+    public native String close(int slot);
 
-    public int[] getChannelsTypes() {
-        return channelsTypes;
-    }
-
-    public int[] getMeasuringRanges() {
-        return measuringRanges;
+    @Override
+    public String getCrate() {
+        return crate;
     }
 
     public void setCrate(String crate) {
         this.crate = crate;
     }
 
+    @Override
     public int getSlot() {
         return slot;
     }
@@ -63,8 +76,37 @@ public class LTR24 {
         this.slot = slot;
     }
 
+    @Override
+    public boolean[] getCheckedChannels() {
+        return checkedChannels;
+    }
+
+    @Override
+    public int[] getChannelsTypes() {
+        return channelsTypes;
+    }
+
+    @Override
+    public int[] getMeasuringRanges() {
+        return measuringRanges;
+    }
+
+    @Override
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    @Override
+    public String[] getCalibrationSettings() {
+        return calibrationSettings;
+    }
+
     public String getStatus() {
         return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public boolean isBusy() {
@@ -72,6 +114,6 @@ public class LTR24 {
     }
 
     static {
-        System.loadLibrary("LTR24Library");
+        System.loadLibrary( "LTR24Library");
     }
 }

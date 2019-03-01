@@ -10,18 +10,31 @@ public class LTR34 {
     private int slot;
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
+    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    public void initModule() {
-        status = initialize(crate, slot, channelsCounter, checkedChannels);
+    public void openConnection() {
+        status = open(crate, slot);
         checkStatus();
     }
 
-    public native String initialize(String crateSN, int slot, int channelsCounter, boolean[] checkedChannels);
+    public native String open(String crate, int slot);
 
     private void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
         }
+    }
+
+    public void initModule() {
+        status = initialize(channelsCounter);
+        checkStatus();
+    }
+
+    public native String initialize(int channelsCounter);
+
+    public void closeConnection() {
+        stop();
+        close();
     }
 
     public native void dataSend(double[] data);
@@ -30,20 +43,50 @@ public class LTR34 {
 
     public native String stop();
 
+    public native String close();
+
+    public void countChannels() {
+        for (int i = 0; i < checkedChannels.length; i++) {
+            if (checkedChannels[i]) {
+                channelsCounter = i + 1;
+            }
+        }
+    }
+
     public boolean[] getCheckedChannels() {
         return checkedChannels;
+    }
+
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
     }
 
     public int[][] getChannelsParameters() {
         return channelsParameters;
     }
 
+    public void setChannelsParameters(int[][] channelsParameters) {
+        this.channelsParameters = channelsParameters;
+    }
+
     public int getChannelsCounter() {
         return channelsCounter;
     }
 
+    public void setChannelsCounter(int channelsCounter) {
+        this.channelsCounter = channelsCounter;
+    }
+
+    public String getCrate() {
+        return crate;
+    }
+
     public void setCrate(String crate) {
         this.crate = crate;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     public void setSlot(int slot) {
@@ -54,12 +97,20 @@ public class LTR34 {
         return status;
     }
 
-    public void countChannels() {
-        for (int i = 0; i < checkedChannels.length; i++) {
-            if (checkedChannels[i]) {
-                channelsCounter = i + 1;
-            }
-        }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public TextEncoder getTextEncoder() {
+        return textEncoder;
+    }
+
+    public void setTextEncoder(TextEncoder textEncoder) {
+        this.textEncoder = textEncoder;
+    }
+
+    public boolean isBusy() {
+        return busy;
     }
 
     static {

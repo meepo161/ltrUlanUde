@@ -11,6 +11,11 @@ public class DataBaseRepository {
     public static void init(boolean forceInit) {
         if (!new File(DATABASE_NAME).exists() || forceInit) {
             AccountRepository.createTable(Account.class);
+            EventRepository.createTable(Event.class);
+            LTR24TablesRepository.createTable(LTR24Table.class);
+            LTR212TablesRepository.createTable(LTR212Table.class);
+            LTR34TablesRepository.createTable(LTR34Table.class);
+            TestProgramRepository.createTable(TestProgram.class);
 
             Account admin = new Account("admin", "102030");
             AccountRepository.insertAccount(admin);
@@ -18,15 +23,9 @@ public class DataBaseRepository {
             Account user = new Account("user", "user");
             AccountRepository.insertAccount(user);
 
-            TestingSampleRepository.createTable(TestingSample.class);
-
-            ProtocolRepository.createTable(Protocol.class);
-
-            EventRepository.createTable(Event.class);
 
             Event event = new Event(0, "База создана");
             EventRepository.insertEvent(event);
-
         }
     }
 }

@@ -1,7 +1,9 @@
 package ru.avem.posum;
 
-import ru.avem.posum.db.models.Protocol;
+import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
 
 import java.util.List;
@@ -11,9 +13,13 @@ public interface ControllerManager {
 
     void loadItemsForModulesTableView();
 
-    void refreshLTR24Settings();
+    void loadDefaultSettings();
 
-    void clearSettingsView();
+    void loadLTR24Settings(int id);
+
+    void loadLTR34Settings(int id);
+
+    void loadLTR212Settings(int id);
 
     void createListModulesControllers(List<String> modulesNames);
 
@@ -29,9 +35,21 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    void setupProtocol(Protocol protocol);
+    double getMaxValue();
+
+    void showChannelValue();
+
+    void showTestProgram(TestProgram testProgram);
 
     void setEditMode(boolean editMode);
+
+    void hideRequiredFieldsSymbols();
+
+    LTR24 getLTR24Instance();
+
+    LTR212 getLTR212Instance();
+
+    void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel);
 
     boolean isClosed();
 
