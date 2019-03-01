@@ -348,7 +348,6 @@ public class SettingsController implements BaseController {
         new Thread(() -> {
             TestProgramRepository.updateTestProgramId();
             cm.loadItemsForMainTableView();
-
         }).start();
         toggleProgressIndicatorState(true);
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);

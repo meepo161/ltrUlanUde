@@ -59,7 +59,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Калибровка" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Тарировка" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>

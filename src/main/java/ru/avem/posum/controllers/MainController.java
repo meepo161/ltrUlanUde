@@ -64,7 +64,7 @@ public class MainController implements BaseController {
         makeColumnTitleWrapper(columnTestProgramType);
         makeColumnTitleWrapper(columnTestingSample);
 
-        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("testProgramId"));
+        columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("index"));
         columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("testProgramName"));
         columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
         columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
@@ -79,7 +79,9 @@ public class MainController implements BaseController {
         TestProgramRepository.updateTestProgramId();
         List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
         testPrograms = FXCollections.observableArrayList(allTestPrograms);
-        testProgramTableView.setItems(testPrograms);
+        Platform.runLater(() -> {
+            testProgramTableView.setItems(testPrograms);
+        });
     }
 
     private void makeColumnTitleWrapper(TableColumn col) {
@@ -200,23 +202,23 @@ public class MainController implements BaseController {
         new Thread(() -> {
             List<TestProgram> allTestPrograms = TestProgramRepository.getAllTestPrograms();
             TestProgram testProgram = allTestPrograms.get(getSelectedItemIndex());
-            long testProgrammId = testProgram.getId();
+            long testProgramId = testProgram.getId();
             TestProgramRepository.deleteTestProgram(testProgram);
 
             for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
-                if (testProgrammId == ltr24Table.getTestProgramId()) {
+                if (testProgramId == ltr24Table.getTestProgramId()) {
                     LTR24TablesRepository.deleteLTR24Table(ltr24Table);
                 }
             }
 
             for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
-                if (testProgrammId == ltr212Table.getTestProgramId()) {
+                if (testProgramId == ltr212Table.getTestProgramId()) {
                     LTR212TablesRepository.deleteLTR212Table(ltr212Table);
                 }
             }
 
             for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
-                if (testProgrammId == ltr34Table.getTestProgramId()) {
+                if (testProgramId == ltr34Table.getTestProgramId()) {
                     LTR34TablesRepository.deleteLTR34Table(ltr34Table);
                 }
             }

@@ -99,7 +99,7 @@ public class SettingsModel {
         List<LTR24Table> ltr24Tables = new ArrayList<>();
 
         for (LTR24Table module : LTR24TablesRepository.getAllLTR24Tables()) {
-            if (module.getTestProgramId() == testProgram.getTestProgramId()) {
+            if (module.getTestProgramId() == testProgram.getId()) {
                 ltr24Tables.add(module);
             }
         }
@@ -110,7 +110,7 @@ public class SettingsModel {
         List<LTR34Table> ltr34Tables = new ArrayList<>();
 
         for (LTR34Table module : LTR34TablesRepository.getAllLTR34Tables()) {
-            if (module.getTestProgramId() == testProgram.getTestProgramId()) {
+            if (module.getTestProgramId() == testProgram.getId()) {
                 ltr34Tables.add(module);
             }
         }
@@ -121,7 +121,7 @@ public class SettingsModel {
         List<LTR212Table> ltr212Tables = new ArrayList<>();
 
         for (LTR212Table module : LTR212TablesRepository.getAllLTR212Tables()) {
-            if (module.getTestProgramId() == testProgram.getTestProgramId()) {
+            if (module.getTestProgramId() == testProgram.getId()) {
                 ltr212Tables.add(module);
             }
         }
@@ -267,7 +267,7 @@ public class SettingsModel {
 
     public void saveHardwareSettings(boolean isEditMode) {
         this.isEditMode = isEditMode;
-        int testProgramId = testProgram.getTestProgramId();
+        long testProgramId = testProgram.getId();
         int ltr24Index = 0; // индексы сохраняют номер последнего взятого объекта
         int ltr212Index = 0;
         int ltr34Index = 0;
@@ -287,7 +287,7 @@ public class SettingsModel {
         }
     }
 
-    private void updateLTR24Table(ADC adc, int testProgramId) {
+    private void updateLTR24Table(ADC adc, long testProgramId) {
         String[][] moduleSettings = setSettings(adc);
 
         if (isEditMode) {
@@ -342,7 +342,7 @@ public class SettingsModel {
         return moduleSettings;
     }
 
-    private void updateLTR34Settings(LTR34 ltr34, int testProgramId) {
+    private void updateLTR34Settings(LTR34 ltr34, long testProgramId) {
         boolean[] checkedChannels = ltr34.getCheckedChannels();
 
         if (isEditMode) {
@@ -356,7 +356,7 @@ public class SettingsModel {
         }
     }
 
-    private void updateLTR212Table(ADC adc, int testProgramId) {
+    private void updateLTR212Table(ADC adc, long testProgramId) {
         String[][] moduleSettings = setSettings(adc);
 
         if (isEditMode) {
