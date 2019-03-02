@@ -323,7 +323,7 @@ public class SettingsController implements BaseController {
         });
     }
 
-    private void toggleButtons(boolean isDisable) {
+    public void toggleButtons(boolean isDisable) {
         saveTestProgrammSettingsButton.setDisable(isDisable);
         backButton.setDisable(isDisable);
     }
@@ -366,7 +366,7 @@ public class SettingsController implements BaseController {
 
     public void handleBackButton() {
         new Thread(() -> {
-            TestProgramRepository.updateTestProgramId();
+            TestProgramRepository.updateTestProgramIndexes();
             cm.loadItemsForMainTableView();
         }).start();
         toggleProgressIndicatorState(true);

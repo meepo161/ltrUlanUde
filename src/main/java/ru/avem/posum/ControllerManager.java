@@ -15,6 +15,8 @@ public interface ControllerManager {
 
     void loadDefaultSettings();
 
+    void toggleSettingsSceneButtons(boolean isDisable);
+
     void loadLTR24Settings(int id);
 
     void loadLTR34Settings(int id);
