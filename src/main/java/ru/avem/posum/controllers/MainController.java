@@ -57,6 +57,8 @@ public class MainController implements BaseController {
     private TestProgram testProgram;
     private long testProgramId;
     private int selectedIndex;
+    private long oldTestProgramId;
+    private long newTestProgramId;
     private boolean isTestProgramSelected;
 
     @FXML
@@ -203,21 +205,19 @@ public class MainController implements BaseController {
     }
 
     private void copyTestProgram() {
+        getTestProgram(selectedIndex);
+        oldTestProgramId = testProgram.getId();
         TestProgramRepository.insertTestProgram(testProgram);
+        newTestProgramId = testProgram.getId();
     }
 
     private void copyTestProgramSettings() {
-        getTestPrograms();
-        getTestProgram(allTestPrograms.size() - 1);
-        long oldTestProgramId = testProgram.getId();
-        long newTestProgramId = testProgram.getId();
-
-        copyLTR24Tables(oldTestProgramId, newTestProgramId);
-        copyLTR34Tables(oldTestProgramId, newTestProgramId);
-        copyLTR212Tables(oldTestProgramId, newTestProgramId);
+        copyLTR24Tables();
+        copyLTR34Tables();
+        copyLTR212Tables();
     }
 
-    private void copyLTR24Tables(long oldTestProgramId, long newTestProgramId) {
+    private void copyLTR24Tables() {
         for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
             if (oldTestProgramId == ltr24Table.getTestProgramId()) {
                 ltr24Table.setTestProgramId(newTestProgramId);
@@ -226,7 +226,7 @@ public class MainController implements BaseController {
         }
     }
 
-    private void copyLTR34Tables(long oldTestProgramId, long newTestProgramId) {
+    private void copyLTR34Tables() {
         for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
             if (oldTestProgramId == ltr34Table.getTestProgramId()) {
                 ltr34Table.setTestProgramId(newTestProgramId);
@@ -235,7 +235,7 @@ public class MainController implements BaseController {
         }
     }
 
-    private void copyLTR212Tables(long oldTestProgramId, long newTestProgramId) {
+    private void copyLTR212Tables() {
         for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
             if (oldTestProgramId == ltr212Table.getTestProgramId()) {
                 ltr212Table.setTestProgramId(newTestProgramId);
