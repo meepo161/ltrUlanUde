@@ -31,7 +31,7 @@ public class TestProgramRepository extends DataBaseRepository {
         sendAction((testProgramDao) -> testProgramDao.update(testProgram));
     }
 
-    public static void updateTestProgramId() {
+    public static void updateTestProgramIndexes() {
         List<TestProgram> testPrograms = getAllTestPrograms();
 
         for (int i = 0; i < testPrograms.size(); i++) {
