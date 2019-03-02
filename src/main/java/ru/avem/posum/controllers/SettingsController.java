@@ -152,7 +152,8 @@ public class SettingsController implements BaseController {
 
     @FXML
     public void listenBackSpaceKey(KeyEvent keyEvent) {
-        didBackSpacePressed = keyEvent.getCode() == KeyCode.BACK_SPACE;
+        KeyCode keyCode = keyEvent.getCode();
+        didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
     }
 
     private void showCrateModules() {
