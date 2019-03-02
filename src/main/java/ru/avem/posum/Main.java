@@ -162,13 +162,26 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     public void setMainView() {
+        initPrimaryStage();
+        setCentreOfStage(primaryStage);
+        showMainScene();
+    }
+
+    private void initPrimaryStage() {
         primaryStage = new Stage();
         primaryStage.setTitle("ПО Система управления многоканальная");
         primaryStage.setScene(mainScene);
-        setMainStageSize();
-        setCentreOfStage(primaryStage);
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
+        primaryStage.setResizable(true);
+    }
+
+    private void showMainScene() {
         primaryStage.show();
         loginStage.close();
+        mainController.getOpenExperimentButton().requestFocus();
     }
 
     @Override
@@ -186,7 +199,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Настрока программы испытаний");
                 primaryStage.setScene(settingsScene);
                 break;
-            case PROCESS_SCENE:
+            case EXPERIMENT_SCENE:
                 primaryStage.setTitle("Процесс испытаний");
                 primaryStage.setScene(processScene);
                 break;
@@ -219,21 +232,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
         primaryStage.setScene(modulesPairs.get(id).getValue());
     }
 
-    private void setMainStageSize() {
-        primaryStage.setMinWidth(1280);
-        primaryStage.setMinHeight(720);
-        primaryStage.setWidth(1280);
-        primaryStage.setHeight(720);
-        primaryStage.setResizable(true);
-    }
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void loadItemsForMainTableView() {
-        mainController.showTestProgram();
+        mainController.getTestPrograms();
+        mainController.showTestPrograms();
     }
 
     @Override
@@ -244,6 +250,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void loadDefaultSettings() {
         settingsController.loadDefaultSettings();
+    }
+
+    @Override
+    public void toggleSettingsSceneButtons(boolean isDisable) {
+        settingsController.toggleButtons(isDisable);
     }
 
     @Override

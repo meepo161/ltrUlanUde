@@ -6,5 +6,7 @@ import ru.avem.posum.WindowsManager;
 public interface BaseController {
     void setWindowManager(WindowsManager wm);
 
-    void setControllerManager(ControllerManager cm);
+    default void setControllerManager(ControllerManager cm) {
+
+    }
 }
