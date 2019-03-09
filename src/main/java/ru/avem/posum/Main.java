@@ -14,9 +14,8 @@ import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
-import ru.avem.posum.hardware.LTR212;
-import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
 
 import java.io.IOException;
@@ -140,7 +139,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void start(Stage loginStage) {
         this.loginStage = loginStage;
         setLoginStageSize();
-        setCentreOfStage(this.loginStage);
+//        setCentreOfStage(this.loginStage);
         this.loginStage.show();
         loginController.showScene();
     }
@@ -258,21 +257,23 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadLTR24Settings(int id) {
-        ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
-        ltr24SettingController.loadSettings();
-    }
+    public void loadModuleSettings(int id, String moduleName) {
+        String moduleType = (moduleName + " ").substring(0, 6).trim();
 
-    @Override
-    public void loadLTR34Settings(int id) {
-        ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
-        ltr34SettingController.loadSettings();
-    }
-
-    @Override
-    public void loadLTR212Settings(int id) {
-        ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
-        ltr212SettingController.loadSettings();
+        switch (moduleType) {
+            case CrateModel.LTR24:
+                ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
+                ltr24SettingController.loadSettings(moduleName);
+                break;
+            case CrateModel.LTR34:
+                ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
+                ltr34SettingController.loadSettings(moduleName);
+                break;
+            case CrateModel.LTR212:
+                ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
+                ltr212SettingController.loadSettings(moduleName);
+                break;
+        }
     }
 
     @Override
@@ -284,7 +285,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 case CrateModel.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
                     break;
-                case CrateModel.LTR34 :
+                case CrateModel.LTR34:
                     layoutPath = "/layouts/LTR34SettingView.fxml";
                     break;
                 case CrateModel.LTR212:
@@ -312,8 +313,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void showChannelData(CrateModel.Moudules moduleType, int slot, int channel) {
-        signalGraphController.initializeView(moduleType, slot, channel);
+    public void showChannelData(ADC adc, int slot, int channel) {
+        signalGraphController.initializeView(adc, slot, channel);
     }
 
     @Override
@@ -323,12 +324,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public int getSelectedModule() {
-        return settingsController.getSelectedModule();
+        return settingsController.getSelectedModuleIndex();
     }
 
     @Override
-    public int getSlot() {
-        return settingsController.getSlot();
+    public String getCrate() {
+        return settingsController.getCrate();
     }
 
     @Override
@@ -367,18 +368,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public LTR24 getLTR24Instance() {
-        return signalGraphController.getLtr24();
-    }
-
-    @Override
-    public LTR212 getLTR212Instance() {
-        return signalGraphController.getLtr212();
-    }
-
-    @Override
-    public void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel) {
-        calibrationController.loadDefaults(moduleType, channel);
+    public void loadDefaultCalibrationSettings(ADC adc, int channel) {
+        calibrationController.loadDefaults(adc, channel);
     }
 
     @Override

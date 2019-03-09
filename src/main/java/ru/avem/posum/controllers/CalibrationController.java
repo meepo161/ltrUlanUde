@@ -11,12 +11,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
-import ru.avem.posum.hardware.LTR212;
-import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.CalibrationModel;
+import ru.avem.posum.models.CalibrationPoint;
+import ru.avem.posum.utils.LinearApproximation;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CalibrationController implements BaseController {
@@ -35,13 +39,13 @@ public class CalibrationController implements BaseController {
     @FXML
     private StatusBar statusBar;
     @FXML
-    private TableView<CalibrationModel> calibrationTableView;
+    private TableView<CalibrationPoint> calibrationTableView;
     @FXML
-    private TableColumn<CalibrationModel, Double> loadChannelColumn;
+    private TableColumn<CalibrationPoint, Double> loadChannelColumn;
     @FXML
-    private TableColumn<CalibrationModel, Double> channelValueColumn;
+    private TableColumn<CalibrationPoint, Double> channelValueColumn;
     @FXML
-    private TableColumn<CalibrationModel, Double> valueNameColumn;
+    private TableColumn<CalibrationPoint, Double> valueNameColumn;
     @FXML
     private TextField loadValueTextField;
     @FXML
@@ -50,15 +54,15 @@ public class CalibrationController implements BaseController {
     private TextField loadValueNameTextField;
 
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private CalibrationModel calibrationModel;
-    private ObservableList<CalibrationModel> calibrationModels = FXCollections.observableArrayList();
+    private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private CrateModel.Moudules moduleType;
     private boolean stopped;
     private int channel;
-    private LTR24 ltr24;
-    private LTR212 ltr212;
+    private ADC adc;
     private String moduleCalibrationSettings;
+    private List<XYChart.Data<Double, Double>> rawData;
+    private CalibrationModel calibrationModel;
     private double loadValue;
     private double channelValue;
     private String valueName;
@@ -67,11 +71,23 @@ public class CalibrationController implements BaseController {
 
     @FXML
     private void initialize() {
+        initColumns();
+        initGraph();
+        initTextFields();
+    }
+
+    private void initColumns() {
         loadChannelColumn.setCellValueFactory(new PropertyValueFactory<>("loadValue"));
         channelValueColumn.setCellValueFactory(new PropertyValueFactory<>("channelValue"));
         valueNameColumn.setCellValueFactory(new PropertyValueFactory<>("valueName"));
-        calibrationTableView.setItems(calibrationModels);
+    }
+
+    private void initGraph() {
+        calibrationTableView.setItems(calibrationPoints);
         calibrationGraph.getData().add(graphSeries);
+    }
+
+    private void initTextFields() {
         setDigitFilterToLoadValueTextField();
         toggleUiElementsIfEmptyField(loadValueTextField);
         toggleUiElementsIfEmptyField(loadValueNameTextField);
@@ -96,65 +112,16 @@ public class CalibrationController implements BaseController {
         });
     }
 
-    public void handleAddToTable() {
-        addCalibrationDataToTable();
-        graphSeries.getData().add(new XYChart.Data<>(calibrationModel.getLoadValue(), calibrationModel.getChannelValue()));
+    public void loadDefaults(ADC adc, int channel) {
+        setFields(adc, channel);
+        loadDefaultUiElementsState();
+        loadCalibrationSettings();
     }
 
-    private void addCalibrationDataToTable() {
-        loadValue = Double.parseDouble(loadValueTextField.getText());
-        channelValue = Double.parseDouble(channelValueTextField.getText());
-        valueName = loadValueNameTextField.getText();
-
-        calibrationModel = new CalibrationModel(loadValue, channelValue, valueName);
-        calibrationModels.add(calibrationModel);
-        toggleUiElementsIfHaveTwoPoints();
-    }
-
-    private void toggleUiElementsIfHaveTwoPoints() {
-        if (calibrationModels.size() == 2) {
-            loadValueLabel.setDisable(true);
-            channelValueLabel.setDisable(true);
-            loadValueNameLabel.setDisable(true);
-            loadValueTextField.setDisable(true);
-            channelValueTextField.setDisable(true);
-            loadValueNameTextField.setDisable(true);
-            addToTableButton.setDisable(true);
-            saveButton.setDisable(false);
-            saveButton.requestFocus();
-        }
-    }
-
-    public void handleBackButton() {
-        stopped = true;
-        clearCalibrationData();
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
-    }
-
-    private void clearCalibrationData() {
-        loadValueTextField.setText("");
-        channelValueTextField.setText("");
-        loadValueNameTextField.setText("");
-        calibrationModels.clear();
-        graphSeries.getData().clear();
-    }
-
-    public void loadDefaults(CrateModel.Moudules moduleType, int channel) {
-        this.moduleType = moduleType;
+    private void setFields(ADC adc, int channel) {
+        this.adc = adc;
         this.channel = channel;
         this.stopped = false;
-
-        loadDefaultUiElementsState();
-
-        if (moduleType == CrateModel.Moudules.LTR24) {
-            ltr24 = cm.getLTR24Instance();
-            moduleCalibrationSettings = ltr24.getCalibrationSettings()[channel];
-            loadCalibrationSettings();
-        } else {
-            ltr212 = cm.getLTR212Instance();
-            moduleCalibrationSettings = ltr212.getCalibrationSettings()[channel];
-            loadCalibrationSettings();
-        }
     }
 
     private void loadDefaultUiElementsState() {
@@ -168,37 +135,100 @@ public class CalibrationController implements BaseController {
     }
 
     private void loadCalibrationSettings() {
-        String[] separatedSettings = moduleCalibrationSettings.split(", ", 6);
-        if (separatedSettings[0].equals("setted")) {
-            addPoint(Double.parseDouble(separatedSettings[1]), Double.parseDouble(separatedSettings[2]), separatedSettings[5]);
-            addPoint(Double.parseDouble(separatedSettings[3]), Double.parseDouble(separatedSettings[4]), separatedSettings[5]);
-            loadValueTextField.setText(separatedSettings[3]);
-            loadValueNameTextField.setText(separatedSettings[5]);
-            toggleUiElementsIfHaveTwoPoints();
-            saveButton.setDisable(true);
+
+    }
+
+    private void addPoint() {
+
+    }
+
+    public void handleAddPoint() {
+        addPointToTable();
+        addPointToGraph();
+    }
+
+    private void addPointToTable() {
+        parseData();
+        addCalibrationPointToTable();
+        toggleUiElements();
+    }
+
+    private void parseData() {
+        loadValue = Double.parseDouble(loadValueTextField.getText());
+        channelValue = Double.parseDouble(channelValueTextField.getText());
+        valueName = loadValueNameTextField.getText();
+    }
+
+    private void addCalibrationPointToTable() {
+        CalibrationPoint point = new CalibrationPoint(loadValue, channelValue, valueName);
+        calibrationPoints.add(point);
+    }
+
+    private void toggleUiElements() {
+        if (calibrationPoints.size() >= 2) {
+            saveButton.setDisable(false);
+            saveButton.requestFocus();
         }
     }
 
-    private void addPoint(double loadValue, double channelValue, String loadValueName) {
-        graphSeries.getData().add(new XYChart.Data<>(loadValue, channelValue));
-        calibrationModel = new CalibrationModel(loadValue, channelValue, loadValueName);
-        calibrationModels.add(calibrationModel);
+    private void addPointToGraph() {
+        int lastPointIndex = calibrationPoints.size() - 1;
+        CalibrationPoint lastPoint = calibrationPoints.get(lastPointIndex);
+        graphSeries.getData().add(new XYChart.Data<>(lastPoint.getLoadValue(), lastPoint.getChannelValue()));
+    }
+
+    public void handleBackButton() {
+        stopped = true;
+        clearCalibrationData();
+        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    private void clearCalibrationData() {
+        loadValueTextField.setText("");
+        channelValueTextField.setText("");
+        loadValueNameTextField.setText("");
+        calibrationPoints.clear();
+        graphSeries.getData().clear();
     }
 
     public void handleSaveButton() {
-        String firstPoint = "setted, " + calibrationModels.get(0).getLoadValue() + ", " + calibrationModels.get(0).getChannelValue() + ", " ;
-        String secondPoint = calibrationModels.get(1).getLoadValue() + ", " + calibrationModels.get(1).getChannelValue() + ", " + calibrationModels.get(1).getValueName();
-        StringBuilder calibrationSettings = new StringBuilder();
-        calibrationSettings.append(firstPoint).append(secondPoint);
+        savePoints();
+        approximatePoints();
+        indicateResult();
+    }
 
-        if (moduleType == CrateModel.Moudules.LTR24) {
-            ltr24 = cm.getLTR24Instance();
-            ltr24.getCalibrationSettings()[channel] = calibrationSettings.toString();
-        } else {
-            ltr212 = cm.getLTR212Instance();
-            ltr212.getCalibrationSettings()[channel] = calibrationSettings.toString();
+    private void savePoints() {
+        calibrationModel = new CalibrationModel();
+        calibrationModel.setChannel(channel);
+//        adc.getCalibrationModel().add(calibrationModel);
+
+        for (CalibrationPoint point : calibrationPoints) {
+            calibrationModel.getLoadValue().add(point.getLoadValue());
+            calibrationModel.getChannelValue().add(point.getChannelValue());
+            calibrationModel.getValueName().add(point.getValueName());
         }
+    }
 
+    private void approximatePoints() {
+        prepareData();
+        approximate();
+    }
+
+    private void prepareData() {
+        rawData = new ArrayList<>();
+
+        for (CalibrationPoint point : calibrationPoints) {
+            rawData.add(new XYChart.Data<>(point.getLoadValue(), point.getChannelValue()));
+        }
+    }
+
+    private void approximate() {
+        LinearApproximation approximation = new LinearApproximation(rawData, calibrationModel);
+        approximation.createEquationSystem();
+        approximation.calculateRoots();
+    }
+
+    private void indicateResult() {
         saveButton.setDisable(true);
         statusBarLine.setStatus("Настройки успешно сохранены", statusBar);
     }

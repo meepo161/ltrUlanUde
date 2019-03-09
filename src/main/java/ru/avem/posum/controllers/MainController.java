@@ -13,13 +13,7 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.LTR212TablesRepository;
-import ru.avem.posum.db.LTR24TablesRepository;
-import ru.avem.posum.db.LTR34TablesRepository;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.LTR212Table;
-import ru.avem.posum.db.models.LTR24Table;
-import ru.avem.posum.db.models.LTR34Table;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -57,10 +51,7 @@ public class MainController implements BaseController {
     private List<TestProgram> allTestPrograms;
     private TestProgram testProgram;
     private ContextMenu contextMenu = new ContextMenu();
-    private long testProgramId;
     private int selectedIndex;
-    private long oldTestProgramId;
-    private long newTestProgramId;
     private boolean isTestProgramSelected;
 
     @FXML
@@ -161,9 +152,7 @@ public class MainController implements BaseController {
 
     private void initModulesList() {
         CrateModel crateModel = cm.getCrateModelInstance();
-        crateModel.getLtr24ModulesList().clear();
-        crateModel.getLtr34ModulesList().clear();
-        crateModel.getLtr212ModulesList().clear();
+        crateModel.getModulesList().clear();
     }
 
     private void prepareSettingsScene() {
@@ -230,42 +219,13 @@ public class MainController implements BaseController {
 
     private void copyTestProgram() {
         getTestProgram(selectedIndex);
-        oldTestProgramId = testProgram.getId();
+        long oldTestProgramId = testProgram.getId();
         TestProgramRepository.insertTestProgram(testProgram);
-        newTestProgramId = testProgram.getId();
+        long newTestProgramId = testProgram.getId();
     }
 
     private void copyTestProgramSettings() {
-        copyLTR24Tables();
-        copyLTR34Tables();
-        copyLTR212Tables();
-    }
 
-    private void copyLTR24Tables() {
-        for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
-            if (oldTestProgramId == ltr24Table.getTestProgramId()) {
-                ltr24Table.setTestProgramId(newTestProgramId);
-                LTR24TablesRepository.insertLTR24Table(ltr24Table);
-            }
-        }
-    }
-
-    private void copyLTR34Tables() {
-        for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
-            if (oldTestProgramId == ltr34Table.getTestProgramId()) {
-                ltr34Table.setTestProgramId(newTestProgramId);
-                LTR34TablesRepository.insertLTR34Module(ltr34Table);
-            }
-        }
-    }
-
-    private void copyLTR212Tables() {
-        for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
-            if (oldTestProgramId == ltr212Table.getTestProgramId()) {
-                ltr212Table.setTestProgramId(newTestProgramId);
-                LTR212TablesRepository.insertLTR212Table(ltr212Table);
-            }
-        }
     }
 
     private void reloadTestProgramsList() {
@@ -295,39 +255,12 @@ public class MainController implements BaseController {
 
     private void delete() {
         deleteTestProgram();
-        deleteLTR24Tables();
-        deleteLTR212Tables();
-        deleteLTR34Tables();
     }
 
     private void deleteTestProgram() {
         getTestProgram(getSelectedItemIndex());
-        testProgramId = testProgram.getId();
+        long testProgramId = testProgram.getId();
         TestProgramRepository.deleteTestProgram(testProgram);
-    }
-
-    private void deleteLTR34Tables() {
-        for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
-            if (testProgramId == ltr34Table.getTestProgramId()) {
-                LTR34TablesRepository.deleteLTR34Table(ltr34Table);
-            }
-        }
-    }
-
-    private void deleteLTR212Tables() {
-        for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
-            if (testProgramId == ltr212Table.getTestProgramId()) {
-                LTR212TablesRepository.deleteLTR212Table(ltr212Table);
-            }
-        }
-    }
-
-    private void deleteLTR24Tables() {
-        for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
-            if (testProgramId == ltr24Table.getTestProgramId()) {
-                LTR24TablesRepository.deleteLTR24Table(ltr24Table);
-            }
-        }
     }
 
     public void handleMenuItemAboutUs() {

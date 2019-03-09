@@ -46,7 +46,7 @@
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
-            <Label styleClass="title" text="Настройки модуля LTR34" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR34" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <LineChart fx:id="graph" animated="false" createSymbols="false" disable="true" legendSide="RIGHT" title="Управляющий сигнал" GridPane.columnSpan="10" GridPane.rowIndex="2">
                <xAxis>
                   <NumberAxis animated="false" autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />

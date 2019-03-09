@@ -4,65 +4,22 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR34;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class LTR34SettingController implements BaseController {
-    @FXML
-    private Button generateSignalButton;
-    @FXML
-    private Button stopSignalButton;
-    @FXML
-    private CheckBox checkChannelN1;
-    @FXML
-    private CheckBox checkChannelN2;
-    @FXML
-    private CheckBox checkChannelN3;
-    @FXML
-    private CheckBox checkChannelN4;
-    @FXML
-    private CheckBox checkChannelN5;
-    @FXML
-    private CheckBox checkChannelN6;
-    @FXML
-    private CheckBox checkChannelN7;
-    @FXML
-    private CheckBox checkChannelN8;
-    @FXML
-    private LineChart<Number, Number> graph;
-    @FXML
-    private ProgressIndicator progressIndicator;
-    @FXML
-    private StatusBar statusBar;
-    @FXML
-    private TextField frequencyOfChannelN1;
-    @FXML
-    private TextField frequencyOfChannelN2;
-    @FXML
-    private TextField frequencyOfChannelN3;
-    @FXML
-    private TextField frequencyOfChannelN4;
-    @FXML
-    private TextField frequencyOfChannelN5;
-    @FXML
-    private TextField frequencyOfChannelN6;
-    @FXML
-    private TextField frequencyOfChannelN7;
-    @FXML
-    private TextField frequencyOfChannelN8;
     @FXML
     private TextField amplitudeOfChannelN1;
     @FXML
@@ -80,6 +37,42 @@ public class LTR34SettingController implements BaseController {
     @FXML
     private TextField amplitudeOfChannelN8;
     @FXML
+    private CheckBox checkChannelN1;
+    @FXML
+    private CheckBox checkChannelN2;
+    @FXML
+    private CheckBox checkChannelN3;
+    @FXML
+    private CheckBox checkChannelN4;
+    @FXML
+    private CheckBox checkChannelN5;
+    @FXML
+    private CheckBox checkChannelN6;
+    @FXML
+    private CheckBox checkChannelN7;
+    @FXML
+    private CheckBox checkChannelN8;
+    @FXML
+    private TextField frequencyOfChannelN1;
+    @FXML
+    private TextField frequencyOfChannelN2;
+    @FXML
+    private TextField frequencyOfChannelN3;
+    @FXML
+    private TextField frequencyOfChannelN4;
+    @FXML
+    private TextField frequencyOfChannelN5;
+    @FXML
+    private TextField frequencyOfChannelN6;
+    @FXML
+    private TextField frequencyOfChannelN7;
+    @FXML
+    private TextField frequencyOfChannelN8;
+    @FXML
+    private Button generateSignalButton;
+    @FXML
+    private LineChart<Number, Number> graph;
+    @FXML
     private TextField phaseOfChannelN1;
     @FXML
     private TextField phaseOfChannelN2;
@@ -95,21 +88,33 @@ public class LTR34SettingController implements BaseController {
     private TextField phaseOfChannelN7;
     @FXML
     private TextField phaseOfChannelN8;
+    @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
+    private Label sceneTitleLabel;
+    @FXML
+    private Button stopSignalButton;
+    @FXML
+    private StatusBar statusBar;
 
+    private int[] amplitudes;
+    private List<TextField> amplitudeTextFields = new ArrayList<>();
+    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
+    private boolean[] checkedChannels;
+    private ControllerManager cm;
+    private boolean connectionOpen;
+    private CrateModel crateModel;
+    private int[] frequencies;
+    private List<TextField> frequencyTextFields = new ArrayList<>();
+    private LTR34 ltr34 = new LTR34();
+    private String moduleName;
+    private int[] phases;
+    private List<TextField> phaseTextFields = new ArrayList<>();
+    private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
+    private int slot;
+    private StatusBarLine statusBarLine = new StatusBarLine();
     private boolean stopped;
     private WindowsManager wm;
-    private ControllerManager cm;
-    private CrateModel crateModel;
-    private boolean connectionOpen;
-    private LTR34 ltr34 = new LTR34();
-    private boolean[] checkedChannels;
-    private int[][] channelsParameters;
-    private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
-    private StatusBarLine statusBarLine = new StatusBarLine();
-    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
-    private List<TextField> amplitudeTextFields = new ArrayList<>();
-    private List<TextField> frequencyTextFields = new ArrayList<>();
-    private List<TextField> phasesTextFields = new ArrayList<>();
 
     @FXML
     private void initialize() {
@@ -162,7 +167,7 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void fillListOfChannelsPhases() {
-        phasesTextFields.addAll(Arrays.asList(
+        phaseTextFields.addAll(Arrays.asList(
                 phaseOfChannelN1,
                 phaseOfChannelN2,
                 phaseOfChannelN3,
@@ -175,67 +180,43 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void addListenerForAllChannels() {
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            toggleChannelsUiElements(channelsCheckBoxes.get(i), i);
+        for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
+            toggleChannelsUiElements(channelsCheckBoxes.get(channel), channel);
+            addListener(amplitudeTextFields, channel);
+            addListener(frequencyTextFields, channel);
+            addListener(phaseTextFields, channel);
         }
     }
 
-    /**
-     * В массив checkedChannels сохраняются значения true - канал отмечен, false - канал не отмечен
-     */
     private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
-        checkedChannels = ltr34.getCheckedChannels();
-
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-                checkedChannels[channel] = true;
                 toggleUiElements(channel, false);
             } else {
-                checkedChannels[channel] = false;
                 toggleUiElements(channel, true);
-                channelsCheckBoxes.get(channel).setSelected(false);
-                amplitudeTextFields.get(channel).setText("");
-                frequencyTextFields.get(channel).setText("");
-                phasesTextFields.get(channel).setText("");
+                setDefaultSettings(channel);
             }
-            enableGenerateButton();
-            disableGenerateButton();
+            checkConditionForGenerateButtonTurningOn();
+            checkConditionForGenerateButtonTurningOff();
         });
-
-        amplitudeTextFields.get(channel).textProperty().addListener(observable -> {
-            enableGenerateButton();
-            disableGenerateButton();
-        });
-
-        frequencyTextFields.get(channel).textProperty().addListener(observable -> {
-            enableGenerateButton();
-            disableGenerateButton();
-        });
-
     }
 
-    private void toggleUiElements(int channel, boolean isDisable) {
-        amplitudeTextFields.get(channel).setDisable(isDisable);
-        frequencyTextFields.get(channel).setDisable(isDisable);
-        phasesTextFields.get(channel).setDisable(isDisable);
-    }
-
-
-    private void enableGenerateButton() {
+    private void checkConditionForGenerateButtonTurningOn() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected() &
+                    !amplitudeTextFields.get(i).getText().isEmpty() &
                     !frequencyTextFields.get(i).getText().isEmpty() &
-                    !amplitudeTextFields.get(i).getText().isEmpty()) {
+                    !phaseTextFields.get(i).getText().isEmpty()) {
                 generateSignalButton.setDisable(false);
             }
         }
     }
 
-    private void disableGenerateButton() {
+    private void checkConditionForGenerateButtonTurningOff() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            if (channelsCheckBoxes.get(i).isSelected() &
-                    (frequencyTextFields.get(i).getText().isEmpty() ||
-                            amplitudeTextFields.get(i).getText().isEmpty())) {
+            if (channelsCheckBoxes.get(i).isSelected() & (amplitudeTextFields.get(i).getText().isEmpty() ||
+                    frequencyTextFields.get(i).getText().isEmpty() ||
+                    phaseTextFields.get(i).getText().isEmpty())) {
                 generateSignalButton.setDisable(true);
             }
         }
@@ -251,6 +232,26 @@ public class LTR34SettingController implements BaseController {
         }
     }
 
+    private void addListener(List<TextField> textFields, int channel) {
+        textFields.get(channel).textProperty().addListener(observable -> {
+            checkConditionForGenerateButtonTurningOn();
+            checkConditionForGenerateButtonTurningOff();
+        });
+    }
+
+    private void toggleUiElements(int channel, boolean isDisable) {
+        amplitudeTextFields.get(channel).setDisable(isDisable);
+        frequencyTextFields.get(channel).setDisable(isDisable);
+        phaseTextFields.get(channel).setDisable(isDisable);
+    }
+
+    private void setDefaultSettings(int channel) {
+        channelsCheckBoxes.get(channel).setSelected(false);
+        amplitudeTextFields.get(channel).setText("");
+        frequencyTextFields.get(channel).setText("");
+        phaseTextFields.get(channel).setText("");
+    }
+
     private void setDigitFilter() {
         for (TextField textField : amplitudeTextFields) {
             setAmplitudeFilter(textField);
@@ -260,7 +261,7 @@ public class LTR34SettingController implements BaseController {
             setFrequencyFilter(textField);
         }
 
-        for (TextField textField : phasesTextFields) {
+        for (TextField textField : phaseTextFields) {
             setPhaseFilter(textField);
         }
     }
@@ -294,7 +295,7 @@ public class LTR34SettingController implements BaseController {
     }
 
     /**
-     * Ввод только цифр 1-360 в текстовых полях "Частота"
+     * Ввод только цифр 0-360 в текстовых полях "Фаза"
      *
      * @param textField текстовое поле к которому нужно применить фильтр
      */
@@ -305,6 +306,62 @@ public class LTR34SettingController implements BaseController {
                 textField.setText(oldValue);
             }
         });
+    }
+
+    public void loadSettings(String moduleName) {
+        writeField(moduleName);
+        parseSlotNumber();
+        setTitleLabel(moduleName);
+        findLTR34Module();
+        loadChannelsSettings();
+    }
+
+    private void writeField(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    private void parseSlotNumber() {
+        slot = Utils.parseSlotNumber(moduleName);
+    }
+
+    private void setTitleLabel(String moduleName) {
+        sceneTitleLabel.setText("Настройки модуля " + moduleName);
+    }
+
+    private void findLTR34Module() {
+        for (Pair<Integer, Module> module : crateModel.getModulesList()) {
+            if (module.getKey() == slot) {
+                ltr34 = (LTR34) module.getValue();
+            }
+        }
+    }
+
+    private void loadChannelsSettings() {
+        loadSettingsFields();
+        setSettings();
+    }
+
+    private void loadSettingsFields() {
+        checkedChannels = ltr34.getCheckedChannels();
+        amplitudes = ltr34.getAmplitudes();
+        frequencies = ltr34.getFrequencies();
+        phases = ltr34.getPhases();
+    }
+
+    private void setSettings() {
+        for (int i = 0; i < ltr34.getChannelsCount(); i++) {
+            channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
+            amplitudeTextFields.get(i).setText(String.valueOf(amplitudes[i]));
+            frequencyTextFields.get(i).setText(String.valueOf(frequencies[i]));
+
+            if (channelsCheckBoxes.get(i).isSelected() && phases[i] == 0) {
+                phaseTextFields.get(i).setText("0");
+            } else if (!channelsCheckBoxes.get(i).isSelected() && phases[i] == 0) {
+                phaseTextFields.get(i).setText("");
+            } else {
+                phaseTextFields.get(i).setText(String.valueOf(phases[i]));
+            }
+        }
     }
 
     public void handleGenerateSignal() {
@@ -331,13 +388,13 @@ public class LTR34SettingController implements BaseController {
     private void generate() {
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
             createChannelsData();
-            ltr34.dataSend(signal);
+//            ltr34.dataSend(signal);
             ltr34.start();
 
             new Thread(() -> {
                 stopped = false;
                 while (!stopped) {
-                    ltr34.dataSend(signal);
+//                    ltr34.dataSend(signal);
                     try {
                         Thread.sleep(1000); // пауза подобрана, чтобы ЦАП работал непрерывно
                     } catch (InterruptedException e) {
@@ -365,28 +422,28 @@ public class LTR34SettingController implements BaseController {
     private void parseChannelsSettings() {
         int selectedCrate = cm.getSelectedCrate();
         String[] cratesSN = crateModel.getCrates()[0];
-        int selectedSlot = cm.getSlot();
-        channelsParameters = ltr34.getChannelsParameters();
+//        int selectedSlot = cm.getSlot();
+//        channelsParameters = ltr34.getChannelsParameters();
         checkedChannels = ltr34.getCheckedChannels();
 
         ltr34.countChannels();
         ltr34.setCrate(cratesSN[selectedCrate]);
-        ltr34.setSlot(selectedSlot);
+//        ltr34.setSlot(selectedSlot);
 
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 checkedChannels[i] = true; // true - канал выбран
                 int frequency = parse(frequencyTextFields.get(i));
                 int amplitude = parse(amplitudeTextFields.get(i));
-                int phase = parse(phasesTextFields.get(i));
-                channelsParameters[0][i] = amplitude;
-                channelsParameters[1][i] = frequency;
-                channelsParameters[2][i] = phase;
+                int phase = parse(phaseTextFields.get(i));
+                amplitudes[i] = amplitude;
+                frequencies[i] = frequency;
+                phases[i] = phase;
             } else {
                 checkedChannels[i] = false; // false - канал не выбран
-                channelsParameters[0][i] = 0; // амплитуда
-                channelsParameters[1][i] = 0; // частота
-                channelsParameters[2][i] = 0; // фаза
+                amplitudes[i] = 0;
+                frequencies[i] = 0;
+                phases[i] = 0;
             }
         }
     }
@@ -408,20 +465,20 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void createChannelsData() {
-        channelsParameters = ltr34.getChannelsParameters();
-        List<double[]> channelsData = new ArrayList<>();
+//        channelsParameters = ltr34.getChannelsParameters();
+//        List<double[]> channelsData = new ArrayList<>();
+//
+//        if (ltr34.getChannelsCounter() <= 4) {
+//            for (int i = 0; i < 4; i++) {
+//                channelsData.add(createSin(signal.length / 4, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
+//            }
+//        } else {
+//            for (int i = 0; i < 8; i++) {
+//                channelsData.add(createSin(signal.length / 8, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
+//            }
+//        }
 
-        if (ltr34.getChannelsCounter() <= 4) {
-            for (int i = 0; i < 4; i++) {
-                channelsData.add(createSin(signal.length / 4, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
-            }
-        } else {
-            for (int i = 0; i < 8; i++) {
-                channelsData.add(createSin(signal.length / 8, channelsParameters[0][i], channelsParameters[1][i], channelsParameters[2][i]));
-            }
-        }
-
-        signal = mergeArrays(channelsData);
+//        signal = mergeArrays(channelsData);
     }
 
     private double[] createSin(int length, int amplitude, int frequency, int phase) {
@@ -463,15 +520,15 @@ public class LTR34SettingController implements BaseController {
                 graph.getData().add(graphSeries);
 
                 int channels;
-                if (ltr34.getChannelsCounter() <= 4) {
-                    channels = 4;
-                } else {
-                    channels = 8;
-                }
+//                if (ltr34.getChannelsCounter() <= 4) {
+//                    channels = 4;
+//                } else {
+//                    channels = 8;
+//                }
 
-                for (int j = i; j < signal.length; j += channels * 10) { // коэффициент 10 введен для того, чтобы не отрисовывать все 500_000 точек
-                    graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 10 + i), signal[j]));
-                }
+//                for (int j = i; j < signal.length; j += channels * 10) { // коэффициент 10 введен для того, чтобы не отрисовывать все 500_000 точек
+//                    graphSeries.getData().add(new XYChart.Data<>((double) j / (signal.length - channels * 10 + i), signal[j]));
+//                }
             }
         }
     }
@@ -482,7 +539,7 @@ public class LTR34SettingController implements BaseController {
             channelsCheckBoxes.get(i).setDisable(true);
             amplitudeTextFields.get(i).setDisable(true);
             frequencyTextFields.get(i).setDisable(true);
-            phasesTextFields.get(i).setDisable(true);
+            phaseTextFields.get(i).setDisable(true);
         }
     }
 
@@ -505,7 +562,7 @@ public class LTR34SettingController implements BaseController {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 amplitudeTextFields.get(i).setDisable(false);
                 frequencyTextFields.get(i).setDisable(false);
-                phasesTextFields.get(i).setDisable(false);
+                phaseTextFields.get(i).setDisable(false);
             }
         }
     }
@@ -539,44 +596,11 @@ public class LTR34SettingController implements BaseController {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 frequencyTextFields.get(i).setDisable(false);
                 amplitudeTextFields.get(i).setDisable(false);
-                phasesTextFields.get(i).setDisable(false);
+                phaseTextFields.get(i).setDisable(false);
             }
         }
     }
 
-    public void loadSettings() {
-        findLTR34Module();
-        loadChannelsSettings();
-    }
-
-    private void findLTR34Module() {
-        int slot = cm.getSlot();
-
-        for (Pair<Integer, LTR34> module : crateModel.getLtr34ModulesList()) {
-            if (module.getValue().getSlot() == slot) {
-                ltr34 = module.getValue();
-            }
-        }
-    }
-
-    private void loadChannelsSettings() {
-        checkedChannels = ltr34.getCheckedChannels();
-        channelsParameters = ltr34.getChannelsParameters();
-
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
-            amplitudeTextFields.get(i).setText(String.valueOf(channelsParameters[0][i]));
-            frequencyTextFields.get(i).setText(String.valueOf(channelsParameters[1][i]));
-
-            if (channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
-                phasesTextFields.get(i).setText("0");
-            } else if (!channelsCheckBoxes.get(i).isSelected() && channelsParameters[2][i] == 0) {
-                phasesTextFields.get(i).setText("");
-            } else {
-                phasesTextFields.get(i).setText(String.valueOf(channelsParameters[2][i]));
-            }
-        }
-    }
 
     @Override
     public void setWindowManager(WindowsManager wm) {

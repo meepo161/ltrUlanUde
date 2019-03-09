@@ -52,7 +52,7 @@
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label styleClass="title" text="Настройки модуля LTR24" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR24" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
             <Label text="Каналы:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Описание:" GridPane.columnIndex="1" GridPane.rowIndex="3">

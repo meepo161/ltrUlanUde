@@ -11,4 +11,8 @@ public class Utils {
         } catch (InterruptedException ignored) {
         }
     }
+
+    public static int parseSlotNumber(String moduleName) {
+        return Integer.parseInt(moduleName.split("Слот ")[1].split("\\)")[0]); // номер слота
+    }
 }

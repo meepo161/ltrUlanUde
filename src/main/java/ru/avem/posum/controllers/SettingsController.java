@@ -28,9 +28,17 @@ public class SettingsController implements BaseController {
     @FXML
     private Button chooseCrateButton;
     @FXML
-    private Button saveTestProgrammSettingsButton;
+    private TextArea commentsTextArea;
     @FXML
-    private Button setupModuleButton;
+    private TextField documentNumberTextField;
+    @FXML
+    private ListView<String> cratesListView;
+    @FXML
+    private TextField leadEngineerTextField;
+    @FXML
+    private ListView<String> modulesListView;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private Label requiredFieldN1;
     @FXML
@@ -42,59 +50,49 @@ public class SettingsController implements BaseController {
     @FXML
     private Label requiredFieldN5;
     @FXML
-    private ListView<String> cratesListView;
-    @FXML
-    private ListView<String> modulesListView;
-    @FXML
-    private ProgressIndicator progressIndicator;
-    @FXML
-    private StatusBar statusBar;
-    @FXML
-    private TextArea commentsTextArea;
-    @FXML
-    private TextField testProgramNameTextField;
-    @FXML
     private TextField sampleNameTextField;
     @FXML
     private TextField sampleSerialNumberTextField;
     @FXML
-    private TextField documentNumberTextField;
+    private Button saveTestProgramSettingsButton;
+    @FXML
+    private Button setupModuleButton;
+    @FXML
+    private StatusBar statusBar;
+    @FXML
+    private TextField testProgramNameTextField;
     @FXML
     private TextField testProgramTimeTextField;
     @FXML
     private TextField testProgramDateTextField;
     @FXML
     private TextField testProgramTypeTextField;
-    @FXML
-    private TextField leadEngineerTextField;
 
-    private int slot;
-    private String crate;
-    private boolean editMode;
-    private int selectedCrate;
-    private WindowsManager wm;
-    private boolean didBackSpacePressed;
-    private int selectedModule;
     private ControllerManager cm;
-    private TestProgram testProgram;
-    private ObservableList<String> crates;
-    private ObservableList<String> modulesNames;
+    private String crate;
     private CrateModel crateModel = new CrateModel();
+    private ObservableList<String> crates;
+    private boolean didBackSpacePressed;
+    private boolean editMode;
+    private String moduleName;
+    private ObservableList<String> modulesNames;
     private List<Pair<Label, TextField>> requiredFields = new ArrayList<>();
-    private List<TextField> textFields = new ArrayList<>();
+    private int selectedCrate;
+    private int selectedModuleIndex;
     private SettingsModel settingsModel = new SettingsModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
+    private TestProgram testProgram;
+    private List<TextField> textFields = new ArrayList<>();
+    private WindowsManager wm;
 
     @FXML
     private void initialize() {
         fillListOfTextFields();
         fillListOfRequiredSymbols();
         initRequiredFieldsSymbols();
-        setTextFormat(testProgramTimeTextField, 8, ":");
-        setTextFormat(testProgramDateTextField, 10, ".");
-        crates = crateModel.getCratesNames();
-        cratesListView.setItems(crates);
-        showCrateModules();
+        initTimeAndDateFields();
+        showCrates();
+        showModules();
     }
 
     private void fillListOfTextFields() {
@@ -127,6 +125,11 @@ public class SettingsController implements BaseController {
         }
     }
 
+    private void initTimeAndDateFields() {
+        setTextFormat(testProgramTimeTextField, 8, ":");
+        setTextFormat(testProgramDateTextField, 10, ".");
+    }
+
     private void setTextFormat(TextField textField, int limitOfNumbers, String separator) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             String text = textField.getText();
@@ -150,24 +153,24 @@ public class SettingsController implements BaseController {
         }
     }
 
-    @FXML
-    public void listenBackSpaceKey(KeyEvent keyEvent) {
-        KeyCode keyCode = keyEvent.getCode();
-        didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
+    private void showCrates() {
+        crates = crateModel.getCratesNames();
+        cratesListView.setItems(crates);
     }
 
-    private void showCrateModules() {
+    private void showModules() {
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
-            modulesListView.setItems(crateModel.fillModulesNames(selectedCrate));
+            crate = crateModel.getCrates()[0][selectedCrate];
+            modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
+            modulesNames = crateModel.getModulesNames(selectedCrate);
             addDoubleClickListener(cratesListView, true);
             addDoubleClickListener(modulesListView, false);
-            modulesNames = crateModel.getModulesNames();
             cm.createListModulesControllers(modulesNames);
         }));
     }
 
-    private void addDoubleClickListener(ListView<String> listView, boolean isCrate) {
+    private void addDoubleClickListener(ListView<String> listView, boolean forCrate) {
         listView.setCellFactory(tv -> {
             ListCell<String> cell = new ListCell<String>() {
                 @Override
@@ -180,7 +183,7 @@ public class SettingsController implements BaseController {
             };
             cell.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!cell.isEmpty())) {
-                    if (isCrate) {
+                    if (forCrate) {
                         handleChooseCrate();
                     } else {
                         handleSetupModule();
@@ -192,9 +195,16 @@ public class SettingsController implements BaseController {
     }
 
     public void handleChooseCrate() {
-        settingsModel.createModulesInstances(crateModel);
-        crate = settingsModel.getCrate();
+        checkSelection();
+        initSettingsModel();
+    }
 
+    private void initSettingsModel() {
+        settingsModel.setControllerManager(cm);
+        settingsModel.createModulesInstances(modulesNames);
+    }
+
+    private void checkSelection() {
         for (int i = 0; i < crates.size(); i++) {
             if (cratesListView.getSelectionModel().isSelected(i)) {
                 toggleUiElements(true, false);
@@ -212,36 +222,33 @@ public class SettingsController implements BaseController {
     public void handleSetupModule() {
         for (int i = 0; i < modulesNames.size(); i++) {
             if (modulesListView.getSelectionModel().isSelected(i)) {
-                selectedModule = modulesListView.getSelectionModel().getSelectedIndex();
-                String module = modulesNames.get(selectedModule);
-
-                slot = settingsModel.parseSlotNumber(module);
-
-                showModuleSettings(module);
+                saveSelectedModuleIndex();
+                showModuleSettings();
                 break;
             }
         }
     }
 
-    private void showModuleSettings(String module) {
-        String moduleName = (module + " ").substring(0, 6).trim();
-        loadModuleSettingsView(moduleName);
-
-        wm.setModuleScene(moduleName, selectedModule);
+    private void saveSelectedModuleIndex() {
+        selectedModuleIndex = modulesListView.getSelectionModel().getSelectedIndex();
     }
 
-    private void loadModuleSettingsView(String moduleName) {
-        switch (moduleName) {
-            case CrateModel.LTR24:
-                cm.loadLTR24Settings(selectedModule);
-                break;
-            case CrateModel.LTR34:
-                cm.loadLTR34Settings(selectedModule);
-                break;
-            case CrateModel.LTR212:
-                cm.loadLTR212Settings(selectedModule);
-                break;
-        }
+    private void showModuleSettings() {
+        parseModuleName();
+        loadModuleSettings();
+        setScene();
+    }
+
+    private void parseModuleName() {
+        moduleName = modulesNames.get(selectedModuleIndex);
+    }
+
+    private void loadModuleSettings() {
+        cm.loadModuleSettings(selectedModuleIndex, moduleName);
+    }
+
+    private void setScene() {
+        wm.setModuleScene(moduleName, selectedModuleIndex);
     }
 
     public void handleSaveTestProgramSettings() {
@@ -284,13 +291,13 @@ public class SettingsController implements BaseController {
         String date = testProgramDateTextField.getText();
         boolean isTextFormatCorrect = true;
 
-        if (!time.matches("^[\\d]{2}:[\\d]{2}:[\\d]{2}")) {
-            statusBarLine.setStatus("Неверно задано время испытаний (необходимый формат - чч:мм:сс)", statusBar);
+        if (!time.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
+            statusBarLine.setStatus("Неверно задано время испытаний", statusBar);
             isTextFormatCorrect = false;
         }
 
-        if (!date.matches("^[\\d]{2}\\.[\\d]{2}\\.[\\d]{4}")) {
-            statusBarLine.setStatus("Неверно задана дата испытаний (необходимый формат - дд.мм.гггг)", statusBar);
+        if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[\\d]{4}")) {
+            statusBarLine.setStatus("Неверно задана дата испытаний", statusBar);
             isTextFormatCorrect = false;
         }
 
@@ -325,7 +332,7 @@ public class SettingsController implements BaseController {
     }
 
     public void toggleButtons(boolean isDisable) {
-        saveTestProgrammSettingsButton.setDisable(isDisable);
+        saveTestProgramSettingsButton.setDisable(isDisable);
         backButton.setDisable(isDisable);
     }
 
@@ -345,12 +352,13 @@ public class SettingsController implements BaseController {
 
     private void saveSettings() {
         settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
-        settingsModel.saveHardwareSettings(editMode);
+//        settingsModel.saveHardwareSettings(editMode);
     }
 
     private HashMap<String, String> parseGeneralSettingsData() {
         HashMap<String, String> generalSettings = new HashMap<>();
 
+        generalSettings.put("Crate Serial Number", crate);
         generalSettings.put("Test Program Name", testProgramNameTextField.getText());
         generalSettings.put("Sample Name", sampleNameTextField.getText());
         generalSettings.put("Sample Serial Number", sampleSerialNumberTextField.getText());
@@ -360,7 +368,6 @@ public class SettingsController implements BaseController {
         generalSettings.put("Test Program Date", testProgramDateTextField.getText());
         generalSettings.put("Lead Engineer", leadEngineerTextField.getText());
         generalSettings.put("Comments", commentsTextArea.getText());
-        generalSettings.put("Crate Serial Number", crate);
 
         return generalSettings;
     }
@@ -379,7 +386,7 @@ public class SettingsController implements BaseController {
 
         loadGeneralSettings(testProgram);
         selectCrate();
-        settingsModel.loadChannelsSettings(testProgram, crateModel, modulesNames, selectedCrate);
+//        settingsModel.loadChannelsSettings(testProgram, crateModel, modulesNames, selectedCrate);
     }
 
     private void loadGeneralSettings(TestProgram testProgram) {
@@ -438,8 +445,18 @@ public class SettingsController implements BaseController {
         toggleButtons(false);
     }
 
+    @FXML
+    public void listenBackSpaceKey(KeyEvent keyEvent) {
+        KeyCode keyCode = keyEvent.getCode();
+        didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
+    }
+
     public void refreshModulesList() {
         modulesListView.setItems(modulesNames);
+    }
+
+    public String getCrate() {
+        return crate;
     }
 
     public CrateModel getCrateModel() {
@@ -450,13 +467,10 @@ public class SettingsController implements BaseController {
         return selectedCrate;
     }
 
-    public int getSelectedModule() {
-        return selectedModule;
+    public int getSelectedModuleIndex() {
+        return selectedModuleIndex;
     }
 
-    public int getSlot() {
-        return slot;
-    }
 
     public void setEditMode(boolean editMode) {
         this.editMode = editMode;
