@@ -31,7 +31,7 @@ public class SettingsModel implements BaseController {
     private int[] measuringRanges;
     private List<Pair<Integer, Module>> modules;
     private ObservableList<String> modulesNames;
-    private HashMap<String, StringBuffer> moduleSettings = new HashMap<>();
+    private HashMap<String, String> moduleSettings;
     private int[] phases;
     private int slot;
     private TestProgram testProgram;
@@ -95,6 +95,9 @@ public class SettingsModel implements BaseController {
         channelsTypes = adc.getChannelsTypes();
         measuringRanges = adc.getMeasuringRanges();
         channelsDescription = adc.getChannelsDescription();
+        amplitudes = null;
+        frequencies = null;
+        phases = null;
     }
 
     private void saveModuleInstance(Module module) {
@@ -114,6 +117,9 @@ public class SettingsModel implements BaseController {
 
     private void setDACSettingsFields() {
         checkedChannels = dac.getCheckedChannels();
+        channelsTypes = null;
+        measuringRanges = null;
+        channelsDescription = null;
         amplitudes = dac.getAmplitudes();
         frequencies = dac.getFrequencies();
         phases = dac.getPhases();
@@ -173,25 +179,25 @@ public class SettingsModel implements BaseController {
     public void saveHardwareSettings(boolean isEditMode) {
         this.isEditMode = isEditMode;
         this.testProgramId = testProgram.getId();
-        int ltr24Index = 0; // индексы сохраняют номер последнего взятого объекта
-        int ltr212Index = 0;
-        int ltr34Index = 0;
 
-        for (String modulesName : modulesNames) {
-            switch (modulesName.split(" ")[0]) {
+        for (int i = 0; i < modulesNames.size(); i++) {
+            slot = parseSlotNumber(i);
+
+            switch (modulesNames.get(i).split(" ")[0]) {
                 case CrateModel.LTR24:
-                    getADCInstance(ltr24Index++);
-                    saveADCSettings();
+                    getADCInstance(i);
+                    saveADCSettings("LTR24");
                     break;
                 case CrateModel.LTR34:
-                    getDACInstance(ltr34Index++);
-                    saveDACSettings();
+                    getDACInstance(i);
+                    saveDACSettings("LTR34");
                     break;
                 case CrateModel.LTR212:
-                    getADCInstance(ltr212Index++);
-                    saveADCSettings();
+                    getADCInstance(i);
+                    saveADCSettings("LTR212");
                     break;
             }
+
         }
     }
 
@@ -199,10 +205,12 @@ public class SettingsModel implements BaseController {
         adc = (ADC) crateModel.getModulesList().get(index).getValue();
     }
 
-    private void saveADCSettings() {
+    private void saveADCSettings(String moduleName) {
         if (isEditMode) {
             updateADCFields();
         } else {
+            setADCSettingsFields();
+            setADCModuleSettings(moduleName);
             addNewModule();
         }
 
@@ -231,16 +239,64 @@ public class SettingsModel implements BaseController {
         ModulesRepository.insertModules(module);
     }
 
+    private void setADCModuleSettings(String moduleName) {
+        moduleSettings = new HashMap<>();
+        StringBuilder checkedChannelsLine = new StringBuilder();
+        StringBuilder channelsTypesLine = new StringBuilder();
+        StringBuilder measuringRangesLine = new StringBuilder();
+        StringBuilder channelsDescriptionsLine = new StringBuilder();
+
+        for (int i = 0; i < adc.getChannelsCount(); i++) {
+            checkedChannelsLine.append(checkedChannels[i]).append(", ");
+            channelsTypesLine.append(channelsTypes[i]).append(", ");
+            measuringRangesLine.append(measuringRanges[i]).append(", ");
+            channelsDescriptionsLine.append(channelsDescription[i]);
+        }
+
+        moduleSettings.put("Test program id", String.valueOf(testProgramId));
+        moduleSettings.put("Module type", moduleName);
+        moduleSettings.put("Slot", String.valueOf(slot));
+        moduleSettings.put("Checked channels", String.valueOf(checkedChannelsLine));
+        moduleSettings.put("Channels types", String.valueOf(channelsTypesLine));
+        moduleSettings.put("Measuring ranges", String.valueOf(measuringRangesLine));
+        moduleSettings.put("Channels description", String.valueOf(channelsDescriptionsLine));
+    }
+
     private void getDACInstance(int index) {
         dac = (DAC) crateModel.getModulesList().get(index).getValue();
     }
 
-    private void saveDACSettings() {
+    private void saveDACSettings(String moduleName) {
         if (isEditMode) {
             updateDACFields();
         } else {
+            setDACSettingsFields();
+            setDACSettings(moduleName);
             addNewModule();
         }
+    }
+
+    private void setDACSettings(String moduleName) {
+        moduleSettings = new HashMap<>();
+        StringBuilder checkedChannelsLine = new StringBuilder();
+        StringBuilder amplitudesLine = new StringBuilder();
+        StringBuilder frequenciesLine = new StringBuilder();
+        StringBuilder phasesLine = new StringBuilder();
+
+        for (int i = 0; i < dac.getChannelsCount(); i++) {
+            checkedChannelsLine.append(checkedChannels[i]).append(", ");
+            amplitudesLine.append(amplitudes[i]).append(", ");
+            frequenciesLine.append(frequencies[i]).append(", ");
+            phasesLine.append(phases[i]).append(", ");
+        }
+
+        moduleSettings.put("Test program id", String.valueOf(testProgramId));
+        moduleSettings.put("Module type", moduleName);
+        moduleSettings.put("Slot", String.valueOf(slot));
+        moduleSettings.put("Checked channels", checkedChannelsLine.toString());
+        moduleSettings.put("Amplitudes", amplitudesLine.toString());
+        moduleSettings.put("Frequencies", frequenciesLine.toString());
+        moduleSettings.put("Phases", phasesLine.toString());
     }
 
     private void updateDACFields() {

@@ -44,14 +44,17 @@ public class Modules {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public Modules(HashMap<String, StringBuffer> moduleSettings) {
-        testProgramId = Long.parseLong(moduleSettings.get("Test Program Id").toString());
-        moduleType = moduleSettings.get("Modules Type").toString();
-        slot = moduleSettings.get("Slot").toString();
-        checkedChannels = moduleSettings.get("Checked Channels").toString();
-        channelsTypes = moduleSettings.get("Channels Types").toString();
-        measuringRanges = moduleSettings.get("Measuring Ranges").toString();
-        channelsDescription = moduleSettings.get("Channels Description").toString();
+    public Modules(HashMap<String, String> moduleSettings) {
+        testProgramId = Long.parseLong(moduleSettings.get("Test program id"));
+        moduleType = moduleSettings.get("Module type");
+        slot = moduleSettings.get("Slot");
+        checkedChannels = moduleSettings.getOrDefault("Checked channels", "");
+        channelsTypes = moduleSettings.getOrDefault("Channels types", "");
+        measuringRanges = moduleSettings.getOrDefault("Measuring ranges", "");
+        channelsDescription = moduleSettings.getOrDefault("Channels description", "");
+        amplitudes = moduleSettings.getOrDefault("Amplitudes", "");
+        frequencies = moduleSettings.getOrDefault("Frequencies", "");
+        phases = moduleSettings.getOrDefault("Phases", "");
     }
 
     public String settingsToString(int[] settings) {
@@ -78,14 +81,6 @@ public class Modules {
 
     public void setTestProgramId(long testProgramId) {
         this.testProgramId = testProgramId;
-    }
-
-    public String getModulesType() {
-        return moduleType;
-    }
-
-    public void setModulesType(String moduleType) {
-        this.moduleType = moduleType;
     }
 
     public int getSlot() {

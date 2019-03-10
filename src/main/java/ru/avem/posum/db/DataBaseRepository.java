@@ -13,7 +13,7 @@ public class DataBaseRepository {
             AccountRepository.createTable(Account.class);
             CalibrationRepository.createTable(Calibration.class);
             EventRepository.createTable(Event.class);
-            ModulesRepository.createTable(Module.class);
+            ModulesRepository.createTable(Modules.class);
             TestProgramRepository.createTable(TestProgram.class);
 
             Account admin = new Account("admin", "102030");
