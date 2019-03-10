@@ -2,23 +2,17 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-public abstract class Module {
-    protected int channelsCount;
-    protected String crate;
+public class Module {
+    int channelsCount;
+    String crate;
     protected int slot;
-    protected long moduleId;
-    protected boolean[] checkedChannels;
+    private long moduleId;
+    boolean[] checkedChannels;
     protected String status;
-    protected TextEncoder textEncoder = new TextEncoder();
-    protected boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
+    private TextEncoder textEncoder = new TextEncoder();
+    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    public abstract void openConnection();
-
-    public abstract void initModule();
-
-    public abstract void closeConnection();
-
-    public void checkStatus() {
+    void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
         }

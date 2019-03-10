@@ -336,6 +336,12 @@ public class SettingsController implements BaseController {
         backButton.setDisable(isDisable);
     }
 
+    public void hideRequiredFieldsSymbols() {
+        for (Pair<Label, TextField> pair : requiredFields) {
+            pair.getKey().setVisible(false);
+        }
+    }
+
     private void toggleProgressIndicatorState(boolean hide) {
         if (hide) {
             progressIndicator.setStyle("-fx-opacity: 0;");
@@ -344,15 +350,9 @@ public class SettingsController implements BaseController {
         }
     }
 
-    public void hideRequiredFieldsSymbols() {
-        for (Pair<Label, TextField> pair : requiredFields) {
-            pair.getKey().setVisible(false);
-        }
-    }
-
     private void saveSettings() {
         settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
-//        settingsModel.saveHardwareSettings(editMode);
+        settingsModel.saveHardwareSettings(editMode);
     }
 
     private HashMap<String, String> parseGeneralSettingsData() {
@@ -386,7 +386,7 @@ public class SettingsController implements BaseController {
 
         loadGeneralSettings(testProgram);
         selectCrate();
-//        settingsModel.loadChannelsSettings(testProgram, crateModel, modulesNames, selectedCrate);
+        settingsModel.loadChannelsSettings(testProgram, crateModel, selectedCrate);
     }
 
     private void loadGeneralSettings(TestProgram testProgram) {

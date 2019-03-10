@@ -318,16 +318,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public int getSelectedCrate() {
-        return settingsController.getSelectedCrate();
-    }
-
-    @Override
-    public int getSelectedModule() {
-        return settingsController.getSelectedModuleIndex();
-    }
-
-    @Override
     public String getCrate() {
         return settingsController.getCrate();
     }

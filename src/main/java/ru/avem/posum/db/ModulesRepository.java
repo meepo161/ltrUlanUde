@@ -5,7 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import ru.avem.posum.db.models.Module;
+import ru.avem.posum.db.models.Modules;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,40 +23,40 @@ public class ModulesRepository extends DataBaseRepository {
         }
     }
 
-    public static void insertModule(Module module) {
-        sendAction((moduleDao) -> moduleDao.create(module));
+    public static void insertModules(Modules modules) {
+        sendAction((modulesDao) -> modulesDao.create(modules));
     }
 
-    public static void updateModule(Module module) {
-        sendAction((moduleDao) -> moduleDao.update(module));
+    public static void updateModules(Modules modules) {
+        sendAction((modulesDao) -> modulesDao.update(modules));
     }
 
-    public static void deleteModule(Module module) {
-        sendAction((moduleDao) -> moduleDao.delete(module));
+    public static void deleteModules(Modules modules) {
+        sendAction((modulesDao) -> modulesDao.delete(modules));
     }
 
-    public static List<Module> getAllModules(){
+    public static List<Modules> getAllModules(){
         final List[] modules = {null};
         sendAction((modulesDao -> modules[0] = modulesDao.queryForAll()));
-        return (List<Module>) modules[0];
+        return (List<Modules>) modules[0];
     }
 
-    public static Module getModule(long id) {
-        final Module[] module = {null};
-        sendAction((modulesDao -> module[0] = modulesDao.queryForId(id)));
-        return module[0];
+    public static Modules getModules(long id) {
+        final Modules[] modules = {null};
+        sendAction((modulesDao -> modules[0] = modulesDao.queryForId(id)));
+        return modules[0];
     }
 
     @FunctionalInterface
     private interface Actionable {
-        void onAction(Dao<Module, Long> modulesDao) throws SQLException;
+        void onAction(Dao<Modules, Long> modulesDao) throws SQLException;
     }
 
     private static void sendAction(ModulesRepository.Actionable actionable) {
         try (ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL)) {
-            Dao<Module, Long> moduleDao = DaoManager.createDao(connectionSource, Module.class);
+            Dao<Modules, Long> modulesDao = DaoManager.createDao(connectionSource, Modules.class);
 
-            actionable.onAction(moduleDao);
+            actionable.onAction(modulesDao);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {

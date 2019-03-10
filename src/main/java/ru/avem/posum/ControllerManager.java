@@ -22,10 +22,6 @@ public interface ControllerManager {
 
     void showChannelData(ADC adc, int slot, int channel);
 
-    int getSelectedCrate();
-
-    int getSelectedModule();
-
     CrateModel getCrateModelInstance();
 
     ExperimentModel getExperimentModel();

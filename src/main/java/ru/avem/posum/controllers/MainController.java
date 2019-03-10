@@ -178,6 +178,20 @@ public class MainController implements BaseController {
         }
     }
 
+    private void checkSelection() {
+        selectedIndex = getSelectedItemIndex();
+
+        if (testPrograms.isEmpty()) {
+            showNotification("Ошибка: отсутсвуют программы испытаний");
+            isTestProgramSelected = false;
+        } else if (selectedIndex == -1) {
+            showNotification("Ошибка: программа испытаний не выбрана");
+            isTestProgramSelected = false;
+        } else {
+            isTestProgramSelected = true;
+        }
+    }
+
     private void prepareEditSettingsScene() {
         cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
         cm.toggleSettingsSceneButtons(false);
@@ -275,20 +289,6 @@ public class MainController implements BaseController {
             getTestProgram(selectedIndex);
             setExperimentId();
             showExperimentScene();
-        }
-    }
-
-    private void checkSelection() {
-        selectedIndex = getSelectedItemIndex();
-
-        if (testPrograms.isEmpty()) {
-            showNotification("Ошибка: отсутсвуют программы испытаний");
-            isTestProgramSelected = false;
-        } else if (selectedIndex == -1) {
-            showNotification("Ошибка: программа испытаний не выбрана");
-            isTestProgramSelected = false;
-        } else {
-            isTestProgramSelected = true;
         }
     }
 
