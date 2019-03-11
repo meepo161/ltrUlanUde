@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
@@ -23,9 +24,17 @@ import static ru.avem.posum.utils.Utils.sleep;
 
 public class SignalGraphController implements BaseController {
     @FXML
+    private CheckBox autoScaleCheckBox;
+    @FXML
+    private TextField amplitudeTextField;
+    @FXML
+    private TextField frequencyTextField;
+    @FXML
     private LineChart<Number, Number> graph;
     @FXML
-    private TextField valueTextField;
+    private TextField phaseTextField;
+    @FXML
+    private TextField shiftTextField;
 
     private LTR24 ltr24;
     private int channel;
@@ -45,6 +54,7 @@ public class SignalGraphController implements BaseController {
 
     public void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
         setFields(moduleType, channel);
+        toggleAutoScale();
         clearGraphData();
         initializeModuleType(selectedSlot);
         checkCalibration();
@@ -62,6 +72,16 @@ public class SignalGraphController implements BaseController {
         graphData.clear();
         graphSeries = new XYChart.Series<>();
         graphData.add(graphSeries);
+    }
+
+    private void toggleAutoScale() {
+        autoScaleCheckBox.selectedProperty().addListener(observable -> {
+            if (autoScaleCheckBox.isSelected()) {
+                setGraphBounds(-10, 10, 1, true);
+            } else {
+                setGraphBounds(-10, 10, 1, true);
+            }
+        });
     }
 
     private void initializeModuleType(int selectedSlot) {
@@ -216,7 +236,7 @@ public class SignalGraphController implements BaseController {
 
         if (calibrationState.equals("setted")) {
             linearApproximation.approximate(maxValue);
-            maxValue = (double) Math.round(linearApproximation.getApproximatedValue() * 100) / 100;
+            maxValue = (double) Math.round(linearApproximation.getApproximatedValue() * 100000) / 100000;
             intermediateList.clear();
 
             for (int i = channel; i < buffer.length; i += CHANNELS) {
@@ -230,7 +250,7 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            valueTextField.setText(Double.toString(maxValue));
+            shiftTextField.setText(String.format("%f", maxValue));
             isDone = true;
         });
     }
