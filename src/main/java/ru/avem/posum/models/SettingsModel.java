@@ -12,7 +12,9 @@ import ru.avem.posum.db.models.LTR34Table;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -223,6 +225,7 @@ public class SettingsModel {
 
     public void saveGeneralSettings(HashMap<String, String> generalSettings, boolean isEditMode) {
         this.isEditMode = isEditMode;
+        String currentDate = new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
 
         /* сохранение общих данных */
         String testProgramName = generalSettings.get("Test Program Name");
@@ -246,6 +249,7 @@ public class SettingsModel {
             testProgram.setTestProgramDate(testProgramDate);
             testProgram.setLeadEngineer(leadEngineer);
             testProgram.setComments(comments);
+            testProgram.setChanged(currentDate);
 
             TestProgramRepository.updateTestProgram(testProgram);
         } else {
@@ -259,7 +263,9 @@ public class SettingsModel {
                     testProgramTime,
                     testProgramDate,
                     leadEngineer,
-                    comments);
+                    comments,
+                    currentDate,
+                    currentDate);
 
             TestProgramRepository.insertTestProgram(testProgram);
         }

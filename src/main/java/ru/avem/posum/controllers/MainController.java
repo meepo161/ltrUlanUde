@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
@@ -55,6 +56,7 @@ public class MainController implements BaseController {
     private ObservableList<TestProgram> testPrograms;
     private List<TestProgram> allTestPrograms;
     private TestProgram testProgram;
+    private ContextMenu contextMenu = new ContextMenu();
     private long testProgramId;
     private int selectedIndex;
     private long oldTestProgramId;
@@ -64,7 +66,7 @@ public class MainController implements BaseController {
     @FXML
     private void initialize() {
         initTableView();
-        addDoubleClickListener();
+        addMouseListener();
     }
 
     private void initTableView() {
@@ -72,6 +74,7 @@ public class MainController implements BaseController {
         setColumns();
         getTestPrograms();
         showTestPrograms();
+        createContextMenu();
     }
 
     private void formatColumnsTitles() {
@@ -100,8 +103,8 @@ public class MainController implements BaseController {
     private void setColumns() {
         columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("index"));
         columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("testProgramName"));
-        columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
-        columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("testProgramDate"));
+        columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("created"));
+        columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("changed"));
         columnTestProgramTime.setCellValueFactory(new PropertyValueFactory<>("testProgramTime"));
         columnTestProgramType.setCellValueFactory(new PropertyValueFactory<>("testProgramType"));
         columnTestingSample.setCellValueFactory(new PropertyValueFactory<>("sampleName"));
@@ -116,15 +119,34 @@ public class MainController implements BaseController {
         testPrograms = FXCollections.observableArrayList(allTestPrograms);
         Platform.runLater(() -> {
             testProgramTableView.setItems(testPrograms);
+            testProgramTableView.getSelectionModel().select(selectedIndex - 1);
         });
     }
 
-    private void addDoubleClickListener() {
+    private void createContextMenu () {
+        MenuItem menuItemEdit = new MenuItem("Настроить");
+        MenuItem menuItemCopy = new MenuItem("Копировать");
+        MenuItem menuItemDelete = new MenuItem("Удалить");
+
+        menuItemEdit.setOnAction(event -> handleMenuItemEdit());
+        menuItemCopy.setOnAction(event -> handleMenuItemCopy());
+        menuItemDelete.setOnAction(event -> handleMenuItemDelete());
+
+        contextMenu.getItems().addAll(menuItemEdit, menuItemCopy, menuItemDelete);
+    }
+
+    private void addMouseListener() {
         testProgramTableView.setRowFactory(tv -> {
             TableRow<TestProgram> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     handleMenuItemEdit();
+                }
+
+                if(event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                    contextMenu.show(testProgramTableView, event.getScreenX(), event.getScreenY());
+                } else if (event.getClickCount() == 1) {
+                    contextMenu.hide();
                 }
             });
             return row;
@@ -168,13 +190,15 @@ public class MainController implements BaseController {
     }
 
     private void prepareEditSettingsScene() {
-        cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex()));
+        cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
         cm.toggleSettingsSceneButtons(false);
         cm.setEditMode(true);
     }
 
     private int getSelectedItemIndex() {
-        return testProgramTableView.getSelectionModel().getSelectedIndex();
+        selectedIndex = testProgramTableView.getSelectionModel().getSelectedIndex();
+        selectedIndex = testProgramTableView.getItems().get(selectedIndex).getIndex();
+        return selectedIndex;
     }
 
     public void handleMenuItemCopy() {
@@ -200,8 +224,8 @@ public class MainController implements BaseController {
         }
     }
 
-    private void getTestProgram(int itemIndex) {
-        testProgram = allTestPrograms.get(itemIndex);
+    private TestProgram getTestProgram(int itemIndex) {
+        return testProgram = allTestPrograms.get(itemIndex - 1);
     }
 
     private void copyTestProgram() {

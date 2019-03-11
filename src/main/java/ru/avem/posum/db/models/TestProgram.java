@@ -4,7 +4,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Objects;
 
 @XmlRootElement
 @DatabaseTable(tableName = "testPrograms")
@@ -33,6 +32,10 @@ public class TestProgram {
     private String leadEngineer;
     @DatabaseField
     private String comments;
+    @DatabaseField
+    private String created;
+    @DatabaseField
+    private String changed;
 
     public TestProgram() {
         // ORMLite and XML binder need a no-arg constructor
@@ -47,7 +50,9 @@ public class TestProgram {
                        String testProgramTime,
                        String testProgramDate,
                        String leadEngineer,
-                       String comments) {
+                       String comments,
+                       String created,
+                       String changed) {
         index++;
         this.crate = crate;
         this.testProgramName = testProgramName;
@@ -59,14 +64,12 @@ public class TestProgram {
         this.testProgramDate = testProgramDate;
         this.leadEngineer = leadEngineer;
         this.comments = comments;
+        this.created = created;
+        this.changed = changed;
     }
 
     public long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public int getIndex() {
@@ -157,51 +160,19 @@ public class TestProgram {
         this.comments = comments;
     }
 
-    @Override
-    public String toString() {
-        return "TestProgram{" +
-                "testProgramId=" + id +
-                ", testProgramName='" + testProgramName + '\'' +
-                ", sampleName='" + sampleName + '\'' +
-                ", sampleSerialNumber='" + sampleSerialNumber + '\'' +
-                ", documentNumber='" + documentNumber + '\'' +
-                ", testProgramType='" + testProgramType + '\'' +
-                ", testProgramTime='" + testProgramTime + '\'' +
-                ", testProgramDate='" + testProgramDate + '\'' +
-                ", leadEngineer='" + leadEngineer + '\'' +
-                ", comments='" + comments + '\'' +
-                '}';
+    public String getCreated() {
+        return created;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        TestProgram testProgram = (TestProgram) o;
-        return id == testProgram.id &&
-                Objects.equals(testProgramName, testProgram.testProgramName) &&
-                Objects.equals(sampleName, testProgram.sampleName) &&
-                Objects.equals(sampleSerialNumber, testProgram.sampleSerialNumber) &&
-                Objects.equals(documentNumber, testProgram.documentNumber) &&
-                Objects.equals(testProgramType, testProgram.testProgramType) &&
-                Objects.equals(testProgramTime, testProgram.testProgramTime) &&
-                Objects.equals(testProgramDate, testProgram.testProgramDate) &&
-                Objects.equals(leadEngineer, testProgram.leadEngineer) &&
-                Objects.equals(comments, testProgram.comments);
+    public void setCreated(String created) {
+        this.created = created;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id,
+    public String getChanged() {
+        return changed;
+    }
 
-                testProgramName,
-                sampleName,
-                sampleSerialNumber,
-                documentNumber,
-                testProgramType,
-                testProgramTime,
-                testProgramDate,
-                leadEngineer,
-                comments);
+    public void setChanged(String changed) {
+        this.changed = changed;
     }
 }
