@@ -18,6 +18,7 @@ import ru.avem.posum.utils.LinearApproximation;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static ru.avem.posum.utils.Utils.sleep;
@@ -27,6 +28,10 @@ public class SignalGraphController implements BaseController {
     private CheckBox autoScaleCheckBox;
     @FXML
     private TextField amplitudeTextField;
+    @FXML
+    private CheckBox averageCheckBox;
+    @FXML
+    private TextField averageTextField;
     @FXML
     private TextField frequencyTextField;
     @FXML
@@ -51,12 +56,22 @@ public class SignalGraphController implements BaseController {
     private String moduleCalibrationSettings;
     private LinearApproximation linearApproximation;
     private volatile XYChart.Series<Number, Number> graphSeries;
+    private double lowerBound;
+    private double upperBound;
+    private double tickUnit;
+    private double averageCount;
+    private int averageIterator;
+    private double bufferedAverageValue;
+    private double averageValue;
 
     public void initializeView(CrateModel.Moudules moduleType, int selectedSlot, int channel) {
         setFields(moduleType, channel);
+        initializeModuleType(selectedSlot);
+        getGraphBounds();
+        setGraphBounds(lowerBound, upperBound, tickUnit, false);
+        initAverage();
         toggleAutoScale();
         clearGraphData();
-        initializeModuleType(selectedSlot);
         checkCalibration();
         startShow();
     }
@@ -67,32 +82,13 @@ public class SignalGraphController implements BaseController {
         cm.setClosed(false);
     }
 
-    private void clearGraphData() {
-        ObservableList<XYChart.Series<Number, Number>> graphData = graph.getData();
-        graphData.clear();
-        graphSeries = new XYChart.Series<>();
-        graphData.add(graphSeries);
-    }
-
-    private void toggleAutoScale() {
-        autoScaleCheckBox.selectedProperty().addListener(observable -> {
-            if (autoScaleCheckBox.isSelected()) {
-                setGraphBounds(-10, 10, 1, true);
-            } else {
-                setGraphBounds(-10, 10, 1, true);
-            }
-        });
-    }
-
     private void initializeModuleType(int selectedSlot) {
         if (isDefineLTR24Slot(selectedSlot)) {
             data = new double[39064];
             ringBuffer = new RingBuffer(data.length * 100);
-            setGraphBounds(-5, 10, 1, false);
         } else if (isDefineLTR212Slot(selectedSlot)) {
             data = new double[2048];
             ringBuffer = new RingBuffer(data.length * 10);
-            setGraphBounds(-0.1, 0.1, 0.01, true);
         }
     }
 
@@ -106,12 +102,122 @@ public class SignalGraphController implements BaseController {
         return false;
     }
 
+    private void getGraphBounds() {
+        if (moduleType == CrateModel.Moudules.LTR24) {
+            getLTR24Bounds();
+        } else {
+            getLTR212Bounds();
+        }
+    }
+
+    private void getLTR24Bounds() {
+        switch (ltr24.getMeasuringRanges()[channel]) {
+            case 0:
+                setBounds(-2, 2, 0.4);
+                break;
+            case 1:
+                setBounds(-10, 10, 2);
+                break;
+            default:
+                setBounds(-10, 10, 2);
+        }
+    }
+
+    private void setBounds(double lowerBound, double upperBound, double tickUnit) {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+        this.tickUnit = tickUnit;
+    }
+
+    private void getLTR212Bounds() {
+        switch (ltr212.getMeasuringRanges()[channel]) {
+            case 0:
+                setBounds(-0.01, 0.01, 0.002);
+                break;
+            case 1:
+                setBounds(-0.02, 0.02, 0.004);
+                break;
+            case 2:
+                setBounds(-0.04, 0.04, 0.008);
+                break;
+            case 3:
+                setBounds(-0.08, 0.08, 0.016);
+                break;
+            case 4:
+                setBounds(0, 0.01, 0.001);
+                break;
+            case 5:
+                setBounds(0, 0.02, 0.002);
+                break;
+            case 6:
+                setBounds(0, 0.04, 0.004);
+                break;
+            case 7:
+                setBounds(0, 0.08, 0.008);
+                break;
+            default:
+                setBounds(-10, 10, 1);
+        }
+    }
+
+    private void clearGraphData() {
+        ObservableList<XYChart.Series<Number, Number>> graphData = graph.getData();
+        graphData.clear();
+        graphSeries = new XYChart.Series<>();
+        graphData.add(graphSeries);
+    }
+
+    private void toggleAutoScale() {
+        autoScaleCheckBox.selectedProperty().addListener(observable -> {
+            if (autoScaleCheckBox.isSelected()) {
+                setGraphBounds(lowerBound, upperBound, tickUnit, true);
+            } else {
+                setGraphBounds(lowerBound, upperBound, tickUnit, false);
+            }
+        });
+    }
+
     private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setAutoRanging(isAutoRangeEnabled);
         yAxis.setLowerBound(lowerBound);
         yAxis.setUpperBound(upperBound);
         yAxis.setTickUnit(tickUnit);
-        yAxis.setAutoRanging(isAutoRangeEnabled);
+    }
+
+    private void initAverage() {
+        setDigitFilter();
+        toggleAverageUiElements();
+        calculateAverage();
+    }
+
+    private void setDigitFilter() {
+        averageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            averageTextField.setText(newValue.replaceAll("[^\\d]{1,3}", ""));
+            if (!newValue.matches("^\\d{1,3}|$")) {
+                averageTextField.setText(oldValue);
+                averageValue = 0;
+                averageCount = 1;
+            }
+        });
+    }
+
+    private void toggleAverageUiElements() {
+        averageCheckBox.selectedProperty().addListener(observable -> {
+            if (averageCheckBox.isSelected()) {
+                averageTextField.setDisable(false);
+            } else {
+                averageTextField.setDisable(true);
+            }
+        });
+    }
+
+    private void calculateAverage() {
+        averageTextField.textProperty().addListener(observable -> {
+            if (averageCheckBox.isSelected() && !averageTextField.getText().isEmpty()) {
+                averageCount = Double.parseDouble(averageTextField.getText());
+            }
+        });
     }
 
     private boolean isDefineLTR212Slot(int slot) {
@@ -216,7 +322,6 @@ public class SignalGraphController implements BaseController {
     }
 
     private void calculateData(List<XYChart.Data<Number, Number>> intermediateList) {
-        maxValue = -999;
         final int CHANNELS = 4;
         double[] buffer = new double[2048];
 
@@ -226,17 +331,29 @@ public class SignalGraphController implements BaseController {
 
         ringBuffer.take(buffer, buffer.length);
 
+        maxValue = -999;
         for (int i = channel; i < buffer.length; i += CHANNELS) {
             if (buffer[i] > maxValue) {
-                maxValue = (double) Math.round(buffer[i] * 100) / 100;
+                maxValue = buffer[i];
             }
 
             intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
         }
 
+        if (averageIterator < averageCount) {
+            bufferedAverageValue += maxValue;
+            averageIterator++;
+        } else {
+            if (averageCount != 0) {
+            averageValue = bufferedAverageValue / averageCount;
+            }
+            averageIterator = 0;
+            bufferedAverageValue = 0;
+        }
+
         if (calibrationState.equals("setted")) {
             linearApproximation.approximate(maxValue);
-            maxValue = (double) Math.round(linearApproximation.getApproximatedValue() * 100000) / 100000;
+            maxValue = linearApproximation.getApproximatedValue();
             intermediateList.clear();
 
             for (int i = channel; i < buffer.length; i += CHANNELS) {
@@ -250,7 +367,7 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            shiftTextField.setText(String.format("%f", maxValue));
+            shiftTextField.setText(String.format("%f", averageValue));
             isDone = true;
         });
     }
@@ -267,11 +384,6 @@ public class SignalGraphController implements BaseController {
     }
 
     @FXML
-    private void handleClear() {
-        clearGraphData();
-    }
-
-    @FXML
     private void handleCalibrate() {
         cm.loadDefaultCalibrationSettings(moduleType, channel);
         cm.showChannelValue();
@@ -281,9 +393,21 @@ public class SignalGraphController implements BaseController {
     @FXML
     private void handleBackButton() {
         String module = cm.getCrateModelInstance().getModulesNames().get(cm.getSelectedModule());
+        disableAverage();
+        disableAutoScale();
         wm.setModuleScene(module, cm.getSelectedModule());
         cm.loadItemsForModulesTableView();
         cm.setClosed(true);
+    }
+
+    private void disableAverage() {
+        averageCheckBox.setSelected(false);
+    }
+
+    @FXML
+    private void disableAutoScale() {
+        autoScaleCheckBox.setSelected(false);
+        toggleAutoScale();
     }
 
     public LTR24 getLtr24() {

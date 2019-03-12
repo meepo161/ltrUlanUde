@@ -19,6 +19,8 @@ import java.util.List;
 
 public class LTR24SettingController implements BaseController {
     @FXML
+    private CheckBox applyForAll;
+    @FXML
     private Button initializeButton;
     @FXML
     private Button valueOfChannelN1;
@@ -87,6 +89,8 @@ public class LTR24SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
+        addListenerForComboBoxes(channelsTypesComboBoxes);
+        addListenerForComboBoxes(measuringRangesComboBoxes);
         checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
     }
 
@@ -159,14 +163,28 @@ public class LTR24SettingController implements BaseController {
     private void disableChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
+                addApplyForAllListener(true);
                 disableChannelsUiElements(channel, false);
             } else {
+                addApplyForAllListener(false);
                 disableChannelsUiElements(channel, true);
                 channelsDescription.get(channel).setText("");
                 channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
                 measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
             }
         });
+    }
+
+    private void addApplyForAllListener(boolean isChannelSelected) {
+        if (applyForAll.isSelected()) {
+            selectSetting(isChannelSelected);
+        }
+    }
+
+    private void selectSetting(boolean isChannelSelected) {
+        for (CheckBox checkBox : channelsCheckBoxes) {
+            checkBox.setSelected(isChannelSelected);
+        }
     }
 
     private void disableChannelsUiElements(int channel, boolean isDisable) {
@@ -215,6 +233,27 @@ public class LTR24SettingController implements BaseController {
         strings.add("~5 В");
 
         measuringRange.getItems().setAll(strings);
+    }
+
+    private void addListenerForComboBoxes(List<ComboBox<String>> comboBoxes) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.valueProperty().addListener(observable -> {
+                int setting = comboBox.getSelectionModel().getSelectedIndex();
+                addApplyForAllListener(comboBoxes, setting);
+            });
+        }
+    }
+
+    private void addApplyForAllListener(List<ComboBox<String>> comboBoxes, int setting) {
+        if (applyForAll.isSelected()) {
+            selectComboBoxes(comboBoxes, setting);
+        }
+    }
+
+    private void selectComboBoxes(List<ComboBox<String>> comboBoxes, int setting) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.getSelectionModel().select(setting);
+        }
     }
 
     private void addListOfDifferentialMeasuringRanges(ComboBox<String> measuringRange) {

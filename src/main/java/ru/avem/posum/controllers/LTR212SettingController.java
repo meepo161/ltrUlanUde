@@ -19,6 +19,8 @@ import java.util.List;
 
 public class LTR212SettingController implements BaseController {
     @FXML
+    private CheckBox applyForAll;
+    @FXML
     private Button initializeButton;
     @FXML
     private Button valueOfChannelN1;
@@ -87,6 +89,8 @@ public class LTR212SettingController implements BaseController {
 
         addListOfChannelsTypes(channelsTypesComboBoxes);
         addListenerForAllChannels();
+        addListenerForComboBoxes(channelsTypesComboBoxes);
+        addListenerForComboBoxes(measuringRangesComboBoxes);
         addListOfMeasuringRanges(measuringRangesComboBoxes);
     }
 
@@ -137,12 +141,12 @@ public class LTR212SettingController implements BaseController {
 
     private void addListOfChannelsTypes(List<ComboBox<String>> channelsTypesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("Сбалансированный мост (200 Ом)");
-        strings.add("Сбалансированный мост (350 Ом)");
-        strings.add("Сбалансированный мост (внешний резистор)");
-        strings.add("Разбалансированный мост (200 Ом)");
-        strings.add("Разбалансированный мост (350 Ом)");
-        strings.add("Разбалансированный мост (внешний резистор)");
+        strings.add("Четверть-мостовая схема (200 Ом)");
+        strings.add("Четверть-мостовая схема (350 Ом)");
+        strings.add("Четверть-мостовая схема (внешний резистор)");
+        strings.add("Четверть-мостовая схема с нормирующим разбалансом (200 Ом)");
+        strings.add("Четверть-мостовая схема с нормирующим разбалансом (350 Ом)");
+        strings.add("Четверть-мостовая схема с нормирующим разбалансом (внешний резистор)");
 
         setComboBox(channelsTypesComboBoxes, strings);
     }
@@ -154,8 +158,8 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void addListenerForAllChannels() {
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            toggleChannelsUiElements(channelsCheckBoxes.get(i), i);
+        for (int channel = 0; channel < channelsCheckBoxes.size(); channel++) {
+            toggleChannelsUiElements(channelsCheckBoxes.get(channel), channel);
         }
     }
 
@@ -165,8 +169,10 @@ public class LTR212SettingController implements BaseController {
     private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
+                addApplyForAllListener(true);
                 toggleUiElements(channel, false);
             } else {
+                addApplyForAllListener(false);
                 toggleUiElements(channel, true);
                 channelsDescription.get(channel).setText("");
                 channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
@@ -174,6 +180,18 @@ public class LTR212SettingController implements BaseController {
                 valueOfChannelsButtons.get(channel).setDisable(true);
             }
         });
+    }
+
+    private void addApplyForAllListener(boolean isChannelSelected) {
+        if (applyForAll.isSelected()) {
+            selectSetting(isChannelSelected);
+        }
+    }
+
+    private void selectSetting(boolean isChannelSelected) {
+        for (CheckBox checkBox : channelsCheckBoxes) {
+            checkBox.setSelected(isChannelSelected);
+        }
     }
 
     private void toggleUiElements(int channel, boolean isDisable) {
@@ -195,6 +213,27 @@ public class LTR212SettingController implements BaseController {
 
         if (disabledChannels == 4) { // 4 - общее количество каналов
             initializeButton.setDisable(true);
+        }
+    }
+
+    private void addListenerForComboBoxes(List<ComboBox<String>> comboBoxes) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.valueProperty().addListener(observable -> {
+                int setting = comboBox.getSelectionModel().getSelectedIndex();
+                addApplyForAllListener(comboBoxes, setting);
+            });
+        }
+    }
+
+    private void addApplyForAllListener(List<ComboBox<String>> comboBoxes, int setting) {
+        if (applyForAll.isSelected()) {
+            selectComboBoxes(comboBoxes, setting);
+        }
+    }
+
+    private void selectComboBoxes(List<ComboBox<String>> comboBoxes, int setting) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.getSelectionModel().select(setting);
         }
     }
 

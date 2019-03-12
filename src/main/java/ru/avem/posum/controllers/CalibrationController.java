@@ -207,7 +207,7 @@ public class CalibrationController implements BaseController {
         new Thread(() -> {
             while (!stopped) {
                 Platform.runLater(() -> {
-                    channelValueTextField.setText(String.valueOf(cm.getMaxValue()));
+                    channelValueTextField.setText(String.format("%.5f", cm.getMaxValue()));
                 });
                 Utils.sleep(100);
             }

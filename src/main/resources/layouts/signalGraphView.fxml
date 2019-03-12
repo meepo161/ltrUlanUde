@@ -32,71 +32,82 @@
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="200.0" prefHeight="200.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="9" GridPane.rowIndex="2" GridPane.rowSpan="5" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="9" GridPane.rowIndex="2" />
             <Label styleClass="title" text="Текущая нагрузка на канале" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
              <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" title="Принятый сигнал" GridPane.columnSpan="9" GridPane.rowIndex="2">
                  <xAxis>
                      <NumberAxis autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                  </xAxis>
                  <yAxis>
-                     <NumberAxis fx:id="yAxis" animated="false" label="Напряжение, В" lowerBound="-10.0" side="LEFT" tickUnit="1.0" upperBound="10.0" />
+                     <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="Напряжение, В" lowerBound="-10.0" side="LEFT" tickUnit="1.0" upperBound="10.0" />
                  </yAxis>
                <GridPane.margin>
                   <Insets left="-10.0" />
                </GridPane.margin>
              </LineChart>
-            <StatusBar text="" GridPane.rowIndex="9" />
-            <Label text="Амплитуда:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+            <StatusBar text="" GridPane.rowIndex="10" />
+            <Label text="Амплитуда:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="amplitudeTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+            <TextField fx:id="amplitudeTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Тарировка" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
+            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Тарировка" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin></Button>
-            <Label text="Частота:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <TextField fx:id="frequencyTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+            <Label text="Частота:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <TextField fx:id="frequencyTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Label text="Фаза:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <TextField fx:id="phaseTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+            <Label text="Фаза:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <TextField fx:id="phaseTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Label text="Смещение:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-            <TextField fx:id="shiftTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+            <Label text="Смещение:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+            <TextField fx:id="shiftTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="8" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="averageCheckBox" mnemonicParsing="false" text="Среднее" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <TextField fx:id="averageTextField" disable="true" maxWidth="50.0" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
-            </CheckBox>
+            </TextField>
          </children>
       </GridPane>
    </children>
