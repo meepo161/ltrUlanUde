@@ -43,7 +43,7 @@
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="9" GridPane.rowIndex="2" />
-            <Label styleClass="title" text="Текущая нагрузка на канале" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label styleClass="title" text="Текущая нагрузка на канале" GridPane.columnIndex="3" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
              <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" title="Принятый сигнал" GridPane.columnSpan="9" GridPane.rowIndex="2">
                  <xAxis>
                      <NumberAxis autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
@@ -66,15 +66,6 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Тарировка" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
-               <GridPane.margin>
-                  <Insets right="10.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="9">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin></Button>
             <Label text="Частота:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
             <TextField fx:id="frequencyTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" promptText="Вольт" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                <GridPane.margin>
@@ -93,11 +84,6 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="7">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </CheckBox>
             <CheckBox fx:id="averageCheckBox" mnemonicParsing="false" text="Среднее" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7">
                <GridPane.margin>
                   <Insets left="10.0" />
@@ -108,6 +94,20 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </TextField>
+            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Тарировка" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin></Button>
          </children>
       </GridPane>
    </children>

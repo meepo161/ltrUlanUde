@@ -37,7 +37,7 @@ public class LTR34 {
         close();
     }
 
-    public native void dataSend(double[] data);
+    public native void generate(double[] data);
 
     public native String start();
 

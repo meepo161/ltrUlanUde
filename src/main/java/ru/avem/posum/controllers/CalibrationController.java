@@ -98,7 +98,8 @@ public class CalibrationController implements BaseController {
 
     public void handleAddToTable() {
         addCalibrationDataToTable();
-        graphSeries.getData().add(new XYChart.Data<>(calibrationModel.getLoadValue(), calibrationModel.getChannelValue()));
+        addCalibrationPointToGraph();
+        disableValueNameTextField();
     }
 
     private void addCalibrationDataToTable() {
@@ -123,6 +124,14 @@ public class CalibrationController implements BaseController {
             saveButton.setDisable(false);
             saveButton.requestFocus();
         }
+    }
+
+    private void addCalibrationPointToGraph() {
+        graphSeries.getData().add(new XYChart.Data<>(calibrationModel.getLoadValue(), calibrationModel.getChannelValue()));
+    }
+
+    private void disableValueNameTextField() {
+        loadValueNameTextField.setDisable(true);
     }
 
     public void handleBackButton() {
@@ -207,7 +216,7 @@ public class CalibrationController implements BaseController {
         new Thread(() -> {
             while (!stopped) {
                 Platform.runLater(() -> {
-                    channelValueTextField.setText(String.format("%.5f", cm.getMaxValue()));
+                    channelValueTextField.setText(String.format("%.6f", cm.getMaxValue()));
                 });
                 Utils.sleep(100);
             }

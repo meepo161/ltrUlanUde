@@ -331,13 +331,13 @@ public class LTR34SettingController implements BaseController {
     private void generate() {
         if (ltr34.getStatus().equals("Операция успешно выполнена")) {
             createChannelsData();
-            ltr34.dataSend(signal);
+            ltr34.generate(signal);
             ltr34.start();
 
             new Thread(() -> {
                 stopped = false;
                 while (!stopped) {
-                    ltr34.dataSend(signal);
+                    ltr34.generate(signal);
                     try {
                         Thread.sleep(1000); // пауза подобрана, чтобы ЦАП работал непрерывно
                     } catch (InterruptedException e) {

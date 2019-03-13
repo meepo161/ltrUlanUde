@@ -193,8 +193,8 @@ public class SignalGraphController implements BaseController {
 
     private void setDigitFilter() {
         averageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            averageTextField.setText(newValue.replaceAll("[^\\d]{1,3}", ""));
-            if (!newValue.matches("^\\d{1,3}|$")) {
+            averageTextField.setText(newValue.replaceAll("[^1-9]{1,3}", ""));
+            if (!newValue.matches("^[1-9]{1,3}|$")) {
                 averageTextField.setText(oldValue);
                 averageValue = 0;
                 averageCount = 1;
@@ -214,8 +214,10 @@ public class SignalGraphController implements BaseController {
 
     private void calculateAverage() {
         averageTextField.textProperty().addListener(observable -> {
-            if (averageCheckBox.isSelected() && !averageTextField.getText().isEmpty()) {
+            if (averageCheckBox.isSelected() & !averageTextField.getText().isEmpty()) {
                 averageCount = Double.parseDouble(averageTextField.getText());
+            } else if (averageTextField.getText().isEmpty()) {
+                averageCount = 0;
             }
         });
     }
@@ -345,10 +347,12 @@ public class SignalGraphController implements BaseController {
             averageIterator++;
         } else {
             if (averageCount != 0) {
-            averageValue = bufferedAverageValue / averageCount;
+                averageValue = bufferedAverageValue / averageCount;
+                averageIterator = 0;
+                bufferedAverageValue = 0;
+            } else {
+                averageValue = maxValue;
             }
-            averageIterator = 0;
-            bufferedAverageValue = 0;
         }
 
         if (calibrationState.equals("setted")) {
@@ -402,6 +406,7 @@ public class SignalGraphController implements BaseController {
 
     private void disableAverage() {
         averageCheckBox.setSelected(false);
+        averageTextField.setText("");
     }
 
     @FXML
