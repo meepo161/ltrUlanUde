@@ -361,6 +361,7 @@ public class SettingsModel implements BaseController {
     private void setFields(TestProgram testProgram, CrateModel crateModel, int selectedCrate) {
         this.testProgram = testProgram;
         this.crateModel = crateModel;
+        this.crate = testProgram.getCrate();
         this.modulesNames = crateModel.getModulesNames(selectedCrate);
     }
 

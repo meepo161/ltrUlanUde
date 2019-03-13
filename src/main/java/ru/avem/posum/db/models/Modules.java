@@ -57,7 +57,7 @@ public class Modules {
         phases = moduleSettings.getOrDefault("Phases", "");
     }
 
-    public String settingsToString(int[] settings) {
+    private String settingsToString(int[] settings) {
         StringBuffer settingsLine = new StringBuffer();
 
         for (Object value : settings) {
