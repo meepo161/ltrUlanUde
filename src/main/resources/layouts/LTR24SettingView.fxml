@@ -54,8 +54,7 @@
          <children>
             <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR24" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
-            <Label text="Каналы:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Описание:" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <Label text="Назначение канала:" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -70,6 +69,7 @@
                   <Insets />
                </GridPane.margin>
             </Label>
+            <CheckBox fx:id="applyForAllCheckBox" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <CheckBox fx:id="checkChannelN1" mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets />
@@ -90,7 +90,7 @@
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -110,7 +110,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="4" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="4" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -130,7 +130,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="6" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="6" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -150,7 +150,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="8" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="8" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>

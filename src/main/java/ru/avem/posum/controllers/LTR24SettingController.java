@@ -21,6 +21,8 @@ import java.util.List;
 
 public class LTR24SettingController implements BaseController {
     @FXML
+    private CheckBox applyForAllCheckBox;
+    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -70,17 +72,18 @@ public class LTR24SettingController implements BaseController {
     private Button valueOfChannelN4;
 
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
-    private String[] channelsDescriptions;
     private List<TextField> channelsDescription = new ArrayList<>();
+    private String[] channelsDescriptions;
     private int[] channelsTypes;
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private boolean[] checkedChannels;
-    private boolean isConnectionOpen;
     private ControllerManager cm;
     private CrateModel crateModel;
+    private int disabledChannels;
+    private boolean isConnectionOpen;
     private LTR24 ltr24;
-    private int[] measuringRanges;
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
+    private int[] measuringRanges;
     private String moduleName;
     private int slot;
     private StatusBarLine statusBarLine = new StatusBarLine();
@@ -97,8 +100,10 @@ public class LTR24SettingController implements BaseController {
         fillListOfChannelsValuesButtons();
 
         addChannelsTypes(channelsTypesComboBoxes);
-        addListenerForAllChannels();
-        checkChannelType(channelsTypesComboBoxes, measuringRangesComboBoxes);
+        addListenerForCheckBoxes(channelsCheckBoxes);
+        addListenerForComboBoxes(channelsTypesComboBoxes);
+        addListenerForComboBoxes(measuringRangesComboBoxes);
+        checkICPChannelsSelection(channelsTypesComboBoxes, measuringRangesComboBoxes);
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -161,54 +166,99 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    private void addListenerForAllChannels() {
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            disableChannelsUiElements(channelsCheckBoxes.get(i), i);
+    private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {
+        for (int i = 0; i < checkBoxes.size(); i++) {
+            changeChannelsUiElementsState(checkBoxes.get(i), i);
         }
     }
 
-    private void disableChannelsUiElements(CheckBox checkBox, int channel) {
+    private void changeChannelsUiElementsState(CheckBox checkBox, int channel) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
-                disableChannelsUiElements(channel, false);
+                applyForAllChannels(true);
+                changeChannelUiElementsState(channel, false);
             } else {
-                disableChannelsUiElements(channel, true);
-                channelsDescription.get(channel).setText("");
-                channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
-                measuringRangesComboBoxes.get(channel).getSelectionModel().select(1);
+                applyForAllChannels(false);
+                changeChannelUiElementsState(channel, true);
+                setDefaultChannelsSettings(channel);
             }
         });
     }
 
-    private void disableChannelsUiElements(int channel, boolean isDisable) {
+    private void applyForAllChannels(boolean isChannelSelected) {
+        if (applyForAllCheckBox.isSelected()) {
+            selectSetting(isChannelSelected);
+        }
+    }
+
+    private void selectSetting(boolean isChannelSelected) {
+        for (CheckBox checkBox : channelsCheckBoxes) {
+            checkBox.setSelected(isChannelSelected);
+        }
+    }
+
+    private void changeChannelUiElementsState(int channel, boolean isDisable) {
         channelsTypesComboBoxes.get(channel).setDisable(isDisable);
         measuringRangesComboBoxes.get(channel).setDisable(isDisable);
         channelsDescription.get(channel).setDisable(isDisable);
-        toggleInitializeButton();
+        changeInitializeButtonState();
     }
 
-    private void toggleInitializeButton() {
-        int disabledChannels = 0;
-        for (CheckBox checkBox : channelsCheckBoxes) {
-            if (checkBox.isSelected()) {
+    private void changeInitializeButtonState() {
+        countDisabledChannels();
+        checkCounterOfDisabledChannels();
+    }
+
+    private void countDisabledChannels() {
+        for (CheckBox channelCheckBox : channelsCheckBoxes) {
+            if (channelCheckBox.isSelected()) {
                 initializeButton.setDisable(false);
             } else {
                 disabledChannels++;
             }
         }
+    }
 
-        if (disabledChannels == 4) { // 4 - общее количество каналов
+    private void checkCounterOfDisabledChannels() {
+        if (disabledChannels == ltr24.getChannelsCount()) { // общее количество каналов
             initializeButton.setDisable(true);
         }
     }
 
-    private void checkChannelType(List<ComboBox<String>> channelsTypesComboBoxes, List<ComboBox<String>> measuringRangesComboBoxes) {
-        for (int i = 0; i < channelsTypesComboBoxes.size(); i++) {
-            toggleICPChannels(channelsTypesComboBoxes.get(i), measuringRangesComboBoxes.get(i));
+    private void setDefaultChannelsSettings(int channel) {
+        channelsDescription.get(channel).setText("");
+        channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
+        measuringRangesComboBoxes.get(channel).getSelectionModel().select(1);
+    }
+
+    private void addListenerForComboBoxes(List<ComboBox<String>> comboBoxes) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.valueProperty().addListener(observable -> {
+                int setting = comboBox.getSelectionModel().getSelectedIndex();
+                applyForAllChannels(comboBoxes, setting);
+            });
         }
     }
 
-    private void toggleICPChannels(ComboBox<String> channelType, ComboBox<String> measuringRange) {
+    private void applyForAllChannels(List<ComboBox<String>> comboBoxes, int setting) {
+        if (applyForAllCheckBox.isSelected()) {
+            selectComboBoxes(comboBoxes, setting);
+        }
+    }
+
+    private void selectComboBoxes(List<ComboBox<String>> comboBoxes, int setting) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.getSelectionModel().select(setting);
+        }
+    }
+
+    private void checkICPChannelsSelection(List<ComboBox<String>> channelsTypesComboBoxes, List<ComboBox<String>> measuringRangesComboBoxes) {
+        for (int i = 0; i < channelsTypesComboBoxes.size(); i++) {
+            changeMeasuringRanges(channelsTypesComboBoxes.get(i), measuringRangesComboBoxes.get(i));
+        }
+    }
+
+    private void changeMeasuringRanges(ComboBox<String> channelType, ComboBox<String> measuringRange) {
         channelType.valueProperty().addListener(observable -> {
             if (channelType.getSelectionModel().isSelected(2)) {
                 addICPMeasuringRanges(measuringRange);
@@ -224,7 +274,6 @@ public class LTR24SettingController implements BaseController {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("~1 В");
         strings.add("~5 В");
-
         measuringRange.getItems().setAll(strings);
     }
 
@@ -232,19 +281,18 @@ public class LTR24SettingController implements BaseController {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-2 В/+2 В");
         strings.add("-10 В/+10 В");
-
         measuringRange.getItems().setAll(strings);
     }
 
     public void loadSettings(String moduleName) {
-        writeField(moduleName);
+        setFields(moduleName);
         parseSlotNumber();
         setTitleLabel();
         findLTR24Module();
         loadModuleSettings();
     }
 
-    private void writeField(String moduleName) {
+    private void setFields(String moduleName) {
         this.moduleName = moduleName;
     }
 
@@ -265,11 +313,11 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void loadModuleSettings() {
-        loadSettingsFields();
+        setSettingsFields();
         setSettings();
     }
 
-    private void loadSettingsFields() {
+    private void setSettingsFields() {
         checkedChannels = ltr24.getCheckedChannels();
         channelsTypes = ltr24.getChannelsTypes();
         measuringRanges = ltr24.getMeasuringRanges();
@@ -298,7 +346,7 @@ public class LTR24SettingController implements BaseController {
 
     private void changeUiElementsState() {
         toggleProgressIndicatorState(false);
-        disableChannelsUiElements();
+        changeChannelsUiElementsState();
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
@@ -309,7 +357,7 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    private void disableChannelsUiElements() {
+    private void changeChannelsUiElementsState() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
             channelsDescription.get(i).setDisable(true);
@@ -349,7 +397,7 @@ public class LTR24SettingController implements BaseController {
             Platform.runLater(() -> {
                 isConnectionOpen = true;
                 toggleProgressIndicatorState(true);
-                enableChannelsButtons();
+                enableChannelValueButtons();
             });
         } else {
             Platform.runLater(() -> {
@@ -360,7 +408,7 @@ public class LTR24SettingController implements BaseController {
         }
     }
 
-    private void enableChannelsButtons() {
+    private void enableChannelValueButtons() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 valueOfChannelsButtons.get(i).setDisable(false);
@@ -388,7 +436,6 @@ public class LTR24SettingController implements BaseController {
     private void indicateResult() {
         Platform.runLater(() -> statusBarLine.setStatus(ltr24.getStatus(), statusBar));
     }
-
 
     public void handleBackButton() {
         new Thread(() -> {
