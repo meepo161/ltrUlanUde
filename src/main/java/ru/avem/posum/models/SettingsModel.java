@@ -1,5 +1,6 @@
 package ru.avem.posum.models;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
@@ -23,51 +24,76 @@ public class SettingsModel implements BaseController {
     private int[] channelsTypes;
     private boolean[] checkedChannels;
     private ControllerManager cm;
+    private int channels;
     private String crate;
     private CrateModel crateModel;
     private DAC dac;
     private int[] frequencies;
     private boolean isEditMode;
+    private HashMap<String, Actionable> instructions = new HashMap<>();
     private int[] measuringRanges;
     private List<Pair<Integer, Module>> modules;
+    private int moduleIndex;
     private ObservableList<String> modulesNames;
     private HashMap<String, String> moduleSettings;
+    private String moduleType;
     private int[] phases;
     private int slot;
     private TestProgram testProgram;
     private long testProgramId;
 
     public void createModulesInstances(ObservableList<String> modulesNames) {
+        setFields(modulesNames);
+        initModulesInstances();
+    }
+
+    private void setFields(ObservableList<String> modulesNames) {
         this.crate = cm.getCrate();
         this.modulesNames = modulesNames;
-        crateModel = cm.getCrateModelInstance();
+        this.crateModel = cm.getCrateModelInstance();
+    }
 
-        for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
-            switch (modulesNames.get(moduleIndex).split(" ")[0]) {
-                case CrateModel.LTR24:
-                    adc = new LTR24();
-                    setModuleSettings(adc, moduleIndex);
-                    setDefaultADCSettings(0, 1);
-                    saveModuleInstance(adc);
-                    break;
-                case CrateModel.LTR34:
-                    dac = new LTR34();
-                    setModuleSettings(dac, moduleIndex);
-                    setDefaultDACSettings();
-                    saveModuleInstance(dac);
-                    break;
-                case CrateModel.LTR212:
-                    adc = new LTR212();
-                    setModuleSettings(adc, moduleIndex);
-                    setDefaultADCSettings(2, 3);
-                    saveModuleInstance(adc);
-                    break;
-            }
+    private void addInitModuleInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::initLTR24Instance);
+        instructions.put(CrateModel.LTR34, this::initLTR34Instance);
+        instructions.put(CrateModel.LTR212, this::initLTR212Instance);
+    }
+
+    private void initLTR24Instance() {
+        adc = new LTR24();
+        setModuleSettings(adc);
+        setDefaultADCSettings(0, 1);
+        saveModuleInstance(adc);
+    }
+
+    private void initLTR34Instance() {
+        dac = new LTR34();
+        setModuleSettings(dac);
+        setDefaultDACSettings();
+        saveModuleInstance(dac);
+    }
+
+    private void initLTR212Instance() {
+        adc = new LTR212();
+        setModuleSettings(adc);
+        setDefaultADCSettings(2, 3);
+        saveModuleInstance(adc);
+    }
+
+    private void initModulesInstances() {
+        addInitModuleInstructions();
+        for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
+            moduleType = modulesNames.get(moduleIndex).split(" ")[0];
+            runInstructions();
         }
     }
 
+    private void runInstructions() {
+        instructions.get(moduleType).onAction();
+    }
 
-    private void setModuleSettings(Module module, int moduleIndex) {
+    private void setModuleSettings(Module module) {
         slot = parseSlotNumber(moduleIndex);
         module.setSlot(slot);
         module.setCrate(crate);
@@ -177,32 +203,48 @@ public class SettingsModel implements BaseController {
     }
 
     public void saveHardwareSettings(boolean isEditMode) {
-        this.isEditMode = isEditMode;
-        this.testProgramId = testProgram.getId();
+        setFields(isEditMode);
+        saveModulesSettings();
+    }
 
-        for (int i = 0; i < modulesNames.size(); i++) {
-            slot = parseSlotNumber(i);
-
-            switch (modulesNames.get(i).split(" ")[0]) {
-                case CrateModel.LTR24:
-                    getADCInstance(i);
-                    saveADCSettings("LTR24");
-                    break;
-                case CrateModel.LTR34:
-                    getDACInstance(i);
-                    saveDACSettings("LTR34");
-                    break;
-                case CrateModel.LTR212:
-                    getADCInstance(i);
-                    saveADCSettings("LTR212");
-                    break;
-            }
-
+    private void saveModulesSettings() {
+        addSaveModuleInstructions();
+        for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
+            moduleType = modulesNames.get(moduleIndex).split(" ")[0];
+            slot = parseSlotNumber(moduleIndex);
+            runInstructions();
         }
     }
 
-    private void getADCInstance(int index) {
-        adc = (ADC) crateModel.getModulesList().get(index).getValue();
+    private void setFields(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        this.testProgramId = testProgram.getId();
+    }
+
+    private void addSaveModuleInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::saveLTR24Settings);
+        instructions.put(CrateModel.LTR34, this::saveLTR34Settings);
+        instructions.put(CrateModel.LTR212, this::saveLTR212Settings);
+    }
+
+    private void saveLTR24Settings() {
+        getADCInstance();
+        saveADCSettings(CrateModel.LTR24);
+    }
+
+    private void saveLTR34Settings() {
+        getDACInstance();
+        saveDACSettings(CrateModel.LTR34);
+    }
+
+    private void saveLTR212Settings() {
+        getADCInstance();
+        saveADCSettings(CrateModel.LTR212);
+    }
+
+    private void getADCInstance() {
+        adc = (ADC) crateModel.getModulesList().get(moduleIndex).getValue();
     }
 
     private void saveADCSettings(String moduleName) {
@@ -213,7 +255,6 @@ public class SettingsModel implements BaseController {
             setADCModuleSettings(moduleName);
             addNewModule();
         }
-
     }
 
     private void updateADCFields() {
@@ -232,7 +273,6 @@ public class SettingsModel implements BaseController {
     private void updateModuleSettings(Modules module) {
         ModulesRepository.updateModules(module);
     }
-
 
     private void addNewModule() {
         Modules module = new Modules(moduleSettings);
@@ -262,8 +302,8 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Channels description", String.valueOf(channelsDescriptionsLine));
     }
 
-    private void getDACInstance(int index) {
-        dac = (DAC) crateModel.getModulesList().get(index).getValue();
+    private void getDACInstance() {
+        dac = (DAC) crateModel.getModulesList().get(moduleIndex).getValue();
     }
 
     private void saveDACSettings(String moduleName) {
@@ -301,7 +341,7 @@ public class SettingsModel implements BaseController {
 
     private void updateDACFields() {
         for (Modules module : ModulesRepository.getAllModules()) {
-            if (module.getTestProgramId() == testProgramId && module.getSlot() == adc.getSlot()) {
+            if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
                 module.setCheckedChannels(dac.getCheckedChannels());
                 module.setAmplitudes(dac.getAmplitudes());
                 module.setFrequencies(dac.getFrequencies());
@@ -327,78 +367,94 @@ public class SettingsModel implements BaseController {
     private void fillModulesList() {
         modules = crateModel.getModulesList();
         testProgramId = testProgram.getId();
+        ObservableList<String> modulesNames = FXCollections.observableArrayList();
 
+        findModules(modulesNames);
+        addInitModuleInstructions();
+        for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
+            moduleType = modulesNames.get(moduleIndex).split(" ")[0];
+            runInstructions();
+        }
+    }
+
+    private void findModules(ObservableList<String> modulesNames) {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId) {
-                modules.add(new Pair<>(module.getSlot(), new Module()));
+                modulesNames.add(module.getModuleType() + " (Слот " + module.getSlot() + ")");
             }
         }
     }
 
     private void loadSettings() {
-        for (int i = 0; i < modulesNames.size(); i++) {
-            slot = parseSlotNumber(i);
-
-            switch (modulesNames.get(i).split(" ")[0]) {
-                case CrateModel.LTR24:
-                case CrateModel.LTR212:
-                    adc = (ADC) modules.get(slot).getValue();
-                    loadADCSettings();
-                    break;
-                case CrateModel.LTR34:
-                    dac = (DAC) modules.get(slot).getValue();
-                    loadDACSettings();
-                    break;
-            }
+        addLoadModulesInstructions();
+        for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
+            moduleType = modulesNames.get(moduleIndex).split(" ")[0];
+            slot = parseSlotNumber(moduleIndex);
+            runInstructions();
         }
     }
 
+    private void addLoadModulesInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::loadADCSettings);
+        instructions.put(CrateModel.LTR34, this::loadDACSettings);
+        instructions.put(CrateModel.LTR212, this::loadADCSettings);
+    }
+
     private void loadADCSettings() {
+        adc = (ADC) modules.get(slot - 1).getValue();
+        channels = adc.getChannelsCount();
         setADCSettingsFields();
-        int CHANNELS = adc.getChannelsCount();
 
         for (Modules module : ModulesRepository.getAllModules()) {
+            parseADCSettings(module);
+        }
+    }
+
+    private void parseADCSettings(Modules module) {
+        if (slot == module.getSlot()) {
+            String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
+            String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
+            String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
+            String[] parsedChannelsDescriptions = module.getChannelsDescription().split(", ", 5);
+
             adc.setSlot(slot);
             adc.setModuleId(module.getId());
 
-            if (slot == module.getSlot()) {
-                String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
-                String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
-                String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
-                String[] parsedChannelsDescriptions = module.getChannelsDescription().split(", ", 5);
-
-                for (int i = 0; i < CHANNELS; i++) {
-                    checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
-                    channelsTypes[i] = Integer.parseInt(parsedChannelsTypes[i]);
-                    measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
-                    parsedChannelsDescriptions[i] = parsedMeasuringRanges[i];
-                }
+            for (int i = 0; i < channels; i++) {
+                checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
+                channelsTypes[i] = Integer.parseInt(parsedChannelsTypes[i]);
+                measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
+                channelsDescription[i] = parsedChannelsDescriptions[i];
             }
         }
     }
 
     private void loadDACSettings() {
+        dac = (DAC) modules.get(slot - 1).getValue();
+        channels = dac.getChannelsCount();
         setDACSettingsFields();
-        int CHANNELS = dac.getChannelsCount();
 
         for (Modules module : ModulesRepository.getAllModules()) {
-            if (slot == module.getSlot()) {
-                dac.setSlot(slot);
-                dac.setModuleId(module.getId());
+            parseDACSettings(module);
+        }
+    }
 
-                if (slot == module.getSlot()) {
-                    String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
-                    String[] parsedAmplitudes = module.getChannelsTypes().split(", ", 9);
-                    String[] parsedFrequencies = module.getMeasuringRanges().split(", ", 9);
-                    String[] parsedPhases = module.getChannelsDescription().split(", ", 9);
+    private void parseDACSettings(Modules module) {
+        if (slot == module.getSlot()) {
+            String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
+            String[] parsedAmplitudes = module.getAmplitudes().split(", ", 9);
+            String[] parsedFrequencies = module.getFrequencies().split(", ", 9);
+            String[] parsedPhases = module.getPhases().split(", ", 9);
 
-                    for (int i = 0; i < CHANNELS; i++) {
-                        checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
-                        amplitudes[i] = Integer.parseInt(parsedAmplitudes[i]);
-                        frequencies[i] = Integer.parseInt(parsedFrequencies[i]);
-                        phases[i] = Integer.parseInt(parsedPhases[i]);
-                    }
-                }
+            dac.setSlot(slot);
+            dac.setModuleId(module.getId());
+
+            for (int i = 0; i < channels; i++) {
+                checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
+                amplitudes[i] = Integer.parseInt(parsedAmplitudes[i]);
+                frequencies[i] = Integer.parseInt(parsedFrequencies[i]);
+                phases[i] = Integer.parseInt(parsedPhases[i]);
             }
         }
     }

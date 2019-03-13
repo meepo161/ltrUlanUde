@@ -5,7 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.HashMap;
 
-@DatabaseTable(tableName = "Modules")
+@DatabaseTable(tableName = "modules")
 public class Modules {
     @DatabaseField(generatedId = true)
     private long id;
@@ -61,7 +61,7 @@ public class Modules {
         StringBuffer settingsLine = new StringBuffer();
 
         for (Object value : settings) {
-            settingsLine.append(value);
+            settingsLine.append(value).append(", ");
         }
 
         return String.valueOf(settingsLine);
@@ -83,6 +83,10 @@ public class Modules {
         this.testProgramId = testProgramId;
     }
 
+    public String getModuleType() {
+        return moduleType;
+    }
+
     public int getSlot() {
         return Integer.parseInt(slot);
     }
@@ -99,7 +103,7 @@ public class Modules {
         StringBuffer settingsLine = new StringBuffer();
 
         for (boolean value : checkedChannels) {
-            settingsLine.append(value);
+            settingsLine.append(value).append(", ");
         }
 
         this.checkedChannels = String.valueOf(settingsLine);
@@ -129,7 +133,7 @@ public class Modules {
         StringBuffer settingsLine = new StringBuffer();
 
         for (String value : channelsDescription) {
-            settingsLine.append(value);
+            settingsLine.append(value).append(", ");
         }
 
         this.channelsDescription = String.valueOf(settingsLine);
