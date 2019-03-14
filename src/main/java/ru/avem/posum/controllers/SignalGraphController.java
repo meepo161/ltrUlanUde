@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
@@ -23,6 +24,8 @@ import static ru.avem.posum.utils.Utils.sleep;
 public class SignalGraphController implements BaseController {
     @FXML
     private LineChart<Number, Number> graph;
+    @FXML
+    private Label titleLabel;
     @FXML
     private TextField valueTextField;
 
@@ -45,10 +48,15 @@ public class SignalGraphController implements BaseController {
 
     public void initializeView(String moduleType, int slot, int channel) {
         setFields(moduleType, slot, channel);
+        setTitleLabel();
         setApplicationState(false);
         initGraph();
         initModule();
         startShow();
+    }
+
+    private void setTitleLabel() {
+        titleLabel.setText("Текущая нагрузка на " + (channel + 1) + " канале" + " (" + moduleType + " слот " + slot + ")");
     }
 
     private void setFields(String moduleType, int slot, int channel) {

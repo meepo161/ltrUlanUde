@@ -34,7 +34,7 @@
         </rowConstraints>
          <children>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="5" />
-            <Label styleClass="title" text="Текущая нагрузка на канале" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label fx:id="titleLabel" styleClass="title" text="Текущая нагрузка на канале" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
              <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" title="Принятый сигнал" GridPane.columnSpan="2" GridPane.rowIndex="2">
                  <xAxis>
                      <NumberAxis autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
