@@ -309,14 +309,14 @@ public class LTR34SettingController implements BaseController {
     }
 
     public void loadSettings(String moduleName) {
-        writeField(moduleName);
+        setField(moduleName);
         parseSlotNumber();
         setTitleLabel(moduleName);
         findLTR34Module();
         loadChannelsSettings();
     }
 
-    private void writeField(String moduleName) {
+    private void setField(String moduleName) {
         this.moduleName = moduleName;
     }
 

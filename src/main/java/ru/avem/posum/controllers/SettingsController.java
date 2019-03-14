@@ -296,7 +296,7 @@ public class SettingsController implements BaseController {
             isTextFormatCorrect = false;
         }
 
-        if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[\\d]{4}")) {
+        if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[2][\\d]{3}")) {
             statusBarLine.setStatus("Неверно задана дата испытаний", statusBar);
             isTextFormatCorrect = false;
         }

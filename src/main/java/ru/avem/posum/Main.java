@@ -139,7 +139,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void start(Stage loginStage) {
         this.loginStage = loginStage;
         setLoginStageSize();
-//        setCentreOfStage(this.loginStage);
+        setCentreOfStage(this.loginStage);
         this.loginStage.show();
         loginController.showScene();
     }
@@ -313,8 +313,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void showChannelData(ADC adc, int slot, int channel) {
-        signalGraphController.initializeView(adc, slot, channel);
+    public void showChannelData(String moduleType, int slot, int channel) {
+        signalGraphController.initializeView(moduleType, slot, channel);
     }
 
     @Override

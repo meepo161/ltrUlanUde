@@ -13,7 +13,9 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -22,6 +24,20 @@ import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
+    private TableColumn<TestProgram, Integer> columnTableViewIndex;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramName;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramChangingDate;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramCreatingDate;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestingSample;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramTime;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramType;
+    @FXML
     private Button openExperimentButton;
     @FXML
     private ProgressIndicator progressIndicator;
@@ -29,30 +45,19 @@ public class MainController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private TableView<TestProgram> testProgramTableView;
-    @FXML
-    private TableColumn<TestProgram, Integer> columnTableViewIndex;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramName;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramCreatingDate;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramChangingDate;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramTime;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramType;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestingSample;
 
-    private WindowsManager wm;
-    private ControllerManager cm;
-    private StatusBarLine statusBarLine = new StatusBarLine();
-    private ObservableList<TestProgram> testPrograms;
     private List<TestProgram> allTestPrograms;
-    private TestProgram testProgram;
+    private ControllerManager cm;
     private ContextMenu contextMenu = new ContextMenu();
-    private int selectedIndex;
     private boolean isTestProgramSelected;
+    private long newTestProgramId;
+    private long oldTestProgramId;
+    private int selectedIndex;
+    private StatusBarLine statusBarLine = new StatusBarLine();
+    private TestProgram testProgram;
+    private long testProgramId;
+    private ObservableList<TestProgram> testPrograms;
+    private WindowsManager wm;
 
     @FXML
     private void initialize() {
@@ -233,13 +238,18 @@ public class MainController implements BaseController {
 
     private void copyTestProgram() {
         getTestProgram(selectedIndex);
-        long oldTestProgramId = testProgram.getId();
+        oldTestProgramId = testProgram.getId();
         TestProgramRepository.insertTestProgram(testProgram);
-        long newTestProgramId = testProgram.getId();
+        newTestProgramId = testProgram.getId();
     }
 
     private void copyTestProgramSettings() {
-
+        for (Modules module : ModulesRepository.getAllModules()) {
+            if (oldTestProgramId == module.getTestProgramId()) {
+                module.setTestProgramId(newTestProgramId);
+                ModulesRepository.insertModule(module);
+            }
+        }
     }
 
     private void reloadTestProgramsList() {
@@ -269,12 +279,21 @@ public class MainController implements BaseController {
 
     private void delete() {
         deleteTestProgram();
+        deleteModules();
     }
 
     private void deleteTestProgram() {
         getTestProgram(getSelectedItemIndex());
-        long testProgramId = testProgram.getId();
+        testProgramId = testProgram.getId();
         TestProgramRepository.deleteTestProgram(testProgram);
+    }
+
+    private void deleteModules() {
+        for (Modules module : ModulesRepository.getAllModules()) {
+            if (testProgramId == module.getTestProgramId()) {
+                ModulesRepository.deleteModule(module);
+            }
+        }
     }
 
     public void handleMenuItemAboutUs() {

@@ -470,7 +470,7 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        cm.showChannelData(ltr24, ltr24.getSlot(), channel);
+        cm.showChannelData(CrateModel.LTR24, ltr24.getSlot(), channel);
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 

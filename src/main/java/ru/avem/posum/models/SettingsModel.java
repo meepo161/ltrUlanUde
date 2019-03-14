@@ -276,7 +276,7 @@ public class SettingsModel implements BaseController {
 
     private void addNewModule() {
         Modules module = new Modules(moduleSettings);
-        ModulesRepository.insertModules(module);
+        ModulesRepository.insertModule(module);
     }
 
     private void setADCModuleSettings(String moduleName) {
@@ -413,7 +413,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void parseADCSettings(Modules module) {
-        if (slot == module.getSlot()) {
+        if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
             String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
             String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
@@ -442,7 +442,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void parseDACSettings(Modules module) {
-        if (slot == module.getSlot()) {
+        if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
             String[] parsedAmplitudes = module.getAmplitudes().split(", ", 9);
             String[] parsedFrequencies = module.getFrequencies().split(", ", 9);

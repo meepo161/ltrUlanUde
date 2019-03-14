@@ -20,7 +20,7 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
-    void showChannelData(ADC adc, int slot, int channel);
+    void showChannelData(String moduleType, int slot, int channel);
 
     CrateModel getCrateModelInstance();
 

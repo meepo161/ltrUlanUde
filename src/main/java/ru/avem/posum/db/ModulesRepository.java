@@ -23,7 +23,7 @@ public class ModulesRepository extends DataBaseRepository {
         }
     }
 
-    public static void insertModules(Modules modules) {
+    public static void insertModule(Modules modules) {
         sendAction((modulesDao) -> modulesDao.create(modules));
     }
 
@@ -31,7 +31,7 @@ public class ModulesRepository extends DataBaseRepository {
         sendAction((modulesDao) -> modulesDao.update(modules));
     }
 
-    public static void deleteModules(Modules modules) {
+    public static void deleteModule(Modules modules) {
         sendAction((modulesDao) -> modulesDao.delete(modules));
     }
 

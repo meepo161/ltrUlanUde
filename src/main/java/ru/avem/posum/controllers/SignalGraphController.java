@@ -7,13 +7,15 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
+import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.*;
+import ru.avem.posum.models.Actionable;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static ru.avem.posum.utils.Utils.sleep;
@@ -25,36 +27,41 @@ public class SignalGraphController implements BaseController {
     private TextField valueTextField;
 
     private ADC adc;
-    private int channel;
-    private double[] data;
-    private double maxValue;
-    private CrateModel.Moudules moduleType;
-    private RingBuffer ringBuffer;
     private double[] buffer;
-    private volatile boolean isDone;
-    List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-    private volatile XYChart.Series<Number, Number> graphSeries;
-    private WindowsManager wm;
+    private int channel;
     private ControllerManager cm;
+    private double[] data;
+    private volatile XYChart.Series<Number, Number> graphSeries;
+    private HashMap<String, Actionable> instructions = new HashMap<>();
+    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+    private volatile boolean isDone;
+    private LTR24 ltr24;
+    private LTR212 ltr212;
+    private double maxValue;
+    private String moduleType;
+    private RingBuffer ringBuffer;
+    private int slot;
+    private WindowsManager wm;
 
-    public void initializeView(ADC adc, int selectedSlot, int channel) {
-        setFields(adc, channel);
-        changeState(false);
-        clearGraphData();
-        initializeModuleType(selectedSlot);
+    public void initializeView(String moduleType, int slot, int channel) {
+        setFields(moduleType, slot, channel);
+        setApplicationState(false);
+        initGraph();
+        initModule();
         startShow();
     }
 
-    private void setFields(ADC adc, int channel) {
-        this.adc = adc;
+    private void setFields(String moduleType, int slot, int channel) {
+        this.moduleType = moduleType;
+        this.slot = slot;
         this.channel = channel;
     }
 
-    private void changeState(boolean isClosed) {
+    private void setApplicationState(boolean isClosed) {
         cm.setClosed(isClosed);
     }
 
-    private void clearGraphData() {
+    private void initGraph() {
         Platform.runLater(() -> {
             ObservableList<XYChart.Series<Number, Number>> graphData = graph.getData();
             graphData.clear();
@@ -63,28 +70,44 @@ public class SignalGraphController implements BaseController {
         });
     }
 
-    private void initializeModuleType(int selectedSlot) {
-        if (isDefineLTR24Slot(selectedSlot)) {
-            data = new double[39064];
-            ringBuffer = new RingBuffer(data.length * 100);
-            setGraphBounds(-5, 10, 1, false);
-            moduleType = CrateModel.Moudules.LTR24;
-        } else if (isDefineLTR212Slot(selectedSlot)) {
-            data = new double[2048];
-            ringBuffer = new RingBuffer(data.length * 10);
-            setGraphBounds(-0.1, 0.1, 0.01, true);
-            moduleType = CrateModel.Moudules.LTR212;
+    private void initModule() {
+        getModuleInstance();
+        addInitModuleInstructions();
+        runInstructions();
+    }
+
+    private void getModuleInstance() {
+        for (Pair<Integer, Module> module : cm.getCrateModelInstance().getModulesList()) {
+            if (module.getKey() == slot) {
+                adc = (ADC) module.getValue();
+            }
         }
     }
 
-    private boolean isDefineLTR24Slot(int slot) {
-//        for (Pair<Integer, LTR24> module : cm.getCrateModelInstance().getLtr24ModulesList()) {
-//            if (module.getValue().getSlot() == slot) {
-//                adc = module.getValue();
-//                return true;
-//            }
-//        }
-        return false;
+    private void addInitModuleInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::initLTR24Module);
+        instructions.put(CrateModel.LTR212, this::initLTR212Module);
+    }
+
+    private void initLTR24Module() {
+        ltr24 = (LTR24) adc;
+        data = new double[39064];
+        buffer = new double[39064];
+        ringBuffer = new RingBuffer(data.length * 100);
+        setGraphBounds(-5, 10, 1, false);
+    }
+
+    private void initLTR212Module() {
+        ltr212 = (LTR212) adc;
+        data = new double[2048];
+        buffer = new double[2048];
+        ringBuffer = new RingBuffer(data.length * 10);
+        setGraphBounds(-0.1, 0.1, 0.01, true);
+    }
+
+    private void runInstructions() {
+        instructions.get(moduleType).onAction();
     }
 
     private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
@@ -93,16 +116,6 @@ public class SignalGraphController implements BaseController {
         yAxis.setUpperBound(upperBound);
         yAxis.setTickUnit(tickUnit);
         yAxis.setAutoRanging(isAutoRangeEnabled);
-    }
-
-    private boolean isDefineLTR212Slot(int slot) {
-//        for (Pair<Integer, LTR212> module : cm.getCrateModelInstance().getLtr212ModulesList()) {
-//            if (module.getValue().getSlot() == slot) {
-//                adc = module.getValue();
-//                return true;
-//            }
-//        }
-        return false;
     }
 
     private void startShow() {
@@ -117,13 +130,25 @@ public class SignalGraphController implements BaseController {
 
     private void prepareDataForShow() {
         if (!adc.isBusy()) {
-            getADCData();
+            addGettingDataInstructions();
+            runInstructions();
             processData();
         }
     }
 
-    private void getADCData() {
-//        adc.receiveData(data);
+    private void addGettingDataInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::getLTR24Data);
+        instructions.put(CrateModel.LTR212, this::getLTR212Data);
+    }
+
+    private void getLTR24Data() {
+        ltr24.receive(data);
+        ringBuffer.put(data);
+    }
+
+    private void getLTR212Data() {
+        ltr212.receive(data);
         ringBuffer.put(data);
     }
 
@@ -136,24 +161,9 @@ public class SignalGraphController implements BaseController {
         maxValue = -999;
         final int CHANNELS = 4;
 
-        createBuffer();
         fillBuffer();
         clearSeriesData();
-
-        for (int i = channel; i < buffer.length; i += CHANNELS) {
-            calculateMaxValue(buffer[i]);
-            addPointToGraph(buffer, i);
-        }
-    }
-
-    private double[] createBuffer() {
-        if (moduleType.name().equals("LTR24")) {
-            buffer = new double[39064];
-        } else {
-            buffer = new double[2048];
-        }
-
-        return buffer;
+        calculate(CHANNELS);
     }
 
     private void fillBuffer() {
@@ -164,7 +174,14 @@ public class SignalGraphController implements BaseController {
         intermediateList.clear();
     }
 
-    private void calculateMaxValue(double value) {
+    private void calculate(int CHANNELS) {
+        for (int i = channel; i < buffer.length; i += CHANNELS) {
+            defineMaxValue(buffer[i]);
+            addPointToGraph(buffer, i);
+        }
+    }
+
+    private void defineMaxValue(double value) {
         if (value > maxValue) {
             maxValue = (double) Math.round(value * 100) / 100;
         }
@@ -192,7 +209,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleClear() {
-        clearGraphData();
+        initGraph();
     }
 
     @FXML
@@ -204,10 +221,9 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleBackButton() {
-//        String module = cm.getCrateModelInstance().getModulesNames().get(cm.getSelectedModuleIndex());
-//        wm.setModuleScene(module, cm.getSelectedModuleIndex());
+        wm.setModuleScene(moduleType, slot - 1);
         cm.loadItemsForModulesTableView();
-        changeState(true);
+        setApplicationState(true);
     }
 
     public double getMaxValue() {

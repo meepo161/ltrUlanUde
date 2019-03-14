@@ -292,6 +292,7 @@ public class LTR212SettingController implements BaseController {
         for (Pair<Integer, Module> module : crateModel.getModulesList()) {
             if (module.getKey() == slot) {
                 ltr212 = (LTR212) module.getValue();
+                break;
             }
         }
     }
@@ -467,7 +468,7 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        cm.showChannelData(ltr212, ltr212.getSlot(), channel);
+        cm.showChannelData(CrateModel.LTR212, ltr212.getSlot(), channel);
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
