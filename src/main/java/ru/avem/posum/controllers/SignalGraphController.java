@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.util.Pair;
@@ -23,11 +24,23 @@ import static ru.avem.posum.utils.Utils.sleep;
 
 public class SignalGraphController implements BaseController {
     @FXML
+    private TextField amplitudeTextField;
+    @FXML
+    private CheckBox autoScaleCheckBox;
+    @FXML
+    private CheckBox averageCheckBox;
+    @FXML
+    private TextField averageTextField;
+    @FXML
+    private TextField frequencyTextField;
+    @FXML
     private LineChart<Number, Number> graph;
     @FXML
-    private Label titleLabel;
+    private TextField phaseTextField;
     @FXML
-    private TextField valueTextField;
+    private TextField staticTextField;
+    @FXML
+    private Label titleLabel;
 
     private ADC adc;
     private double[] buffer;
@@ -50,6 +63,8 @@ public class SignalGraphController implements BaseController {
         setFields(moduleType, slot, channel);
         setTitleLabel();
         setApplicationState(false);
+        listenAutoScaleCheckBox();
+        listenAverageCheckBox();
         initGraph();
         initModule();
         startShow();
@@ -67,6 +82,24 @@ public class SignalGraphController implements BaseController {
 
     private void setApplicationState(boolean isClosed) {
         cm.setClosed(isClosed);
+    }
+
+    private void listenAutoScaleCheckBox() {
+        autoScaleCheckBox.selectedProperty().addListener(observable -> {
+            if (autoScaleCheckBox.isSelected()) {
+
+            }
+        });
+    }
+
+    private void listenAverageCheckBox() {
+        averageCheckBox.selectedProperty().addListener(observable -> {
+            if (averageCheckBox.isSelected()) {
+                averageTextField.setDisable(false);
+            } else {
+                averageTextField.setDisable(true);
+            }
+        });
     }
 
     private void initGraph() {
@@ -204,7 +237,7 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            valueTextField.setText(Double.toString(maxValue));
+//            valueTextField.setText(Double.toString(maxValue));
             isDone = true;
         });
     }
