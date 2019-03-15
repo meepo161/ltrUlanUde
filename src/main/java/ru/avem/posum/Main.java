@@ -334,7 +334,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public double getMaxValue() {
-        return signalGraphController.getMaxValue();
+        return signalGraphController.getAmplitude();
     }
 
     @Override

@@ -14,6 +14,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
+import ru.avem.posum.models.ReceivedSignal;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.ArrayList;
@@ -38,26 +39,29 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField phaseTextField;
     @FXML
-    private TextField staticTextField;
+    private TextField zeroShiftTextField;
     @FXML
     private Label titleLabel;
 
     private ADC adc;
+    private double amplitude;
     private double[] buffer;
     private int channel;
     private ControllerManager cm;
     private double[] data;
+    private double frequency;
     private volatile XYChart.Series<Number, Number> graphSeries;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private volatile boolean isDone;
     private LTR24 ltr24;
     private LTR212 ltr212;
-    private double maxValue;
     private String moduleType;
+    private double phase;
     private RingBuffer ringBuffer;
     private int slot;
     private WindowsManager wm;
+    private double zeroShift;
 
     public void initializeView(String moduleType, int slot, int channel) {
         setFields(moduleType, slot, channel);
@@ -199,12 +203,10 @@ public class SignalGraphController implements BaseController {
     }
 
     private void calculateData() {
-        maxValue = -999;
-        final int CHANNELS = 4;
-
         fillBuffer();
         clearSeriesData();
-        calculate(CHANNELS);
+        addSeriesData();
+        calculateParameters();
     }
 
     private void fillBuffer() {
@@ -215,16 +217,10 @@ public class SignalGraphController implements BaseController {
         intermediateList.clear();
     }
 
-    private void calculate(int CHANNELS) {
+    private void addSeriesData() {
+        final int CHANNELS = 4;
         for (int i = channel; i < buffer.length; i += CHANNELS) {
-            defineMaxValue(buffer[i]);
             addPointToGraph(buffer, i);
-        }
-    }
-
-    private void defineMaxValue(double value) {
-        if (value > maxValue) {
-            maxValue = (double) Math.round(value * 100) / 100;
         }
     }
 
@@ -232,12 +228,23 @@ public class SignalGraphController implements BaseController {
         intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
     }
 
+    private void calculateParameters() {
+        ReceivedSignal receivedSignal = new ReceivedSignal();
+        receivedSignal.calculateBaseParameters(buffer, channel);
+        amplitude = receivedSignal.getAmplitude();
+        zeroShift = receivedSignal.getZeroShift();
+        phase = receivedSignal.getPhase();
+    }
+
     private void showData() {
         isDone = false;
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-//            valueTextField.setText(Double.toString(maxValue));
+            amplitudeTextField.setText(String.format("%.5f", amplitude));
+            frequencyTextField.setText(String.format("%.5f", frequency));
+            phaseTextField.setText(String.format("%.5f", phase));
+            zeroShiftTextField.setText(String.format("%.5f", zeroShift));
             isDone = true;
         });
     }
@@ -246,11 +253,6 @@ public class SignalGraphController implements BaseController {
         while (!isDone && !cm.isClosed()) {
             sleep(10);
         }
-    }
-
-    @FXML
-    private void handleClear() {
-        initGraph();
     }
 
     @FXML
@@ -267,8 +269,8 @@ public class SignalGraphController implements BaseController {
         setApplicationState(true);
     }
 
-    public double getMaxValue() {
-        return maxValue;
+    public double getAmplitude() {
+        return amplitude;
     }
 
     @Override
