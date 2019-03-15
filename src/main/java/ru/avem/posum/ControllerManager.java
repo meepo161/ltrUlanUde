@@ -43,4 +43,6 @@ public interface ControllerManager {
     void setClosed(boolean closed);
 
     void loadModuleSettings(int selectedModuleIndex, String moduleName);
+
+    boolean getICPMode();
 }

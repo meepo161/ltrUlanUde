@@ -2,13 +2,19 @@ package ru.avem.posum.hardware;
 
 public class LTR212 extends ADC {
     public void openConnection() {
+        clearStatus();
         status = open(crate, slot, System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
         checkStatus();
+    }
+
+    private void clearStatus() {
+        status = "";
     }
 
     public native String open(String crate, int slot, String path);
 
     public void initModule() {
+        clearStatus();
         status = initialize(slot, channelsTypes, measuringRanges);
         checkStatus();
     }
@@ -16,6 +22,7 @@ public class LTR212 extends ADC {
     public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
 
     public void receive(double[] data) {
+        clearStatus();
         status = fillArray(slot, data);
         checkStatus();
     }

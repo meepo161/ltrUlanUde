@@ -80,6 +80,7 @@ public class LTR24SettingController implements BaseController {
     private ControllerManager cm;
     private CrateModel crateModel;
     private int disabledChannels;
+    private boolean icpMode;
     private boolean isConnectionOpen;
     private LTR24 ltr24;
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
@@ -261,13 +262,19 @@ public class LTR24SettingController implements BaseController {
     private void changeMeasuringRanges(ComboBox<String> channelType, ComboBox<String> measuringRange) {
         channelType.valueProperty().addListener(observable -> {
             if (channelType.getSelectionModel().isSelected(2)) {
+                setICPMode(true);
                 addICPMeasuringRanges(measuringRange);
                 measuringRange.getSelectionModel().select(1);
             } else {
+                setICPMode(false);
                 addDifferentialMeasuringRanges(measuringRange);
                 measuringRange.getSelectionModel().select(1);
             }
         });
+    }
+
+    private void setICPMode(boolean isICPModeOn) {
+        icpMode = isICPModeOn;
     }
 
     private void addICPMeasuringRanges(ComboBox<String> measuringRange) {
@@ -495,5 +502,9 @@ public class LTR24SettingController implements BaseController {
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
         crateModel = cm.getCrateModelInstance();
+    }
+
+    public boolean isIcpMode() {
+        return icpMode;
     }
 }

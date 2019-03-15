@@ -277,6 +277,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public boolean getICPMode() {
+        return ltr24SettingController.isIcpMode();
+    }
+
+    @Override
     public void createListModulesControllers(List<String> modulesNames) {
         modulesPairs.clear();
         for (String module : modulesNames) {

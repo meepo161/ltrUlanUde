@@ -54,12 +54,15 @@ public class SignalGraphController implements BaseController {
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private volatile boolean isDone;
+    private boolean isMeasuringRangeNegative;
     private LTR24 ltr24;
     private LTR212 ltr212;
+    private double measuringRange;
     private String moduleType;
     private double phase;
     private RingBuffer ringBuffer;
     private int slot;
+    private double valueInPercents;
     private WindowsManager wm;
     private double zeroShift;
 
@@ -119,6 +122,8 @@ public class SignalGraphController implements BaseController {
         getModuleInstance();
         addInitModuleInstructions();
         runInstructions();
+        addDefineMeasuringRangeInstructions();
+        runInstructions();
     }
 
     private void getModuleInstance() {
@@ -140,7 +145,6 @@ public class SignalGraphController implements BaseController {
         data = new double[39064];
         buffer = new double[39064];
         ringBuffer = new RingBuffer(data.length * 100);
-        setGraphBounds(-5, 10, 1, false);
     }
 
     private void initLTR212Module() {
@@ -148,11 +152,93 @@ public class SignalGraphController implements BaseController {
         data = new double[2048];
         buffer = new double[2048];
         ringBuffer = new RingBuffer(data.length * 10);
-        setGraphBounds(-0.1, 0.1, 0.01, true);
     }
 
     private void runInstructions() {
         instructions.get(moduleType).onAction();
+    }
+
+    private void addDefineMeasuringRangeInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::defineLTR24MeasuringRange);
+        instructions.put(CrateModel.LTR212, this::defineLTR212MeasuringRange);
+    }
+
+    private void defineLTR24MeasuringRange() {
+        if (cm.getICPMode()) {
+            defineICPModeRanges();
+        } else {
+            defineDifferentialModeRanges();
+        }
+    }
+
+    private void defineICPModeRanges() {
+        switch (ltr24.getMeasuringRanges()[channel]) {
+            case 0:
+                measuringRange = 1;
+                break;
+            case 1:
+                measuringRange = 5;
+                break;
+            default:
+                measuringRange = 5;
+        }
+    }
+
+    private void defineDifferentialModeRanges() {
+        switch (ltr24.getMeasuringRanges()[channel]) {
+            case 0:
+                measuringRange = 2;
+                isMeasuringRangeNegative = true;
+                break;
+            case 1:
+                measuringRange = 10;
+                isMeasuringRangeNegative = true;
+                break;
+            default:
+                measuringRange = 10;
+                isMeasuringRangeNegative = true;
+        }
+    }
+
+    private void defineLTR212MeasuringRange() {
+        switch (ltr212.getMeasuringRanges()[channel]) {
+            case 0:
+                measuringRange = 0.01;
+                isMeasuringRangeNegative = true;
+                break;
+            case 1:
+                measuringRange = 0.02;
+                isMeasuringRangeNegative = true;
+                break;
+            case 2:
+                measuringRange = 0.04;
+                isMeasuringRangeNegative = true;
+                break;
+            case 3:
+                measuringRange = 0.08;
+                isMeasuringRangeNegative = true;
+                break;
+            case 4:
+                measuringRange = 0.01;
+                isMeasuringRangeNegative = false;
+                break;
+            case 5:
+                measuringRange = 0.02;
+                isMeasuringRangeNegative = false;
+                break;
+            case 6:
+                measuringRange = 0.04;
+                isMeasuringRangeNegative = false;
+                break;
+            case 7:
+                measuringRange = 0.08;
+                isMeasuringRangeNegative = false;
+                break;
+            default:
+                isMeasuringRangeNegative = true;
+                measuringRange = 0.08;
+        }
     }
 
     private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
@@ -225,15 +311,51 @@ public class SignalGraphController implements BaseController {
     }
 
     private void addPointToGraph(double[] buffer, int i) {
-        intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
+        intermediateList.add(new XYChart.Data<>((double) i / buffer.length, convertToPercents(buffer[i])));
+    }
+
+    private double convertToPercents(double value) {
+        valueInPercents = (value / measuringRange) * 100;
+        convert();
+        setZeroRange(value);
+
+        return valueInPercents;
+    }
+
+    private void convert() {
+        if (isMeasuringRangeNegative & valueInPercents < 0) {
+            valueInPercents = 100 - (50 + (-valueInPercents / 2));
+        } else if (isMeasuringRangeNegative & valueInPercents > 0) {
+            valueInPercents = 100 - (50 - (valueInPercents / 2));
+        }
+    }
+
+    private void setZeroRange(double value) {
+        if (isMeasuringRangeNegative) {
+            setNegativeZeroRange(value);
+        } else {
+            setPositiveZeroRange(value);
+        }
+    }
+
+    private void setNegativeZeroRange(double value) {
+        if (value > -0.00001 & value < 0.00001) {
+            valueInPercents = 50;
+        }
+    }
+
+    private void setPositiveZeroRange(double value) {
+        if (value > -0.00001 & value < 0.00001) {
+            valueInPercents = 0;
+        }
     }
 
     private void calculateParameters() {
         ReceivedSignal receivedSignal = new ReceivedSignal();
         receivedSignal.calculateBaseParameters(buffer, channel);
-        amplitude = receivedSignal.getAmplitude();
-        zeroShift = receivedSignal.getZeroShift();
-        phase = receivedSignal.getPhase();
+        amplitude = receivedSignal.getAmplitude() / measuringRange;
+        zeroShift = convertToPercents(receivedSignal.getZeroShift());
+        phase = receivedSignal.getPhase() / measuringRange;
     }
 
     private void showData() {

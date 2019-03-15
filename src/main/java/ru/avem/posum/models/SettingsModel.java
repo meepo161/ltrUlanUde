@@ -77,7 +77,7 @@ public class SettingsModel implements BaseController {
     private void initLTR212Instance() {
         adc = new LTR212();
         setModuleSettings(adc);
-        setDefaultADCSettings(2, 3);
+        setDefaultADCSettings(1, 3);
         saveModuleInstance(adc);
     }
 

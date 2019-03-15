@@ -37,8 +37,11 @@ public class TextEncoder {
                 i = 0, j = 0;
 
         for (; i < cnt; ++i) {
-            char c = utf[inputString[i]];
-            outputString[j++] = c;
+            if (inputString[i] < 1040) {
+                char c = utf[inputString[i]];
+                outputString[j++] = c;
+                System.out.println(c);
+            }
         }
 
         return String.valueOf(outputString);
