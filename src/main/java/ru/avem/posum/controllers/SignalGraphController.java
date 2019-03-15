@@ -54,14 +54,15 @@ public class SignalGraphController implements BaseController {
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private volatile boolean isDone;
-    private boolean isMeasuringRangeNegative;
+    private double lowerBound;
     private LTR24 ltr24;
     private LTR212 ltr212;
-    private double measuringRange;
     private String moduleType;
     private double phase;
     private RingBuffer ringBuffer;
     private int slot;
+    private double tickUnit;
+    private double upperBound;
     private double valueInPercents;
     private WindowsManager wm;
     private double zeroShift;
@@ -122,8 +123,9 @@ public class SignalGraphController implements BaseController {
         getModuleInstance();
         addInitModuleInstructions();
         runInstructions();
-        addDefineMeasuringRangeInstructions();
+        addDefineBoundsInstructions();
         runInstructions();
+        setGraphBounds(lowerBound, upperBound, tickUnit, false);
     }
 
     private void getModuleInstance() {
@@ -158,13 +160,13 @@ public class SignalGraphController implements BaseController {
         instructions.get(moduleType).onAction();
     }
 
-    private void addDefineMeasuringRangeInstructions() {
+    private void addDefineBoundsInstructions() {
         instructions.clear();
-        instructions.put(CrateModel.LTR24, this::defineLTR24MeasuringRange);
+        instructions.put(CrateModel.LTR24, this::defineLTR24Bounds);
         instructions.put(CrateModel.LTR212, this::defineLTR212MeasuringRange);
     }
 
-    private void defineLTR24MeasuringRange() {
+    private void defineLTR24Bounds() {
         if (cm.getICPMode()) {
             defineICPModeRanges();
         } else {
@@ -175,70 +177,74 @@ public class SignalGraphController implements BaseController {
     private void defineICPModeRanges() {
         switch (ltr24.getMeasuringRanges()[channel]) {
             case 0:
-                measuringRange = 1;
+                setBounds(0, 1, 0.1);
                 break;
             case 1:
-                measuringRange = 5;
+                setBounds(0, 5, 0.5);
                 break;
             default:
-                measuringRange = 5;
+                setBounds(0, 5, 0.5);
         }
     }
 
     private void defineDifferentialModeRanges() {
         switch (ltr24.getMeasuringRanges()[channel]) {
             case 0:
-                measuringRange = 2;
-                isMeasuringRangeNegative = true;
+                setBounds(-2, 2, 0.4);
                 break;
             case 1:
-                measuringRange = 10;
-                isMeasuringRangeNegative = true;
+                setBounds(-10, 10, 2);
                 break;
             default:
-                measuringRange = 10;
-                isMeasuringRangeNegative = true;
+                setBounds(-10, 10, 2);
         }
+    }
+
+    private void setBounds(double lowerBound, double upperBound, double tickUnit) {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+        this.tickUnit = tickUnit;
     }
 
     private void defineLTR212MeasuringRange() {
         switch (ltr212.getMeasuringRanges()[channel]) {
             case 0:
-                measuringRange = 0.01;
-                isMeasuringRangeNegative = true;
+                setBounds(-0.01, 0.01, 0.002);
                 break;
             case 1:
-                measuringRange = 0.02;
-                isMeasuringRangeNegative = true;
+                setBounds(-0.02, 0.02, 0.004);
                 break;
             case 2:
-                measuringRange = 0.04;
-                isMeasuringRangeNegative = true;
+                setBounds(-0.04, 0.04, 0.008);
                 break;
             case 3:
-                measuringRange = 0.08;
-                isMeasuringRangeNegative = true;
+                setBounds(-0.08, 0.08, 0.016);
                 break;
             case 4:
-                measuringRange = 0.01;
-                isMeasuringRangeNegative = false;
+                setBounds(0, 0.01, 0.001);
                 break;
             case 5:
-                measuringRange = 0.02;
-                isMeasuringRangeNegative = false;
+                setBounds(0, 0.02, 0.002);
                 break;
             case 6:
-                measuringRange = 0.04;
-                isMeasuringRangeNegative = false;
+                setBounds(0, 0.04, 0.004);
                 break;
             case 7:
-                measuringRange = 0.08;
-                isMeasuringRangeNegative = false;
+                setBounds(0, 0.08, 0.008);
                 break;
             default:
-                isMeasuringRangeNegative = true;
-                measuringRange = 0.08;
+                setBounds(-10, 10, 1);
         }
+    }
+
+    private void toggleAutoScale() {
+        autoScaleCheckBox.selectedProperty().addListener(observable -> {
+            if (autoScaleCheckBox.isSelected()) {
+                setGraphBounds(lowerBound, upperBound, tickUnit, true);
+            } else {
+                setGraphBounds(lowerBound, upperBound, tickUnit, false);
+            }
+        });
     }
 
     private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
