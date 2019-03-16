@@ -8,11 +8,11 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.CalibrationModel;
 import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.utils.LinearApproximation;
@@ -27,46 +27,50 @@ public class CalibrationController implements BaseController {
     @FXML
     private Button addToTableButton;
     @FXML
-    private Button saveButton;
-    @FXML
-    private Label loadValueLabel;
-    @FXML
-    private Label channelValueLabel;
-    @FXML
-    private Label loadValueNameLabel;
-    @FXML
     private LineChart<Number, Number> calibrationGraph;
-    @FXML
-    private StatusBar statusBar;
     @FXML
     private TableView<CalibrationPoint> calibrationTableView;
     @FXML
-    private TableColumn<CalibrationPoint, Double> loadChannelColumn;
-    @FXML
     private TableColumn<CalibrationPoint, Double> channelValueColumn;
-    @FXML
-    private TableColumn<CalibrationPoint, Double> valueNameColumn;
-    @FXML
-    private TextField loadValueTextField;
     @FXML
     private TextField channelValueTextField;
     @FXML
+    private Label channelValueLabel;
+    @FXML
+    private TableColumn<CalibrationPoint, Double> loadChannelColumn;
+    @FXML
+    private Label loadValueLabel;
+    @FXML
+    private Label loadValueNameLabel;
+    @FXML
+    private TextField loadValueTextField;
+    @FXML
     private TextField loadValueNameTextField;
+    @FXML
+    private TableColumn<CalibrationPoint, Double> valueNameColumn;
+    @FXML
+    private Button saveButton;
+    @FXML
+    private StatusBar statusBar;
+    @FXML
+    private Label titleLabel;
 
-    private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
-    private StatusBarLine statusBarLine = new StatusBarLine();
-    private CrateModel.Moudules moduleType;
-    private boolean stopped;
-    private int channel;
     private ADC adc;
-    private String moduleCalibrationSettings;
-    private List<XYChart.Data<Double, Double>> rawData;
+    private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
     private CalibrationModel calibrationModel;
-    private double loadValue;
+    private ContextMenu contextMenu = new ContextMenu();
+    private int channel;
     private double channelValue;
-    private String valueName;
     private ControllerManager cm;
+    private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
+    private double loadValue;
+    private String moduleCalibrationSettings;
+    private String moduleType;
+    private List<XYChart.Data<Double, Double>> rawData;
+    private StatusBarLine statusBarLine = new StatusBarLine();
+    private int slot;
+    private boolean stopped;
+    private String valueName;
     private WindowsManager wm;
 
     @FXML
@@ -74,6 +78,8 @@ public class CalibrationController implements BaseController {
         initColumns();
         initGraph();
         initTextFields();
+        createContextMenu();
+        addMouseListener();
     }
 
     private void initColumns() {
@@ -93,6 +99,68 @@ public class CalibrationController implements BaseController {
         toggleUiElementsIfEmptyField(loadValueNameTextField);
     }
 
+    private void createContextMenu() {
+        MenuItem menuItemCopy = new MenuItem("Копировать");
+        MenuItem menuItemDelete = new MenuItem("Удалить");
+
+        menuItemCopy.setOnAction(event -> copyCalibrationPoint());
+        menuItemDelete.setOnAction(event -> deleteCalibrationPoint());
+
+        contextMenu.getItems().addAll(menuItemCopy, menuItemDelete);
+    }
+
+    private void deleteCalibrationPoint() {
+        calibrationPoints.remove(calibrationTableView.getSelectionModel().getSelectedIndex());
+        checkNumberOfCalibrationPoints();
+        checkSaveButtonState();
+    }
+
+
+    private void checkNumberOfCalibrationPoints() {
+        if (calibrationPoints.size() == 7) {
+            changeState(true);
+        } else {
+            changeState(false);
+        }
+    }
+
+    private void changeState(boolean isDisable) {
+        if (calibrationPoints.size() == 0) {
+            loadValueNameTextField.setDisable(false);
+        } else {
+            loadValueNameTextField.setDisable(true);
+        }
+
+        loadValueLabel.setDisable(isDisable);
+        loadValueTextField.setDisable(isDisable);
+        channelValueLabel.setDisable(isDisable);
+        channelValueTextField.setDisable(isDisable);
+        loadValueNameLabel.setDisable(isDisable);
+        addToTableButton.setDisable(isDisable);
+    }
+
+    private void copyCalibrationPoint() {
+        if (calibrationPoints.size() <= 7) {
+            calibrationPoints.add(calibrationPoints.get(calibrationTableView.getSelectionModel().getSelectedIndex()));
+            checkNumberOfCalibrationPoints();
+            checkSaveButtonState();
+        }
+    }
+
+    private void addMouseListener() {
+        calibrationTableView.setRowFactory(tv -> {
+            TableRow<CalibrationPoint> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                    contextMenu.show(calibrationTableView, event.getScreenX(), event.getScreenY());
+                } else if (event.getClickCount() == 1) {
+                    contextMenu.hide();
+                }
+            });
+            return row;
+        });
+    }
+
     private void setDigitFilterToLoadValueTextField() {
         loadValueTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             loadValueTextField.setText(newValue.replaceAll("[^\\d.]", ""));
@@ -104,7 +172,10 @@ public class CalibrationController implements BaseController {
 
     private void toggleUiElementsIfEmptyField(TextField textField) {
         textField.textProperty().addListener((observable) -> {
-            if (!loadValueTextField.getText().isEmpty() & !channelValueTextField.getText().isEmpty() & !loadValueNameTextField.getText().isEmpty()) {
+            if (!loadValueTextField.getText().isEmpty() &
+                    !channelValueTextField.getText().isEmpty() &
+                    !loadValueNameTextField.getText().isEmpty() &
+                    calibrationPoints.size() <= 7) {
                 addToTableButton.setDisable(false);
             } else {
                 addToTableButton.setDisable(true);
@@ -112,16 +183,23 @@ public class CalibrationController implements BaseController {
         });
     }
 
-    public void loadDefaults(ADC adc, int channel) {
-        setFields(adc, channel);
+    public void loadDefaults(ADC adc, String moduleType, int channel) {
+        setFields(adc, moduleType, channel);
+        setTitleLabel();
         loadDefaultUiElementsState();
         loadCalibrationSettings();
     }
 
-    private void setFields(ADC adc, int channel) {
+    private void setFields(ADC adc, String moduleType, int channel) {
         this.adc = adc;
+        this.moduleType = moduleType;
+        this.slot = adc.getSlot();
         this.channel = channel;
         this.stopped = false;
+    }
+
+    private void setTitleLabel() {
+        titleLabel.setText("Градуировка " + (channel + 1) + " канала" + " (" + moduleType + " слот " + slot + ")");
     }
 
     private void loadDefaultUiElementsState() {
@@ -138,24 +216,21 @@ public class CalibrationController implements BaseController {
 
     }
 
-    private void addPoint() {
-
-    }
-
     public void handleAddPoint() {
         addPointToTable();
         addPointToGraph();
+        checkNumberOfCalibrationPoints();
     }
 
     private void addPointToTable() {
         parseData();
         addCalibrationPointToTable();
-        toggleUiElements();
+        checkSaveButtonState();
     }
 
     private void parseData() {
         loadValue = Double.parseDouble(loadValueTextField.getText());
-        channelValue = Double.parseDouble(channelValueTextField.getText());
+        channelValue = (double) Math.round(Double.parseDouble(channelValueTextField.getText()) * 1000) / 1000;
         valueName = loadValueNameTextField.getText();
     }
 
@@ -164,10 +239,12 @@ public class CalibrationController implements BaseController {
         calibrationPoints.add(point);
     }
 
-    private void toggleUiElements() {
+    private void checkSaveButtonState() {
         if (calibrationPoints.size() >= 2) {
             saveButton.setDisable(false);
             saveButton.requestFocus();
+        } else {
+            saveButton.setDisable(true);
         }
     }
 
@@ -236,9 +313,7 @@ public class CalibrationController implements BaseController {
     public void showChannelValue() {
         new Thread(() -> {
             while (!stopped) {
-                Platform.runLater(() -> {
-                    channelValueTextField.setText(String.valueOf(cm.getMaxValue()));
-                });
+                Platform.runLater(() -> channelValueTextField.setText(String.format("%.3f", cm.getZeroShift())));
                 Utils.sleep(100);
             }
         }).start();

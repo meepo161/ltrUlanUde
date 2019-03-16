@@ -26,7 +26,7 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    double getMaxValue();
+    double getZeroShift();
 
     void showChannelValue();
 
@@ -36,7 +36,7 @@ public interface ControllerManager {
 
     void hideRequiredFieldsSymbols();
 
-    void loadDefaultCalibrationSettings(ADC adc, int channel);
+    void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel);
 
     boolean isClosed();
 

@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CrateModel {
-    public enum Moudules {
-        LTR24, LTR34, LTR212
-    }
-
     public static final String LTR24 = "LTR24";
     public static final String LTR34 = "LTR34";
     public static final String LTR212 = "LTR212";

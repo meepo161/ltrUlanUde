@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
@@ -219,7 +220,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setScene(signalGraphScene);
                 break;
             case CALIBRATION_SCENE:
-                primaryStage.setTitle("Тарировка канала");
+                primaryStage.setTitle("Градуировка канала");
                 primaryStage.setScene(calibrationScene);
                 break;
         }
@@ -338,8 +339,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public double getMaxValue() {
-        return signalGraphController.getAmplitude();
+    public double getZeroShift() {
+        return signalGraphController.getZeroShift();
     }
 
     @Override
@@ -363,8 +364,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadDefaultCalibrationSettings(ADC adc, int channel) {
-        calibrationController.loadDefaults(adc, channel);
+    public void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel) {
+        calibrationController.loadDefaults(adc, moduleType, channel);
     }
 
     @Override

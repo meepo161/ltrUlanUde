@@ -45,7 +45,13 @@ public class SignalGraphController implements BaseController {
 
     private ADC adc;
     private double amplitude;
+    private double averageCount = 1;
+    private int averageIterator;
+    private double averageValue;
     private double[] buffer;
+    private double bufferedAmplitude;
+    private double bufferedPhase;
+    private double buffereZeroShift;
     private int channel;
     private ControllerManager cm;
     private double[] data;
@@ -63,7 +69,6 @@ public class SignalGraphController implements BaseController {
     private int slot;
     private double tickUnit;
     private double upperBound;
-    private double valueInPercents;
     private WindowsManager wm;
     private double zeroShift;
 
@@ -71,9 +76,10 @@ public class SignalGraphController implements BaseController {
         setFields(moduleType, slot, channel);
         setTitleLabel();
         setApplicationState(false);
-        listenAutoScaleCheckBox();
         listenAverageCheckBox();
+        listenAutoScaleCheckBox();
         initGraph();
+        initAverage();
         initModule();
         startShow();
     }
@@ -92,20 +98,14 @@ public class SignalGraphController implements BaseController {
         cm.setClosed(isClosed);
     }
 
-    private void listenAutoScaleCheckBox() {
-        autoScaleCheckBox.selectedProperty().addListener(observable -> {
-            if (autoScaleCheckBox.isSelected()) {
-
-            }
-        });
-    }
-
     private void listenAverageCheckBox() {
         averageCheckBox.selectedProperty().addListener(observable -> {
             if (averageCheckBox.isSelected()) {
                 averageTextField.setDisable(false);
             } else {
                 averageTextField.setDisable(true);
+                averageTextField.setText("");
+                averageCount = 1;
             }
         });
     }
@@ -237,7 +237,7 @@ public class SignalGraphController implements BaseController {
         }
     }
 
-    private void toggleAutoScale() {
+    private void listenAutoScaleCheckBox() {
         autoScaleCheckBox.selectedProperty().addListener(observable -> {
             if (autoScaleCheckBox.isSelected()) {
                 setGraphBounds(lowerBound, upperBound, tickUnit, true);
@@ -249,10 +249,39 @@ public class SignalGraphController implements BaseController {
 
     private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setAutoRanging(isAutoRangeEnabled);
         yAxis.setLowerBound(lowerBound);
         yAxis.setUpperBound(upperBound);
         yAxis.setTickUnit(tickUnit);
-        yAxis.setAutoRanging(isAutoRangeEnabled);
+    }
+
+
+    private void initAverage() {
+        setDigitFilter();
+        changeAverageUiElementsState();
+    }
+
+    private void setDigitFilter() {
+        averageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            averageTextField.setText(newValue.replaceAll("[^1-9][\\d]{2,3}", ""));
+            if (!newValue.matches("^[1-9]|\\d{2,3}|$")) {
+                averageTextField.setText(oldValue);
+            }
+
+            if (!averageTextField.getText().isEmpty()) {
+                averageCount = Double.parseDouble(averageTextField.getText());
+            }
+        });
+    }
+
+    private void changeAverageUiElementsState() {
+        averageCheckBox.selectedProperty().addListener(observable -> {
+            if (averageCheckBox.isSelected()) {
+                averageTextField.setDisable(false);
+            } else {
+                averageTextField.setDisable(true);
+            }
+        });
     }
 
     private void startShow() {
@@ -317,51 +346,27 @@ public class SignalGraphController implements BaseController {
     }
 
     private void addPointToGraph(double[] buffer, int i) {
-        intermediateList.add(new XYChart.Data<>((double) i / buffer.length, convertToPercents(buffer[i])));
-    }
-
-    private double convertToPercents(double value) {
-        valueInPercents = (value / measuringRange) * 100;
-        convert();
-        setZeroRange(value);
-
-        return valueInPercents;
-    }
-
-    private void convert() {
-        if (isMeasuringRangeNegative & valueInPercents < 0) {
-            valueInPercents = 100 - (50 + (-valueInPercents / 2));
-        } else if (isMeasuringRangeNegative & valueInPercents > 0) {
-            valueInPercents = 100 - (50 - (valueInPercents / 2));
-        }
-    }
-
-    private void setZeroRange(double value) {
-        if (isMeasuringRangeNegative) {
-            setNegativeZeroRange(value);
-        } else {
-            setPositiveZeroRange(value);
-        }
-    }
-
-    private void setNegativeZeroRange(double value) {
-        if (value > -0.00001 & value < 0.00001) {
-            valueInPercents = 50;
-        }
-    }
-
-    private void setPositiveZeroRange(double value) {
-        if (value > -0.00001 & value < 0.00001) {
-            valueInPercents = 0;
-        }
+        intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
     }
 
     private void calculateParameters() {
         ReceivedSignal receivedSignal = new ReceivedSignal();
         receivedSignal.calculateBaseParameters(buffer, channel);
-        amplitude = receivedSignal.getAmplitude() / measuringRange;
-        zeroShift = convertToPercents(receivedSignal.getZeroShift());
-        phase = receivedSignal.getPhase() / measuringRange;
+
+        if (averageIterator < averageCount) {
+            bufferedAmplitude += receivedSignal.getAmplitude();
+            buffereZeroShift += receivedSignal.getZeroShift();
+            bufferedPhase += receivedSignal.getPhase();
+            averageIterator++;
+        } else {
+            amplitude = bufferedAmplitude / averageCount;
+            zeroShift = buffereZeroShift / averageCount;
+            phase = buffereZeroShift / averageCount;
+            averageIterator = 0;
+            bufferedAmplitude = 0;
+            buffereZeroShift = 0;
+            bufferedPhase = 0;
+        }
     }
 
     private void showData() {
@@ -369,10 +374,10 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(String.format("%.5f", amplitude));
-            frequencyTextField.setText(String.format("%.5f", frequency));
-            phaseTextField.setText(String.format("%.5f", phase));
-            zeroShiftTextField.setText(String.format("%.5f", zeroShift));
+            amplitudeTextField.setText(String.format("%.3f", amplitude));
+            frequencyTextField.setText(String.format("%.3f", frequency));
+            phaseTextField.setText(String.format("%.3f", phase));
+            zeroShiftTextField.setText(String.format("%.3f", zeroShift));
             isDone = true;
         });
     }
@@ -385,7 +390,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleCalibrate() {
-        cm.loadDefaultCalibrationSettings(adc, channel);
+        cm.loadDefaultCalibrationSettings(adc, moduleType, channel);
         cm.showChannelValue();
         wm.setScene(WindowsManager.Scenes.CALIBRATION_SCENE);
     }
@@ -395,10 +400,22 @@ public class SignalGraphController implements BaseController {
         wm.setModuleScene(moduleType, slot - 1);
         cm.loadItemsForModulesTableView();
         setApplicationState(true);
+        disableAutoRange();
+        disableAverage();
     }
 
-    public double getAmplitude() {
-        return amplitude;
+    private void disableAutoRange() {
+        setGraphBounds(lowerBound, upperBound, tickUnit, false);
+        autoScaleCheckBox.setSelected(false);
+    }
+
+    private void disableAverage() {
+        averageTextField.setText("");
+        averageCheckBox.setSelected(false);
+    }
+
+    public double getZeroShift() {
+        return zeroShift;
     }
 
     @Override

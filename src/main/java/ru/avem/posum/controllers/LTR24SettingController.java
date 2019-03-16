@@ -372,6 +372,7 @@ public class LTR24SettingController implements BaseController {
             measuringRangesComboBoxes.get(i).setDisable(true);
         }
 
+        applyForAllCheckBox.setDisable(true);
         initializeButton.setDisable(true);
     }
 
@@ -437,6 +438,7 @@ public class LTR24SettingController implements BaseController {
             }
         }
 
+        applyForAllCheckBox.setDisable(false);
         initializeButton.setDisable(false);
     }
 
