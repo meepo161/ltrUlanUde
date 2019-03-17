@@ -1,7 +1,6 @@
 package ru.avem.posum.utils;
 
 import javafx.scene.chart.XYChart;
-import ru.avem.posum.models.CalibrationModel;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public class LinearApproximation {
     private double[] roots = new double[2];
     private double approximatedValue;
 
-    public LinearApproximation(List<XYChart.Data<Double, Double>> rawData, CalibrationModel calibrationModel) {
+    public LinearApproximation(List<XYChart.Data<Double, Double>> rawData) {
         points = 2; // всегда аппроксимируются две точки
 
         for (int i = 0; i < rawData.size() - 1; i++) {
@@ -33,8 +32,8 @@ public class LinearApproximation {
             createEquationSystem();
             calculateRoots();
 
-            calibrationModel.getCoefficientA().add(roots[0]);
-            calibrationModel.getCoefficientB().add(roots[1]);
+//            calibrationModel.getCoefficientA().add(roots[0]);
+//            calibrationModel.getCoefficientB().add(roots[1]);
         }
     }
 

@@ -40,7 +40,6 @@ public class TextEncoder {
             if (inputString[i] < 1040) {
                 char c = utf[inputString[i]];
                 outputString[j++] = c;
-                System.out.println(c);
             }
         }
 

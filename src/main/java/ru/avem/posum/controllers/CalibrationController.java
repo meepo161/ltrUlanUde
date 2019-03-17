@@ -13,7 +13,6 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.models.CalibrationModel;
 import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.utils.LinearApproximation;
 import ru.avem.posum.utils.StatusBarLine;
@@ -57,14 +56,12 @@ public class CalibrationController implements BaseController {
 
     private ADC adc;
     private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
-    private CalibrationModel calibrationModel;
     private ContextMenu contextMenu = new ContextMenu();
     private int channel;
     private double channelValue;
     private ControllerManager cm;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private double loadValue;
-    private String moduleCalibrationSettings;
     private String moduleType;
     private List<XYChart.Data<Double, Double>> rawData;
     private StatusBarLine statusBarLine = new StatusBarLine();
@@ -110,11 +107,15 @@ public class CalibrationController implements BaseController {
     }
 
     private void deleteCalibrationPoint() {
-        calibrationPoints.remove(calibrationTableView.getSelectionModel().getSelectedIndex());
-        checkNumberOfCalibrationPoints();
-        checkSaveButtonState();
-    }
+        int selectedPoint = calibrationTableView.getSelectionModel().getSelectedIndex();
 
+        if (selectedPoint != -1) {
+            graphSeries.getData().remove(selectedPoint);
+            calibrationPoints.remove(selectedPoint);
+        }
+
+        checkNumberOfCalibrationPoints();
+    }
 
     private void checkNumberOfCalibrationPoints() {
         if (calibrationPoints.size() == 7) {
@@ -143,7 +144,6 @@ public class CalibrationController implements BaseController {
         if (calibrationPoints.size() <= 7) {
             calibrationPoints.add(calibrationPoints.get(calibrationTableView.getSelectionModel().getSelectedIndex()));
             checkNumberOfCalibrationPoints();
-            checkSaveButtonState();
         }
     }
 
@@ -188,6 +188,7 @@ public class CalibrationController implements BaseController {
         setTitleLabel();
         loadDefaultUiElementsState();
         loadCalibrationSettings();
+        saveButton.setDisable(false);
     }
 
     private void setFields(ADC adc, String moduleType, int channel) {
@@ -209,43 +210,54 @@ public class CalibrationController implements BaseController {
         loadValueTextField.setDisable(false);
         channelValueTextField.setDisable(false);
         loadValueNameTextField.setDisable(false);
-        saveButton.setDisable(true);
     }
 
     private void loadCalibrationSettings() {
+        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
+        for (String settings : calibrationSettings) {
+            load(settings);
+        }
     }
 
-    public void handleAddPoint() {
-        addPointToTable();
+    private void load(String settings) {
+        int channel = Integer.parseInt(settings.substring(9, 10));
+
+        if (this.channel == channel) {
+            loadValue = Double.parseDouble(settings.split(", ")[1].split("load value: ")[1]);
+            channelValue = Double.parseDouble(settings.split(", ")[2].split("channel value: ")[1]);
+            valueName = settings.split(", ")[3].split("value name: ")[1];
+
+            showCalibration();
+            setUiElements();
+        }
+    }
+
+    private void showCalibration() {
+        addCalibrationPointToTable();
         addPointToGraph();
         checkNumberOfCalibrationPoints();
     }
 
-    private void addPointToTable() {
+    private void addCalibrationPointToTable() {
+        CalibrationPoint point = new CalibrationPoint(channel, loadValue, channelValue, valueName);
+        calibrationPoints.add(point);
+    }
+
+    private void setUiElements() {
+        loadValueTextField.setText(String.valueOf(loadValue));
+        loadValueNameTextField.setText(String.valueOf(valueName));
+    }
+
+    public void handleAddPoint() {
         parseData();
-        addCalibrationPointToTable();
-        checkSaveButtonState();
+        showCalibration();
     }
 
     private void parseData() {
         loadValue = Double.parseDouble(loadValueTextField.getText());
         channelValue = (double) Math.round(Double.parseDouble(channelValueTextField.getText()) * 1000) / 1000;
         valueName = loadValueNameTextField.getText();
-    }
-
-    private void addCalibrationPointToTable() {
-        CalibrationPoint point = new CalibrationPoint(loadValue, channelValue, valueName);
-        calibrationPoints.add(point);
-    }
-
-    private void checkSaveButtonState() {
-        if (calibrationPoints.size() >= 2) {
-            saveButton.setDisable(false);
-            saveButton.requestFocus();
-        } else {
-            saveButton.setDisable(true);
-        }
     }
 
     private void addPointToGraph() {
@@ -270,39 +282,12 @@ public class CalibrationController implements BaseController {
 
     public void handleSaveButton() {
         savePoints();
-        approximatePoints();
         indicateResult();
     }
 
     private void savePoints() {
-        calibrationModel = new CalibrationModel();
-        calibrationModel.setChannel(channel);
-//        adc.getCalibrationModel().add(calibrationModel);
-
-        for (CalibrationPoint point : calibrationPoints) {
-            calibrationModel.getLoadValue().add(point.getLoadValue());
-            calibrationModel.getChannelValue().add(point.getChannelValue());
-            calibrationModel.getValueName().add(point.getValueName());
-        }
-    }
-
-    private void approximatePoints() {
-        prepareData();
-        approximate();
-    }
-
-    private void prepareData() {
-        rawData = new ArrayList<>();
-
-        for (CalibrationPoint point : calibrationPoints) {
-            rawData.add(new XYChart.Data<>(point.getLoadValue(), point.getChannelValue()));
-        }
-    }
-
-    private void approximate() {
-        LinearApproximation approximation = new LinearApproximation(rawData, calibrationModel);
-        approximation.createEquationSystem();
-        approximation.calculateRoots();
+        adc.getCalibrationSettings().get(channel).clear();
+        adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationPoints));
     }
 
     private void indicateResult() {

@@ -5,14 +5,17 @@ import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.db.CalibrationRepository;
 import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.utils.Utils;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.List;
 public class SettingsModel implements BaseController {
     private ADC adc;
     private int[] amplitudes;
+    private ArrayList<List<String>> calibrationSettings;
     private String[] channelsDescription;
     private int[] channelsTypes;
     private boolean[] checkedChannels;
@@ -32,6 +36,7 @@ public class SettingsModel implements BaseController {
     private boolean isEditMode;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private int[] measuringRanges;
+    private long moduleId;
     private List<Pair<Integer, Module>> modules;
     private int moduleIndex;
     private ObservableList<String> modulesNames;
@@ -113,6 +118,7 @@ public class SettingsModel implements BaseController {
             channelsTypes[i] = channelsType;
             measuringRanges[i] = measuringRange;
             channelsDescription[i] = ", ";
+            calibrationSettings.add(new ArrayList<>());
         }
     }
 
@@ -121,6 +127,7 @@ public class SettingsModel implements BaseController {
         channelsTypes = adc.getChannelsTypes();
         measuringRanges = adc.getMeasuringRanges();
         channelsDescription = adc.getChannelsDescription();
+        calibrationSettings = adc.getCalibrationSettings();
         amplitudes = null;
         frequencies = null;
         phases = null;
@@ -207,6 +214,11 @@ public class SettingsModel implements BaseController {
         saveModulesSettings();
     }
 
+    private void setFields(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+        this.testProgramId = testProgram.getId();
+    }
+
     private void saveModulesSettings() {
         addSaveModuleInstructions();
         for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
@@ -214,11 +226,6 @@ public class SettingsModel implements BaseController {
             slot = parseSlotNumber(moduleIndex);
             runInstructions();
         }
-    }
-
-    private void setFields(boolean isEditMode) {
-        this.isEditMode = isEditMode;
-        this.testProgramId = testProgram.getId();
     }
 
     private void addSaveModuleInstructions() {
@@ -250,10 +257,12 @@ public class SettingsModel implements BaseController {
     private void saveADCSettings(String moduleName) {
         if (isEditMode) {
             updateADCFields();
+            updateCalibration();
         } else {
             setADCSettingsFields();
             setADCModuleSettings(moduleName);
             addNewModule();
+            addNewCalibrationSettings();
         }
     }
 
@@ -270,6 +279,17 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    private void updateCalibration() {
+        List<Calibration> allCalibrations = CalibrationRepository.getAllCalibrations();
+
+        for (Calibration calibration : allCalibrations) {
+            if (calibration.getModuleId() == adc.getModuleId()) {
+                calibration.setCalibrationSettings(adc.getCalibrationSettings());
+                CalibrationRepository.updateCalibration(calibration);
+            }
+        }
+    }
+
     private void updateModuleSettings(Modules module) {
         ModulesRepository.updateModules(module);
     }
@@ -277,6 +297,12 @@ public class SettingsModel implements BaseController {
     private void addNewModule() {
         Modules module = new Modules(moduleSettings);
         ModulesRepository.insertModule(module);
+        moduleId = module.getId();
+    }
+
+    private void addNewCalibrationSettings() {
+        Calibration calibration = new Calibration(moduleId, adc.getCalibrationSettings());
+        CalibrationRepository.insertCalibration(calibration);
     }
 
     private void setADCModuleSettings(String moduleName) {
@@ -414,19 +440,35 @@ public class SettingsModel implements BaseController {
 
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
-            String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
-            String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
-            String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
-            String[] parsedChannelsDescriptions = module.getChannelsDescription().split(", ", 5);
+            parseChannelsSettings(module);
+            loadCalibrationSettings(module);
+        }
+    }
 
-            adc.setSlot(slot);
-            adc.setModuleId(module.getId());
+    private void parseChannelsSettings(Modules module) {
+        String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
+        String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
+        String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
+        String[] parsedChannelsDescriptions = module.getChannelsDescription().split(", ", 5);
 
-            for (int i = 0; i < channels; i++) {
-                checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
-                channelsTypes[i] = Integer.parseInt(parsedChannelsTypes[i]);
-                measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
-                channelsDescription[i] = parsedChannelsDescriptions[i];
+        adc.setSlot(slot);
+        adc.setModuleId(module.getId());
+
+        for (int i = 0; i < channels; i++) {
+            checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
+            channelsTypes[i] = Integer.parseInt(parsedChannelsTypes[i]);
+            measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
+            channelsDescription[i] = parsedChannelsDescriptions[i];
+        }
+    }
+
+    private void loadCalibrationSettings(Modules module) {
+        long moduleId = module.getId();
+        List<Calibration> allCalibrations = CalibrationRepository.getAllCalibrations();
+
+        for (Calibration calibration : allCalibrations) {
+            if (calibration.getModuleId() == moduleId) {
+                adc.setCalibrationSettings(calibration.getCalibrationSettings());
             }
         }
     }

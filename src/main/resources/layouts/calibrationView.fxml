@@ -94,7 +94,7 @@
                </GridPane.margin>
             </Button>
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="8" GridPane.rowIndex="13" />
-            <Button fx:id="saveButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveButton" text="Сохранить" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
+            <Button fx:id="saveButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveButton" text="Сохранить" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
