@@ -23,6 +23,7 @@ import java.util.List;
 public class SettingsModel implements BaseController {
     private ADC adc;
     private int[] amplitudes;
+    private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private String[] channelsDescription;
     private int[] channelsTypes;
@@ -119,6 +120,7 @@ public class SettingsModel implements BaseController {
             measuringRanges[i] = measuringRange;
             channelsDescription[i] = ", ";
             calibrationSettings.add(new ArrayList<>());
+            calibrationCoefficients.add(new ArrayList<>());
         }
     }
 
@@ -128,6 +130,7 @@ public class SettingsModel implements BaseController {
         measuringRanges = adc.getMeasuringRanges();
         channelsDescription = adc.getChannelsDescription();
         calibrationSettings = adc.getCalibrationSettings();
+        calibrationCoefficients = adc.getCalibrationCoefficients();
         amplitudes = null;
         frequencies = null;
         phases = null;
@@ -285,6 +288,7 @@ public class SettingsModel implements BaseController {
         for (Calibration calibration : allCalibrations) {
             if (calibration.getModuleId() == adc.getModuleId()) {
                 calibration.setCalibrationSettings(adc.getCalibrationSettings());
+                calibration.setCalibrationCoefficients(adc.getCalibrationCoefficients());
                 CalibrationRepository.updateCalibration(calibration);
             }
         }
@@ -301,7 +305,8 @@ public class SettingsModel implements BaseController {
     }
 
     private void addNewCalibrationSettings() {
-        Calibration calibration = new Calibration(moduleId, adc.getCalibrationSettings());
+        Calibration calibration = new Calibration(testProgramId, moduleId, adc.getCalibrationSettings(),
+                adc.getCalibrationCoefficients());
         CalibrationRepository.insertCalibration(calibration);
     }
 
@@ -469,6 +474,7 @@ public class SettingsModel implements BaseController {
         for (Calibration calibration : allCalibrations) {
             if (calibration.getModuleId() == moduleId) {
                 adc.setCalibrationSettings(calibration.getCalibrationSettings());
+                adc.setCalibrationCoefficients(calibration.getCalibrationCoefficients());
             }
         }
     }

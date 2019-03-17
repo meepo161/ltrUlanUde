@@ -14,11 +14,10 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.CalibrationPoint;
-import ru.avem.posum.utils.LinearApproximation;
+import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -224,9 +223,9 @@ public class CalibrationController implements BaseController {
         int channel = Integer.parseInt(settings.substring(9, 10));
 
         if (this.channel == channel) {
-            loadValue = Double.parseDouble(settings.split(", ")[1].split("load value: ")[1]);
-            channelValue = Double.parseDouble(settings.split(", ")[2].split("channel value: ")[1]);
-            valueName = settings.split(", ")[3].split("value name: ")[1];
+            loadValue = CalibrationPoint.parseLoadValue(settings);
+            channelValue = CalibrationPoint.parseChannelValue(settings);
+            valueName = CalibrationPoint.parseValueName(settings);
 
             showCalibration();
             setUiElements();
@@ -269,6 +268,7 @@ public class CalibrationController implements BaseController {
     public void handleBackButton() {
         stopped = true;
         clearCalibrationData();
+        cm.checkCalibration();
         wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
@@ -288,6 +288,11 @@ public class CalibrationController implements BaseController {
     private void savePoints() {
         adc.getCalibrationSettings().get(channel).clear();
         adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationPoints));
+
+        Calibration calibration = new Calibration();
+        calibration.calibrate(adc, channel);
+        adc.getCalibrationCoefficients().get(channel).clear();
+        adc.getCalibrationCoefficients().get(channel).addAll(calibration.getCalibrationCoefficients());
     }
 
     private void indicateResult() {

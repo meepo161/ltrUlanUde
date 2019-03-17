@@ -283,6 +283,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void checkCalibration() {
+        signalGraphController.checkCalibration();
+    }
+
+    @Override
     public void createListModulesControllers(List<String> modulesNames) {
         modulesPairs.clear();
         for (String module : modulesNames) {

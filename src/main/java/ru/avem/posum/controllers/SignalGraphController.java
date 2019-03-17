@@ -14,7 +14,9 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
+import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.ReceivedSignal;
+import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.ArrayList;
@@ -59,6 +61,7 @@ public class SignalGraphController implements BaseController {
     private volatile XYChart.Series<Number, Number> graphSeries;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+    private boolean isCalibrationExists;
     private volatile boolean isDone;
     private double lowerBound;
     private LTR24 ltr24;
@@ -125,7 +128,8 @@ public class SignalGraphController implements BaseController {
         runInstructions();
         addDefineBoundsInstructions();
         runInstructions();
-        setGraphBounds(lowerBound, upperBound, tickUnit, false);
+        setGraphBounds(lowerBound, upperBound, tickUnit);
+        toggleAutoScale(false);
     }
 
     private void getModuleInstance() {
@@ -158,6 +162,15 @@ public class SignalGraphController implements BaseController {
 
     private void runInstructions() {
         instructions.get(moduleType).onAction();
+    }
+
+
+    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
     }
 
     private void addDefineBoundsInstructions() {
@@ -240,19 +253,17 @@ public class SignalGraphController implements BaseController {
     private void listenAutoScaleCheckBox() {
         autoScaleCheckBox.selectedProperty().addListener(observable -> {
             if (autoScaleCheckBox.isSelected()) {
-                setGraphBounds(lowerBound, upperBound, tickUnit, true);
+                toggleAutoScale(true);
             } else {
-                setGraphBounds(lowerBound, upperBound, tickUnit, false);
+                toggleAutoScale(false);
+                setGraphBounds(lowerBound, upperBound, tickUnit);
             }
         });
     }
 
-    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit, boolean isAutoRangeEnabled) {
+    private void toggleAutoScale(boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         yAxis.setAutoRanging(isAutoRangeEnabled);
-        yAxis.setLowerBound(lowerBound);
-        yAxis.setUpperBound(upperBound);
-        yAxis.setTickUnit(tickUnit);
     }
 
 
@@ -325,9 +336,9 @@ public class SignalGraphController implements BaseController {
 
     private void calculateData() {
         fillBuffer();
+        calculateParameters();
         clearSeriesData();
         addSeriesData();
-        calculateParameters();
     }
 
     private void fillBuffer() {
@@ -336,17 +347,6 @@ public class SignalGraphController implements BaseController {
 
     private void clearSeriesData() {
         intermediateList.clear();
-    }
-
-    private void addSeriesData() {
-        final int CHANNELS = 4;
-        for (int i = channel; i < buffer.length; i += CHANNELS) {
-            addPointToGraph(buffer, i);
-        }
-    }
-
-    private void addPointToGraph(double[] buffer, int i) {
-        intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
     }
 
     private void calculateParameters() {
@@ -366,6 +366,32 @@ public class SignalGraphController implements BaseController {
             bufferedAmplitude = 0;
             buffereZeroShift = 0;
             bufferedPhase = 0;
+        }
+
+        if (isCalibrationExists) {
+            amplitude = applyCalibration(amplitude);
+            zeroShift = applyCalibration(zeroShift);
+        }
+    }
+
+    private void addSeriesData() {
+        final int CHANNELS = 4;
+        int scale = 1;
+
+        if (moduleType.equals(CrateModel.LTR24)) {
+            scale = 32;
+        }
+
+        for (int i = channel; i < buffer.length; i += CHANNELS * scale) {
+            addPointToGraph(buffer, i);
+        }
+    }
+
+    private void addPointToGraph(double[] buffer, int i) {
+        if (isCalibrationExists) {
+            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, applyCalibration(buffer[i])));
+        } else {
+            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
         }
     }
 
@@ -405,7 +431,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void disableAutoRange() {
-        setGraphBounds(lowerBound, upperBound, tickUnit, false);
+        toggleAutoScale(false);
         autoScaleCheckBox.setSelected(false);
     }
 
@@ -413,6 +439,50 @@ public class SignalGraphController implements BaseController {
         averageTextField.setText("");
         averageCheckBox.setSelected(false);
     }
+
+    public void checkCalibration() {
+        if (!adc.getCalibrationCoefficients().get(channel).isEmpty()) {
+            setCalibratedBounds();
+            intermediateList = new ArrayList<>();
+            graphSeries.getData().clear();
+            graphSeries.getData().addAll(intermediateList);
+            isCalibrationExists = true;
+        }
+    }
+
+    private void setCalibratedBounds() {
+        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
+        int lastPointIndex = calibrationSettings.size() - 1;
+        double loadValue = CalibrationPoint.parseLoadValue(calibrationSettings.get(lastPointIndex));
+        String valueName = CalibrationPoint.parseValueName(calibrationSettings.get(lastPointIndex));
+
+        if (loadValue < 0) {
+            lowerBound = loadValue * 1.5;
+            upperBound = -loadValue * 1.5;
+            tickUnit = -loadValue * 1.5 / 5;
+        } else {
+            lowerBound = -loadValue * 1.5;
+            upperBound = loadValue * 1.5;
+            tickUnit = loadValue * 1.5 / 5;
+        }
+
+        setBounds(lowerBound, upperBound, tickUnit);
+        setGraphBounds(lowerBound, upperBound, tickUnit);
+        Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
+    }
+    private double applyCalibration(double value) {
+        List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
+        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
+
+        for (int i = 0; i < calibrationCoefficients.size(); i++) {
+            if (value <= CalibrationPoint.parseChannelValue(calibrationSettings.get(i))) {
+                return Calibration.applyCalibration(value, i, calibrationCoefficients);
+            }
+        }
+
+        return value;
+    }
+
 
     public double getZeroShift() {
         return zeroShift;

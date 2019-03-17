@@ -8,41 +8,43 @@ import ru.avem.posum.models.ExperimentModel;
 import java.util.List;
 
 public interface ControllerManager {
-    String getCrate();
-
-    void loadItemsForMainTableView();
-
-    void loadItemsForModulesTableView();
-
-    void loadDefaultSettings();
-
-    void toggleSettingsSceneButtons(boolean isDisable);
+    void checkCalibration();
 
     void createListModulesControllers(List<String> modulesNames);
 
-    void showChannelData(String moduleType, int slot, int channel);
+    String getCrate();
 
     CrateModel getCrateModelInstance();
 
     ExperimentModel getExperimentModel();
 
+    boolean getICPMode();
+
     double getZeroShift();
+
+    void hideRequiredFieldsSymbols();
+
+    boolean isClosed();
+
+    void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel);
+
+    void loadDefaultSettings();
+
+    void loadItemsForMainTableView();
+
+    void loadItemsForModulesTableView();
+
+    void loadModuleSettings(int selectedModuleIndex, String moduleName);
+
+    void setClosed(boolean closed);
+
+    void setEditMode(boolean editMode);
+
+    void showChannelData(String moduleType, int slot, int channel);
 
     void showChannelValue();
 
     void showTestProgram(TestProgram testProgram);
 
-    void setEditMode(boolean editMode);
-
-    void hideRequiredFieldsSymbols();
-
-    void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel);
-
-    boolean isClosed();
-
-    void setClosed(boolean closed);
-
-    void loadModuleSettings(int selectedModuleIndex, String moduleName);
-
-    boolean getICPMode();
+    void toggleSettingsSceneButtons(boolean isDisable);
 }

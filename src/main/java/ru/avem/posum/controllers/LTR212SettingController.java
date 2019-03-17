@@ -471,6 +471,7 @@ public class LTR212SettingController implements BaseController {
 
     private void showChannelValue(int channel) {
         cm.showChannelData(CrateModel.LTR212, ltr212.getSlot(), channel);
+        cm.checkCalibration();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 

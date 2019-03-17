@@ -3,7 +3,6 @@ package ru.avem.posum.models;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
-import java.util.Observable;
 
 public class CalibrationPoint {
     private int channel;
@@ -37,6 +36,18 @@ public class CalibrationPoint {
         }
 
         return convertedList;
+    }
+
+    public static double parseLoadValue(String settings) {
+        return Double.parseDouble(settings.split(", ")[1].split("load value: ")[1]);
+    }
+
+    public static double parseChannelValue(String settings) {
+        return Double.parseDouble(settings.split(", ")[2].split("channel value: ")[1]);
+    }
+
+    public static String parseValueName(String settings) {
+        return settings.split(", ")[3].split("value name: ")[1];
     }
 
     public int getChannel() {
