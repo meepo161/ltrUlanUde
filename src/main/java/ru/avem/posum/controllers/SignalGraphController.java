@@ -18,6 +18,7 @@ import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.ReceivedSignal;
 import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.RingBuffer;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,6 +72,7 @@ public class SignalGraphController implements BaseController {
     private RingBuffer ringBuffer;
     private int slot;
     private double tickUnit;
+    private double[] timeMarks;
     private double upperBound;
     private WindowsManager wm;
     private double zeroShift;
@@ -148,15 +150,16 @@ public class SignalGraphController implements BaseController {
 
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
-        data = new double[39064];
-        buffer = new double[39064];
+        data = new double[150_000];
+        buffer = new double[data.length];
+        timeMarks = new double[data.length];
         ringBuffer = new RingBuffer(data.length * 100);
     }
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
         data = new double[2048];
-        buffer = new double[2048];
+        buffer = new double[data.length];
         ringBuffer = new RingBuffer(data.length * 10);
     }
 
@@ -298,19 +301,19 @@ public class SignalGraphController implements BaseController {
     private void startShow() {
         new Thread(() -> {
             while (!cm.isClosed()) {
-                prepareDataForShow();
-                pause();
+                addGettingDataInstructions();
+                runInstructions();
+                Utils.sleep(100);
             }
             isDone = true;
         }).start();
-    }
 
-    private void prepareDataForShow() {
-        if (!adc.isBusy()) {
-            addGettingDataInstructions();
-            runInstructions();
-            processData();
-        }
+        new Thread(() -> {
+            while (!cm.isClosed()) {
+//                processData();
+//                Utils.sleep(10);
+            }
+        }).start();
     }
 
     private void addGettingDataInstructions() {
@@ -320,8 +323,9 @@ public class SignalGraphController implements BaseController {
     }
 
     private void getLTR24Data() {
-        ltr24.receive(data);
+        ltr24.receive(data, timeMarks, data.length, 100);
         ringBuffer.put(data);
+        System.out.println(data[0]);
     }
 
     private void getLTR212Data() {
@@ -343,6 +347,7 @@ public class SignalGraphController implements BaseController {
 
     private void fillBuffer() {
         ringBuffer.take(buffer, buffer.length);
+        System.out.println(buffer[0]);
     }
 
     private void clearSeriesData() {
@@ -376,13 +381,8 @@ public class SignalGraphController implements BaseController {
 
     private void addSeriesData() {
         final int CHANNELS = 4;
-        int scale = 1;
 
-        if (moduleType.equals(CrateModel.LTR24)) {
-            scale = 32;
-        }
-
-        for (int i = channel; i < buffer.length; i += CHANNELS * scale) {
+        for (int i = channel; i < buffer.length; i += CHANNELS) {
             addPointToGraph(buffer, i);
         }
     }
@@ -398,20 +398,14 @@ public class SignalGraphController implements BaseController {
     private void showData() {
         isDone = false;
         Platform.runLater(() -> {
-            graphSeries.getData().clear();
-            graphSeries.getData().addAll(intermediateList);
+//            graphSeries.getData().clear();
+//            graphSeries.getData().addAll(intermediateList);
             amplitudeTextField.setText(String.format("%.3f", amplitude));
             frequencyTextField.setText(String.format("%.3f", frequency));
             phaseTextField.setText(String.format("%.3f", phase));
             zeroShiftTextField.setText(String.format("%.3f", zeroShift));
             isDone = true;
         });
-    }
-
-    private void pause() {
-        while (!isDone && !cm.isClosed()) {
-            sleep(10);
-        }
     }
 
     @FXML
@@ -444,8 +438,10 @@ public class SignalGraphController implements BaseController {
         if (!adc.getCalibrationCoefficients().get(channel).isEmpty()) {
             setCalibratedBounds();
             intermediateList = new ArrayList<>();
-            graphSeries.getData().clear();
+            graphSeries = new XYChart.Series<>();
             graphSeries.getData().addAll(intermediateList);
+            graph.getData().clear();
+            graph.getData().add(graphSeries);
             isCalibrationExists = true;
         }
     }
@@ -457,12 +453,12 @@ public class SignalGraphController implements BaseController {
         String valueName = CalibrationPoint.parseValueName(calibrationSettings.get(lastPointIndex));
 
         if (loadValue < 0) {
-            lowerBound = loadValue * 1.5;
-            upperBound = -loadValue * 1.5;
-            tickUnit = -loadValue * 1.5 / 5;
+            lowerBound = loadValue * 1.1;
+            upperBound = -loadValue * 1.1;
+            tickUnit = -loadValue / 5;
         } else {
-            lowerBound = -loadValue * 1.5;
-            upperBound = loadValue * 1.5;
+            lowerBound = -loadValue * 1.1;
+            upperBound = loadValue * 1.1;
             tickUnit = loadValue * 1.5 / 5;
         }
 
@@ -470,12 +466,17 @@ public class SignalGraphController implements BaseController {
         setGraphBounds(lowerBound, upperBound, tickUnit);
         Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
     }
+
     private double applyCalibration(double value) {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
-        for (int i = 0; i < calibrationCoefficients.size(); i++) {
-            if (value <= CalibrationPoint.parseChannelValue(calibrationSettings.get(i))) {
+        for (int i = 0; i < calibrationCoefficients.size() - 1; i++) {
+            String lowerBoundCalibrationPoint = calibrationSettings.get(i);
+            String upperBoundCalibrationPoint = calibrationSettings.get(i + 1);
+
+            if (value > CalibrationPoint.parseChannelValue(lowerBoundCalibrationPoint) / 1.1 &
+                    value <= CalibrationPoint.parseChannelValue(upperBoundCalibrationPoint) * 1.1) {
                 return Calibration.applyCalibration(value, i, calibrationCoefficients);
             }
         }

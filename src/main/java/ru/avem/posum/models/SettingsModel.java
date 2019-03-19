@@ -5,7 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.db.CalibrationRepository;
+import ru.avem.posum.db.CalibrationsRepository;
 import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Calibration;
@@ -50,6 +50,7 @@ public class SettingsModel implements BaseController {
 
     public void createModulesInstances(ObservableList<String> modulesNames) {
         setFields(modulesNames);
+        initCrate();
         initModulesInstances();
     }
 
@@ -57,6 +58,10 @@ public class SettingsModel implements BaseController {
         this.crate = cm.getCrate();
         this.modulesNames = modulesNames;
         this.crateModel = cm.getCrateModelInstance();
+    }
+
+    private void initCrate() {
+        crateModel.initialize(crate);
     }
 
     private void addInitModuleInstructions() {
@@ -283,13 +288,13 @@ public class SettingsModel implements BaseController {
     }
 
     private void updateCalibration() {
-        List<Calibration> allCalibrations = CalibrationRepository.getAllCalibrations();
+        List<Calibration> allCalibrations = CalibrationsRepository.getAllCalibrations();
 
         for (Calibration calibration : allCalibrations) {
             if (calibration.getModuleId() == adc.getModuleId()) {
                 calibration.setCalibrationSettings(adc.getCalibrationSettings());
                 calibration.setCalibrationCoefficients(adc.getCalibrationCoefficients());
-                CalibrationRepository.updateCalibration(calibration);
+                CalibrationsRepository.updateCalibration(calibration);
             }
         }
     }
@@ -307,7 +312,7 @@ public class SettingsModel implements BaseController {
     private void addNewCalibrationSettings() {
         Calibration calibration = new Calibration(testProgramId, moduleId, adc.getCalibrationSettings(),
                 adc.getCalibrationCoefficients());
-        CalibrationRepository.insertCalibration(calibration);
+        CalibrationsRepository.insertCalibration(calibration);
     }
 
     private void setADCModuleSettings(String moduleName) {
@@ -469,7 +474,7 @@ public class SettingsModel implements BaseController {
 
     private void loadCalibrationSettings(Modules module) {
         long moduleId = module.getId();
-        List<Calibration> allCalibrations = CalibrationRepository.getAllCalibrations();
+        List<Calibration> allCalibrations = CalibrationsRepository.getAllCalibrations();
 
         for (Calibration calibration : allCalibrations) {
             if (calibration.getModuleId() == moduleId) {
