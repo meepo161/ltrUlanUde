@@ -11,7 +11,7 @@ public class DataBaseRepository {
     public static void init(boolean forceInit) {
         if (!new File(DATABASE_NAME).exists() || forceInit) {
             AccountRepository.createTable(Account.class);
-            CalibrationRepository.createTable(Calibration.class);
+            CalibrationsRepository.createTable(Calibration.class);
             EventRepository.createTable(Event.class);
             ModulesRepository.createTable(Modules.class);
             TestProgramRepository.createTable(TestProgram.class);

@@ -18,7 +18,6 @@ import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.ReceivedSignal;
 import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.RingBuffer;
-import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,10 +68,10 @@ public class SignalGraphController implements BaseController {
     private LTR212 ltr212;
     private String moduleType;
     private double phase;
+    private ReceivedSignal receivedSignal = new ReceivedSignal();
     private RingBuffer ringBuffer;
     private int slot;
     private double tickUnit;
-    private double[] timeMarks;
     private double upperBound;
     private WindowsManager wm;
     private double zeroShift;
@@ -150,16 +149,15 @@ public class SignalGraphController implements BaseController {
 
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
-        data = new double[150_000];
-        buffer = new double[data.length];
-        timeMarks = new double[data.length];
+        data = new double[39064];
+        buffer = new double[39064];
         ringBuffer = new RingBuffer(data.length * 100);
     }
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
         data = new double[2048];
-        buffer = new double[data.length];
+        buffer = new double[2048];
         ringBuffer = new RingBuffer(data.length * 10);
     }
 
@@ -301,19 +299,19 @@ public class SignalGraphController implements BaseController {
     private void startShow() {
         new Thread(() -> {
             while (!cm.isClosed()) {
-                addGettingDataInstructions();
-                runInstructions();
-                Utils.sleep(100);
+                prepareDataForShow();
+                pause();
             }
             isDone = true;
         }).start();
+    }
 
-        new Thread(() -> {
-            while (!cm.isClosed()) {
-//                processData();
-//                Utils.sleep(10);
-            }
-        }).start();
+    private void prepareDataForShow() {
+        if (!adc.isBusy()) {
+            addGettingDataInstructions();
+            runInstructions();
+            processData();
+        }
     }
 
     private void addGettingDataInstructions() {
@@ -323,9 +321,8 @@ public class SignalGraphController implements BaseController {
     }
 
     private void getLTR24Data() {
-        ltr24.receive(data, timeMarks, data.length, 100);
+        ltr24.receive(data);
         ringBuffer.put(data);
-        System.out.println(data[0]);
     }
 
     private void getLTR212Data() {
@@ -347,7 +344,6 @@ public class SignalGraphController implements BaseController {
 
     private void fillBuffer() {
         ringBuffer.take(buffer, buffer.length);
-        System.out.println(buffer[0]);
     }
 
     private void clearSeriesData() {
@@ -355,7 +351,6 @@ public class SignalGraphController implements BaseController {
     }
 
     private void calculateParameters() {
-        ReceivedSignal receivedSignal = new ReceivedSignal();
         receivedSignal.calculateBaseParameters(buffer, channel);
 
         if (averageIterator < averageCount) {
@@ -381,8 +376,13 @@ public class SignalGraphController implements BaseController {
 
     private void addSeriesData() {
         final int CHANNELS = 4;
+        int scale = 1;
 
-        for (int i = channel; i < buffer.length; i += CHANNELS) {
+        if (moduleType.equals(CrateModel.LTR24)) {
+            scale = 32;
+        }
+
+        for (int i = channel; i < buffer.length; i += CHANNELS * scale) {
             addPointToGraph(buffer, i);
         }
     }
@@ -398,14 +398,20 @@ public class SignalGraphController implements BaseController {
     private void showData() {
         isDone = false;
         Platform.runLater(() -> {
-//            graphSeries.getData().clear();
-//            graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(String.format("%.3f", amplitude));
-            frequencyTextField.setText(String.format("%.3f", frequency));
-            phaseTextField.setText(String.format("%.3f", phase));
-            zeroShiftTextField.setText(String.format("%.3f", zeroShift));
+            graphSeries.getData().clear();
+            graphSeries.getData().addAll(intermediateList);
+            amplitudeTextField.setText(String.format("%.5f", amplitude));
+            frequencyTextField.setText(String.format("%.5f", frequency));
+            phaseTextField.setText(String.format("%.5f", phase));
+            zeroShiftTextField.setText(String.format("%.5f", zeroShift));
             isDone = true;
         });
+    }
+
+    private void pause() {
+        while (!isDone && !cm.isClosed()) {
+            sleep(10);
+        }
     }
 
     @FXML
@@ -455,18 +461,17 @@ public class SignalGraphController implements BaseController {
         if (loadValue < 0) {
             lowerBound = loadValue * 1.1;
             upperBound = -loadValue * 1.1;
-            tickUnit = -loadValue / 5;
+            tickUnit = -loadValue * 1.1 / 5;
         } else {
             lowerBound = -loadValue * 1.1;
             upperBound = loadValue * 1.1;
-            tickUnit = loadValue * 1.5 / 5;
+            tickUnit = loadValue * 1.1 / 5;
         }
 
         setBounds(lowerBound, upperBound, tickUnit);
         setGraphBounds(lowerBound, upperBound, tickUnit);
         Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
     }
-
     private double applyCalibration(double value) {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
@@ -484,9 +489,8 @@ public class SignalGraphController implements BaseController {
         return value;
     }
 
-
-    public double getZeroShift() {
-        return zeroShift;
+    public ReceivedSignal getReceivedSignal() {
+        return receivedSignal;
     }
 
     @Override

@@ -394,7 +394,7 @@ public class LTR24SettingController implements BaseController {
 
     private void initializeModule() {
         if (!isConnectionOpen) {
-            ltr24.connect();
+            ltr24.openConnection();
         }
 
         ltr24.initModule();
@@ -460,7 +460,7 @@ public class LTR24SettingController implements BaseController {
 
     private void closeConnection() {
         if (isConnectionOpen) {
-            ltr24.disconnect();
+            ltr24.closeConnection();
             isConnectionOpen = false;
         }
     }

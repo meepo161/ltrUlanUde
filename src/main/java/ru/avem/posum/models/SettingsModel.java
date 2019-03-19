@@ -50,7 +50,6 @@ public class SettingsModel implements BaseController {
 
     public void createModulesInstances(ObservableList<String> modulesNames) {
         setFields(modulesNames);
-        initCrate();
         initModulesInstances();
     }
 
@@ -58,10 +57,6 @@ public class SettingsModel implements BaseController {
         this.crate = cm.getCrate();
         this.modulesNames = modulesNames;
         this.crateModel = cm.getCrateModelInstance();
-    }
-
-    private void initCrate() {
-        crateModel.initialize(crate);
     }
 
     private void addInitModuleInstructions() {

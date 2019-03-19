@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CalibrationRepository extends DataBaseRepository {
+public class CalibrationsRepository extends DataBaseRepository {
     public static void createTable(Class dataClass) {
         try (ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL)) {
             TableUtils.dropTable(connectionSource, dataClass, true);
@@ -52,7 +52,7 @@ public class CalibrationRepository extends DataBaseRepository {
         void onAction(Dao<Calibration, Long> calibrationsDao) throws SQLException;
     }
 
-    private static void sendAction(CalibrationRepository.Actionable actionable) {
+    private static void sendAction(CalibrationsRepository.Actionable actionable) {
         try (ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL)) {
             Dao<Calibration, Long> calibrationDao = DaoManager.createDao(connectionSource, Calibration.class);
 

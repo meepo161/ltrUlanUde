@@ -345,7 +345,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public double getZeroShift() {
-        return signalGraphController.getZeroShift();
+        return signalGraphController.getReceivedSignal().getZeroShift();
     }
 
     @Override

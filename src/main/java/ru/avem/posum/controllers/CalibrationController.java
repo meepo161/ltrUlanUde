@@ -31,11 +31,15 @@ public class CalibrationController implements BaseController {
     @FXML
     private TableColumn<CalibrationPoint, Double> channelValueColumn;
     @FXML
-    private TextField channelValueTextField;
-    @FXML
     private Label channelValueLabel;
     @FXML
+    private ComboBox<String> channelValueMultiplierComboBox;
+    @FXML
+    private TextField channelValueTextField;
+    @FXML
     private TableColumn<CalibrationPoint, Double> loadChannelColumn;
+    @FXML
+    private ComboBox<String> loadValueMultiplierComboBox;
     @FXML
     private Label loadValueLabel;
     @FXML
@@ -49,6 +53,8 @@ public class CalibrationController implements BaseController {
     @FXML
     private Button saveButton;
     @FXML
+    private CheckBox setChannelValueCheckBox;
+    @FXML
     private StatusBar statusBar;
     @FXML
     private Label titleLabel;
@@ -58,9 +64,11 @@ public class CalibrationController implements BaseController {
     private ContextMenu contextMenu = new ContextMenu();
     private int channel;
     private double channelValue;
+    private double channelValueCoefficient;
     private ControllerManager cm;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private double loadValue;
+    private double loadValueCoefficient;
     private String moduleType;
     private List<XYChart.Data<Double, Double>> rawData;
     private StatusBarLine statusBarLine = new StatusBarLine();
@@ -71,11 +79,60 @@ public class CalibrationController implements BaseController {
 
     @FXML
     private void initialize() {
+        initComboBoxes();
+        listenSetChannelValueCheckBox();
         initColumns();
         initGraph();
         initTextFields();
         createContextMenu();
         addMouseListener();
+    }
+
+    private void initComboBoxes() {
+        addCoefficientsList();
+        setDefaultCoefficient();
+    }
+
+    private void listenSetChannelValueCheckBox() {
+        setChannelValueCheckBox.selectedProperty().addListener(observable -> {
+            if (setChannelValueCheckBox.isSelected()) {
+                stopped = true;
+                channelValueTextField.setEditable(true);
+                channelValueTextField.setFocusTraversable(true);
+                channelValueTextField.setMouseTransparent(false);
+                channelValueTextField.setText("");
+            } else {
+                stopped = false;
+                channelValueTextField.setEditable(false);
+                channelValueTextField.setFocusTraversable(false);
+                channelValueTextField.setMouseTransparent(true);
+                showChannelValue();
+            }
+        });
+    }
+
+    private void addCoefficientsList() {
+        ObservableList<String> coefficients = FXCollections.observableArrayList();
+
+        coefficients.add("0.00001");
+        coefficients.add("0.0001");
+        coefficients.add("0.001");
+        coefficients.add("0.01");
+        coefficients.add("0.1");
+        coefficients.add("1");
+        coefficients.add("10");
+        coefficients.add("100");
+        coefficients.add("1000");
+        coefficients.add("10000");
+        coefficients.add("100000");
+
+        channelValueMultiplierComboBox.setItems(coefficients);
+        loadValueMultiplierComboBox.setItems(coefficients);
+    }
+
+    private void setDefaultCoefficient() {
+        channelValueMultiplierComboBox.getSelectionModel().select(5);
+        loadValueMultiplierComboBox.getSelectionModel().select(5);
     }
 
     private void initColumns() {
@@ -117,10 +174,16 @@ public class CalibrationController implements BaseController {
     }
 
     private void checkNumberOfCalibrationPoints() {
-        if (calibrationPoints.size() == 7) {
+        if (calibrationPoints.size() == 12) {
             changeState(true);
         } else {
             changeState(false);
+        }
+
+        if (calibrationPoints.size() < 2) {
+            saveButton.setDisable(true);
+        } else {
+            saveButton.setDisable(false);
         }
     }
 
@@ -162,8 +225,8 @@ public class CalibrationController implements BaseController {
 
     private void setDigitFilterToLoadValueTextField() {
         loadValueTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            loadValueTextField.setText(newValue.replaceAll("[^\\d.]", ""));
-            if (!newValue.matches("(^[0-9]{1,5}\\.[0-9]{1,2}|$)|^[0-9]+\\.|([0-9]{1,5})")) {
+            loadValueTextField.setText(newValue.replaceAll("[^-\\d.]", ""));
+            if (!newValue.matches("(^[-]?[0-9]{1,5}\\.[0-9]{1,2}|$)|^[-]?[0-9]+\\.|^[-]?([0-9]{1,5})|^-")) {
                 loadValueTextField.setText(oldValue);
             }
         });
@@ -249,13 +312,20 @@ public class CalibrationController implements BaseController {
     }
 
     public void handleAddPoint() {
+        getCoefficients();
         parseData();
         showCalibration();
     }
 
+    private void getCoefficients() {
+        loadValueCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+        channelValueCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+    }
+
+
     private void parseData() {
-        loadValue = Double.parseDouble(loadValueTextField.getText());
-        channelValue = (double) Math.round(Double.parseDouble(channelValueTextField.getText()) * 1000) / 1000;
+        loadValue = (Double.parseDouble(loadValueTextField.getText())) * loadValueCoefficient;
+        channelValue = ((double) Math.round(cm.getZeroShift() * 1000) / 1000) * channelValueCoefficient;
         valueName = loadValueNameTextField.getText();
     }
 
@@ -303,7 +373,7 @@ public class CalibrationController implements BaseController {
     public void showChannelValue() {
         new Thread(() -> {
             while (!stopped) {
-                Platform.runLater(() -> channelValueTextField.setText(String.format("%.3f", cm.getZeroShift())));
+                Platform.runLater(() -> channelValueTextField.setText(String.format("%.5f", cm.getZeroShift())));
                 Utils.sleep(100);
             }
         }).start();
