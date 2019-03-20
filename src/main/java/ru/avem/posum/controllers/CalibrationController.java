@@ -20,6 +20,7 @@ import ru.avem.posum.utils.Utils;
 
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Observable;
 
 
 public class CalibrationController implements BaseController {
@@ -89,6 +90,8 @@ public class CalibrationController implements BaseController {
     }
 
     private void initComboBoxes() {
+        setDigitFilterToTextField(channelValueTextField);
+        setDigitFilterToTextField(loadValueTextField);
         addCoefficientsList();
         setDefaultCoefficient();
     }
@@ -233,7 +236,7 @@ public class CalibrationController implements BaseController {
     private void setDigitFilterToTextField(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^-\\d.]", ""));
-            if (!newValue.matches("(^[-]?[0-9]{1,5}\\.[0-9]{1,6}|$)|^[-]?[0-9]+\\.|^[-]?([0-9]{1,5})|^-")) {
+            if (!newValue.matches("^-?[1-9]+\\.\\d+|^-?[1-9]+\\.|^-?[1-9]+|(^-?0\\.\\d+|^-?0\\.|^-?0)|-|$")) {
                 textField.setText(oldValue);
             }
         });
