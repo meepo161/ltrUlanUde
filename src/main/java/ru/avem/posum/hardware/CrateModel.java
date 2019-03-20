@@ -6,6 +6,7 @@ import javafx.util.Pair;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CrateModel {
@@ -18,7 +19,7 @@ public class CrateModel {
     private String[][] crates = new String[LTR_CRATES_MAX][LTR_CRATES_MAX]; // массив хранит серийные номера, имена и интерфейс подключения крейтов
     private ObservableList<String> cratesNames;
     private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX];
-    private List<Pair<Integer, Module>> modulesList = new ArrayList<>();
+    private HashMap<Integer, Module> modulesList = new HashMap<>();
     private String status;
     private TextEncoder textEncoder = new TextEncoder();
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
@@ -113,7 +114,7 @@ public class CrateModel {
         return modulesNames;
     }
 
-    public List<Pair<Integer, Module>> getModulesList() {
+    public HashMap<Integer, Module> getModulesList() {
         return modulesList;
     }
 

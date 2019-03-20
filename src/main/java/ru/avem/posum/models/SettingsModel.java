@@ -38,7 +38,7 @@ public class SettingsModel implements BaseController {
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private int[] measuringRanges;
     private long moduleId;
-    private List<Pair<Integer, Module>> modules;
+    private HashMap<Integer, Module> modules;
     private int moduleIndex;
     private ObservableList<String> modulesNames;
     private HashMap<String, String> moduleSettings;
@@ -137,7 +137,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void saveModuleInstance(Module module) {
-        crateModel.getModulesList().add(new Pair<>(slot, module));
+        crateModel.getModulesList().put(slot, module);
     }
 
     private void setDefaultDACSettings() {
@@ -254,7 +254,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void getADCInstance() {
-        adc = (ADC) crateModel.getModulesList().get(moduleIndex).getValue();
+        adc = (ADC) crateModel.getModulesList().get(slot);
     }
 
     private void saveADCSettings(String moduleName) {
@@ -334,7 +334,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void getDACInstance() {
-        dac = (DAC) crateModel.getModulesList().get(moduleIndex).getValue();
+        dac = (DAC) crateModel.getModulesList().get(moduleIndex);
     }
 
     private void saveDACSettings(String moduleName) {
@@ -434,7 +434,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void loadADCSettings() {
-        adc = (ADC) modules.get(slot - 1).getValue();
+        adc = (ADC) modules.get(slot);
         channels = adc.getChannelsCount();
         setADCSettingsFields();
 
@@ -480,7 +480,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void loadDACSettings() {
-        dac = (DAC) modules.get(slot - 1).getValue();
+        dac = (DAC) modules.get(slot);
         channels = dac.getChannelsCount();
         setDACSettingsFields();
 

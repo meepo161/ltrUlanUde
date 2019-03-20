@@ -17,6 +17,7 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class LTR34SettingController implements BaseController {
@@ -329,11 +330,8 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void findLTR34Module() {
-        for (Pair<Integer, Module> module : crateModel.getModulesList()) {
-            if (module.getKey() == slot) {
-                ltr34 = (LTR34) module.getValue();
-            }
-        }
+        HashMap<Integer, Module> modules = cm.getCrateModelInstance().getModulesList();
+        ltr34 = (LTR34) modules.get(slot);
     }
 
     private void loadChannelsSettings() {

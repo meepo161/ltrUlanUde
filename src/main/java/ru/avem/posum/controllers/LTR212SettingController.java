@@ -17,6 +17,7 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class LTR212SettingController implements BaseController {
@@ -243,7 +244,7 @@ public class LTR212SettingController implements BaseController {
 
     private void setDefaultSettings(int channel) {
         channelsDescription.get(channel).setText("");
-        channelsTypesComboBoxes.get(channel).getSelectionModel().select(2);
+        channelsTypesComboBoxes.get(channel).getSelectionModel().select(1);
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
     }
 
@@ -289,12 +290,8 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void findLTR212Module() {
-        for (Pair<Integer, Module> module : crateModel.getModulesList()) {
-            if (module.getKey() == slot) {
-                ltr212 = (LTR212) module.getValue();
-                break;
-            }
-        }
+        HashMap<Integer, Module> modules = cm.getCrateModelInstance().getModulesList();
+        ltr212 = (LTR212) modules.get(slot);
     }
 
     private void loadModuleSettings() {

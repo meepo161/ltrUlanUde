@@ -18,6 +18,7 @@ import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
+import java.text.NumberFormat;
 import java.util.List;
 
 
@@ -70,7 +71,6 @@ public class CalibrationController implements BaseController {
     private double loadValue;
     private double loadValueCoefficient;
     private String moduleType;
-    private List<XYChart.Data<Double, Double>> rawData;
     private StatusBarLine statusBarLine = new StatusBarLine();
     private int slot;
     private boolean stopped;
@@ -147,7 +147,6 @@ public class CalibrationController implements BaseController {
     }
 
     private void initTextFields() {
-        setDigitFilterToLoadValueTextField();
         toggleUiElementsIfEmptyField(loadValueTextField);
         toggleUiElementsIfEmptyField(loadValueNameTextField);
     }
@@ -155,32 +154,34 @@ public class CalibrationController implements BaseController {
     private void createContextMenu() {
         MenuItem menuItemCopy = new MenuItem("Копировать");
         MenuItem menuItemDelete = new MenuItem("Удалить");
+        MenuItem menuItemClear = new MenuItem("Очистить");
 
         menuItemCopy.setOnAction(event -> copyCalibrationPoint());
         menuItemDelete.setOnAction(event -> deleteCalibrationPoint());
+        menuItemClear.setOnAction(event -> clearCalibrationPoints());
 
-        contextMenu.getItems().addAll(menuItemCopy, menuItemDelete);
+        contextMenu.getItems().addAll(menuItemCopy, menuItemDelete, menuItemClear);
     }
 
-    private void deleteCalibrationPoint() {
-        int selectedPoint = calibrationTableView.getSelectionModel().getSelectedIndex();
-
-        if (selectedPoint != -1) {
-            graphSeries.getData().remove(selectedPoint);
-            calibrationPoints.remove(selectedPoint);
-        }
-
+    private void copyCalibrationPoint() {
+        int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
+        double xValue = (double) graphSeries.getData().get(selectedPointIndex).getXValue() * 0.000_000_001;
+        double yValue = (double) graphSeries.getData().get(selectedPointIndex).getYValue();
+        graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
+        calibrationPoints.add(calibrationPoints.get(selectedPointIndex));
         checkNumberOfCalibrationPoints();
     }
 
     private void checkNumberOfCalibrationPoints() {
-        if (calibrationPoints.size() == 12) {
+        int MAX_CALIBRATION_POINTS = 20;
+        if (calibrationPoints.size() == MAX_CALIBRATION_POINTS) {
             changeState(true);
         } else {
             changeState(false);
         }
 
-        if (calibrationPoints.size() < 2) {
+        int MIN_CALIBRATION_POINTS = 2;
+        if (calibrationPoints.size() < MIN_CALIBRATION_POINTS) {
             saveButton.setDisable(true);
         } else {
             saveButton.setDisable(false);
@@ -202,11 +203,17 @@ public class CalibrationController implements BaseController {
         addToTableButton.setDisable(isDisable);
     }
 
-    private void copyCalibrationPoint() {
-        if (calibrationPoints.size() <= 7) {
-            calibrationPoints.add(calibrationPoints.get(calibrationTableView.getSelectionModel().getSelectedIndex()));
-            checkNumberOfCalibrationPoints();
-        }
+    private void deleteCalibrationPoint() {
+        int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
+        graphSeries.getData().remove(selectedPointIndex);
+        calibrationPoints.remove(selectedPointIndex);
+        checkNumberOfCalibrationPoints();
+    }
+
+    private void clearCalibrationPoints() {
+        graphSeries.getData().clear();
+        calibrationPoints.clear();
+        checkNumberOfCalibrationPoints();
     }
 
     private void addMouseListener() {
@@ -223,11 +230,11 @@ public class CalibrationController implements BaseController {
         });
     }
 
-    private void setDigitFilterToLoadValueTextField() {
-        loadValueTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            loadValueTextField.setText(newValue.replaceAll("[^-\\d.]", ""));
-            if (!newValue.matches("(^[-]?[0-9]{1,5}\\.[0-9]{1,2}|$)|^[-]?[0-9]+\\.|^[-]?([0-9]{1,5})|^-")) {
-                loadValueTextField.setText(oldValue);
+    private void setDigitFilterToTextField(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            textField.setText(newValue.replaceAll("[^-\\d.]", ""));
+            if (!newValue.matches("(^[-]?[0-9]{1,5}\\.[0-9]{1,6}|$)|^[-]?[0-9]+\\.|^[-]?([0-9]{1,5})|^-")) {
+                textField.setText(oldValue);
             }
         });
     }
@@ -237,7 +244,7 @@ public class CalibrationController implements BaseController {
             if (!loadValueTextField.getText().isEmpty() &
                     !channelValueTextField.getText().isEmpty() &
                     !loadValueNameTextField.getText().isEmpty() &
-                    calibrationPoints.size() <= 7) {
+                    calibrationPoints.size() <= 20) {
                 addToTableButton.setDisable(false);
             } else {
                 addToTableButton.setDisable(true);
@@ -324,8 +331,13 @@ public class CalibrationController implements BaseController {
 
 
     private void parseData() {
+        if (setChannelValueCheckBox.isSelected()) {
+            channelValue = Double.parseDouble(channelValueTextField.getText()) * channelValueCoefficient;
+        } else {
+            channelValue = (double) Math.round(cm.getZeroShift() * 1_000_000) / 1_000_000;
+        }
+
         loadValue = Double.parseDouble(loadValueTextField.getText()) * loadValueCoefficient;
-        channelValue = Double.parseDouble(channelValueTextField.getText()) * channelValueCoefficient;
         valueName = loadValueNameTextField.getText();
     }
 

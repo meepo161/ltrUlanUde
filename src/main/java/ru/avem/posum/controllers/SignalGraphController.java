@@ -134,11 +134,8 @@ public class SignalGraphController implements BaseController {
     }
 
     private void getModuleInstance() {
-        for (Pair<Integer, Module> module : cm.getCrateModelInstance().getModulesList()) {
-            if (module.getKey() == slot) {
-                adc = (ADC) module.getValue();
-            }
-        }
+        HashMap<Integer, Module> modules = cm.getCrateModelInstance().getModulesList();
+        adc = (ADC) modules.get(slot);
     }
 
     private void addInitModuleInstructions() {
