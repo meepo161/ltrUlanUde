@@ -324,8 +324,8 @@ public class CalibrationController implements BaseController {
 
 
     private void parseData() {
-        loadValue = (Double.parseDouble(loadValueTextField.getText())) * loadValueCoefficient;
-        channelValue = ((double) Math.round(cm.getZeroShift() * 1000) / 1000) * channelValueCoefficient;
+        loadValue = Double.parseDouble(loadValueTextField.getText()) * loadValueCoefficient;
+        channelValue = Double.parseDouble(channelValueTextField.getText()) * channelValueCoefficient;
         valueName = loadValueNameTextField.getText();
     }
 
