@@ -155,24 +155,13 @@ public class CalibrationController implements BaseController {
     }
 
     private void createContextMenu() {
-        MenuItem menuItemCopy = new MenuItem("Копировать");
         MenuItem menuItemDelete = new MenuItem("Удалить");
-        MenuItem menuItemClear = new MenuItem("Очистить");
+        MenuItem menuItemClear = new MenuItem("Удалить все");
 
-        menuItemCopy.setOnAction(event -> copyCalibrationPoint());
         menuItemDelete.setOnAction(event -> deleteCalibrationPoint());
         menuItemClear.setOnAction(event -> clearCalibrationPoints());
 
-        contextMenu.getItems().addAll(menuItemCopy, menuItemDelete, menuItemClear);
-    }
-
-    private void copyCalibrationPoint() {
-        int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
-        double xValue = (double) graphSeries.getData().get(selectedPointIndex).getXValue() * 0.000_000_001;
-        double yValue = (double) graphSeries.getData().get(selectedPointIndex).getYValue();
-        graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
-        calibrationPoints.add(calibrationPoints.get(selectedPointIndex));
-        checkNumberOfCalibrationPoints();
+        contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
     private void checkNumberOfCalibrationPoints() {
@@ -235,8 +224,8 @@ public class CalibrationController implements BaseController {
 
     private void setDigitFilterToTextField(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setText(newValue.replaceAll("[^-\\d.]", ""));
-            if (!newValue.matches("^-?[1-9]+\\.\\d+|^-?[1-9]+\\.|^-?[1-9]+|(^-?0\\.\\d+|^-?0\\.|^-?0)|-|$")) {
+            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
+            if (!newValue.matches("^-?[1-9]+(\\.|,)\\d+|^-?[1-9]+(\\.|,)|^-?[1-9]+|(^-?0(\\.|,)\\d+|^-?0(\\.|,)|^-?0)|-|$")) {
                 textField.setText(oldValue);
             }
         });
