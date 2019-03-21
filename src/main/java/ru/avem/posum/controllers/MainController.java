@@ -13,8 +13,10 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.db.CalibrationsRepository;
 import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
@@ -217,7 +219,7 @@ public class MainController implements BaseController {
             toggleProgressIndicatorState(false);
             new Thread(() -> {
                 copyTestProgram();
-                copyTestProgramSettings();
+                copyModulesSettings();
                 reloadTestProgramsList();
                 showNotification("Программа испытаний скопирована");
             }).start();
@@ -243,11 +245,24 @@ public class MainController implements BaseController {
         newTestProgramId = testProgram.getId();
     }
 
-    private void copyTestProgramSettings() {
+    private void copyModulesSettings() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (oldTestProgramId == module.getTestProgramId()) {
+                long oldModuleId = module.getId();
                 module.setTestProgramId(newTestProgramId);
                 ModulesRepository.insertModule(module);
+                long newModuleId = module.getId();
+                copyCalibrations(oldModuleId, newModuleId);
+            }
+        }
+    }
+
+    private void copyCalibrations(long oldModuleId, long newModuleId) {
+        for (Calibration calibration : CalibrationsRepository.getAllCalibrations()) {
+            if (calibration.getModuleId() == oldModuleId & calibration.getTestProgramId() == oldTestProgramId) {
+                calibration.setTestProgramId(newTestProgramId);
+                calibration.setModuleId(newModuleId);
+                CalibrationsRepository.insertCalibration(calibration);
             }
         }
     }
@@ -291,9 +306,19 @@ public class MainController implements BaseController {
     private void deleteModules() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (testProgramId == module.getTestProgramId()) {
+                deleteCalibrations(module.getId());
                 ModulesRepository.deleteModule(module);
             }
         }
+    }
+
+    private void deleteCalibrations(long moduleId) {
+        for (Calibration calibration : CalibrationsRepository.getAllCalibrations()) {
+            if (calibration.getModuleId() == moduleId & calibration.getTestProgramId() == testProgramId) {
+                CalibrationsRepository.deleteCalibration(calibration);
+            }
+        }
+
     }
 
     public void handleMenuItemAboutUs() {

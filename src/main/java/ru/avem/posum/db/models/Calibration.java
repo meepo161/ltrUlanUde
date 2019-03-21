@@ -47,6 +47,10 @@ public class Calibration {
         return moduleId;
     }
 
+    public void setModuleId(long moduleId) {
+        this.moduleId = moduleId;
+    }
+
     public ArrayList<List<Double>> getCalibrationCoefficients() {
         return calibrationCoefficients;
     }
