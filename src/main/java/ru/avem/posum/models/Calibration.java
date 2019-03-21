@@ -35,11 +35,6 @@ public class Calibration {
         }
     }
 
-    // Рассчитывает значение функции от x
-    public static double applyCalibration(double x, int coefficient, List<Double> calibrationCoefficients) {
-        return x * calibrationCoefficients.get(coefficient);
-    }
-
     public List<Double> getCalibrationCoefficients() {
         return calibrationCoefficients;
     }

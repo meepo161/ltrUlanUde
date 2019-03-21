@@ -6,14 +6,14 @@ import java.util.ArrayList;
 
 public class CalibrationPoint {
     private int channel;
-    private double loadValue;
-    private double channelValue;
+    private String loadValue;
+    private String channelValue;
     private String valueName;
 
     public CalibrationPoint(int channel, double loadValue, double channelValue, String channelName) {
         this.channel = channel;
-        this.loadValue = loadValue;
-        this.channelValue = channelValue;
+        this.loadValue = String.valueOf(loadValue);
+        this.channelValue = String.format("%.5f", channelValue);
         this.valueName = channelName;
     }
 
@@ -54,12 +54,12 @@ public class CalibrationPoint {
         return channel;
     }
 
-    public double getLoadValue() {
-        return loadValue;
+    public String getLoadValue() {
+        return loadValue.replaceAll(",", ".");
     }
 
-    public double getChannelValue() {
-        return channelValue;
+    public String getChannelValue() {
+        return channelValue.replaceAll(",", ".");
     }
 
     public String getValueName() {

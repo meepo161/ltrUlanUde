@@ -334,7 +334,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void getDACInstance() {
-        dac = (DAC) crateModel.getModulesList().get(moduleIndex);
+        dac = (DAC) crateModel.getModulesList().get(slot);
     }
 
     private void saveDACSettings(String moduleName) {

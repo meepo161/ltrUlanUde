@@ -18,9 +18,8 @@ import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Observable;
 
 
 public class CalibrationController implements BaseController {
@@ -31,7 +30,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private TableView<CalibrationPoint> calibrationTableView;
     @FXML
-    private TableColumn<CalibrationPoint, Double> channelValueColumn;
+    private TableColumn<CalibrationPoint, String> channelValueColumn;
     @FXML
     private Label channelValueLabel;
     @FXML
@@ -39,7 +38,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField channelValueTextField;
     @FXML
-    private TableColumn<CalibrationPoint, Double> loadChannelColumn;
+    private TableColumn<CalibrationPoint, String> loadChannelColumn;
     @FXML
     private ComboBox<String> loadValueMultiplierComboBox;
     @FXML
@@ -51,7 +50,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField loadValueNameTextField;
     @FXML
-    private TableColumn<CalibrationPoint, Double> valueNameColumn;
+    private TableColumn<CalibrationPoint, String> valueNameColumn;
     @FXML
     private Button saveButton;
     @FXML
@@ -225,7 +224,7 @@ public class CalibrationController implements BaseController {
     private void setDigitFilterToTextField(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
-            if (!newValue.matches("^-?[1-9]+(\\.|,)\\d+|^-?[1-9]+(\\.|,)|^-?[1-9]+|(^-?0(\\.|,)\\d+|^-?0(\\.|,)|^-?0)|-|$")) {
+            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -321,22 +320,38 @@ public class CalibrationController implements BaseController {
         channelValueCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
     }
 
-
     private void parseData() {
         if (setChannelValueCheckBox.isSelected()) {
-            channelValue = Double.parseDouble(channelValueTextField.getText()) * channelValueCoefficient;
+            channelValue = parseFrom(channelValueTextField, channelValueCoefficient);
         } else {
             channelValue = (double) Math.round(cm.getZeroShift() * 1_000_000) / 1_000_000;
         }
 
-        loadValue = Double.parseDouble(loadValueTextField.getText()) * loadValueCoefficient;
+        loadValue = parseFrom(loadValueTextField, loadValueCoefficient);
         valueName = loadValueNameTextField.getText();
+    }
+
+    private double parseFrom(TextField textField, double multiplierCoefficient) {
+        double defaultValue = 0;
+
+        if (!textField.getText().equals("-")) {
+            return Double.parseDouble(textField.getText().replaceAll(",", ".")) * multiplierCoefficient;
+        }
+
+        return defaultValue;
     }
 
     private void addPointToGraph() {
         int lastPointIndex = calibrationPoints.size() - 1;
         CalibrationPoint lastPoint = calibrationPoints.get(lastPointIndex);
-        graphSeries.getData().add(new XYChart.Data<>(lastPoint.getLoadValue(), lastPoint.getChannelValue()));
+        double xValue = Double.parseDouble(lastPoint.getLoadValue());
+        double yValue = Double.parseDouble(lastPoint.getChannelValue());
+
+        try {
+            graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
+        } catch (NumberFormatException e) {
+            System.out.println("Point added");
+        }
     }
 
     public void handleBackButton() {
@@ -350,6 +365,7 @@ public class CalibrationController implements BaseController {
         loadValueTextField.setText("");
         channelValueTextField.setText("");
         loadValueNameTextField.setText("");
+        setChannelValueCheckBox.setSelected(false);
         calibrationPoints.clear();
         graphSeries.getData().clear();
     }

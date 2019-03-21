@@ -471,7 +471,6 @@ public class SettingsController implements BaseController {
         return selectedModuleIndex;
     }
 
-
     public void setEditMode(boolean editMode) {
         this.editMode = editMode;
     }

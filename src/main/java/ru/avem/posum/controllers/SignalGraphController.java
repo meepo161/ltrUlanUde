@@ -18,6 +18,7 @@ import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.ReceivedSignal;
 import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.RingBuffer;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -363,11 +364,11 @@ public class SignalGraphController implements BaseController {
             bufferedAmplitude = 0;
             buffereZeroShift = 0;
             bufferedPhase = 0;
-        }
 
-        if (isCalibrationExists) {
-            amplitude = applyCalibration(amplitude);
-            zeroShift = applyCalibration(zeroShift);
+            if (isCalibrationExists) {
+//                amplitude = applyCalibration(amplitude);
+                zeroShift = applyCalibration(zeroShift);
+            }
         }
     }
 
@@ -451,35 +452,64 @@ public class SignalGraphController implements BaseController {
 
     private void setCalibratedBounds() {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-        int lastPointIndex = calibrationSettings.size() - 1;
-        double loadValue = CalibrationPoint.parseLoadValue(calibrationSettings.get(lastPointIndex));
-        String valueName = CalibrationPoint.parseValueName(calibrationSettings.get(lastPointIndex));
+        String valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
+        double minLoadValue = 999_999_999;
+        double maxLoadValue = -999_999_999;
+        int GRAPH_SCALE = 10;
 
-        if (loadValue < 0) {
-            lowerBound = loadValue * 1.1;
-            upperBound = -loadValue * 1.1;
-            tickUnit = -loadValue * 1.1 / 5;
-        } else {
-            lowerBound = -loadValue * 1.1;
-            upperBound = loadValue * 1.1;
-            tickUnit = loadValue * 1.1 / 5;
+        for (int i = 0; i < calibrationSettings.size(); i++) {
+            double loadValue = CalibrationPoint.parseLoadValue(calibrationSettings.get(i));
+            if (minLoadValue > loadValue) {
+                minLoadValue = loadValue;
+            }
+            if (maxLoadValue < loadValue) {
+                maxLoadValue = loadValue;
+            }
         }
+
+        lowerBound = minLoadValue;
+        upperBound = maxLoadValue;
+        tickUnit = maxLoadValue / GRAPH_SCALE;
 
         setBounds(lowerBound, upperBound, tickUnit);
         setGraphBounds(lowerBound, upperBound, tickUnit);
         Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
     }
+
     private double applyCalibration(double value) {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
         for (int i = 0; i < calibrationCoefficients.size() - 1; i++) {
-            String lowerBoundCalibrationPoint = calibrationSettings.get(i);
-            String upperBoundCalibrationPoint = calibrationSettings.get(i + 1);
+            String firstCalibrationPoint = calibrationSettings.get(i);
+            String secondCalibrationPoint = calibrationSettings.get(i + 1);
+            double firstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
+            double firstPointLoadValue = CalibrationPoint.parseLoadValue(firstCalibrationPoint);
+            double secondPointChannelValue = CalibrationPoint.parseChannelValue(secondCalibrationPoint);
+            double secondPointLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
+            double lowerBound;
+            double upperBound;
 
-            if (value > CalibrationPoint.parseChannelValue(lowerBoundCalibrationPoint) / 1.1 &
-                    value <= CalibrationPoint.parseChannelValue(upperBoundCalibrationPoint) * 1.1) {
-                return Calibration.applyCalibration(value, i, calibrationCoefficients);
+            if (firstPointChannelValue > secondPointChannelValue) {
+                double loadValueBuffer = firstPointLoadValue;
+                double channelValueBuffer = firstPointChannelValue;
+                firstPointLoadValue = secondPointLoadValue;
+                firstPointChannelValue = secondPointChannelValue;
+                secondPointLoadValue = loadValueBuffer;
+                secondPointChannelValue = channelValueBuffer;
+            }
+
+            lowerBound = firstPointChannelValue;
+            upperBound = secondPointChannelValue;
+
+            if (value > lowerBound * 1.1 & value <= upperBound * 1.1) {
+                double k = (secondPointLoadValue - firstPointLoadValue) / (secondPointChannelValue - firstPointChannelValue);
+                double b = firstPointLoadValue - k * firstPointChannelValue;
+                double calibratedValue = k * value + b;
+                System.out.println("Bounds: " + lowerBound + ", " + upperBound);
+                System.out.println(value + ": " + calibratedValue);
+
+                return calibratedValue;
             }
         }
 
