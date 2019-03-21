@@ -272,7 +272,7 @@ public class SettingsController implements BaseController {
                 isRequiredFieldsFilled = false;
 
                 Platform.runLater(() -> {
-                    statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля", statusBar);
+                    statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля основной информации", statusBar);
                 });
             } else {
                 filledFields++;
@@ -333,6 +333,7 @@ public class SettingsController implements BaseController {
 
     public void toggleButtons(boolean isDisable) {
         saveTestProgramSettingsButton.setDisable(isDisable);
+        setupModuleButton.setDisable(true);
         backButton.setDisable(isDisable);
     }
 
