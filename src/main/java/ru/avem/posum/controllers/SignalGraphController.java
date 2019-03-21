@@ -367,7 +367,7 @@ public class SignalGraphController implements BaseController {
 
             if (isCalibrationExists) {
 //                amplitude = applyCalibration(amplitude);
-                zeroShift = applyCalibration(zeroShift);
+                zeroShift = receivedSignal.applyCalibration(adc, zeroShift);
             }
         }
     }
@@ -387,7 +387,7 @@ public class SignalGraphController implements BaseController {
 
     private void addPointToGraph(double[] buffer, int i) {
         if (isCalibrationExists) {
-            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, applyCalibration(buffer[i])));
+            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, receivedSignal.applyCalibration(adc, buffer[i])));
         } else {
             intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
         }
@@ -476,47 +476,7 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
     }
 
-    private double applyCalibration(double value) {
-        List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
-        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-
-        for (int i = 0; i < calibrationCoefficients.size() - 1; i++) {
-            String firstCalibrationPoint = calibrationSettings.get(i);
-            String secondCalibrationPoint = calibrationSettings.get(i + 1);
-            double firstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
-            double firstPointLoadValue = CalibrationPoint.parseLoadValue(firstCalibrationPoint);
-            double secondPointChannelValue = CalibrationPoint.parseChannelValue(secondCalibrationPoint);
-            double secondPointLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
-            double lowerBound;
-            double upperBound;
-
-            if (firstPointChannelValue > secondPointChannelValue) {
-                double loadValueBuffer = firstPointLoadValue;
-                double channelValueBuffer = firstPointChannelValue;
-                firstPointLoadValue = secondPointLoadValue;
-                firstPointChannelValue = secondPointChannelValue;
-                secondPointLoadValue = loadValueBuffer;
-                secondPointChannelValue = channelValueBuffer;
-            }
-
-            lowerBound = firstPointChannelValue;
-            upperBound = secondPointChannelValue;
-
-            if (value > lowerBound * 1.1 & value <= upperBound * 1.1) {
-                double k = (secondPointLoadValue - firstPointLoadValue) / (secondPointChannelValue - firstPointChannelValue);
-                double b = firstPointLoadValue - k * firstPointChannelValue;
-                double calibratedValue = k * value + b;
-                System.out.println("Bounds: " + lowerBound + ", " + upperBound);
-                System.out.println(value + ": " + calibratedValue);
-
-                return calibratedValue;
-            }
-        }
-
-        return value;
-    }
-
-    public ReceivedSignal getReceivedSignal() {
+        public ReceivedSignal getReceivedSignal() {
         return receivedSignal;
     }
 
