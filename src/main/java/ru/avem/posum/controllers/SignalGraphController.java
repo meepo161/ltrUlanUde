@@ -24,6 +24,8 @@ import static ru.avem.posum.utils.Utils.sleep;
 
 public class SignalGraphController implements BaseController {
     @FXML
+    private Label amplitudeLabel;
+    @FXML
     private TextField amplitudeTextField;
     @FXML
     private CheckBox autoScaleCheckBox;
@@ -34,11 +36,17 @@ public class SignalGraphController implements BaseController {
     @FXML
     private CheckBox calibrationCheckBox;
     @FXML
+    private Label frequencyLabel;
+    @FXML
     private TextField frequencyTextField;
     @FXML
     private LineChart<Number, Number> graph;
     @FXML
+    private Label phaseLabel;
+    @FXML
     private TextField phaseTextField;
+    @FXML
+    private Label zeroShiftLabel;
     @FXML
     private TextField zeroShiftTextField;
     @FXML
@@ -83,6 +91,7 @@ public class SignalGraphController implements BaseController {
         initGraph();
         initAverage();
         initModule();
+        setLabels();
         startShow();
     }
 
@@ -264,8 +273,16 @@ public class SignalGraphController implements BaseController {
 
     private void listenCalibrationCheckBox() {
         calibrationCheckBox.selectedProperty().addListener(observable -> {
-            if (calibrationCheckBox.isSelected() & isCalibrationExists) {
+            if (calibrationCheckBox.isSelected()) {
                 checkCalibration();
+            } else {
+                setCalibrationExists(false);
+                valueName = "В";
+                setValueNameToGraph();
+                setLabels();
+                addDefineBoundsInstructions();
+                runInstructions();
+                setGraphBounds(lowerBound, upperBound, tickUnit);
             }
         });
     }
@@ -296,6 +313,13 @@ public class SignalGraphController implements BaseController {
                 averageTextField.setDisable(true);
             }
         });
+    }
+
+    private void setLabels() {
+        amplitudeLabel.setText(String.format("Амлитуда, %s:", valueName));
+        frequencyLabel.setText("Частота, Гц:");
+        phaseLabel.setText("Фаза, °:");
+        zeroShiftLabel.setText(String.format("Статика, %s:", valueName));
     }
 
     private void startShow() {
@@ -390,10 +414,10 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(String.format("%.5f %s", amplitude, valueName));
-            frequencyTextField.setText(String.format("%.5f Гц", frequency));
-            phaseTextField.setText(String.format("%.5f °", phase));
-            zeroShiftTextField.setText(String.format("%.5f %s", zeroShift, valueName));
+            amplitudeTextField.setText(String.format("%.5f", amplitude));
+            frequencyTextField.setText(String.format("%.5f", frequency));
+            phaseTextField.setText(String.format("%.5f", phase));
+            zeroShiftTextField.setText(String.format("%.5f", zeroShift));
             isDone = true;
         });
     }
@@ -441,10 +465,12 @@ public class SignalGraphController implements BaseController {
             receivedSignal.setCalibratedBounds(adc);
             setBounds(receivedSignal.getLowerBound(), receivedSignal.getUpperBound(), receivedSignal.getTickUnit());
             setFields(receivedSignal.getValueName());
-            setValueName();
+            setValueNameToGraph();
             setGraphBounds(lowerBound, upperBound, tickUnit);
             clearView();
+            setLabels();
             setCalibrationExists(true);
+            calibrationCheckBox.setSelected(true);
         }
     }
 
@@ -452,7 +478,7 @@ public class SignalGraphController implements BaseController {
         this.valueName = valueName;
     }
 
-    private void setValueName() {
+    private void setValueNameToGraph() {
         Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
     }
 

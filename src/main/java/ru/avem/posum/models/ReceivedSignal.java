@@ -37,8 +37,8 @@ public class ReceivedSignal {
         calculate(signal, channel);
 
         if (averageIterator < averageCount) {
-            bufferedAmplitude += amplitude;
-            bufferedZeroShift += zeroShift;
+            bufferedAmplitude += calculateAmplitude();
+            bufferedZeroShift += calculateZeroShift();
             bufferedPhase += phase;
             averageIterator++;
         } else {
@@ -55,16 +55,6 @@ public class ReceivedSignal {
     private void calculate(double[] rawData, int channel) {
         setFields(rawData, channel);
         calculateMinAndMaxValues();
-        calculateAmplitude();
-        calculateZeroShift();
-        calculatePhase();
-    }
-
-    private void checkCalibration(boolean isCalibrationExists) {
-        if (isCalibrationExists) {
-            amplitude = applyCalibration(amplitude);
-            zeroShift = applyCalibration(adc, zeroShift);
-        }
     }
 
     private void setFields(double[] rawData, int channel) {
@@ -87,12 +77,12 @@ public class ReceivedSignal {
         }
     }
 
-    private void calculateAmplitude() {
-        amplitude = (maxValue - minValue) / 2;
+    private double calculateAmplitude() {
+        return (maxValue - minValue) / 2;
     }
 
-    private void calculateZeroShift() {
-        zeroShift = (maxValue + minValue) / 2;
+    private double calculateZeroShift() {
+        return  (maxValue + minValue) / 2;
     }
 
     private void calculatePhase() {
@@ -104,10 +94,21 @@ public class ReceivedSignal {
         phase = complexNumber.phase();
     }
 
+    private void checkCalibration(boolean isCalibrationExists) {
+        if (isCalibrationExists) {
+            if (lowerBound < 0 & firstPointLoadValue >= 0) {
+                amplitude = applyCalibration(amplitude);
+            } else {
+                amplitude = applyCalibration(adc, amplitude);
+            }
+            zeroShift = applyCalibration(adc, zeroShift);
+        }
+    }
+
     private double applyCalibration(double value) {
         defineBounds();
         setBounds();
-        return calibratedValue =  value * 2 / (lowerBound + upperBound);
+        return calibratedValue =  value / (Math.abs(lowerBound) + Math.abs(upperBound)) * 100;
     }
 
     private void defineBounds() {
@@ -141,6 +142,7 @@ public class ReceivedSignal {
     }
 
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
+        System.out.println(calibrationSettings);
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
         firstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
@@ -154,8 +156,6 @@ public class ReceivedSignal {
             double k = (secondPointLoadValue - firstPointLoadValue) / (secondPointChannelValue - firstPointChannelValue);
             double b = firstPointLoadValue - k * firstPointChannelValue;
             calibratedValue = k * value + b;
-        } else {
-            calibratedValue = value;
         }
     }
 
@@ -164,7 +164,7 @@ public class ReceivedSignal {
         valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
         double minLoadValue = 999_999_999;
         double maxLoadValue = -999_999_999;
-        int GRAPH_SCALE = 10;
+        int GRAPH_SCALE = 5;
 
         for (String calibrationSetting : calibrationSettings) {
             double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);

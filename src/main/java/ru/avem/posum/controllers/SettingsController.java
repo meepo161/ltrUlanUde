@@ -54,7 +54,7 @@ public class SettingsController implements BaseController {
     @FXML
     private TextField sampleSerialNumberTextField;
     @FXML
-    private Button saveTestProgramSettingsButton;
+    private Button saveSettingsButton;
     @FXML
     private Button setupModuleButton;
     @FXML
@@ -216,6 +216,7 @@ public class SettingsController implements BaseController {
         cratesListView.setDisable(crate);
         chooseCrateButton.setDisable(crate);
         modulesListView.setDisable(module);
+        saveSettingsButton.setDisable(module);
         setupModuleButton.setDisable(module);
     }
 
@@ -332,7 +333,7 @@ public class SettingsController implements BaseController {
     }
 
     public void toggleButtons(boolean isDisable) {
-        saveTestProgramSettingsButton.setDisable(isDisable);
+        saveSettingsButton.setDisable(isDisable);
         setupModuleButton.setDisable(true);
         backButton.setDisable(isDisable);
     }
