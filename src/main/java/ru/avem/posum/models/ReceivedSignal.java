@@ -6,7 +6,12 @@ import ru.avem.posum.utils.Complex;
 import java.util.List;
 
 public class ReceivedSignal {
+    private ADC adc;
+    private int averageIterator;
     private double amplitude;
+    private double bufferedAmplitude;
+    private double bufferedPhase;
+    private double bufferedZeroShift;
     private double calibratedValue;
     private int channel;
     private double[] data;
@@ -18,10 +23,36 @@ public class ReceivedSignal {
     private double phase;
     private double secondPointLoadValue;
     private double secondPointChannelValue;
+    private double tickUnit;
     private double upperBound;
+    private String valueName;
     private double zeroShift;
 
-    public void calculateBaseParameters(double[] rawData, int channel) {
+    public void setFields(ADC adc, int channel) {
+        this.adc = adc;
+        this.channel = channel;
+    }
+
+    public void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
+        calculate(signal, channel);
+
+        if (averageIterator < averageCount) {
+            bufferedAmplitude += amplitude;
+            bufferedZeroShift += zeroShift;
+            bufferedPhase += phase;
+            averageIterator++;
+        } else {
+            amplitude = bufferedAmplitude / averageCount;
+            zeroShift = bufferedZeroShift / averageCount;
+            phase = bufferedZeroShift / averageCount;
+            averageIterator = 0;
+            bufferedAmplitude = bufferedZeroShift = bufferedPhase = 0;
+
+            checkCalibration(isCalibrationExists);
+        }
+    }
+
+    private void calculate(double[] rawData, int channel) {
         setFields(rawData, channel);
         calculateMinAndMaxValues();
         calculateAmplitude();
@@ -29,21 +60,11 @@ public class ReceivedSignal {
         calculatePhase();
     }
 
-    private void calculateAmplitude() {
-        amplitude = (maxValue - minValue) / 2;
-    }
-
-    private void calculatePhase() {
-        createComplexArray();
-    }
-
-    private void createComplexArray() {
-        Complex complexNumber = new Complex(zeroShift, 0);
-        phase = complexNumber.phase();
-    }
-
-    private void calculateZeroShift() {
-        zeroShift = (maxValue + minValue) / 2;
+    private void checkCalibration(boolean isCalibrationExists) {
+        if (isCalibrationExists) {
+            amplitude = applyCalibration(amplitude);
+            zeroShift = applyCalibration(adc, zeroShift);
+        }
     }
 
     private void setFields(double[] rawData, int channel) {
@@ -64,6 +85,45 @@ public class ReceivedSignal {
                 minValue = data[i];
             }
         }
+    }
+
+    private void calculateAmplitude() {
+        amplitude = (maxValue - minValue) / 2;
+    }
+
+    private void calculateZeroShift() {
+        zeroShift = (maxValue + minValue) / 2;
+    }
+
+    private void calculatePhase() {
+        createComplexArray();
+    }
+
+    private void createComplexArray() {
+        Complex complexNumber = new Complex(zeroShift, 0);
+        phase = complexNumber.phase();
+    }
+
+    private double applyCalibration(double value) {
+        defineBounds();
+        setBounds();
+        return calibratedValue =  value * 2 / (lowerBound + upperBound);
+    }
+
+    private void defineBounds() {
+        if (firstPointChannelValue > secondPointChannelValue) {
+            double loadValueBuffer = firstPointLoadValue;
+            double channelValueBuffer = firstPointChannelValue;
+            firstPointLoadValue = secondPointLoadValue;
+            firstPointChannelValue = secondPointChannelValue;
+            secondPointLoadValue = loadValueBuffer;
+            secondPointChannelValue = channelValueBuffer;
+        }
+    }
+
+    private void setBounds() {
+        lowerBound = firstPointChannelValue;
+        upperBound = secondPointChannelValue;
     }
 
     public double applyCalibration(ADC adc, double value) {
@@ -89,43 +149,64 @@ public class ReceivedSignal {
         secondPointLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
     }
 
-    private void defineBounds() {
-        if (firstPointChannelValue > secondPointChannelValue) {
-            double loadValueBuffer = firstPointLoadValue;
-            double channelValueBuffer = firstPointChannelValue;
-            firstPointLoadValue = secondPointLoadValue;
-            firstPointChannelValue = secondPointChannelValue;
-            secondPointLoadValue = loadValueBuffer;
-            secondPointChannelValue = channelValueBuffer;
-        }
-    }
-
-    private void setBounds() {
-        lowerBound = firstPointChannelValue;
-        upperBound = secondPointChannelValue;
-    }
-
     private void calibrate(double value) {
         if (value > lowerBound * 1.2 & value <= upperBound * 1.2) {
             double k = (secondPointLoadValue - firstPointLoadValue) / (secondPointChannelValue - firstPointChannelValue);
             double b = firstPointLoadValue - k * firstPointChannelValue;
             calibratedValue = k * value + b;
-            System.out.println("Bounds: " + lowerBound + ", " + upperBound); // TODO: delete this
-            System.out.println(value + ": " + calibratedValue); // TODO: delete this
         } else {
             calibratedValue = value;
         }
+    }
+
+    public void setCalibratedBounds(ADC adc) {
+        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
+        valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
+        double minLoadValue = 999_999_999;
+        double maxLoadValue = -999_999_999;
+        int GRAPH_SCALE = 10;
+
+        for (String calibrationSetting : calibrationSettings) {
+            double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
+
+            if (minLoadValue > loadValue) {
+                minLoadValue = loadValue;
+            }
+            if (maxLoadValue < loadValue) {
+                maxLoadValue = loadValue;
+            }
+        }
+
+        lowerBound = minLoadValue;
+        upperBound = maxLoadValue;
+        tickUnit = maxLoadValue / GRAPH_SCALE;
     }
 
     public double getAmplitude() {
         return amplitude;
     }
 
-    public double getZeroShift() {
-        return zeroShift;
+    public double getLowerBound() {
+        return lowerBound;
     }
 
     public double getPhase() {
         return phase;
+    }
+
+    public double getTickUnit() {
+        return tickUnit;
+    }
+
+    public double getUpperBound() {
+        return upperBound;
+    }
+
+    public String getValueName() {
+        return valueName;
+    }
+
+    public double getZeroShift() {
+        return zeroShift;
     }
 }

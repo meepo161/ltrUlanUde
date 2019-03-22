@@ -64,9 +64,10 @@
             <TextField fx:id="phaseTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
             <Label text="Статика:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="zeroShiftTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="7" GridPane.rowIndex="5" />
-            <CheckBox fx:id="averageCheckBox" mnemonicParsing="false" text="Среднее" GridPane.columnIndex="3" GridPane.rowIndex="7" />
-            <TextField fx:id="averageTextField" disable="true" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="7" />
-            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="5" GridPane.rowIndex="7" />
+            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <CheckBox fx:id="calibrationCheckBox" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+            <CheckBox fx:id="averageCheckBox" mnemonicParsing="false" text="Усреднять по:" GridPane.columnIndex="5" GridPane.rowIndex="7" />
+            <TextField fx:id="averageTextField" disable="true" GridPane.columnIndex="7" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
             <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnSpan="9" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets right="270.0" />

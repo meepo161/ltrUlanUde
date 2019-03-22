@@ -9,16 +9,12 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
-import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.ReceivedSignal;
-import ru.avem.posum.models.Calibration;
 import ru.avem.posum.utils.RingBuffer;
-import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +32,8 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField averageTextField;
     @FXML
+    private CheckBox calibrationCheckBox;
+    @FXML
     private TextField frequencyTextField;
     @FXML
     private LineChart<Number, Number> graph;
@@ -52,9 +50,6 @@ public class SignalGraphController implements BaseController {
     private int averageIterator;
     private double averageValue;
     private double[] buffer;
-    private double bufferedAmplitude;
-    private double bufferedPhase;
-    private double buffereZeroShift;
     private int channel;
     private ControllerManager cm;
     private double[] data;
@@ -74,6 +69,7 @@ public class SignalGraphController implements BaseController {
     private int slot;
     private double tickUnit;
     private double upperBound;
+    private String valueName = "В";
     private WindowsManager wm;
     private double zeroShift;
 
@@ -83,6 +79,7 @@ public class SignalGraphController implements BaseController {
         setApplicationState(false);
         listenAverageCheckBox();
         listenAutoScaleCheckBox();
+        listenCalibrationCheckBox();
         initGraph();
         initAverage();
         initModule();
@@ -148,14 +145,14 @@ public class SignalGraphController implements BaseController {
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
         data = new double[39064];
-        buffer = new double[39064];
+        buffer = new double[data.length];
         ringBuffer = new RingBuffer(data.length * 100);
     }
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
         data = new double[2048];
-        buffer = new double[2048];
+        buffer = new double[data.length];
         ringBuffer = new RingBuffer(data.length * 10);
     }
 
@@ -265,6 +262,13 @@ public class SignalGraphController implements BaseController {
         yAxis.setAutoRanging(isAutoRangeEnabled);
     }
 
+    private void listenCalibrationCheckBox() {
+        calibrationCheckBox.selectedProperty().addListener(observable -> {
+            if (calibrationCheckBox.isSelected() & isCalibrationExists) {
+                checkCalibration();
+            }
+        });
+    }
 
     private void initAverage() {
         setDigitFilter();
@@ -335,7 +339,8 @@ public class SignalGraphController implements BaseController {
 
     private void calculateData() {
         fillBuffer();
-        calculateParameters();
+        calculate();
+        getSignalParameters();
         clearSeriesData();
         addSeriesData();
     }
@@ -344,32 +349,19 @@ public class SignalGraphController implements BaseController {
         ringBuffer.take(buffer, buffer.length);
     }
 
-    private void clearSeriesData() {
-        intermediateList.clear();
+    private void calculate() {
+        receivedSignal.setFields(adc, channel);
+        receivedSignal.calculateParameters(buffer, averageCount, isCalibrationExists);
     }
 
-    private void calculateParameters() {
-        receivedSignal.calculateBaseParameters(buffer, channel);
+    private void getSignalParameters() {
+        amplitude = receivedSignal.getAmplitude();
+        phase = receivedSignal.getPhase();
+        zeroShift = receivedSignal.getZeroShift();
+    }
 
-        if (averageIterator < averageCount) {
-            bufferedAmplitude += receivedSignal.getAmplitude();
-            buffereZeroShift += receivedSignal.getZeroShift();
-            bufferedPhase += receivedSignal.getPhase();
-            averageIterator++;
-        } else {
-            amplitude = bufferedAmplitude / averageCount;
-            zeroShift = buffereZeroShift / averageCount;
-            phase = buffereZeroShift / averageCount;
-            averageIterator = 0;
-            bufferedAmplitude = 0;
-            buffereZeroShift = 0;
-            bufferedPhase = 0;
-
-            if (isCalibrationExists) {
-//                amplitude = applyCalibration(amplitude);
-                zeroShift = receivedSignal.applyCalibration(adc, zeroShift);
-            }
-        }
+    private void clearSeriesData() {
+        intermediateList.clear();
     }
 
     private void addSeriesData() {
@@ -398,10 +390,10 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(String.format("%.5f", amplitude));
-            frequencyTextField.setText(String.format("%.5f", frequency));
-            phaseTextField.setText(String.format("%.5f", phase));
-            zeroShiftTextField.setText(String.format("%.5f", zeroShift));
+            amplitudeTextField.setText(String.format("%.5f %s", amplitude, valueName));
+            frequencyTextField.setText(String.format("%.5f Гц", frequency));
+            phaseTextField.setText(String.format("%.5f °", phase));
+            zeroShiftTextField.setText(String.format("%.5f %s", zeroShift, valueName));
             isDone = true;
         });
     }
@@ -426,6 +418,7 @@ public class SignalGraphController implements BaseController {
         setApplicationState(true);
         disableAutoRange();
         disableAverage();
+        disableCalibration();
     }
 
     private void disableAutoRange() {
@@ -438,46 +431,45 @@ public class SignalGraphController implements BaseController {
         averageCheckBox.setSelected(false);
     }
 
+    private void disableCalibration() {
+        calibrationCheckBox.setSelected(false);
+        setCalibrationExists(false);
+    }
+
     public void checkCalibration() {
         if (!adc.getCalibrationCoefficients().get(channel).isEmpty()) {
-            setCalibratedBounds();
-            intermediateList = new ArrayList<>();
-            graphSeries = new XYChart.Series<>();
-            graphSeries.getData().addAll(intermediateList);
-            graph.getData().clear();
-            graph.getData().add(graphSeries);
-            isCalibrationExists = true;
+            receivedSignal.setCalibratedBounds(adc);
+            setBounds(receivedSignal.getLowerBound(), receivedSignal.getUpperBound(), receivedSignal.getTickUnit());
+            setFields(receivedSignal.getValueName());
+            setValueName();
+            setGraphBounds(lowerBound, upperBound, tickUnit);
+            clearView();
+            setCalibrationExists(true);
         }
     }
 
-    private void setCalibratedBounds() {
-        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-        String valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
-        double minLoadValue = 999_999_999;
-        double maxLoadValue = -999_999_999;
-        int GRAPH_SCALE = 10;
+    private void setFields(String valueName) {
+        this.valueName = valueName;
+    }
 
-        for (int i = 0; i < calibrationSettings.size(); i++) {
-            double loadValue = CalibrationPoint.parseLoadValue(calibrationSettings.get(i));
-            if (minLoadValue > loadValue) {
-                minLoadValue = loadValue;
-            }
-            if (maxLoadValue < loadValue) {
-                maxLoadValue = loadValue;
-            }
-        }
-
-        lowerBound = minLoadValue;
-        upperBound = maxLoadValue;
-        tickUnit = maxLoadValue / GRAPH_SCALE;
-
-        setBounds(lowerBound, upperBound, tickUnit);
-        setGraphBounds(lowerBound, upperBound, tickUnit);
+    private void setValueName() {
         Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
     }
 
-        public ReceivedSignal getReceivedSignal() {
+    private void clearView() {
+        intermediateList = new ArrayList<>();
+        graphSeries = new XYChart.Series<>();
+        graphSeries.getData().addAll(intermediateList);
+        graph.getData().clear();
+        graph.getData().add(graphSeries);
+    }
+
+    public ReceivedSignal getReceivedSignal() {
         return receivedSignal;
+    }
+
+    private void setCalibrationExists(boolean calibrationExists) {
+        this.isCalibrationExists = calibrationExists;
     }
 
     @Override
