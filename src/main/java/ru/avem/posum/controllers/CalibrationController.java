@@ -401,11 +401,7 @@ public class CalibrationController implements BaseController {
     }
 
     private void setValueName() {
-        if (calibrationPoints.size() > 0) {
-            channelValueLabel.setText(String.format("Значение, %s:", valueName));
-        } else {
-            channelValueLabel.setText("Значение, В:");
-        }
+        Platform.runLater(() -> channelValueLabel.setText(String.format("Значение, %s:", cm.getValueName())));
     }
 
     @Override

@@ -490,6 +490,10 @@ public class SignalGraphController implements BaseController {
         graph.getData().add(graphSeries);
     }
 
+    public String getValueName() {
+        return valueName;
+    }
+
     public ReceivedSignal getReceivedSignal() {
         return receivedSignal;
     }

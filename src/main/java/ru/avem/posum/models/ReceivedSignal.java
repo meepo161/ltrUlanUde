@@ -108,7 +108,7 @@ public class ReceivedSignal {
     private double applyCalibration(double value) {
         defineBounds();
         setBounds();
-        return calibratedValue =  value / (Math.abs(lowerBound) + Math.abs(upperBound)) * 100;
+        return calibratedValue =  value / (Math.abs(lowerBound) + Math.abs(upperBound)) * secondPointLoadValue;
     }
 
     private void defineBounds() {

@@ -283,6 +283,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public String getValueName() {
+        return signalGraphController.getValueName();
+    }
+
+    @Override
     public void checkCalibration() {
         signalGraphController.checkCalibration();
     }
