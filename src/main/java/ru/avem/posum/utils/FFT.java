@@ -1,9 +1,9 @@
 package ru.avem.posum.utils;
 
-public class FFT {
-    public static double amplitude8Hz = 0;
-    public static double amplitude20Hz = 0;
+import javafx.util.Pair;
+import ru.avem.posum.utils.Complex;
 
+public class FFT {
     // compute the FFT of x[], assuming its length is a power of 2
     public static Complex[] fft(Complex[] x) {
         int n = x.length;
@@ -110,24 +110,20 @@ public class FFT {
         return cconvolve(a, b);
     }
 
-    // preparation for visualization
-    public static void prepare(Complex[] inputArray, int nSamplesPerSec) {
+    public static Pair<int[], double[]> convert(Complex[] inputArray, int nSamplesPerSec) {
         int N = inputArray.length;
         int Nmax = (N + 1) / 2;
         int j = 0; // harmonic number
+        int[] frequency = new int[Nmax];
         double[] amplitude = new double[Nmax];
-        double[] frequency = new double[Nmax];
         double limit = 0.01;
         double abs2min = Math.pow(limit, 2) * Math.pow(N, 2);
-        double correctionCoefficient8Hz = 1.03;
-        double correctionCoefficient20Hz = 2.17;
+        Pair<int[], double[]> convertedArray = new Pair<>(frequency, amplitude);
 
-        amplitude8Hz = 0;
-        amplitude20Hz = 0;
-
+        // Check first harmonic
         if (inputArray[0].re() >= limit) {
-            amplitude[j] = inputArray[0].re() / N;
-            frequency[j] = 0;
+            amplitude[0] = inputArray[0].re() / N;
+            frequency[0] = 0;
             j++;
         }
 
@@ -144,16 +140,9 @@ public class FFT {
             amplitude[j] = 2.0 * Math.sqrt(abs2) / N;
             frequency[j] = nSamplesPerSec * i / N;
 
-
-            if (frequency[j] == 8) {
-                amplitude8Hz += amplitude[j] / correctionCoefficient8Hz;
-            } else if (frequency[j] == 20) {
-                amplitude20Hz += amplitude[j] * correctionCoefficient20Hz;
-            }
-
             j++;
         }
-        amplitude8Hz = (double)Math.round(amplitude8Hz * 10) / 10;
-        amplitude20Hz = (double)Math.round(amplitude20Hz * 10) / 10;
+
+        return convertedArray;
     }
 }

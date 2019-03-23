@@ -13,10 +13,10 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.TestProgram;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
-import ru.avem.posum.hardware.LTR212;
-import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
 
 import java.io.IOException;
@@ -162,13 +162,26 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     public void setMainView() {
+        initPrimaryStage();
+        setCentreOfStage(primaryStage);
+        showMainScene();
+    }
+
+    private void initPrimaryStage() {
         primaryStage = new Stage();
         primaryStage.setTitle("ПО Система управления многоканальная");
         primaryStage.setScene(mainScene);
-        setMainStageSize();
-        setCentreOfStage(primaryStage);
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setWidth(1280);
+        primaryStage.setHeight(720);
+        primaryStage.setResizable(true);
+    }
+
+    private void showMainScene() {
         primaryStage.show();
         loginStage.close();
+        mainController.getOpenExperimentButton().requestFocus();
     }
 
     @Override
@@ -186,7 +199,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Настрока программы испытаний");
                 primaryStage.setScene(settingsScene);
                 break;
-            case PROCESS_SCENE:
+            case EXPERIMENT_SCENE:
                 primaryStage.setTitle("Процесс испытаний");
                 primaryStage.setScene(processScene);
                 break;
@@ -207,7 +220,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setScene(signalGraphScene);
                 break;
             case CALIBRATION_SCENE:
-                primaryStage.setTitle("Тарировка канала");
+                primaryStage.setTitle("Градуировка канала");
                 primaryStage.setScene(calibrationScene);
                 break;
         }
@@ -219,21 +232,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
         primaryStage.setScene(modulesPairs.get(id).getValue());
     }
 
-    private void setMainStageSize() {
-        primaryStage.setMinWidth(1280);
-        primaryStage.setMinHeight(720);
-        primaryStage.setWidth(1280);
-        primaryStage.setHeight(720);
-        primaryStage.setResizable(true);
-    }
-
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void loadItemsForMainTableView() {
-        mainController.showTestProgram();
+        mainController.getTestPrograms();
+        mainController.showTestPrograms();
     }
 
     @Override
@@ -247,21 +253,43 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadLTR24Settings(int id) {
-        ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
-        ltr24SettingController.loadSettings();
+    public void toggleSettingsSceneButtons(boolean isDisable) {
+        settingsController.toggleButtons(isDisable);
     }
 
     @Override
-    public void loadLTR34Settings(int id) {
-        ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
-        ltr34SettingController.loadSettings();
+    public void loadModuleSettings(int id, String moduleName) {
+        String moduleType = (moduleName + " ").substring(0, 6).trim();
+
+        switch (moduleType) {
+            case CrateModel.LTR24:
+                ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
+                ltr24SettingController.loadSettings(moduleName);
+                break;
+            case CrateModel.LTR34:
+                ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
+                ltr34SettingController.loadSettings(moduleName);
+                break;
+            case CrateModel.LTR212:
+                ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
+                ltr212SettingController.loadSettings(moduleName);
+                break;
+        }
     }
 
     @Override
-    public void loadLTR212Settings(int id) {
-        ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
-        ltr212SettingController.loadSettings();
+    public boolean getICPMode() {
+        return ltr24SettingController.isIcpMode();
+    }
+
+    @Override
+    public String getValueName() {
+        return signalGraphController.getValueName();
+    }
+
+    @Override
+    public void checkCalibration() {
+        signalGraphController.checkCalibration();
     }
 
     @Override
@@ -273,7 +301,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 case CrateModel.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
                     break;
-                case CrateModel.LTR34 :
+                case CrateModel.LTR34:
                     layoutPath = "/layouts/LTR34SettingView.fxml";
                     break;
                 case CrateModel.LTR212:
@@ -301,23 +329,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void showChannelData(CrateModel.Moudules moduleType, int slot, int channel) {
+    public void showChannelData(String moduleType, int slot, int channel) {
         signalGraphController.initializeView(moduleType, slot, channel);
     }
 
     @Override
-    public int getSelectedCrate() {
-        return settingsController.getSelectedCrate();
-    }
-
-    @Override
-    public int getSelectedModule() {
-        return settingsController.getSelectedModule();
-    }
-
-    @Override
-    public int getSlot() {
-        return settingsController.getSlot();
+    public String getCrate() {
+        return settingsController.getCrate();
     }
 
     @Override
@@ -331,8 +349,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public double getMaxValue() {
-        return signalGraphController.getMaxValue();
+    public double getZeroShift() {
+        return signalGraphController.getReceivedSignal().getZeroShift();
     }
 
     @Override
@@ -356,18 +374,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public LTR24 getLTR24Instance() {
-        return signalGraphController.getLtr24();
-    }
-
-    @Override
-    public LTR212 getLTR212Instance() {
-        return signalGraphController.getLtr212();
-    }
-
-    @Override
-    public void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel) {
-        calibrationController.loadDefaults(moduleType, channel);
+    public void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel) {
+        calibrationController.loadDefaults(adc, moduleType, channel);
     }
 
     @Override

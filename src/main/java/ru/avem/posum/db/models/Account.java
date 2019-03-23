@@ -9,8 +9,10 @@ import java.util.Objects;
 public class Account {
     @DatabaseField(generatedId = true)
     private long id;
+
     @DatabaseField
     private String userName;
+
     @DatabaseField
     private String userPassword;
 

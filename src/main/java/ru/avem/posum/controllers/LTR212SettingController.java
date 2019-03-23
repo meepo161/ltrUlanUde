@@ -11,23 +11,18 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class LTR212SettingController implements BaseController {
     @FXML
-    private Button initializeButton;
-    @FXML
-    private Button valueOfChannelN1;
-    @FXML
-    private Button valueOfChannelN2;
-    @FXML
-    private Button valueOfChannelN3;
-    @FXML
-    private Button valueOfChannelN4;
+    private CheckBox applyForAllCheckBox;
     @FXML
     private CheckBox checkChannelN1;
     @FXML
@@ -37,13 +32,15 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private CheckBox checkChannelN4;
     @FXML
-    private ComboBox<String> typeOfChannelN1;
+    private TextField descriptionOfChannelN1;
     @FXML
-    private ComboBox<String> typeOfChannelN2;
+    private TextField descriptionOfChannelN2;
     @FXML
-    private ComboBox<String> typeOfChannelN3;
+    private TextField descriptionOfChannelN3;
     @FXML
-    private ComboBox<String> typeOfChannelN4;
+    private TextField descriptionOfChannelN4;
+    @FXML
+    private Button initializeButton;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN1;
     @FXML
@@ -55,27 +52,44 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
+    private Label sceneTitleLabel;
+    @FXML
     private StatusBar statusBar;
     @FXML
-    private TextField descriptionOfChannelN1;
+    private ComboBox<String> typeOfChannelN1;
     @FXML
-    private TextField descriptionOfChannelN2;
+    private ComboBox<String> typeOfChannelN2;
     @FXML
-    private TextField descriptionOfChannelN3;
+    private ComboBox<String> typeOfChannelN3;
     @FXML
-    private TextField descriptionOfChannelN4;
+    private ComboBox<String> typeOfChannelN4;
+    @FXML
+    private Button valueOfChannelN1;
+    @FXML
+    private Button valueOfChannelN2;
+    @FXML
+    private Button valueOfChannelN3;
+    @FXML
+    private Button valueOfChannelN4;
 
-    private WindowsManager wm;
+    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
+    private List<TextField> channelsDescription = new ArrayList<>();
+    private String[] channelsDescriptions;
+    private int[] channelsTypes;
+    private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
+    private boolean[] checkedChannels;
     private ControllerManager cm;
     private CrateModel crateModel;
-    private boolean connectionOpen;
+    private int disabledChannels;
+    private boolean isConnectionOpen;
     private LTR212 ltr212 = new LTR212();
-    private StatusBarLine statusBarLine = new StatusBarLine();
-    private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
-    private List<Button> valueOfChannelsButtons = new ArrayList<>();
-    private List<TextField> channelsDescription = new ArrayList<>();
-    private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
+    private int[] measuringRanges;
+    private String moduleName;
+    private int slot;
+    private StatusBarLine statusBarLine = new StatusBarLine();
+    private List<Button> valueOfChannelsButtons = new ArrayList<>();
+    private WindowsManager wm;
 
     @FXML
     private void initialize() {
@@ -85,9 +99,11 @@ public class LTR212SettingController implements BaseController {
         fillListOfMeasuringRangesComboBoxes();
         fillListOfChannelsValuesButtons();
 
-        addListOfChannelsTypes(channelsTypesComboBoxes);
-        addListenerForAllChannels();
-        addListOfMeasuringRanges(measuringRangesComboBoxes);
+        addChannelsTypes(channelsTypesComboBoxes);
+        addMeasuringRanges(measuringRangesComboBoxes);
+        addListenerForCheckBoxes(channelsCheckBoxes);
+        addListenerForComboBoxes(channelsTypesComboBoxes);
+        addListenerForComboBoxes(measuringRangesComboBoxes);
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -135,70 +151,19 @@ public class LTR212SettingController implements BaseController {
         ));
     }
 
-    private void addListOfChannelsTypes(List<ComboBox<String>> channelsTypesComboBoxes) {
+    private void addChannelsTypes(List<ComboBox<String>> channelsTypesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("Сбалансированный мост (200 Ом)");
-        strings.add("Сбалансированный мост (350 Ом)");
-        strings.add("Сбалансированный мост (внешний резистор)");
-        strings.add("Разбалансированный мост (200 Ом)");
-        strings.add("Разбалансированный мост (350 Ом)");
-        strings.add("Разбалансированный мост (внешний резистор)");
+        strings.add("Четверть-мостовая схема (200 Ом)");
+        strings.add("Четверть-мостовая схема (350 Ом)");
+        strings.add("Четверть-мостовая схема (внешний резистор)");
+        strings.add("Четверть-мостовая схема с нормирующим разбалансом (200 Ом)");
+        strings.add("Четверть-мостовая схема с нормирующим разбалансом (350 Ом)");
+        strings.add("Четверть-мостовая схема с нормирующим разбалансом (внешний резистор)");
 
         setComboBox(channelsTypesComboBoxes, strings);
     }
 
-    private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
-        for (ComboBox<String> comboBox : comboBoxes) {
-            comboBox.getItems().addAll(strings);
-        }
-    }
-
-    private void addListenerForAllChannels() {
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
-            toggleChannelsUiElements(channelsCheckBoxes.get(i), i);
-        }
-    }
-
-    /**
-     * В массив checkedChannels сохраняются значения 1 - канал отмечен, 0 - канал не отмечен
-     */
-    private void toggleChannelsUiElements(CheckBox checkBox, int channel) {
-        checkBox.selectedProperty().addListener(observable -> {
-            if (checkBox.isSelected()) {
-                toggleUiElements(channel, false);
-            } else {
-                toggleUiElements(channel, true);
-                channelsDescription.get(channel).setText("");
-                channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
-                measuringRangesComboBoxes.get(channel).getSelectionModel().select(0);
-                valueOfChannelsButtons.get(channel).setDisable(true);
-            }
-        });
-    }
-
-    private void toggleUiElements(int channel, boolean isDisable) {
-        channelsTypesComboBoxes.get(channel).setDisable(isDisable);
-        measuringRangesComboBoxes.get(channel).setDisable(isDisable);
-        channelsDescription.get(channel).setDisable(isDisable);
-        toggleInitializeButton();
-    }
-
-    private void toggleInitializeButton() {
-        int disabledChannels = 0;
-        for (CheckBox checkBox : channelsCheckBoxes) {
-            if (checkBox.isSelected()) {
-                initializeButton.setDisable(false);
-            } else {
-                disabledChannels++;
-            }
-        }
-
-        if (disabledChannels == 4) { // 4 - общее количество каналов
-            initializeButton.setDisable(true);
-        }
-    }
-
-    private void addListOfMeasuringRanges(List<ComboBox<String>> measuringRangesComboBoxes) {
+    private void addMeasuringRanges(List<ComboBox<String>> measuringRangesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-10 мВ/+10 мВ");
         strings.add("-20 мВ/+20 мВ");
@@ -212,59 +177,159 @@ public class LTR212SettingController implements BaseController {
         setComboBox(measuringRangesComboBoxes, strings);
     }
 
-    public void loadSettings() {
-        findLTR212Module();
-        loadChannelsSettings();
+    private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
+        for (ComboBox<String> comboBox : comboBoxes) {
+            comboBox.getItems().addAll(strings);
+        }
     }
 
-    private void findLTR212Module() {
-        int slot = cm.getSlot();
+    private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {
+        for (int i = 0; i < checkBoxes.size(); i++) {
+            changeChannelsUiElementsState(checkBoxes.get(i), i);
+        }
+    }
 
-        for (Pair<Integer, LTR212> module : crateModel.getLtr212ModulesList()) {
-            if (module.getValue().getSlot() == slot) {
-                ltr212 = module.getValue();
+    private void changeChannelsUiElementsState(CheckBox checkBox, int channel) {
+        checkBox.selectedProperty().addListener(observable -> {
+            if (checkBox.isSelected()) {
+                applyForAllChannels(true);
+                changeChannelUiElementsState(channel, false);
+            } else {
+                applyForAllChannels(false);
+                changeChannelUiElementsState(channel, true);
+                setDefaultSettings(channel);
+            }
+        });
+    }
+
+    private void applyForAllChannels(boolean isChannelSelected) {
+        if (applyForAllCheckBox.isSelected()) {
+            selectSetting(isChannelSelected);
+        }
+    }
+
+    private void selectSetting(boolean isChannelSelected) {
+        for (CheckBox checkBox : channelsCheckBoxes) {
+            checkBox.setSelected(isChannelSelected);
+        }
+    }
+
+    private void changeChannelUiElementsState(int channel, boolean isDisable) {
+        channelsTypesComboBoxes.get(channel).setDisable(isDisable);
+        measuringRangesComboBoxes.get(channel).setDisable(isDisable);
+        channelsDescription.get(channel).setDisable(isDisable);
+        changeInitializeButtonState();
+    }
+
+    private void changeInitializeButtonState() {
+        countDisabledChannels();
+        checkCounterOfDisabledChannels();
+    }
+
+    private void countDisabledChannels() {
+        for (CheckBox channelCheckBox : channelsCheckBoxes) {
+            if (channelCheckBox.isSelected()) {
+                initializeButton.setDisable(false);
+            } else {
+                disabledChannels++;
             }
         }
     }
 
-    private void loadChannelsSettings() {
-        boolean[] checkedChannels = ltr212.getCheckedChannels();
-        int[] channelsTypes = ltr212.getChannelsTypes();
-        int[] measuringRanges = ltr212.getMeasuringRanges();
-        String[] descriptions = ltr212.getChannelsDescription();
+    private void checkCounterOfDisabledChannels() {
+        if (disabledChannels == ltr212.getChannelsCount()) { // общее количество каналов
+            initializeButton.setDisable(true);
+        }
+    }
 
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+    private void setDefaultSettings(int channel) {
+        channelsDescription.get(channel).setText("");
+        channelsTypesComboBoxes.get(channel).getSelectionModel().select(1);
+        measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
+    }
+
+    private void addListenerForComboBoxes(List<ComboBox<String>> comboBoxes) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.valueProperty().addListener(observable -> {
+                int setting = comboBox.getSelectionModel().getSelectedIndex();
+                applyForAllChannels(comboBoxes, setting);
+            });
+        }
+    }
+
+    private void applyForAllChannels(List<ComboBox<String>> comboBoxes, int setting) {
+        if (applyForAllCheckBox.isSelected()) {
+            selectComboBoxes(comboBoxes, setting);
+        }
+    }
+
+    private void selectComboBoxes(List<ComboBox<String>> comboBoxes, int setting) {
+        for (ComboBox comboBox : comboBoxes) {
+            comboBox.getSelectionModel().select(setting);
+        }
+    }
+
+    public void loadSettings(String moduleName) {
+        setFields(moduleName);
+        parseSlotNumber();
+        setTitleLabel();
+        findLTR212Module();
+        loadModuleSettings();
+    }
+
+    private void setFields(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    private void parseSlotNumber() {
+        slot = Utils.parseSlotNumber(moduleName);
+    }
+
+    private void setTitleLabel() {
+        sceneTitleLabel.setText("Настройки модуля " + moduleName);
+    }
+
+    private void findLTR212Module() {
+        HashMap<Integer, Module> modules = cm.getCrateModelInstance().getModulesList();
+        ltr212 = (LTR212) modules.get(slot);
+    }
+
+    private void loadModuleSettings() {
+        loadSettingsFields();
+        setSettings();
+    }
+
+    private void loadSettingsFields() {
+        checkedChannels = ltr212.getCheckedChannels();
+        channelsTypes = ltr212.getChannelsTypes();
+        measuringRanges = ltr212.getMeasuringRanges();
+        channelsDescriptions = ltr212.getChannelsDescription();
+    }
+
+    private void setSettings() {
+        for (int i = 0; i < ltr212.getChannelsCount(); i++) {
             channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
             channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
-            channelsDescription.get(i).setText(descriptions[i]);
+            channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
         }
     }
 
     public void handleInitialize() {
-        toggleProgressIndicatorState(false);
-        disableUiElements();
+        changeUiElementsState();
 
         new Thread(() -> {
             saveChannelsSettings();
             initializeModule();
-
-            Platform.runLater(() -> {
-                statusBarLine.setStatus(ltr212.getStatus(), statusBar);
-            });
-
-            if (ltr212.getStatus().equals("Операция успешно выполнена")) {
-                Platform.runLater(() -> {
-                    toggleProgressIndicatorState(true);
-                    enableChannelsButtons();
-                });
-            } else {
-                Platform.runLater(() -> {
-                    toggleProgressIndicatorState(true);
-                    enableChannelsUiElements();
-                });
-            }
+            avoidError();
+            checkResult();
+            indicateResult();
         }).start();
+    }
+
+    private void changeUiElementsState() {
+        toggleProgressIndicatorState(false);
+        disableChannelsUiElements();
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
@@ -275,26 +340,7 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
-    private void initializeModule() {
-
-        if (!connectionOpen) {
-            ltr212.openConnection();
-            connectionOpen = true;
-        }
-
-        ltr212.initModule();
-
-        String error = ltr212.getStatus();
-        while (error.equals("Использование калибровки невозможно для установленных параметров") || error.equals("Канал связи с ltrd не был создан или закрыт")) {
-            ltr212.closeConnection();
-            ltr212.openConnection();
-            ltr212.initModule();
-            error = ltr212.getStatus();
-            System.out.println(error);
-        }
-    }
-
-    private void disableUiElements() {
+    private void disableChannelsUiElements() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             channelsCheckBoxes.get(i).setDisable(true);
             channelsDescription.get(i).setDisable(true);
@@ -302,53 +348,66 @@ public class LTR212SettingController implements BaseController {
             measuringRangesComboBoxes.get(i).setDisable(true);
         }
 
+        applyForAllCheckBox.setDisable(true);
         initializeButton.setDisable(true);
     }
 
-    private void enableChannelsButtons() {
-        for (int i = 0; i < channelsCheckBoxes.size(); i++) {
+    private void saveChannelsSettings() {
+        for (int i = 0; i < ltr212.getChannelsCount(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
-                valueOfChannelsButtons.get(i).setDisable(false);
+                checkedChannels[i] = true; // true - канал выбран
+                channelsDescriptions[i] = channelsDescription.get(i).getText() + ", ";
+                channelsTypes[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+                measuringRanges[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
+            } else {
+                checkedChannels[i] = false; // false - канал не выбран
+                channelsDescriptions[i] = ", ";
+                channelsTypes[i] = 0;
+                measuringRanges[i] = 0;
             }
         }
     }
 
-    public void handleBackButton() {
-        new Thread(() -> {
-            findLTR212Module();
-            saveChannelsSettings();
-            if (connectionOpen) {
-                ltr212.closeConnection();
-                connectionOpen = false;
-            }
+    private void initializeModule() {
+        if (!isConnectionOpen) {
+            ltr212.openConnection();
+        }
 
-            enableChannelsUiElements();
-            cm.loadItemsForMainTableView();
-            cm.loadItemsForModulesTableView();
-        }).start();
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        ltr212.initModule();
     }
 
-    private void saveChannelsSettings() {
-        int selectedCrate = cm.getSelectedCrate();
-        String[] cratesSN = crateModel.getCrates()[0];
-        int slot = cm.getSlot();
+    /* Неприемлимое решение проблемы с возникающей ошибкой */
+    private void avoidError() {
+        String error = ltr212.getStatus();
 
+        while (error.equals("Использование калибровки невозможно для установленных параметров")) {
+            ltr212.closeConnection();
+            ltr212.openConnection();
+            ltr212.initModule();
+            error = ltr212.getStatus();
+        }
+    }
+
+    private void checkResult() {
+        if (ltr212.getStatus().equals("Операция успешно выполнена")) {
+            Platform.runLater(() -> {
+                isConnectionOpen = true;
+                toggleProgressIndicatorState(true);
+                enableChannelValueButtons();
+            });
+        } else {
+            Platform.runLater(() -> {
+                isConnectionOpen = false;
+                toggleProgressIndicatorState(true);
+                enableChannelsUiElements();
+            });
+        }
+    }
+
+    private void enableChannelValueButtons() {
         for (int i = 0; i < channelsCheckBoxes.size(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
-                ltr212.getCheckedChannels()[i] = true; // true - канал выбран
-                ltr212.getChannelsDescription()[i] = channelsDescription.get(i).getText();
-                ltr212.getChannelsTypes()[i] = channelsTypesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
-                ltr212.getMeasuringRanges()[i] = measuringRangesComboBoxes.get(i).getSelectionModel().getSelectedIndex();
-                ltr212.setCrate(cratesSN[selectedCrate]);
-                ltr212.setSlot(slot);
-            } else {
-                ltr212.getCheckedChannels()[i] = false; // false - канал не выбран
-                ltr212.getChannelsDescription()[i] = "";
-                ltr212.getChannelsTypes()[i] = 0;
-                ltr212.getMeasuringRanges()[i] = 0;
-                ltr212.setCrate(cratesSN[selectedCrate]);
-                ltr212.setSlot(slot);
+                valueOfChannelsButtons.get(i).setDisable(false);
             }
         }
     }
@@ -367,27 +426,62 @@ public class LTR212SettingController implements BaseController {
             }
         }
 
+        applyForAllCheckBox.setDisable(false);
         initializeButton.setDisable(false);
     }
 
+    private void indicateResult() {
+        Platform.runLater(() -> statusBarLine.setStatus(ltr212.getStatus(), statusBar));
+    }
+
+    public void handleBackButton() {
+        new Thread(() -> {
+            findLTR212Module();
+            saveChannelsSettings();
+            closeConnection();
+            enableChannelsUiElements();
+            prepareSettingScene();
+        }).start();
+
+        changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    private void closeConnection() {
+        if (isConnectionOpen) {
+            ltr212.closeConnection();
+            isConnectionOpen = false;
+        }
+    }
+
+    private void prepareSettingScene() {
+        cm.loadItemsForMainTableView();
+        cm.loadItemsForModulesTableView();
+    }
+
+    private void changeScene(WindowsManager.Scenes settingsScene) {
+        wm.setScene(settingsScene);
+    }
+
     public void handleValueOfChannelN1() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 0);
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        showChannelValue(0);
+    }
+
+    private void showChannelValue(int channel) {
+        cm.showChannelData(CrateModel.LTR212, ltr212.getSlot(), channel);
+        cm.checkCalibration();
+        changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
     public void handleValueOfChannelN2() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 1);
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        showChannelValue(1);
     }
 
     public void handleValueOfChannelN3() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 2);
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        showChannelValue(2);
     }
 
     public void handleValueOfChannelN4() {
-        cm.showChannelData(CrateModel.Moudules.LTR212, ltr212.getSlot(), 3);
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        showChannelValue(3);
     }
 
     @Override

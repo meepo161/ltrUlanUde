@@ -1,17 +1,49 @@
 package ru.avem.posum.hardware;
 
-public interface ADC {
-    String[] getCalibrationSettings();
+import java.util.ArrayList;
+import java.util.List;
 
-    boolean[] getCheckedChannels();
+public class ADC extends Module {
+    private ArrayList<List<Double>> calibrationCoefficients = new ArrayList<>();
+    private ArrayList<List<String>> calibrationSettings;
+    int[] channelsTypes;
+    int[] measuringRanges;
+    private String[] channelsDescription;
 
-    int[] getChannelsTypes();
+    ADC() {
+        channelsCount = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
+        checkedChannels = new boolean[channelsCount];
+        channelsTypes = new int[channelsCount];
+        measuringRanges = new int[channelsCount];
+        channelsDescription = new String[channelsCount];
+        calibrationSettings = new ArrayList<>();
+    }
 
-    int[] getMeasuringRanges();
+    public ArrayList<List<Double>> getCalibrationCoefficients() {
+        return calibrationCoefficients;
+    }
 
-    String[] getChannelsDescription();
+    public void setCalibrationCoefficients(ArrayList<List<Double>> calibrationCoefficients) {
+        this.calibrationCoefficients = calibrationCoefficients;
+    }
 
-    String getCrate();
+    public ArrayList<List<String>> getCalibrationSettings() {
+        return calibrationSettings;
+    }
 
-    int getSlot();
+    public void setCalibrationSettings(ArrayList<List<String>> calibrationSettings) {
+        this.calibrationSettings = calibrationSettings;
+    }
+
+    public int[] getChannelsTypes() {
+        return channelsTypes;
+    }
+
+    public int[] getMeasuringRanges() {
+        return measuringRanges;
+    }
+
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
 }

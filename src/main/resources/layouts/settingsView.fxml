@@ -27,8 +27,8 @@
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" />
                               <ColumnConstraints hgrow="SOMETIMES" />
-                              <ColumnConstraints hgrow="SOMETIMES" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+                              <ColumnConstraints />
                           </columnConstraints>
                           <rowConstraints>
                               <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
@@ -45,49 +45,14 @@
                               <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Испытываемый объект:" GridPane.rowIndex="2">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label text="Серийный номер объекта:" GridPane.rowIndex="3">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label text="Номер документа:" GridPane.rowIndex="4">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label text="Тип испытаний:" GridPane.rowIndex="5">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label text="Ведущий инженер:" GridPane.rowIndex="8">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label text="Комментарии:" GridPane.rowIndex="9">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
                               <Label text="Название испытания:" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label text="Длительность испытаний:" GridPane.rowIndex="6">
+                              <Label fx:id="requiredFieldN1" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="1">
                                  <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label text="Дата испытаний:" GridPane.rowIndex="7">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
+                                    <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
                               <TextField fx:id="testProgramNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
@@ -95,58 +60,9 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <TextField fx:id="sampleNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="sampleSerialNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="documentNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="testProgramTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="testProgramTimeTextField" onKeyPressed="#listenBackSpaceKey" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin></TextField>
-                              <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </TextField>
-                              <TextArea fx:id="commentsTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="10">
-                                 <GridPane.margin>
-                                    <Insets left="10.0" right="10.0" />
-                                 </GridPane.margin>
-                              </TextArea>
-                              <Button fx:id="saveTestProgrammSettingsButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgramSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </Button>
-                              <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="11" GridPane.valignment="BOTTOM">
+                              <Label text="Испытываемый объект:" GridPane.rowIndex="2">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Button>
-                              <Label fx:id="requiredFieldN1" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="1">
-                                 <GridPane.margin>
-                                    <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
                               <Label fx:id="requiredFieldN2" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="2">
@@ -154,9 +70,49 @@
                                     <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
+                              <TextField fx:id="sampleNameTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Серийный номер объекта:" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="sampleSerialNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Номер документа:" GridPane.rowIndex="4">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="documentNumberTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Тип испытаний:" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
                               <Label fx:id="requiredFieldN3" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="5">
                                  <GridPane.margin>
                                     <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="testProgramTypeTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Длительность испытаний:" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
                               <Label fx:id="requiredFieldN4" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="6">
@@ -164,11 +120,46 @@
                                     <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
+                              <TextField fx:id="testProgramTimeTextField" onKeyPressed="#listenBackSpaceKey" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Дата испытаний:" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
                               <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
+                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin></TextField>
+                              <Label text="Ведущий инженер:" GridPane.rowIndex="8">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
+                                 <GridPane.margin>
+                                    <Insets right="10.0" />
+                                 </GridPane.margin>
+                              </TextField>
+                              <Label text="Комментарии:" GridPane.rowIndex="9">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextArea fx:id="commentsTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="10">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </GridPane.margin>
+                              </TextArea>
+                              <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.rowSpan="9" GridPane.valignment="BOTTOM" />
                            </children>
                         </GridPane>
                      </children>
@@ -181,8 +172,8 @@
                      <children>
                         <GridPane AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" />
-                              <ColumnConstraints hgrow="SOMETIMES" />
+                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
@@ -192,27 +183,12 @@
                               <RowConstraints />
                            </rowConstraints>
                            <children>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="grid-pane" stylesheets="@../css/main.css" GridPane.columnSpan="2" GridPane.rowIndex="1" GridPane.rowSpan="4">
-                                 <GridPane.margin>
-                                    <Insets />
-                                 </GridPane.margin>
-                              </AnchorPane>
-                              <Button fx:id="chooseCrateButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleChooseCrate" text="Выбрать" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
-
-                                 <GridPane.margin>
-                                    <Insets right="10.0" />
-                                 </GridPane.margin>
-                              </Button>
-                              <Button fx:id="setupModuleButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSetupModule" text="Настроить" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                              <Label fx:id="crates_Label" text="Крейты:" GridPane.rowIndex="1">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
-                                 </GridPane.margin></Button>
-                              <ListView fx:id="cratesListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
-                                 <GridPane.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" />
                                  </GridPane.margin>
-                              </ListView>
-                              <ListView fx:id="modulesListView" disable="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                              </Label>
+                              <ListView fx:id="cratesListView" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                                  <GridPane.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" />
                                  </GridPane.margin>
@@ -222,11 +198,21 @@
                                     <Insets left="10.0" top="5.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label fx:id="crates_Label" text="Крейты:" GridPane.rowIndex="1">
+                              <ListView fx:id="modulesListView" disable="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                  <GridPane.margin>
-                                    <Insets left="10.0" />
+                                    <Insets bottom="10.0" left="10.0" right="10.0" />
                                  </GridPane.margin>
-                              </Label>
+                              </ListView>
+                              <Button fx:id="chooseCrateButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleChooseCrate" text="Выбрать" GridPane.halignment="RIGHT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                                 <GridPane.margin>
+                                    <Insets right="145.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <Button fx:id="saveSettingsButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgramSettings" text="Сохранить" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                              <Button fx:id="setupModuleButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSetupModule" text="Настроить" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
+                                 <GridPane.margin>
+                                    <Insets left="145.0" />
+                                 </GridPane.margin></Button>
                            </children>
                         </GridPane>
                      </children>
