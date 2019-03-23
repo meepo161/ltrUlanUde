@@ -20,6 +20,8 @@ public interface ControllerManager {
 
     boolean getICPMode();
 
+    String getValueName();
+
     double getZeroShift();
 
     void hideRequiredFieldsSymbols();

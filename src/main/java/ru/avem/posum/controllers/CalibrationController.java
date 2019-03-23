@@ -392,11 +392,16 @@ public class CalibrationController implements BaseController {
 
     public void showChannelValue() {
         new Thread(() -> {
+            setValueName();
             while (!stopped) {
                 Platform.runLater(() -> channelValueTextField.setText(String.format("%.5f", cm.getZeroShift())));
                 Utils.sleep(100);
             }
         }).start();
+    }
+
+    private void setValueName() {
+        Platform.runLater(() -> channelValueLabel.setText(String.format("Значение, %s:", cm.getValueName())));
     }
 
     @Override
