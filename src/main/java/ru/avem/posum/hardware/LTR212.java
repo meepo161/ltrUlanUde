@@ -15,19 +15,19 @@ public class LTR212 extends ADC {
 
     public void initModule() {
         clearStatus();
-        status = initialize(slot, channelsTypes, measuringRanges);
+        status = initialize(slot, channelsTypes, measuringRanges, moduleSettings);
         checkStatus();
     }
 
-    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
 
     public void receive(double[] data) {
         clearStatus();
-        status = fillArray(slot, data);
+        status = fillArray(slot, data, timeMarks);
         checkStatus();
     }
 
-    public native String fillArray(int slot, double[] data);
+    public native String fillArray(int slot, double[] data, double[] timeMarks);
 
     public void closeConnection() {
         close(slot);
