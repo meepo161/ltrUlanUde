@@ -354,6 +354,7 @@ public class SignalGraphController implements BaseController {
     private void getLTR212Data() {
         ltr212.receive(data);
         ringBuffer.put(data);
+        System.out.println(adc.getTimeMarks()[0]); // TODO: delete this
     }
 
     private void processData() {

@@ -153,6 +153,7 @@ public class LTR212SettingController implements BaseController {
 
     private void addChannelsTypes(List<ComboBox<String>> channelsTypesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
+        strings.add("Полно- или полу-мостовая схема");
         strings.add("Четверть-мостовая схема (200 Ом)");
         strings.add("Четверть-мостовая схема (350 Ом)");
         strings.add("Четверть-мостовая схема (внешний резистор)");
@@ -244,7 +245,7 @@ public class LTR212SettingController implements BaseController {
 
     private void setDefaultSettings(int channel) {
         channelsDescription.get(channel).setText("");
-        channelsTypesComboBoxes.get(channel).getSelectionModel().select(1);
+        channelsTypesComboBoxes.get(channel).getSelectionModel().select(2);
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
     }
 

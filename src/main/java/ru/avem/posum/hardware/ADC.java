@@ -8,6 +8,8 @@ public class ADC extends Module {
     private ArrayList<List<String>> calibrationSettings;
     int[] channelsTypes;
     int[] measuringRanges;
+    int[] moduleSettings = {0, 0, 0, 4, 0, 0, 0, 0, 1, 0};
+    double[] timeMarks = new double[4096];
     private String[] channelsDescription;
 
     ADC() {
@@ -45,5 +47,9 @@ public class ADC extends Module {
 
     public String[] getChannelsDescription() {
         return channelsDescription;
+    }
+
+    public double[] getTimeMarks() {
+        return timeMarks;
     }
 }
