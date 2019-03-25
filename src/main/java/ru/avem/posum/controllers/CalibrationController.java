@@ -14,11 +14,10 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.CalibrationPoint;
-import ru.avem.posum.models.Calibration;
+import ru.avem.posum.models.CalibrationModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 
@@ -387,10 +386,10 @@ public class CalibrationController implements BaseController {
         adc.getCalibrationSettings().get(channel).clear();
         adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationPoints));
 
-        Calibration calibration = new Calibration();
-        calibration.calibrate(adc, channel);
+        CalibrationModel calibrationModel = new CalibrationModel();
+        calibrationModel.calibrate(adc, channel);
         adc.getCalibrationCoefficients().get(channel).clear();
-        adc.getCalibrationCoefficients().get(channel).addAll(calibration.getCalibrationCoefficients());
+        adc.getCalibrationCoefficients().get(channel).addAll(calibrationModel.getCalibrationCoefficients());
     }
 
     private void indicateResult() {

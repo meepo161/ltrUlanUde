@@ -158,7 +158,7 @@ public class ReceivedSignal {
         }
     }
 
-    public void setCalibratedBounds(ADC adc) {
+    public void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
         double minLoadValue = 999_999_999;

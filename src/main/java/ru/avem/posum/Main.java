@@ -391,7 +391,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void setClosed(boolean cl) {
+    public void setStopped(boolean cl) {
         this.closed = cl;
     }
 

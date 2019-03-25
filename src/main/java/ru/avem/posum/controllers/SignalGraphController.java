@@ -86,23 +86,23 @@ public class SignalGraphController implements BaseController {
     private double zeroShift;
 
     public void initializeView(String moduleType, int slot, int channel) {
+        isStopped(false);
         setFields(moduleType, slot, channel);
         setTitleLabel();
-        setApplicationState(false);
         listenAverageCheckBox();
         listenAutoScaleCheckBox();
         listenCalibrationCheckBox();
-        addListOfDecimalFormat();
+        addDecimalFormats();
         setDefaultDecimalFormat();
         initGraph();
         initAverage();
         initModule();
-        setLabels();
+        setSignalParametersLabels();
         startShow();
     }
 
-    private void setTitleLabel() {
-        titleLabel.setText("Текущая нагрузка на " + (channel + 1) + " канале" + " (" + moduleType + " слот " + slot + ")");
+    private void isStopped(boolean isStopped) {
+        cm.setStopped(isStopped);
     }
 
     private void setFields(String moduleType, int slot, int channel) {
@@ -111,8 +111,8 @@ public class SignalGraphController implements BaseController {
         this.channel = channel;
     }
 
-    private void setApplicationState(boolean isClosed) {
-        cm.setClosed(isClosed);
+    private void setTitleLabel() {
+        titleLabel.setText("Текущая нагрузка на " + (channel + 1) + " канале" + " (" + moduleType + " слот " + slot + ")");
     }
 
     private void listenAverageCheckBox() {
@@ -127,7 +127,108 @@ public class SignalGraphController implements BaseController {
         });
     }
 
-    private void addListOfDecimalFormat() {
+    private void listenAutoScaleCheckBox() {
+        autoScaleCheckBox.selectedProperty().addListener(observable -> {
+            if (autoScaleCheckBox.isSelected()) {
+                toggleAutoScale(true);
+            } else {
+                toggleAutoScale(false);
+                setGraphBounds(lowerBound, upperBound, tickUnit);
+            }
+        });
+    }
+
+    private void toggleAutoScale(boolean isAutoRangeEnabled) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setAutoRanging(isAutoRangeEnabled);
+    }
+
+    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+    }
+
+    private void listenCalibrationCheckBox() {
+        calibrationCheckBox.selectedProperty().addListener(observable -> {
+            if (calibrationCheckBox.isSelected()) {
+                checkCalibration();
+            } else {
+                setCalibrationExists(false);
+                setValueName();
+                setSignalParametersLabels();
+                setBounds();
+            }
+        });
+    }
+
+    private void setValueName() {
+        valueName = "В";
+        setValueNameToGraph();
+    }
+
+    private void setValueNameToGraph() {
+        Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
+    }
+
+    private void setSignalParametersLabels() {
+        amplitudeLabel.setText(String.format("Амлитуда, %s:", valueName));
+        frequencyLabel.setText("Частота, Гц:");
+        phaseLabel.setText("Фаза, °:");
+        zeroShiftLabel.setText(String.format("Статика, %s:", valueName));
+    }
+
+    private void setBounds() {
+        addDefineBoundsInstructions();
+        runInstructions();
+        setGraphBounds(lowerBound, upperBound, tickUnit);
+    }
+
+    private void addDefineBoundsInstructions() {
+        instructions.clear();
+        instructions.put(CrateModel.LTR24, this::defineLTR24Bounds);
+        instructions.put(CrateModel.LTR212, this::defineLTR212MeasuringRange);
+    }
+
+    private void runInstructions() {
+        instructions.get(moduleType).onAction();
+    }
+
+    public void checkCalibration() {
+        if (!adc.getCalibrationCoefficients().get(channel).isEmpty()) {
+            setCalibrationExists(true);
+            receivedSignal.defineCalibratedBounds(adc);
+            setBounds(receivedSignal.getLowerBound(), receivedSignal.getUpperBound(), receivedSignal.getTickUnit());
+            setFields(receivedSignal.getValueName());
+            setValueNameToGraph();
+            setGraphBounds(lowerBound, upperBound, tickUnit);
+            clearGraph();
+            setSignalParametersLabels();
+            calibrationCheckBox.setSelected(true);
+        }
+    }
+
+    private void setBounds(double lowerBound, double upperBound, double tickUnit) {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+        this.tickUnit = tickUnit;
+    }
+
+    private void setFields(String valueName) {
+        this.valueName = valueName;
+    }
+
+    private void clearGraph() {
+        intermediateList = new ArrayList<>();
+        graphSeries = new XYChart.Series<>();
+        graphSeries.getData().addAll(intermediateList);
+        graph.getData().clear();
+        graph.getData().add(graphSeries);
+    }
+
+    private void addDecimalFormats() {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("1");
         strings.add("2");
@@ -157,9 +258,7 @@ public class SignalGraphController implements BaseController {
         getModuleInstance();
         addInitModuleInstructions();
         runInstructions();
-        addDefineBoundsInstructions();
-        runInstructions();
-        setGraphBounds(lowerBound, upperBound, tickUnit);
+        setBounds();
         toggleAutoScale(false);
     }
 
@@ -186,25 +285,6 @@ public class SignalGraphController implements BaseController {
         data = new double[2048];
         buffer = new double[data.length];
         ringBuffer = new RingBuffer(data.length * 10);
-    }
-
-    private void runInstructions() {
-        instructions.get(moduleType).onAction();
-    }
-
-
-    private void setGraphBounds(double lowerBound, double upperBound, double tickUnit) {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-
-        yAxis.setLowerBound(lowerBound);
-        yAxis.setUpperBound(upperBound);
-        yAxis.setTickUnit(tickUnit);
-    }
-
-    private void addDefineBoundsInstructions() {
-        instructions.clear();
-        instructions.put(CrateModel.LTR24, this::defineLTR24Bounds);
-        instructions.put(CrateModel.LTR212, this::defineLTR212MeasuringRange);
     }
 
     private void defineLTR24Bounds() {
@@ -241,12 +321,6 @@ public class SignalGraphController implements BaseController {
         }
     }
 
-    private void setBounds(double lowerBound, double upperBound, double tickUnit) {
-        this.lowerBound = lowerBound;
-        this.upperBound = upperBound;
-        this.tickUnit = tickUnit;
-    }
-
     private void defineLTR212MeasuringRange() {
         switch (ltr212.getMeasuringRanges()[channel]) {
             case 0:
@@ -278,38 +352,6 @@ public class SignalGraphController implements BaseController {
         }
     }
 
-    private void listenAutoScaleCheckBox() {
-        autoScaleCheckBox.selectedProperty().addListener(observable -> {
-            if (autoScaleCheckBox.isSelected()) {
-                toggleAutoScale(true);
-            } else {
-                toggleAutoScale(false);
-                setGraphBounds(lowerBound, upperBound, tickUnit);
-            }
-        });
-    }
-
-    private void toggleAutoScale(boolean isAutoRangeEnabled) {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        yAxis.setAutoRanging(isAutoRangeEnabled);
-    }
-
-    private void listenCalibrationCheckBox() {
-        calibrationCheckBox.selectedProperty().addListener(observable -> {
-            if (calibrationCheckBox.isSelected()) {
-                checkCalibration();
-            } else {
-                setCalibrationExists(false);
-                valueName = "В";
-                setValueNameToGraph();
-                setLabels();
-                addDefineBoundsInstructions();
-                runInstructions();
-                setGraphBounds(lowerBound, upperBound, tickUnit);
-            }
-        });
-    }
-
     private void initAverage() {
         setDigitFilter();
         changeAverageUiElementsState();
@@ -336,13 +378,6 @@ public class SignalGraphController implements BaseController {
                 averageTextField.setDisable(true);
             }
         });
-    }
-
-    private void setLabels() {
-        amplitudeLabel.setText(String.format("Амлитуда, %s:", valueName));
-        frequencyLabel.setText("Частота, Гц:");
-        phaseLabel.setText("Фаза, °:");
-        zeroShiftLabel.setText(String.format("Статика, %s:", valueName));
     }
 
     private void startShow() {
@@ -462,7 +497,7 @@ public class SignalGraphController implements BaseController {
     private void handleBackButton() {
         wm.setModuleScene(moduleType, slot - 1);
         cm.loadItemsForModulesTableView();
-        setApplicationState(true);
+        isStopped(true);
         disableAutoRange();
         disableAverage();
         disableCalibration();
@@ -481,36 +516,6 @@ public class SignalGraphController implements BaseController {
     private void disableCalibration() {
         calibrationCheckBox.setSelected(false);
         setCalibrationExists(false);
-    }
-
-    public void checkCalibration() {
-        if (!adc.getCalibrationCoefficients().get(channel).isEmpty()) {
-            receivedSignal.setCalibratedBounds(adc);
-            setBounds(receivedSignal.getLowerBound(), receivedSignal.getUpperBound(), receivedSignal.getTickUnit());
-            setFields(receivedSignal.getValueName());
-            setValueNameToGraph();
-            setGraphBounds(lowerBound, upperBound, tickUnit);
-            clearView();
-            setLabels();
-            setCalibrationExists(true);
-            calibrationCheckBox.setSelected(true);
-        }
-    }
-
-    private void setFields(String valueName) {
-        this.valueName = valueName;
-    }
-
-    private void setValueNameToGraph() {
-        Platform.runLater(() -> graph.getYAxis().setLabel(valueName));
-    }
-
-    private void clearView() {
-        intermediateList = new ArrayList<>();
-        graphSeries = new XYChart.Series<>();
-        graphSeries.getData().addAll(intermediateList);
-        graph.getData().clear();
-        graph.getData().add(graphSeries);
     }
 
     public String getValueName() {

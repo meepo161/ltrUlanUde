@@ -40,7 +40,7 @@ public interface ControllerManager {
 
     void loadModuleSettings(int selectedModuleIndex, String moduleName);
 
-    void setClosed(boolean closed);
+    void setStopped(boolean closed);
 
     void setEditMode(boolean editMode);
 

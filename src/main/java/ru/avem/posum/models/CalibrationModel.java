@@ -6,7 +6,7 @@ import ru.avem.posum.utils.GaussianElimination;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Calibration {
+public class CalibrationModel {
     private ADC adc;
     private int channel;
     private List<Double> calibrationCoefficients = new ArrayList<>();
