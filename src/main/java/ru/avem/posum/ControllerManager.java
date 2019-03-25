@@ -8,15 +8,16 @@ import ru.avem.posum.models.ExperimentModel;
 import java.util.List;
 
 public interface ControllerManager {
+
     void checkCalibration();
 
     void createListModulesControllers(List<String> modulesNames);
 
-    int getDecimalFormatScale();
-
     String getCrate();
 
     CrateModel getCrateModelInstance();
+
+    int getDecimalFormatScale();
 
     ExperimentModel getExperimentModel();
 
