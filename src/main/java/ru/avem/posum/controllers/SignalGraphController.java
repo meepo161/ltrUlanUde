@@ -55,8 +55,6 @@ public class SignalGraphController implements BaseController {
     private ADC adc;
     private double amplitude;
     private double averageCount = 1;
-    private int averageIterator;
-    private double averageValue;
     private double[] buffer;
     private int channel;
     private ControllerManager cm;

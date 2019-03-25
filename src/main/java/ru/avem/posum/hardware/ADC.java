@@ -45,6 +45,10 @@ public class ADC extends Module {
         return measuringRanges;
     }
 
+    public int[] getModuleSettings() {
+        return moduleSettings;
+    }
+
     public String[] getChannelsDescription() {
         return channelsDescription;
     }

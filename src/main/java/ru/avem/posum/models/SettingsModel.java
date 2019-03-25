@@ -2,7 +2,6 @@ package ru.avem.posum.models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.CalibrationsRepository;

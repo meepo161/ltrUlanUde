@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -15,10 +14,7 @@ import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class LTR212SettingController implements BaseController {
     @FXML
@@ -49,6 +45,8 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> measuringRangeOfChannelN3;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
+    @FXML
+    private ComboBox<String> moduleModesComboBox;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -101,6 +99,7 @@ public class LTR212SettingController implements BaseController {
 
         addChannelsTypes(channelsTypesComboBoxes);
         addMeasuringRanges(measuringRangesComboBoxes);
+        addModuleModes(moduleModesComboBox);
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
@@ -164,6 +163,12 @@ public class LTR212SettingController implements BaseController {
         setComboBox(channelsTypesComboBoxes, strings);
     }
 
+    private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
+        for (ComboBox<String> comboBox : comboBoxes) {
+            comboBox.getItems().addAll(strings);
+        }
+    }
+
     private void addMeasuringRanges(List<ComboBox<String>> measuringRangesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-10 мВ/+10 мВ");
@@ -178,10 +183,12 @@ public class LTR212SettingController implements BaseController {
         setComboBox(measuringRangesComboBoxes, strings);
     }
 
-    private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
-        for (ComboBox<String> comboBox : comboBoxes) {
-            comboBox.getItems().addAll(strings);
-        }
+    private void addModuleModes(ComboBox<String> moduleModesComboBox) {
+        ObservableList<String> modes = FXCollections.observableArrayList();
+        modes.add("Средней точности");
+        modes.add("Высокой точности");
+
+        moduleModesComboBox.getItems().addAll(modes);
     }
 
     private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {
@@ -198,7 +205,7 @@ public class LTR212SettingController implements BaseController {
             } else {
                 applyForAllChannels(false);
                 changeChannelUiElementsState(channel, true);
-                setDefaultSettings(channel);
+                setDefaultChannelsSettings(channel);
             }
         });
     }
@@ -243,7 +250,7 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
-    private void setDefaultSettings(int channel) {
+    private void setDefaultChannelsSettings(int channel) {
         channelsDescription.get(channel).setText("");
         channelsTypesComboBoxes.get(channel).getSelectionModel().select(2);
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
@@ -313,6 +320,7 @@ public class LTR212SettingController implements BaseController {
             channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
+            moduleModesComboBox.getSelectionModel().select(0);
         }
     }
 
@@ -321,8 +329,8 @@ public class LTR212SettingController implements BaseController {
 
         new Thread(() -> {
             saveChannelsSettings();
+            saveModuleSettings();
             initializeModule();
-            avoidError();
             checkResult();
             indicateResult();
         }).start();
@@ -369,24 +377,16 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
+    private void saveModuleSettings() {
+        ltr212.getModuleSettings()[0] = moduleModesComboBox.getSelectionModel().getSelectedIndex();
+    }
+
     private void initializeModule() {
         if (!isConnectionOpen) {
             ltr212.openConnection();
         }
 
         ltr212.initModule();
-    }
-
-    /* Неприемлимое решение проблемы с возникающей ошибкой */
-    private void avoidError() {
-        String error = ltr212.getStatus();
-
-        while (error.equals("Использование калибровки невозможно для установленных параметров")) {
-            ltr212.closeConnection();
-            ltr212.openConnection();
-            ltr212.initModule();
-            error = ltr212.getStatus();
-        }
     }
 
     private void checkResult() {
@@ -439,6 +439,7 @@ public class LTR212SettingController implements BaseController {
         new Thread(() -> {
             findLTR212Module();
             saveChannelsSettings();
+            saveModuleSettings();
             closeConnection();
             enableChannelsUiElements();
             prepareSettingScene();
