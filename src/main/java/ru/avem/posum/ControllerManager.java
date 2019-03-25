@@ -12,6 +12,8 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
+    int getDecimalFormatScale();
+
     String getCrate();
 
     CrateModel getCrateModelInstance();

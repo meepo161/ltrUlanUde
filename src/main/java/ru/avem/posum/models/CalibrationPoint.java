@@ -12,8 +12,8 @@ public class CalibrationPoint {
 
     public CalibrationPoint(int channel, double loadValue, double channelValue, String channelName) {
         this.channel = channel;
-        this.loadValue = String.valueOf(loadValue);
-        this.channelValue = String.format("%.5f", channelValue);
+        this.loadValue = String.format("%.7f", loadValue);
+        this.channelValue = String.format("%.7f", channelValue);
         this.valueName = channelName;
     }
 

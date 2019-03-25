@@ -142,7 +142,6 @@ public class ReceivedSignal {
     }
 
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
-        System.out.println(calibrationSettings);
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
         firstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);

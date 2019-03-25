@@ -50,8 +50,6 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField loadValueNameTextField;
     @FXML
-    private TableColumn<CalibrationPoint, String> valueNameColumn;
-    @FXML
     private Button saveButton;
     @FXML
     private CheckBox setChannelValueCheckBox;
@@ -67,6 +65,7 @@ public class CalibrationController implements BaseController {
     private double channelValue;
     private double channelValueCoefficient;
     private ControllerManager cm;
+    private int decimalFormatScale;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private double loadValue;
     private double loadValueCoefficient;
@@ -140,7 +139,6 @@ public class CalibrationController implements BaseController {
     private void initColumns() {
         loadChannelColumn.setCellValueFactory(new PropertyValueFactory<>("loadValue"));
         channelValueColumn.setCellValueFactory(new PropertyValueFactory<>("channelValue"));
-        valueNameColumn.setCellValueFactory(new PropertyValueFactory<>("valueName"));
     }
 
     private void initGraph() {
@@ -278,6 +276,9 @@ public class CalibrationController implements BaseController {
         for (String settings : calibrationSettings) {
             load(settings);
         }
+
+        decimalFormatScale = cm.getDecimalFormatScale();
+        setUiElements();
     }
 
     private void load(String settings) {
@@ -289,8 +290,12 @@ public class CalibrationController implements BaseController {
             valueName = CalibrationPoint.parseValueName(settings);
 
             showCalibration();
-            setUiElements();
         }
+    }
+
+    private void setUiElements() {
+        loadValueTextField.setText(String.valueOf(Utils.roundValue(loadValue, decimalFormatScale)));
+        loadValueNameTextField.setText(valueName);
     }
 
     private void showCalibration() {
@@ -301,12 +306,25 @@ public class CalibrationController implements BaseController {
 
     private void addCalibrationPointToTable() {
         CalibrationPoint point = new CalibrationPoint(channel, loadValue, channelValue, valueName);
+        setColumnTitle(loadChannelColumn, valueName);
         calibrationPoints.add(point);
     }
 
-    private void setUiElements() {
-        loadValueTextField.setText(String.valueOf(loadValue));
-        loadValueNameTextField.setText(String.valueOf(valueName));
+    private void addPointToGraph() {
+        int lastPointIndex = calibrationPoints.size() - 1;
+        CalibrationPoint lastPoint = calibrationPoints.get(lastPointIndex);
+        double xValue = Double.parseDouble(lastPoint.getLoadValue());
+        double yValue = Double.parseDouble(lastPoint.getChannelValue());
+
+        try {
+            graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
+        } catch (NumberFormatException e) {
+            System.out.println("Point added");
+        }
+    }
+
+    private void setColumnTitle(TableColumn<CalibrationPoint, String> column, String valueName) {
+        column.textProperty().set("Величина нагрузки, " + valueName);
     }
 
     public void handleAddPoint() {
@@ -321,10 +339,12 @@ public class CalibrationController implements BaseController {
     }
 
     private void parseData() {
+        decimalFormatScale = cm.getDecimalFormatScale();
+
         if (setChannelValueCheckBox.isSelected()) {
             channelValue = parseFrom(channelValueTextField, channelValueCoefficient);
         } else {
-            channelValue = (double) Math.round(cm.getZeroShift() * 1_000_000) / 1_000_000;
+            channelValue = Utils.roundValue(cm.getZeroShift(), decimalFormatScale) * channelValueCoefficient;
         }
 
         loadValue = parseFrom(loadValueTextField, loadValueCoefficient);
@@ -332,25 +352,13 @@ public class CalibrationController implements BaseController {
     }
 
     private double parseFrom(TextField textField, double multiplierCoefficient) {
-        double defaultValue = 0;
-
         if (!textField.getText().equals("-")) {
-            return Double.parseDouble(textField.getText().replaceAll(",", ".")) * multiplierCoefficient;
-        }
+            String digits = textField.getText().replaceAll(",", ".");
+            double value = Utils.roundValue(Double.valueOf(digits), decimalFormatScale);
 
-        return defaultValue;
-    }
-
-    private void addPointToGraph() {
-        int lastPointIndex = calibrationPoints.size() - 1;
-        CalibrationPoint lastPoint = calibrationPoints.get(lastPointIndex);
-        double xValue = Double.parseDouble(lastPoint.getLoadValue());
-        double yValue = Double.parseDouble(lastPoint.getChannelValue());
-
-        try {
-            graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
-        } catch (NumberFormatException e) {
-            System.out.println("Point added");
+            return  value * multiplierCoefficient;
+        } else {
+            return 0;
         }
     }
 
@@ -391,10 +399,13 @@ public class CalibrationController implements BaseController {
     }
 
     public void showChannelValue() {
+        decimalFormatScale = cm.getDecimalFormatScale();
+
         new Thread(() -> {
             setValueName();
             while (!stopped) {
-                Platform.runLater(() -> channelValueTextField.setText(String.format("%.5f", cm.getZeroShift())));
+                double value = Utils.roundValue(cm.getZeroShift(), decimalFormatScale);
+                Platform.runLater(() -> channelValueTextField.setText(String.valueOf(value)));
                 Utils.sleep(100);
             }
         }).start();

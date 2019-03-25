@@ -18,6 +18,7 @@ import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -289,6 +290,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void checkCalibration() {
+        Utils.sleep(500);
         signalGraphController.checkCalibration();
     }
 
@@ -331,6 +333,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void showChannelData(String moduleType, int slot, int channel) {
         signalGraphController.initializeView(moduleType, slot, channel);
+    }
+
+    @Override
+    public int getDecimalFormatScale() {
+        return signalGraphController.getDecimalFormatScale();
     }
 
     @Override

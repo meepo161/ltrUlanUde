@@ -1,12 +1,14 @@
 package ru.avem.posum.controllers;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
@@ -15,6 +17,7 @@ import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
 import ru.avem.posum.models.ReceivedSignal;
 import ru.avem.posum.utils.RingBuffer;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +38,8 @@ public class SignalGraphController implements BaseController {
     private TextField averageTextField;
     @FXML
     private CheckBox calibrationCheckBox;
+    @FXML
+    private ComboBox<String> decimalFormatComboBox;
     @FXML
     private Label frequencyLabel;
     @FXML
@@ -61,6 +66,7 @@ public class SignalGraphController implements BaseController {
     private int channel;
     private ControllerManager cm;
     private double[] data;
+    private int decimalFormatScale = 100;
     private double frequency;
     private volatile XYChart.Series<Number, Number> graphSeries;
     private HashMap<String, Actionable> instructions = new HashMap<>();
@@ -88,6 +94,8 @@ public class SignalGraphController implements BaseController {
         listenAverageCheckBox();
         listenAutoScaleCheckBox();
         listenCalibrationCheckBox();
+        addListOfDecimalFormat();
+        setDefaultDecimalFormat();
         initGraph();
         initAverage();
         initModule();
@@ -119,6 +127,23 @@ public class SignalGraphController implements BaseController {
                 averageCount = 1;
             }
         });
+    }
+
+    private void addListOfDecimalFormat() {
+        ObservableList<String> strings = FXCollections.observableArrayList();
+        strings.add("1");
+        strings.add("2");
+        strings.add("3");
+        strings.add("4");
+        strings.add("5");
+        strings.add("6");
+        strings.add("7");
+
+        decimalFormatComboBox.getItems().addAll(strings);
+    }
+
+    private void setDefaultDecimalFormat() {
+        decimalFormatComboBox.getSelectionModel().select(1);
     }
 
     private void initGraph() {
@@ -354,7 +379,6 @@ public class SignalGraphController implements BaseController {
     private void getLTR212Data() {
         ltr212.receive(data);
         ringBuffer.put(data);
-        System.out.println(adc.getTimeMarks()[0]); // TODO: delete this
     }
 
     private void processData() {
@@ -415,10 +439,10 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(String.format("%.5f", amplitude));
-            frequencyTextField.setText(String.format("%.5f", frequency));
-            phaseTextField.setText(String.format("%.5f", phase));
-            zeroShiftTextField.setText(String.format("%.5f", zeroShift));
+            amplitudeTextField.setText(String.valueOf(Utils.roundValue(amplitude, decimalFormatScale)));
+            frequencyTextField.setText(String.valueOf(Utils.roundValue(frequency, decimalFormatScale)));
+            phaseTextField.setText(String.valueOf(Utils.roundValue(phase, decimalFormatScale)));
+            zeroShiftTextField.setText(String.valueOf(Utils.roundValue(zeroShift, decimalFormatScale)));
             isDone = true;
         });
     }
@@ -497,6 +521,14 @@ public class SignalGraphController implements BaseController {
 
     public ReceivedSignal getReceivedSignal() {
         return receivedSignal;
+    }
+
+    public int getDecimalFormatScale() {
+        return decimalFormatScale;
+    }
+
+    public void setDecimalFormatScale() {
+        decimalFormatScale = (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
     }
 
     private void setCalibrationExists(boolean calibrationExists) {

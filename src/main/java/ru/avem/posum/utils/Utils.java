@@ -15,4 +15,8 @@ public class Utils {
     public static int parseSlotNumber(String moduleName) {
         return Integer.parseInt(moduleName.split("Слот ")[1].split("\\)")[0]); // номер слота
     }
+
+    public static double roundValue(double value, int rounder) {
+        return (double) Math.round(value * rounder) / rounder;
+    }
 }
