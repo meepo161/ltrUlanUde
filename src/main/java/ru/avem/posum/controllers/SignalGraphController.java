@@ -58,13 +58,11 @@ public class SignalGraphController implements BaseController {
 
     private int averageCount = 1;
     private ControllerManager cm;
-    private double[] data;
     private int decimalFormatScale = 100;
     private volatile XYChart.Series<Number, Number> graphSeries;
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private volatile boolean isDone;
     private ReceivedSignal receivedSignal = new ReceivedSignal();
-    private RingBuffer ringBuffer;
     private SignalGraphModel signalGraphModel = new SignalGraphModel();
     private WindowsManager wm;
 
