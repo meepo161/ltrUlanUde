@@ -27,7 +27,11 @@ public interface ControllerManager {
 
     double getZeroShift();
 
+    void giveChannelInfo(int channel, String moduleType, int slot);
+
     void hideRequiredFieldsSymbols();
+
+    void initializeSignalGraphView();
 
     boolean isClosed();
 
@@ -44,8 +48,6 @@ public interface ControllerManager {
     void setStopped(boolean closed);
 
     void setEditMode(boolean editMode);
-
-    void showChannelData(String moduleType, int slot, int channel);
 
     void showChannelValue();
 

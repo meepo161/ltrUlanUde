@@ -263,7 +263,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public String getValueName() {
-        return signalGraphController.getValueName();
+        return signalGraphController.getSignalGraphModel().getValueName();
     }
 
     @Override
@@ -272,8 +272,18 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void giveChannelInfo(int channel, String moduleType, int slot) {
+        signalGraphController.getSignalGraphModel().setFields(moduleType, slot, channel);
+    }
+
+    @Override
     public void hideRequiredFieldsSymbols() {
         settingsController.hideRequiredFieldsSymbols();
+    }
+
+    @Override
+    public void initializeSignalGraphView() {
+        signalGraphController.initializeView();
     }
 
     @Override
@@ -330,11 +340,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void setEditMode(boolean editMode) {
         settingsController.setEditMode(editMode);
-    }
-
-    @Override
-    public void showChannelData(String moduleType, int slot, int channel) {
-        signalGraphController.initializeView(moduleType, slot, channel);
     }
 
     @Override
