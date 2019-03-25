@@ -197,6 +197,7 @@ public class SettingsController implements BaseController {
     public void handleChooseCrate() {
         checkSelection();
         initSettingsModel();
+        crateModel.initialize(crate);
     }
 
     private void initSettingsModel() {

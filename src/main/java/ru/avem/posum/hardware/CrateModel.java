@@ -2,12 +2,9 @@ package ru.avem.posum.hardware;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.util.Pair;
 import ru.avem.posum.utils.TextEncoder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class CrateModel {
     public static final String LTR24 = "LTR24";
@@ -76,20 +73,20 @@ public class CrateModel {
     private void setModulesList() {
         for (int i = 0; i < crates[0].length; i++) {
             if (!crates[0][i].isEmpty()) {
-                status = fillListOfModules(crates[0][i], modules[i]);
+                status = fillModulesList(crates[0][i], modules[i]);
                 checkStatus();
             }
         }
     }
 
-    public native String fillListOfModules(String crate, String[] modules);
+    public native String fillModulesList(String crate, String[] modules);
 
     private void closeConnection() {
-        status = stop();
+        status = close();
         checkStatus();
     }
 
-    public native String stop();
+    public native String close();
 
     private void fillCratesNames() {
         cratesNames = FXCollections.observableArrayList();
@@ -113,6 +110,8 @@ public class CrateModel {
 
         return modulesNames;
     }
+
+    public native String initialize(String crateSN);
 
     public HashMap<Integer, Module> getModulesList() {
         return modulesList;

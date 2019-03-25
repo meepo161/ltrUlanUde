@@ -183,9 +183,9 @@
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="20" />
             <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="20" />
             <Label text="Режим сбора данных:" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-            <ComboBox maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+            <ComboBox fx:id="moduleModesComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
             <Label text="Опорное напряжение:" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-            <ComboBox maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+            <ComboBox fx:id="referenceVoltageComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
             <CheckBox mnemonicParsing="false" text="Исп. калиб. коэф." GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="9" />
             <CheckBox mnemonicParsing="false" text="Завод. калиб. коэф." GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="10" />
             <CheckBox mnemonicParsing="false" text="Пост. опорн. напр." GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.rowIndex="9" />
