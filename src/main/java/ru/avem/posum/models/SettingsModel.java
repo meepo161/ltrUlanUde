@@ -280,6 +280,7 @@ public class SettingsModel implements BaseController {
                 module.setChannelsTypes(adc.getChannelsTypes());
                 module.setMeasuringRanges(adc.getMeasuringRanges());
                 module.setChannelsDescription(adc.getChannelsDescription());
+                module.setSettings(String.valueOf(adc.moduleSettingsToString()));
 
                 updateModuleSettings(module);
             }

@@ -170,4 +170,8 @@ public class Modules {
     public String getSettings() {
         return settings;
     }
+
+    public void setSettings(String settings) {
+        this.settings = settings;
+    }
 }
