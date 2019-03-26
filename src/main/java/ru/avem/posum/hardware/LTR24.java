@@ -47,6 +47,11 @@ public class LTR24 extends ADC {
         return settings;
     }
 
+    @Override
+    public void parseModuleSettings(String settings) {
+
+    }
+
     static {
         System.loadLibrary( "LTR24Library");
     }

@@ -35,7 +35,6 @@ public class SettingsModel implements BaseController {
     private int[] frequencies;
     private boolean isEditMode;
     private HashMap<String, Actionable> instructions = new HashMap<>();
-    private LTR212SettingsModel ltr212SettingsModel = new LTR212SettingsModel();
     private int[] measuringRanges;
     private long moduleId;
     private HashMap<Integer, Module> modules;
@@ -452,6 +451,7 @@ public class SettingsModel implements BaseController {
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             parseChannelsSettings(module);
+            parseModuleSettings(module);
             loadCalibrationSettings(module);
         }
     }
@@ -471,6 +471,11 @@ public class SettingsModel implements BaseController {
             measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
             channelsDescription[i] = parsedChannelsDescriptions[i];
         }
+    }
+
+    private void parseModuleSettings(Modules module) {
+        String settings = module.getSettings();
+        adc.parseModuleSettings(settings);
     }
 
     private void loadCalibrationSettings(Modules module) {

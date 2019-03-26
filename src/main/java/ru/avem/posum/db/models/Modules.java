@@ -166,4 +166,8 @@ public class Modules {
     public void setPhases(int[] phases) {
         this.phases = settingsToString(phases);
     }
+
+    public String getSettings() {
+        return settings;
+    }
 }

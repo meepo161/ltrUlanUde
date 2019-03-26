@@ -472,11 +472,11 @@ public class LTR212SettingController implements BaseController {
         }
 
         applyForAllCheckBox.setDisable(false);
-        moduleModesComboBox.setDisable(true);
-        referenceVoltageComboBox.setDisable(true);
-        useCalibrationCheckBox.setDisable(true);
-        useFabricCalibrationCheckBox.setDisable(true);
-        referenceVoltageTypeCheckBox.setDisable(true);
+        moduleModesComboBox.setDisable(false);
+        referenceVoltageComboBox.setDisable(false);
+        useCalibrationCheckBox.setDisable(false);
+        useFabricCalibrationCheckBox.setDisable(false);
+        referenceVoltageTypeCheckBox.setDisable(false);
         initializeButton.setDisable(false);
     }
 

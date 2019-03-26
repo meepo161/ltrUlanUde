@@ -1,5 +1,6 @@
 package ru.avem.posum.hardware;
 
+import javax.lang.model.element.NestingKind;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +96,22 @@ public class LTR212 extends ADC {
                 .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
 
         return settings;
+    }
+
+    @Override
+    public void parseModuleSettings(String settings) {
+        String[] separatedSettings = settings.split(", ");
+
+        moduleSettings.put(Settings.ADC_MODE.getSettingName(), Integer.valueOf(separatedSettings[0]));
+        moduleSettings.put(Settings.CALIBRATION_COEFFICIENTS.getSettingName(), Integer.valueOf(separatedSettings[1]));
+        moduleSettings.put(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), Integer.valueOf(separatedSettings[2]));
+        moduleSettings.put(Settings.LOGIC_CHANNELS_COUNT.getSettingName(), Integer.valueOf(separatedSettings[3]));
+        moduleSettings.put(Settings.IIR_FILTER.getSettingName(), Integer.valueOf(separatedSettings[4]));
+        moduleSettings.put(Settings.FIR_FILTER.getSettingName(), Integer.valueOf(separatedSettings[5]));
+        moduleSettings.put(Settings.DECIMATION.getSettingName(), Integer.valueOf(separatedSettings[6]));
+        moduleSettings.put(Settings.TAP.getSettingName(), Integer.valueOf(separatedSettings[7]));
+        moduleSettings.put(Settings.REFERENCE_VOLTAGE.getSettingName(), Integer.valueOf(separatedSettings[8]));
+        moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), Integer.valueOf(separatedSettings[9]));
     }
 
     static {

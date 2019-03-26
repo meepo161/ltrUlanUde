@@ -51,6 +51,8 @@ public abstract class ADC extends Module {
 
     public abstract StringBuilder moduleSettingsToString();
 
+    public abstract void parseModuleSettings(String settings);
+
     public double[] getBuffer() {
         return buffer;
     }
