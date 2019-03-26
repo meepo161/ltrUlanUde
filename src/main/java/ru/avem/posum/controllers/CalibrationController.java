@@ -267,7 +267,7 @@ public class CalibrationController implements BaseController {
         for (String calibration : calibrationSettings) {
             int channelFromCalibration = Integer.parseInt(calibration.substring(9, 10));
             if (channel == channelFromCalibration) {
-                calibrationModel.parseCalibration(channel, calibration);
+                calibrationModel.parseCalibration(calibration);
                 showCalibration();
             }
         }
