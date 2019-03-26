@@ -1,6 +1,7 @@
 package ru.avem.posum.hardware;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LTR212 extends ADC {
@@ -17,8 +18,8 @@ public class LTR212 extends ADC {
         getModuleSettings().put(Settings.FIR_FILTER.getSettingName(), 0); // использование программного фильтра
         getModuleSettings().put(Settings.DECIMATION.getSettingName(), 0); // использование децимации
         getModuleSettings().put(Settings.TAP.getSettingName(), 0); // порядок фильтра
-        getModuleSettings().put(Settings.REFERENCE_VOLTAGE.getSettingName(), 0); // опорное напряжение
-        getModuleSettings().put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), 0); // тип опорного напряжения
+        getModuleSettings().put(Settings.REFERENCE_VOLTAGE.getSettingName(), 1); // опорное напряжение
+        getModuleSettings().put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), 1); // тип опорного напряжения
     }
 
     public void openConnection() {
@@ -77,6 +78,24 @@ public class LTR212 extends ADC {
     }
 
     public native String close(int slot);
+
+    @Override
+    public StringBuilder moduleSettingsToString() {
+        StringBuilder settings = new StringBuilder();
+
+        settings.append(moduleSettings.get(Settings.ADC_MODE.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.IIR_FILTER.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FIR_FILTER.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.DECIMATION.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.TAP.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
+
+        return settings;
+    }
 
     static {
         System.loadLibrary( "LTR212Library");

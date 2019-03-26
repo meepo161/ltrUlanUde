@@ -22,12 +22,12 @@
         </rowConstraints>
          <children>
             <Button defaultButton="true" mnemonicParsing="false" onAction="#handleLogIn" prefHeight="50.0" prefWidth="250.0" text="Войти" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-            <TextField fx:id="userLogin" maxWidth="250.0" promptText="Имя пользователя" GridPane.halignment="CENTER">
+            <TextField fx:id="userLogin" maxWidth="250.0" promptText="Имя пользователя" text="user" GridPane.halignment="CENTER">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <PasswordField fx:id="userPassword" maxWidth="250.0" promptText="Пароль" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <PasswordField fx:id="userPassword" maxWidth="250.0" promptText="Пароль" text="user" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

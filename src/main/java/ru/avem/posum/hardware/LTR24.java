@@ -29,6 +29,24 @@ public class LTR24 extends ADC {
 
     public native String close(int slot);
 
+    @Override
+    public StringBuilder moduleSettingsToString() {
+        StringBuilder settings = new StringBuilder();
+
+        settings.append(moduleSettings.get(Settings.ADC_MODE.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.IIR_FILTER.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FIR_FILTER.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.DECIMATION.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.TAP.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
+
+        return settings;
+    }
+
     static {
         System.loadLibrary( "LTR24Library");
     }

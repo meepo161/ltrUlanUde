@@ -35,6 +35,7 @@ public class SettingsModel implements BaseController {
     private int[] frequencies;
     private boolean isEditMode;
     private HashMap<String, Actionable> instructions = new HashMap<>();
+    private LTR212SettingsModel ltr212SettingsModel = new LTR212SettingsModel();
     private int[] measuringRanges;
     private long moduleId;
     private HashMap<Integer, Module> modules;
@@ -335,6 +336,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Channels types", String.valueOf(channelsTypesLine));
         moduleSettings.put("Measuring ranges", String.valueOf(measuringRangesLine));
         moduleSettings.put("Channels description", String.valueOf(channelsDescriptionsLine));
+        moduleSettings.put("Module Settings", String.valueOf(adc.moduleSettingsToString()));
     }
 
     private void getDACInstance() {

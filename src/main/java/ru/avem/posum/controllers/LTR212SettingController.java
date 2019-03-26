@@ -57,6 +57,8 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private ComboBox<String> referenceVoltageComboBox;
     @FXML
+    private CheckBox referenceVoltageTypeCheckBox;
+    @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
     private ComboBox<String> typeOfChannelN2;
@@ -64,6 +66,10 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> typeOfChannelN3;
     @FXML
     private ComboBox<String> typeOfChannelN4;
+    @FXML
+    private CheckBox useCalibrationCheckBox;
+    @FXML
+    private CheckBox useFabricCalibrationCheckBox;
     @FXML
     private Button valueOfChannelN1;
     @FXML
@@ -327,13 +333,22 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void setSettings() {
+        int moduleMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName());
+        int referenceVoltage = ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE.getSettingName());
+        int useCalibration = ltr212.getModuleSettings().get(ADC.Settings.CALIBRATION_COEFFICIENTS.getSettingName());
+        int useFabricCalibration = ltr212.getModuleSettings().get(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName());
+        int referenceVoltageType = ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName());
+
         for (int i = 0; i < ltr212.getChannelsCount(); i++) {
             channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
             channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
-            moduleModesComboBox.getSelectionModel().select(ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName()));
-            referenceVoltageComboBox.getSelectionModel().select(ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE.getSettingName()));
+            moduleModesComboBox.getSelectionModel().select(moduleMode);
+            referenceVoltageComboBox.getSelectionModel().select(referenceVoltage);
+            useCalibrationCheckBox.setSelected(useCalibration == 1);
+            useFabricCalibrationCheckBox.setSelected(useFabricCalibration == 1);
+            referenceVoltageTypeCheckBox.setSelected(referenceVoltageType == 1);
         }
     }
 
@@ -371,6 +386,11 @@ public class LTR212SettingController implements BaseController {
         }
 
         applyForAllCheckBox.setDisable(true);
+        moduleModesComboBox.setDisable(true);
+        referenceVoltageComboBox.setDisable(true);
+        useCalibrationCheckBox.setDisable(true);
+        useFabricCalibrationCheckBox.setDisable(true);
+        referenceVoltageTypeCheckBox.setDisable(true);
         initializeButton.setDisable(true);
     }
 
@@ -394,9 +414,15 @@ public class LTR212SettingController implements BaseController {
         HashMap<String, Integer> settings = ltr212.getModuleSettings();
         int selectedADCMode = moduleModesComboBox.getSelectionModel().getSelectedIndex();
         int selectedReferenceVoltage = referenceVoltageComboBox.getSelectionModel().getSelectedIndex();
+        int useCalibration = useCalibrationCheckBox.isSelected() ? 1 : 0;
+        int useFabricCalibration = useFabricCalibrationCheckBox.isSelected() ? 1 : 0;
+        int referenceVoltageType = referenceVoltageTypeCheckBox.isSelected() ? 1 : 0;
 
         settings.put(ADC.Settings.ADC_MODE.getSettingName(), selectedADCMode);
         settings.put(ADC.Settings.REFERENCE_VOLTAGE.getSettingName(), selectedReferenceVoltage);
+        settings.put(ADC.Settings.CALIBRATION_COEFFICIENTS.getSettingName(), useCalibration);
+        settings.put(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), useFabricCalibration);
+        settings.put(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), referenceVoltageType);
     }
 
     private void initializeModule() {
@@ -446,6 +472,11 @@ public class LTR212SettingController implements BaseController {
         }
 
         applyForAllCheckBox.setDisable(false);
+        moduleModesComboBox.setDisable(true);
+        referenceVoltageComboBox.setDisable(true);
+        useCalibrationCheckBox.setDisable(true);
+        useFabricCalibrationCheckBox.setDisable(true);
+        referenceVoltageTypeCheckBox.setDisable(true);
         initializeButton.setDisable(false);
     }
 

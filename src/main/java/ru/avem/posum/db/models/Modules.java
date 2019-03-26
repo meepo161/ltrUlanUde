@@ -40,6 +40,9 @@ public class Modules {
     @DatabaseField
     private String phases;
 
+    @DatabaseField
+    private String settings;
+
     public Modules() {
         // ORMLite and XML binder need a no-arg constructor
     }
@@ -55,6 +58,7 @@ public class Modules {
         amplitudes = moduleSettings.getOrDefault("Amplitudes", "");
         frequencies = moduleSettings.getOrDefault("Frequencies", "");
         phases = moduleSettings.getOrDefault("Phases", "");
+        settings = moduleSettings.getOrDefault("Module Settings", "");
     }
 
     private String settingsToString(int[] settings) {
