@@ -19,7 +19,6 @@ import ru.avem.posum.models.SignalGraphModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import javax.rmi.CORBA.Util;
 import java.util.List;
 
 
@@ -59,19 +58,13 @@ public class CalibrationController implements BaseController {
     @FXML
     private Label titleLabel;
 
-    private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
+    private CalibrationModel calibrationModel = new CalibrationModel();
     private ContextMenu contextMenu = new ContextMenu();
-    private double channelValue;
-    private double channelValueCoefficient;
     private ControllerManager cm;
-    private int decimalFormatScale;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private double loadValue;
-    private double loadValueCoefficient;
     private SignalGraphModel signalGraphModel;
     private StatusBarLine statusBarLine = new StatusBarLine();
     private boolean stopped;
-    private String valueName = "";
     private WindowsManager wm;
 
     @FXML
@@ -90,6 +83,15 @@ public class CalibrationController implements BaseController {
         setDigitFilterToTextField(loadValueTextField);
         addCoefficientsList();
         setDefaultCoefficient();
+    }
+
+    private void setDigitFilterToTextField(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
+            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$")) {
+                textField.setText(oldValue);
+            }
+        });
     }
 
     private void listenSetChannelValueCheckBox() {
@@ -140,13 +142,26 @@ public class CalibrationController implements BaseController {
     }
 
     private void initGraph() {
-        calibrationTableView.setItems(calibrationPoints);
+        calibrationTableView.setItems(calibrationModel.getCalibrationPoints());
         calibrationGraph.getData().add(graphSeries);
     }
 
     private void initTextFields() {
         toggleUiElementsIfEmptyField(loadValueTextField);
         toggleUiElementsIfEmptyField(loadValueNameTextField);
+    }
+
+    private void toggleUiElementsIfEmptyField(TextField textField) {
+        textField.textProperty().addListener((observable) -> {
+            if (!loadValueTextField.getText().isEmpty() &
+                    !channelValueTextField.getText().isEmpty() &
+                    !loadValueNameTextField.getText().isEmpty() &
+                    calibrationModel.getCalibrationPoints().size() <= 20) {
+                addToTableButton.setDisable(false);
+            } else {
+                addToTableButton.setDisable(true);
+            }
+        });
     }
 
     private void createContextMenu() {
@@ -157,50 +172,6 @@ public class CalibrationController implements BaseController {
         menuItemClear.setOnAction(event -> clearCalibrationPoints());
 
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
-    }
-
-    private void checkNumberOfCalibrationPoints() {
-        int MAX_CALIBRATION_POINTS = 20;
-        if (calibrationPoints.size() == MAX_CALIBRATION_POINTS) {
-            changeState(true);
-        } else {
-            changeState(false);
-        }
-
-        int MIN_CALIBRATION_POINTS = 2;
-        if (calibrationPoints.size() < MIN_CALIBRATION_POINTS) {
-            saveButton.setDisable(true);
-        } else {
-            saveButton.setDisable(false);
-        }
-    }
-
-    private void changeState(boolean isDisable) {
-        if (calibrationPoints.size() == 0) {
-            loadValueNameTextField.setDisable(false);
-        } else {
-            loadValueNameTextField.setDisable(true);
-        }
-
-        loadValueLabel.setDisable(isDisable);
-        loadValueTextField.setDisable(isDisable);
-        channelValueLabel.setDisable(isDisable);
-        channelValueTextField.setDisable(isDisable);
-        loadValueNameLabel.setDisable(isDisable);
-        addToTableButton.setDisable(isDisable);
-    }
-
-    private void deleteCalibrationPoint() {
-        int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
-        graphSeries.getData().remove(selectedPointIndex);
-        calibrationPoints.remove(selectedPointIndex);
-        checkNumberOfCalibrationPoints();
-    }
-
-    private void clearCalibrationPoints() {
-        graphSeries.getData().clear();
-        calibrationPoints.clear();
-        checkNumberOfCalibrationPoints();
     }
 
     private void addMouseListener() {
@@ -217,34 +188,60 @@ public class CalibrationController implements BaseController {
         });
     }
 
-    private void setDigitFilterToTextField(TextField textField) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
-            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$")) {
-                textField.setText(oldValue);
-            }
-        });
+    private void deleteCalibrationPoint() {
+        int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
+        graphSeries.getData().remove(selectedPointIndex);
+        calibrationModel.getCalibrationPoints().remove(selectedPointIndex);
+        checkNumberOfCalibrationPoints();
     }
 
-    private void toggleUiElementsIfEmptyField(TextField textField) {
-        textField.textProperty().addListener((observable) -> {
-            if (!loadValueTextField.getText().isEmpty() &
-                    !channelValueTextField.getText().isEmpty() &
-                    !loadValueNameTextField.getText().isEmpty() &
-                    calibrationPoints.size() <= 20) {
-                addToTableButton.setDisable(false);
-            } else {
-                addToTableButton.setDisable(true);
-            }
-        });
+    private void checkNumberOfCalibrationPoints() {
+        ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
+        int MAX_CALIBRATION_POINTS = 20;
+        int MIN_CALIBRATION_POINTS = 2;
+
+        if (calibrationPoints.size() == MAX_CALIBRATION_POINTS) {
+            changeState(true);
+        } else {
+            changeState(false);
+        }
+
+        if (calibrationPoints.size() < MIN_CALIBRATION_POINTS) {
+            saveButton.setDisable(true);
+        } else {
+            saveButton.setDisable(false);
+        }
+    }
+
+    private void changeState(boolean isDisable) {
+        if (calibrationModel.getCalibrationPoints().size() == 0) {
+            loadValueNameTextField.setDisable(false);
+        } else {
+            loadValueNameTextField.setDisable(true);
+        }
+
+        loadValueLabel.setDisable(isDisable);
+        loadValueTextField.setDisable(isDisable);
+        channelValueLabel.setDisable(isDisable);
+        channelValueTextField.setDisable(isDisable);
+        loadValueNameLabel.setDisable(isDisable);
+        addToTableButton.setDisable(isDisable);
+    }
+
+    private void clearCalibrationPoints() {
+        graphSeries.getData().clear();
+        calibrationModel.getCalibrationPoints().clear();
+        checkNumberOfCalibrationPoints();
     }
 
     public void loadDefaults(SignalGraphModel signalGraphModel) {
         this.stopped = false;
         this.signalGraphModel = signalGraphModel;
+        calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
         setTitleLabel();
         loadDefaultUiElementsState();
         loadCalibrationSettings();
+        setLoadValueTextFields();
         saveButton.setDisable(false);
     }
 
@@ -267,23 +264,12 @@ public class CalibrationController implements BaseController {
         int channel = signalGraphModel.getChannel();
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
-        for (String settings : calibrationSettings) {
-            load(settings, channel);
-        }
-
-        decimalFormatScale = cm.getDecimalFormatScale();
-        setUiElements();
-    }
-
-    private void load(String settings, int channel) {
-        int settingsChannel = Integer.parseInt(settings.substring(9, 10));
-
-        if (channel == settingsChannel) {
-            loadValue = CalibrationPoint.parseLoadValue(settings);
-            channelValue = CalibrationPoint.parseChannelValue(settings);
-            valueName = CalibrationPoint.parseValueName(settings);
-
-            showCalibration();
+        for (String calibration : calibrationSettings) {
+            int channelFromCalibration = Integer.parseInt(calibration.substring(9, 10));
+            if (channel == channelFromCalibration) {
+                calibrationModel.parseCalibration(channel, calibration);
+                showCalibration();
+            }
         }
     }
 
@@ -296,9 +282,9 @@ public class CalibrationController implements BaseController {
     private void addCalibrationPointToTable() {
         int channel = signalGraphModel.getChannel();
 
-        CalibrationPoint point = new CalibrationPoint(channel, this);
-        setColumnTitle(loadChannelColumn, valueName);
-        calibrationPoints.add(point);
+        CalibrationPoint point = new CalibrationPoint(channel, calibrationModel);
+        calibrationModel.getCalibrationPoints().add(point);
+        setColumnTitle(loadChannelColumn, calibrationModel.getValueName());
     }
 
     private void setColumnTitle(TableColumn<CalibrationPoint, String> column, String valueName) {
@@ -306,50 +292,53 @@ public class CalibrationController implements BaseController {
     }
 
     private void addPointToGraph() {
-        int lastPointIndex = calibrationPoints.size() - 1;
-        CalibrationPoint lastPoint = calibrationPoints.get(lastPointIndex);
+        int lastPointIndex = calibrationModel.getCalibrationPoints().size() - 1;
+        CalibrationPoint lastPoint = calibrationModel.getCalibrationPoints().get(lastPointIndex);
         double xValue = Double.parseDouble(lastPoint.getLoadValue());
         double yValue = Double.parseDouble(lastPoint.getChannelValue());
 
         graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
     }
 
-    private void setUiElements() {
-        double value = Utils.roundValue(loadValue, decimalFormatScale);
-        String formattedValue = Utils.convertFromExponentialFormat(value, decimalFormatScale);
-
-        loadValueTextField.setText(formattedValue);
-        loadValueNameTextField.setText(valueName);
+    private void setLoadValueTextFields() {
+        loadValueTextField.setText(calibrationModel.getFormattedLoadValue());
+        loadValueNameTextField.setText(calibrationModel.getValueName());
     }
 
     public void handleAddPoint() {
-        getCoefficients();
+        parseCoefficients();
         parseData();
         showCalibration();
     }
 
-    private void getCoefficients() {
-        loadValueCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
-        channelValueCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+    private void parseCoefficients() {
+        double loadCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+        double channelCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+
+        calibrationModel.setLoadValueCoefficient(loadCoefficient);
+        calibrationModel.setChannelValueCoefficient(channelCoefficient);
     }
 
     private void parseData() {
-        decimalFormatScale = cm.getDecimalFormatScale();
+        calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
+        double channelCoefficient = calibrationModel.getChannelValueCoefficient();
+        double loadCoefficient = calibrationModel.getLoadValueCoefficient();
+        int decimalFormatScale = calibrationModel.getDecimalFormatScale();
 
         if (setChannelValueCheckBox.isSelected()) {
-            channelValue = parseFrom(channelValueTextField, channelValueCoefficient);
+            calibrationModel.setChannelValue(parseFrom(channelValueTextField, channelCoefficient));
         } else {
-            channelValue = Utils.roundValue(cm.getZeroShift(), decimalFormatScale) * channelValueCoefficient;
+            calibrationModel.setChannelValue(Utils.roundValue(cm.getZeroShift(), decimalFormatScale) * channelCoefficient);
         }
 
-        loadValue = parseFrom(loadValueTextField, loadValueCoefficient);
-        valueName = loadValueNameTextField.getText();
+        calibrationModel.setLoadValue(parseFrom(loadValueTextField, loadCoefficient));
+        calibrationModel.setValueName(loadValueNameTextField.getText());
     }
 
     private double parseFrom(TextField textField, double multiplierCoefficient) {
         if (!textField.getText().equals("-")) {
             String digits = textField.getText().replaceAll(",", ".");
-            double value = Utils.roundValue(Double.valueOf(digits), decimalFormatScale);
+            double value = Utils.roundValue(Double.valueOf(digits), calibrationModel.getDecimalFormatScale());
 
             return value * multiplierCoefficient;
         } else {
@@ -369,7 +358,7 @@ public class CalibrationController implements BaseController {
         channelValueTextField.setText("");
         loadValueNameTextField.setText("");
         setChannelValueCheckBox.setSelected(false);
-        calibrationPoints.clear();
+        calibrationModel.getCalibrationPoints().clear();
         graphSeries.getData().clear();
     }
 
@@ -383,7 +372,7 @@ public class CalibrationController implements BaseController {
         int channel = signalGraphModel.getChannel();
 
         adc.getCalibrationSettings().get(channel).clear();
-        adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationPoints));
+        adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationModel.getCalibrationPoints()));
 
         CalibrationModel calibrationModel = new CalibrationModel();
         calibrationModel.calibrate(adc, channel);
@@ -397,13 +386,13 @@ public class CalibrationController implements BaseController {
     }
 
     public void showChannelValue() {
-        decimalFormatScale = cm.getDecimalFormatScale();
+        calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
 
         new Thread(() -> {
             setValueName();
             while (!stopped) {
-                double value = Utils.roundValue(cm.getZeroShift(), decimalFormatScale);
-                String formattedValue = Utils.convertFromExponentialFormat(value, decimalFormatScale);
+                double value = Utils.roundValue(cm.getZeroShift(), calibrationModel.getDecimalFormatScale());
+                String formattedValue = Utils.convertFromExponentialFormat(value, calibrationModel.getDecimalFormatScale());
                 Platform.runLater(() -> channelValueTextField.setText(formattedValue));
                 Utils.sleep(100);
             }
@@ -412,22 +401,6 @@ public class CalibrationController implements BaseController {
 
     private void setValueName() {
         Platform.runLater(() -> channelValueLabel.setText(String.format("Значение, %s:", cm.getValueName())));
-    }
-
-    public int getDecimalFormatScale() {
-        return decimalFormatScale;
-    }
-
-    public double getLoadValue() {
-        return loadValue;
-    }
-
-    public double getChannelValue() {
-        return channelValue;
-    }
-
-    public String getValueName() {
-        return valueName;
     }
 
     @Override

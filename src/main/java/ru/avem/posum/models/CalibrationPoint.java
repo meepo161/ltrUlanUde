@@ -13,11 +13,11 @@ public class CalibrationPoint {
     private String channelValue;
     private String valueName;
 
-    public CalibrationPoint(int channel, CalibrationController calibrationController) {
-        double loadValue = calibrationController.getLoadValue();
-        double channelValue = calibrationController.getChannelValue();
-        String valueName = calibrationController.getValueName();
-        int decimalFormatScale = calibrationController.getDecimalFormatScale();
+    public CalibrationPoint(int channel, CalibrationModel calibrationModel) {
+        double loadValue = calibrationModel.getLoadValue();
+        double channelValue = calibrationModel.getChannelValue();
+        String valueName = calibrationModel.getValueName();
+        int decimalFormatScale = calibrationModel.getDecimalFormatScale();
 
         this.channel = channel;
         this.loadValue = Utils.convertFromExponentialFormat(loadValue, decimalFormatScale);
