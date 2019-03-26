@@ -270,7 +270,7 @@ public class LTR212SettingController implements BaseController {
 
     private void setDefaultChannelsSettings(int channel) {
         channelsDescription.get(channel).setText("");
-        channelsTypesComboBoxes.get(channel).getSelectionModel().select(2);
+        channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
     }
 
@@ -405,7 +405,7 @@ public class LTR212SettingController implements BaseController {
                 checkedChannels[i] = false; // false - канал не выбран
                 channelsDescriptions[i] = ", ";
                 channelsTypes[i] = 0;
-                measuringRanges[i] = 0;
+                measuringRanges[i] = 3;
             }
         }
     }
