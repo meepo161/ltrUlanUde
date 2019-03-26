@@ -21,7 +21,6 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.List;
 
-
 public class CalibrationController implements BaseController {
     @FXML
     private Button addToTableButton;
