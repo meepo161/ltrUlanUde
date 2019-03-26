@@ -191,13 +191,9 @@ public class SignalGraphController implements BaseController {
     private void addDecimalFormats() {
         if (decimalFormatComboBox.getItems().isEmpty()) {
             ObservableList<String> strings = FXCollections.observableArrayList();
-            strings.add("1");
-            strings.add("2");
-            strings.add("3");
-            strings.add("4");
-            strings.add("5");
-            strings.add("6");
-            strings.add("7");
+            for (int i = 1; i <= Utils.getDecimalScaleLimit(); i++) {
+                strings.add(String.format("%d", i));
+            }
 
             decimalFormatComboBox.getItems().addAll(strings);
         }
@@ -297,10 +293,10 @@ public class SignalGraphController implements BaseController {
         Platform.runLater(() -> {
             graphSeries.getData().clear();
             graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(String.valueOf(amplitude));
-            frequencyTextField.setText(String.valueOf(frequency));
-            phaseTextField.setText(String.valueOf(phase));
-            zeroShiftTextField.setText(String.valueOf(zeroShift));
+            amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
+            frequencyTextField.setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
+            phaseTextField.setText(Utils.convertFromExponentialFormat(phase, decimalFormatScale));
+            zeroShiftTextField.setText(Utils.convertFromExponentialFormat(zeroShift, decimalFormatScale));
             isDone = true;
         });
     }

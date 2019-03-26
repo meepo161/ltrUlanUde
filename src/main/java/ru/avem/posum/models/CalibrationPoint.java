@@ -1,6 +1,9 @@
 package ru.avem.posum.models;
 
 import javafx.collections.ObservableList;
+import ru.avem.posum.controllers.CalibrationController;
+import ru.avem.posum.db.models.Calibration;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -10,11 +13,16 @@ public class CalibrationPoint {
     private String channelValue;
     private String valueName;
 
-    public CalibrationPoint(int channel, double loadValue, double channelValue, String channelName) {
+    public CalibrationPoint(int channel, CalibrationController calibrationController) {
+        double loadValue = calibrationController.getLoadValue();
+        double channelValue = calibrationController.getChannelValue();
+        String valueName = calibrationController.getValueName();
+        int decimalFormatScale = calibrationController.getDecimalFormatScale();
+
         this.channel = channel;
-        this.loadValue = String.format("%.7f", loadValue);
-        this.channelValue = String.format("%.7f", channelValue);
-        this.valueName = channelName;
+        this.loadValue = Utils.convertFromExponentialFormat(loadValue, decimalFormatScale);
+        this.channelValue = Utils.convertFromExponentialFormat(channelValue, decimalFormatScale);
+        this.valueName = valueName;
     }
 
     public static ArrayList<String> toString(ObservableList<CalibrationPoint> points) {

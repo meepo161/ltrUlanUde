@@ -19,6 +19,7 @@ import ru.avem.posum.models.SignalGraphModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
+import javax.rmi.CORBA.Util;
 import java.util.List;
 
 
@@ -85,8 +86,8 @@ public class CalibrationController implements BaseController {
     }
 
     private void initComboBoxes() {
-//        setDigitFilterToTextField(channelValueTextField);
-//        setDigitFilterToTextField(loadValueTextField);
+        setDigitFilterToTextField(channelValueTextField);
+        setDigitFilterToTextField(loadValueTextField);
         addCoefficientsList();
         setDefaultCoefficient();
     }
@@ -295,7 +296,7 @@ public class CalibrationController implements BaseController {
     private void addCalibrationPointToTable() {
         int channel = signalGraphModel.getChannel();
 
-        CalibrationPoint point = new CalibrationPoint(channel, loadValue, channelValue, valueName);
+        CalibrationPoint point = new CalibrationPoint(channel, this);
         setColumnTitle(loadChannelColumn, valueName);
         calibrationPoints.add(point);
     }
@@ -314,7 +315,10 @@ public class CalibrationController implements BaseController {
     }
 
     private void setUiElements() {
-        loadValueTextField.setText(String.valueOf(Utils.roundValue(loadValue, decimalFormatScale)));
+        double value = Utils.roundValue(loadValue, decimalFormatScale);
+        String formattedValue = Utils.convertFromExponentialFormat(value, decimalFormatScale);
+
+        loadValueTextField.setText(formattedValue);
         loadValueNameTextField.setText(valueName);
     }
 
@@ -399,7 +403,8 @@ public class CalibrationController implements BaseController {
             setValueName();
             while (!stopped) {
                 double value = Utils.roundValue(cm.getZeroShift(), decimalFormatScale);
-                Platform.runLater(() -> channelValueTextField.setText(String.valueOf(value)));
+                String formattedValue = Utils.convertFromExponentialFormat(value, decimalFormatScale);
+                Platform.runLater(() -> channelValueTextField.setText(formattedValue));
                 Utils.sleep(100);
             }
         }).start();
@@ -407,6 +412,22 @@ public class CalibrationController implements BaseController {
 
     private void setValueName() {
         Platform.runLater(() -> channelValueLabel.setText(String.format("Значение, %s:", cm.getValueName())));
+    }
+
+    public int getDecimalFormatScale() {
+        return decimalFormatScale;
+    }
+
+    public double getLoadValue() {
+        return loadValue;
+    }
+
+    public double getChannelValue() {
+        return channelValue;
+    }
+
+    public String getValueName() {
+        return valueName;
     }
 
     @Override
