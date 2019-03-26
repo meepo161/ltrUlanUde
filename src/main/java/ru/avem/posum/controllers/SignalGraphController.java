@@ -176,6 +176,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void setDefaultBounds() {
+        signalGraphModel.defineModuleInstance(cm.getCrateModelInstance().getModulesList());
         signalGraphModel.setICPMode(cm.getICPMode());
         signalGraphModel.getDefaultBounds();
         setGraphBounds();

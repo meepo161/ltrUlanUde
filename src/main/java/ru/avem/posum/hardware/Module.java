@@ -5,7 +5,7 @@ import ru.avem.posum.utils.TextEncoder;
 public class Module {
     int channelsCount;
     String crate;
-    protected int slot;
+    private int slot;
     private long moduleId;
     boolean[] checkedChannels;
     protected String status;

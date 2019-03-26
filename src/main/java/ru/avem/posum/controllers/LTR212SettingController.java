@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.Module;
@@ -53,6 +54,8 @@ public class LTR212SettingController implements BaseController {
     private Label sceneTitleLabel;
     @FXML
     private StatusBar statusBar;
+    @FXML
+    private ComboBox<String> referenceVoltageComboBox;
     @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
@@ -100,6 +103,7 @@ public class LTR212SettingController implements BaseController {
         addChannelsTypes(channelsTypesComboBoxes);
         addMeasuringRanges(measuringRangesComboBoxes);
         addModuleModes(moduleModesComboBox);
+        addReferenceVoltageModes(referenceVoltageComboBox);
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
@@ -189,6 +193,14 @@ public class LTR212SettingController implements BaseController {
         modes.add("Высокой точности");
 
         moduleModesComboBox.getItems().addAll(modes);
+    }
+
+    private void addReferenceVoltageModes(ComboBox<String> referenceVoltageComboBox) {
+        ObservableList<String> modes = FXCollections.observableArrayList();
+        modes.add("2.5 В");
+        modes.add("5.0 В");
+
+        referenceVoltageComboBox.getItems().addAll(modes);
     }
 
     private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {
@@ -320,7 +332,8 @@ public class LTR212SettingController implements BaseController {
             channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
-            moduleModesComboBox.getSelectionModel().select(0);
+            moduleModesComboBox.getSelectionModel().select(ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName()));
+            referenceVoltageComboBox.getSelectionModel().select(ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE.getSettingName()));
         }
     }
 
@@ -378,7 +391,12 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void saveModuleSettings() {
-        ltr212.getModuleSettings()[0] = moduleModesComboBox.getSelectionModel().getSelectedIndex();
+        HashMap<String, Integer> settings = ltr212.getModuleSettings();
+        int selectedADCMode = moduleModesComboBox.getSelectionModel().getSelectedIndex();
+        int selectedReferenceVoltage = referenceVoltageComboBox.getSelectionModel().getSelectedIndex();
+
+        settings.put(ADC.Settings.ADC_MODE.getSettingName(), selectedADCMode);
+        settings.put(ADC.Settings.REFERENCE_VOLTAGE.getSettingName(), selectedReferenceVoltage);
     }
 
     private void initializeModule() {

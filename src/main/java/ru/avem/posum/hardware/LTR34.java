@@ -10,7 +10,7 @@ public class LTR34 extends DAC {
     }
 
     public void openConnection() {
-        status = open(crate, slot);
+        status = open(crate, getSlot());
         checkStatus();
     }
 
