@@ -18,6 +18,7 @@ import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.SignalGraphModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private LoginController loginController;
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
     private LTR24SettingController ltr24SettingController;
+    private LTR27SettingController ltr27SettingController;
     private LTR34SettingController ltr34SettingController;
     private LTR212SettingController ltr212SettingController;
     private CalibrationController calibrationController;
@@ -40,6 +42,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene settingsScene;
     private Scene processScene;
     private Scene ltr24Scene;
+    private Scene ltr27Scene;
     private Scene ltr34Scene;
     private Scene ltr212Scene;
     private Scene signalGraphScene;
@@ -196,9 +199,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
         modulesPairs.clear();
         for (String module : modulesNames) {
             String layoutPath = null;
-            switch (module.split(" ")[0]) {
+            switch (Utils.parseModuleType(module)) {
                 case CrateModel.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
+                    break;
+                case CrateModel.LTR27:
+                    layoutPath = "/layouts/LTR27SettingView.fxml";
                     break;
                 case CrateModel.LTR34:
                     layoutPath = "/layouts/LTR34SettingView.fxml";
@@ -268,7 +274,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public double getZeroShift() {
-        return signalGraphController.getReceivedSignal().getZeroShift();
+        return signalGraphController.getSignalGraphModel().getZeroShift();
     }
 
     @Override
@@ -292,8 +298,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel) {
-        calibrationController.loadDefaults(adc, moduleType, channel);
+    public void loadDefaultCalibrationSettings(SignalGraphModel signalGraphModel) {
+        calibrationController.loadDefaults(signalGraphModel);
     }
 
     @Override

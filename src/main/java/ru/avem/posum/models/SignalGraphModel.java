@@ -220,6 +220,7 @@ public class SignalGraphModel {
     }
 
     private void fillBuffer() {
+        buffer = adc.getBuffer();
         adc.getRingBuffer().take(buffer, adc.getData().length);
     }
 
@@ -233,7 +234,6 @@ public class SignalGraphModel {
         phase = receivedSignal.getPhase();
         zeroShift = receivedSignal.getZeroShift();
     }
-
 
     public ADC getAdc() {
         return adc;
@@ -265,6 +265,10 @@ public class SignalGraphModel {
 
     public double getPhase() {
         return phase;
+    }
+
+    public ReceivedSignal getReceivedSignal() {
+        return receivedSignal;
     }
 
     public int getSlot() {

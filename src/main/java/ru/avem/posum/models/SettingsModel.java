@@ -61,6 +61,7 @@ public class SettingsModel implements BaseController {
     private void addInitModuleInstructions() {
         instructions.clear();
         instructions.put(CrateModel.LTR24, this::initLTR24Instance);
+        instructions.put(CrateModel.LTR27, this::initLTR27Instance);
         instructions.put(CrateModel.LTR34, this::initLTR34Instance);
         instructions.put(CrateModel.LTR212, this::initLTR212Instance);
     }
@@ -70,6 +71,10 @@ public class SettingsModel implements BaseController {
         setModuleSettings(adc);
         setDefaultADCSettings(0, 1);
         saveModuleInstance(adc);
+    }
+
+    private void initLTR27Instance() {
+
     }
 
     private void initLTR34Instance() {

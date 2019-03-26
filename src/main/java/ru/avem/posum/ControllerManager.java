@@ -4,6 +4,7 @@ import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.SignalGraphModel;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public interface ControllerManager {
 
     boolean isClosed();
 
-    void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel);
+    void loadDefaultCalibrationSettings(SignalGraphModel signalGraphModel);
 
     void loadDefaultSettings();
 

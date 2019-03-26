@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class CrateModel {
     public static final String LTR24 = "LTR24";
+    public static final String LTR27 = "LTR27";
     public static final String LTR34 = "LTR34";
     public static final String LTR212 = "LTR212";
     private static final int LTR_CRATES_MAX = 16;

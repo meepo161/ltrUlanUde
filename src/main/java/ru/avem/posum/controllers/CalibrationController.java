@@ -15,6 +15,7 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.CalibrationModel;
+import ru.avem.posum.models.SignalGraphModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -57,10 +58,8 @@ public class CalibrationController implements BaseController {
     @FXML
     private Label titleLabel;
 
-    private ADC adc;
     private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
     private ContextMenu contextMenu = new ContextMenu();
-    private int channel;
     private double channelValue;
     private double channelValueCoefficient;
     private ControllerManager cm;
@@ -68,11 +67,10 @@ public class CalibrationController implements BaseController {
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private double loadValue;
     private double loadValueCoefficient;
-    private String moduleType;
+    private SignalGraphModel signalGraphModel;
     private StatusBarLine statusBarLine = new StatusBarLine();
-    private int slot;
     private boolean stopped;
-    private String valueName;
+    private String valueName = "";
     private WindowsManager wm;
 
     @FXML
@@ -87,8 +85,8 @@ public class CalibrationController implements BaseController {
     }
 
     private void initComboBoxes() {
-        setDigitFilterToTextField(channelValueTextField);
-        setDigitFilterToTextField(loadValueTextField);
+//        setDigitFilterToTextField(channelValueTextField);
+//        setDigitFilterToTextField(loadValueTextField);
         addCoefficientsList();
         setDefaultCoefficient();
     }
@@ -240,24 +238,18 @@ public class CalibrationController implements BaseController {
         });
     }
 
-    public void loadDefaults(ADC adc, String moduleType, int channel) {
-        setFields(adc, moduleType, channel);
+    public void loadDefaults(SignalGraphModel signalGraphModel) {
+        this.stopped = false;
+        this.signalGraphModel = signalGraphModel;
         setTitleLabel();
         loadDefaultUiElementsState();
         loadCalibrationSettings();
         saveButton.setDisable(false);
     }
 
-    private void setFields(ADC adc, String moduleType, int channel) {
-        this.adc = adc;
-        this.moduleType = moduleType;
-        this.slot = adc.getSlot();
-        this.channel = channel;
-        this.stopped = false;
-    }
-
     private void setTitleLabel() {
-        titleLabel.setText("Градуировка " + (channel + 1) + " канала" + " (" + moduleType + " слот " + slot + ")");
+        titleLabel.setText("Градуировка " + (signalGraphModel.getChannel() + 1) + " канала" + " ("
+                + signalGraphModel.getModuleType() + " слот " + signalGraphModel.getSlot() + ")");
     }
 
     private void loadDefaultUiElementsState() {
@@ -270,31 +262,28 @@ public class CalibrationController implements BaseController {
     }
 
     private void loadCalibrationSettings() {
+        ADC adc = signalGraphModel.getAdc();
+        int channel = signalGraphModel.getChannel();
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
         for (String settings : calibrationSettings) {
-            load(settings);
+            load(settings, channel);
         }
 
         decimalFormatScale = cm.getDecimalFormatScale();
         setUiElements();
     }
 
-    private void load(String settings) {
-        int channel = Integer.parseInt(settings.substring(9, 10));
+    private void load(String settings, int channel) {
+        int settingsChannel = Integer.parseInt(settings.substring(9, 10));
 
-        if (this.channel == channel) {
+        if (channel == settingsChannel) {
             loadValue = CalibrationPoint.parseLoadValue(settings);
             channelValue = CalibrationPoint.parseChannelValue(settings);
             valueName = CalibrationPoint.parseValueName(settings);
 
             showCalibration();
         }
-    }
-
-    private void setUiElements() {
-        loadValueTextField.setText(String.valueOf(Utils.roundValue(loadValue, decimalFormatScale)));
-        loadValueNameTextField.setText(valueName);
     }
 
     private void showCalibration() {
@@ -304,9 +293,15 @@ public class CalibrationController implements BaseController {
     }
 
     private void addCalibrationPointToTable() {
+        int channel = signalGraphModel.getChannel();
+
         CalibrationPoint point = new CalibrationPoint(channel, loadValue, channelValue, valueName);
         setColumnTitle(loadChannelColumn, valueName);
         calibrationPoints.add(point);
+    }
+
+    private void setColumnTitle(TableColumn<CalibrationPoint, String> column, String valueName) {
+        column.textProperty().set("Величина нагрузки, " + valueName);
     }
 
     private void addPointToGraph() {
@@ -315,15 +310,12 @@ public class CalibrationController implements BaseController {
         double xValue = Double.parseDouble(lastPoint.getLoadValue());
         double yValue = Double.parseDouble(lastPoint.getChannelValue());
 
-        try {
-            graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
-        } catch (NumberFormatException e) {
-            System.out.println("Point added");
-        }
+        graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
     }
 
-    private void setColumnTitle(TableColumn<CalibrationPoint, String> column, String valueName) {
-        column.textProperty().set("Величина нагрузки, " + valueName);
+    private void setUiElements() {
+        loadValueTextField.setText(String.valueOf(Utils.roundValue(loadValue, decimalFormatScale)));
+        loadValueNameTextField.setText(valueName);
     }
 
     public void handleAddPoint() {
@@ -355,7 +347,7 @@ public class CalibrationController implements BaseController {
             String digits = textField.getText().replaceAll(",", ".");
             double value = Utils.roundValue(Double.valueOf(digits), decimalFormatScale);
 
-            return  value * multiplierCoefficient;
+            return value * multiplierCoefficient;
         } else {
             return 0;
         }
@@ -383,6 +375,9 @@ public class CalibrationController implements BaseController {
     }
 
     private void savePoints() {
+        ADC adc = signalGraphModel.getAdc();
+        int channel = signalGraphModel.getChannel();
+
         adc.getCalibrationSettings().get(channel).clear();
         adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationPoints));
 

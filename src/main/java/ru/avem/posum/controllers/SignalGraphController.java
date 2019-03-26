@@ -11,6 +11,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.apache.poi.hssf.record.RecalcIdRecord;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.*;
@@ -62,7 +63,6 @@ public class SignalGraphController implements BaseController {
     private volatile XYChart.Series<Number, Number> graphSeries;
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private volatile boolean isDone;
-    private ReceivedSignal receivedSignal = new ReceivedSignal();
     private SignalGraphModel signalGraphModel = new SignalGraphModel();
     private WindowsManager wm;
 
@@ -133,10 +133,12 @@ public class SignalGraphController implements BaseController {
                 setGraphBounds();
                 clearGraph();
                 setSignalParametersLabels();
+                setCalibrationExists(true);
             } else {
                 setDefaultValueName();
                 setSignalParametersLabels();
                 setDefaultBounds();
+                setCalibrationExists(false);
             }
         });
     }
@@ -170,6 +172,10 @@ public class SignalGraphController implements BaseController {
         zeroShiftLabel.setText(String.format("Статика, %s:", signalGraphModel.getValueName()));
     }
 
+    private void setCalibrationExists(boolean isExists) {
+        signalGraphModel.setCalibrationExists(isExists);
+    }
+
     private void setDefaultValueName() {
         signalGraphModel.setDefaultValueName();
         setValueNameToGraph();
@@ -183,16 +189,18 @@ public class SignalGraphController implements BaseController {
     }
 
     private void addDecimalFormats() {
-        ObservableList<String> strings = FXCollections.observableArrayList();
-        strings.add("1");
-        strings.add("2");
-        strings.add("3");
-        strings.add("4");
-        strings.add("5");
-        strings.add("6");
-        strings.add("7");
+        if (decimalFormatComboBox.getItems().isEmpty()) {
+            ObservableList<String> strings = FXCollections.observableArrayList();
+            strings.add("1");
+            strings.add("2");
+            strings.add("3");
+            strings.add("4");
+            strings.add("5");
+            strings.add("6");
+            strings.add("7");
 
-        decimalFormatComboBox.getItems().addAll(strings);
+            decimalFormatComboBox.getItems().addAll(strings);
+        }
     }
 
     private void setDefaultDecimalFormat() {
@@ -271,6 +279,7 @@ public class SignalGraphController implements BaseController {
 
     private void addPointToGraph(double[] buffer, int i) {
         if (signalGraphModel.isCalibrationExists()) {
+            ReceivedSignal receivedSignal = signalGraphModel.getReceivedSignal();
             double calibratedValue = receivedSignal.applyCalibration(signalGraphModel.getAdc(), buffer[i]);
             intermediateList.add(new XYChart.Data<>((double) i / buffer.length, calibratedValue));
         } else {
@@ -304,11 +313,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleCalibrate() {
-        ADC adc = signalGraphModel.getAdc();
-        String moduleType = signalGraphModel.getModuleType();
-        int channel = signalGraphModel.getChannel();
-
-        cm.loadDefaultCalibrationSettings(adc, moduleType, channel);
+        cm.loadDefaultCalibrationSettings(signalGraphModel);
         cm.showChannelValue();
         wm.setScene(WindowsManager.Scenes.CALIBRATION_SCENE);
     }
@@ -343,10 +348,6 @@ public class SignalGraphController implements BaseController {
 
     public int getDecimalFormatScale() {
         return decimalFormatScale;
-    }
-
-    public ReceivedSignal getReceivedSignal() {
-        return receivedSignal;
     }
 
     public SignalGraphModel getSignalGraphModel() {

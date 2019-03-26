@@ -12,6 +12,10 @@ public class Utils {
         }
     }
 
+    public static String parseModuleType(String moduleName) {
+        return moduleName.split(" ")[0];
+    }
+
     public static int parseSlotNumber(String moduleName) {
         return Integer.parseInt(moduleName.split("Слот ")[1].split("\\)")[0]); // номер слота
     }
