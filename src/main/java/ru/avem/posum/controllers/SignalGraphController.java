@@ -239,8 +239,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed()) {
                 getData();
-                showData();
-                pause();
+//                pause();
             }
             isDone = true;
         }).start();
@@ -248,6 +247,10 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed()) {
                 signalGraphModel.processData();
+                clearSeries();
+                fillSeries();
+                showData();
+                pause();
             }
         }).start();
     }
@@ -255,8 +258,6 @@ public class SignalGraphController implements BaseController {
     private void getData() {
         if (!signalGraphModel.getAdc().isBusy()) {
             signalGraphModel.getData(averageCount);
-            clearSeries();
-            fillSeries();
         }
     }
 
@@ -272,18 +273,19 @@ public class SignalGraphController implements BaseController {
 
         double[] buffer = signalGraphModel.getReceivedDataBuffer();
         int channels = signalGraphModel.getAdc().getChannelsCount();
-        for (int i = signalGraphModel.getChannel(); i < buffer.length; i += channels * scale) {
-            addPointToGraph(buffer, i);
+        for (int index = signalGraphModel.getChannel(); index < buffer.length; index += channels * scale) {
+            addPointToGraph(index);
         }
     }
 
-    private void addPointToGraph(double[] buffer, int i) {
+    private void addPointToGraph(int index) {
+        double[] buffer = signalGraphModel.getReceivedDataBuffer();
         if (signalGraphModel.isCalibrationExists()) {
             ReceivedSignal receivedSignal = signalGraphModel.getReceivedSignal();
-            double calibratedValue = receivedSignal.applyCalibration(signalGraphModel.getAdc(), buffer[i]);
-            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, calibratedValue));
+            double calibratedValue = receivedSignal.applyCalibration(signalGraphModel.getAdc(), buffer[index]);
+            intermediateList.add(new XYChart.Data<>((double) index / buffer.length, calibratedValue));
         } else {
-            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
+            intermediateList.add(new XYChart.Data<>((double) index / buffer.length, buffer[index]));
         }
     }
 

@@ -12,9 +12,7 @@ public class SignalGraphModel {
     private double averageCount;
     private boolean calibrationExists;
     private int channel;
-    private int discretizationFrequency;
     private double frequency;
-    private double firstTimeMark;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private boolean isICPMode;
     private double lowerBound;
@@ -24,8 +22,6 @@ public class SignalGraphModel {
     private double phase;
     private double[] receivedDataBuffer;
     private ReceivedSignal receivedSignal = new ReceivedSignal();
-    private double[] receivedTimeMarksBuffer;
-    private int samplesCounter;
     private int slot;
     private double tickUnit;
     private double upperBound;
@@ -57,7 +53,7 @@ public class SignalGraphModel {
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[39064]);
-        ltr24.setReceivedDataBuffer(new double[ltr24.getData().length]);
+        ltr24.setDataBuffer(new double[ltr24.getData().length]);
         ltr24.setReceivedData(new RingBuffer(ltr24.getData().length * 100));
     }
 
@@ -66,9 +62,8 @@ public class SignalGraphModel {
         ltr212.setData(new double[2048]);
         ltr212.setTimeMarks(new double[ltr212.getData().length * 4]);
         ltr212.setReceivedData(new RingBuffer(ltr212.getData().length * 10));
-        ltr212.setReceivedDataBuffer(new double[ltr212.getData().length]);
         ltr212.setReceivedTimeMarks(new RingBuffer(ltr212.getTimeMarks().length * 10));
-        ltr212.setReceivedTimeMarksBuffer(new double[ltr212.getTimeMarks().length]);
+        ltr212.setDataBuffer(new double[ltr212.getData().length]);
     }
 
     private void runInstructions() {
@@ -213,13 +208,12 @@ public class SignalGraphModel {
 
     private void getLTR212Data() {
         double[] data = ltr212.getData();
-        double[] timeMarks = ltr212.getTimeMarks();
         RingBuffer receivedData = ltr212.getReceivedData();
         RingBuffer receivedTimeMarks = ltr212.getReceivedTimeMarks();
 
         ltr212.receive(data);
         receivedData.put(data);
-        receivedTimeMarks.put(timeMarks);
+        receivedTimeMarks.put(ltr212.getTimeMarks());
     }
 
     public void processData() {
@@ -229,8 +223,30 @@ public class SignalGraphModel {
     }
 
     private void fillBuffer() {
-        receivedDataBuffer = adc.getReceivedDataBuffer();
-//        adc.getReceivedData().take(receivedDataBuffer, discretizationFrequency);
+        double[] timeMarks = new double[ltr212.getData().length];
+        ltr212.getReceivedTimeMarks().take(timeMarks, timeMarks.length);
+        for (int i = 0; i < ltr212.getReceivedTimeMarks().capacity; i += timeMarks.length) {
+            definePeriodSamplesCount(timeMarks[0]);
+        }
+
+        receivedDataBuffer = new double[adc.getData().length * adc.getArraysPerSecond()];
+        adc.getReceivedData().take(receivedDataBuffer, receivedDataBuffer.length);
+    }
+
+    private void definePeriodSamplesCount(double timeMark) {
+        System.out.println("Time mark: " + timeMark);
+        if (adc.getArraysCounter() == 0) {
+            adc.setBufferedTimeMark(timeMark);
+        }
+
+        if (timeMark <= adc.getBufferedTimeMark()) {
+            adc.setArraysCounter(adc.getArraysCounter() + 1);
+            System.out.println("Array counter: " + adc.getArraysCounter());
+        } else {
+            adc.setArraysPerSecond(adc.getArraysCounter());
+            adc.setArraysCounter(0);
+            System.out.println(adc.getArraysPerSecond());
+        }
     }
 
     private void calculate() {

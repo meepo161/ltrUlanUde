@@ -26,28 +26,27 @@ public abstract class ADC extends Module {
     }
 
     int arraysCounter;
+    int arraysPerSecond;
+    double bufferedTimeMark;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
     private String[] channelsDescription;
-    int[] channelsTypes;
+    private int[] channelsTypes;
     private double[] data;
-    int[] measuringRanges;
-    int arraysPerSecond;
+    private double[] dataBuffer;
+    private int[] measuringRanges;
     HashMap<String, Integer> moduleSettings;
     private RingBuffer receivedData;
-    private double[] receivedDataBuffer;
     private RingBuffer receivedTimeMarks;
-    private double[] receivedTimeMarksBuffer;
     double[] timeMarks;
-    double bufferedTimeMark;
 
     ADC() {
         channelsCount = CHANNELS;
         checkedChannels = new boolean[channelsCount];
         channelsTypes = new int[channelsCount];
         measuringRanges = new int[channelsCount];
-        timeMarks = new double[8192];
+        timeMarks = new double[4096];
         channelsDescription = new String[channelsCount];
         calibrationCoefficients = new ArrayList<>();
         calibrationSettings = new ArrayList<>();
@@ -58,12 +57,28 @@ public abstract class ADC extends Module {
 
     public abstract void parseModuleSettings(String settings);
 
-    public double[] getReceivedDataBuffer() {
-        return receivedDataBuffer;
+    public int getArraysCounter() {
+        return arraysCounter;
     }
 
-    public void setReceivedDataBuffer(double[] receivedDataBuffer) {
-        this.receivedDataBuffer = receivedDataBuffer;
+    public void setArraysCounter(int arraysCounter) {
+        this.arraysCounter = arraysCounter;
+    }
+
+    public int getArraysPerSecond() {
+        return arraysPerSecond;
+    }
+
+    public void setArraysPerSecond(int arraysPerSecond) {
+        this.arraysPerSecond = arraysPerSecond;
+    }
+
+    public double getBufferedTimeMark() {
+        return bufferedTimeMark;
+    }
+
+    public void setBufferedTimeMark(double bufferedTimeMark) {
+        this.bufferedTimeMark = bufferedTimeMark;
     }
 
     public ArrayList<List<Double>> getCalibrationCoefficients() {
@@ -82,12 +97,24 @@ public abstract class ADC extends Module {
         this.calibrationSettings = calibrationSettings;
     }
 
+    public static int getCHANNELS() {
+        return CHANNELS;
+    }
+
     public String[] getChannelsDescription() {
         return channelsDescription;
     }
 
+    public void setChannelsDescription(String[] channelsDescription) {
+        this.channelsDescription = channelsDescription;
+    }
+
     public int[] getChannelsTypes() {
         return channelsTypes;
+    }
+
+    public void setChannelsTypes(int[] channelsTypes) {
+        this.channelsTypes = channelsTypes;
     }
 
     public double[] getData() {
@@ -102,8 +129,16 @@ public abstract class ADC extends Module {
         return measuringRanges;
     }
 
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
     public HashMap<String, Integer> getModuleSettings() {
         return moduleSettings;
+    }
+
+    public void setModuleSettings(HashMap<String, Integer> moduleSettings) {
+        this.moduleSettings = moduleSettings;
     }
 
     public RingBuffer getReceivedData() {
@@ -118,20 +153,20 @@ public abstract class ADC extends Module {
         return receivedTimeMarks;
     }
 
-    public double[] getTimeMarks() {
-        return timeMarks;
-    }
-
     public void setReceivedTimeMarks(RingBuffer receivedTimeMarks) {
         this.receivedTimeMarks = receivedTimeMarks;
     }
 
-    public double[] getReceivedTimeMarksBuffer() {
-        return receivedTimeMarksBuffer;
+    public double[] getDataBuffer() {
+        return dataBuffer;
     }
 
-    public void setReceivedTimeMarksBuffer(double[] receivedTimeMarksBuffer) {
-        this.receivedTimeMarksBuffer = receivedTimeMarksBuffer;
+    public void setDataBuffer(double[] dataBuffer) {
+        this.dataBuffer = dataBuffer;
+    }
+
+    public double[] getTimeMarks() {
+        return timeMarks;
     }
 
     public void setTimeMarks(double[] timeMarks) {
