@@ -1,5 +1,7 @@
 package ru.avem.posum.hardware;
 
+import com.sun.org.apache.bcel.internal.generic.ARRAYLENGTH;
+
 import javax.lang.model.element.NestingKind;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,7 +70,25 @@ public class LTR212 extends ADC {
     public void receive(double[] data) {
         clearStatus();
         status = fillArray(getSlot(), data, getTimeMarks());
+        System.out.println(getTimeMarks()[0]);
+        definePeriodSamplesCount(timeMarks[0]);
+
         checkStatus();
+    }
+
+    private void definePeriodSamplesCount(double timeMark) {
+        if (arraysCounter == 0) {
+            bufferedTimeMark = timeMark;
+        }
+
+        if (timeMark <= bufferedTimeMark) {
+            arraysCounter++;
+            System.out.println("Buffered time mark: " + bufferedTimeMark + " time mark: " + timeMark + " arrays counter: " + arraysCounter);
+        } else {
+            arraysPerSecond = arraysCounter;
+            arraysCounter = 0;
+//            System.out.println("Arrays counter: " + arraysPerSecond);
+        }
     }
 
     public native String fillArray(int slot, double[] data, double[] timeMarks);
@@ -115,6 +135,6 @@ public class LTR212 extends ADC {
     }
 
     static {
-        System.loadLibrary( "LTR212Library");
+        System.loadLibrary("LTR212Library");
     }
 }

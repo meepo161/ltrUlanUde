@@ -11,13 +11,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.apache.poi.hssf.record.RecalcIdRecord;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.ReceivedSignal;
 import ru.avem.posum.models.SignalGraphModel;
-import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
@@ -246,6 +244,12 @@ public class SignalGraphController implements BaseController {
             }
             isDone = true;
         }).start();
+
+        new Thread(() -> {
+            while (!cm.isClosed()) {
+                signalGraphModel.processData();
+            }
+        }).start();
     }
 
     private void getData() {
@@ -266,7 +270,7 @@ public class SignalGraphController implements BaseController {
             scale = 32;
         }
 
-        double[] buffer = signalGraphModel.getBuffer();
+        double[] buffer = signalGraphModel.getReceivedDataBuffer();
         int channels = signalGraphModel.getAdc().getChannelsCount();
         for (int i = signalGraphModel.getChannel(); i < buffer.length; i += channels * scale) {
             addPointToGraph(buffer, i);

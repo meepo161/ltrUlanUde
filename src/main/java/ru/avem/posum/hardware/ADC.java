@@ -25,7 +25,7 @@ public abstract class ADC extends Module {
         }
     }
 
-    private double[] buffer;
+    int arraysCounter;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
@@ -33,16 +33,21 @@ public abstract class ADC extends Module {
     int[] channelsTypes;
     private double[] data;
     int[] measuringRanges;
+    int arraysPerSecond;
     HashMap<String, Integer> moduleSettings;
-    private RingBuffer ringBuffer;
+    private RingBuffer receivedData;
+    private double[] receivedDataBuffer;
+    private RingBuffer receivedTimeMarks;
+    private double[] receivedTimeMarksBuffer;
     double[] timeMarks;
+    double bufferedTimeMark;
 
     ADC() {
         channelsCount = CHANNELS;
         checkedChannels = new boolean[channelsCount];
         channelsTypes = new int[channelsCount];
         measuringRanges = new int[channelsCount];
-        timeMarks = new double[4096];
+        timeMarks = new double[8192];
         channelsDescription = new String[channelsCount];
         calibrationCoefficients = new ArrayList<>();
         calibrationSettings = new ArrayList<>();
@@ -53,12 +58,12 @@ public abstract class ADC extends Module {
 
     public abstract void parseModuleSettings(String settings);
 
-    public double[] getBuffer() {
-        return buffer;
+    public double[] getReceivedDataBuffer() {
+        return receivedDataBuffer;
     }
 
-    public void setBuffer(double[] buffer) {
-        this.buffer = buffer;
+    public void setReceivedDataBuffer(double[] receivedDataBuffer) {
+        this.receivedDataBuffer = receivedDataBuffer;
     }
 
     public ArrayList<List<Double>> getCalibrationCoefficients() {
@@ -101,15 +106,35 @@ public abstract class ADC extends Module {
         return moduleSettings;
     }
 
-    public RingBuffer getRingBuffer() {
-        return ringBuffer;
+    public RingBuffer getReceivedData() {
+        return receivedData;
     }
 
-    public void setRingBuffer(RingBuffer ringBuffer) {
-        this.ringBuffer = ringBuffer;
+    public void setReceivedData(RingBuffer receivedData) {
+        this.receivedData = receivedData;
+    }
+
+    public RingBuffer getReceivedTimeMarks() {
+        return receivedTimeMarks;
     }
 
     public double[] getTimeMarks() {
         return timeMarks;
+    }
+
+    public void setReceivedTimeMarks(RingBuffer receivedTimeMarks) {
+        this.receivedTimeMarks = receivedTimeMarks;
+    }
+
+    public double[] getReceivedTimeMarksBuffer() {
+        return receivedTimeMarksBuffer;
+    }
+
+    public void setReceivedTimeMarksBuffer(double[] receivedTimeMarksBuffer) {
+        this.receivedTimeMarksBuffer = receivedTimeMarksBuffer;
+    }
+
+    public void setTimeMarks(double[] timeMarks) {
+        this.timeMarks = timeMarks;
     }
 }

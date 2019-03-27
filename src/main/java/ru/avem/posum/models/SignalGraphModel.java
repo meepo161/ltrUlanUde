@@ -10,10 +10,11 @@ public class SignalGraphModel {
     private ADC adc;
     private double amplitude;
     private double averageCount;
-    private double[] buffer;
     private boolean calibrationExists;
     private int channel;
+    private int discretizationFrequency;
     private double frequency;
+    private double firstTimeMark;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private boolean isICPMode;
     private double lowerBound;
@@ -21,7 +22,10 @@ public class SignalGraphModel {
     private LTR212 ltr212;
     private String moduleType;
     private double phase;
+    private double[] receivedDataBuffer;
     private ReceivedSignal receivedSignal = new ReceivedSignal();
+    private double[] receivedTimeMarksBuffer;
+    private int samplesCounter;
     private int slot;
     private double tickUnit;
     private double upperBound;
@@ -53,15 +57,18 @@ public class SignalGraphModel {
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[39064]);
-        ltr24.setBuffer(new double[ltr24.getData().length]);
-        ltr24.setRingBuffer(new RingBuffer(ltr24.getData().length * 100));
+        ltr24.setReceivedDataBuffer(new double[ltr24.getData().length]);
+        ltr24.setReceivedData(new RingBuffer(ltr24.getData().length * 100));
     }
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[2048]);
-        ltr212.setBuffer(new double[ltr212.getData().length]);
-        ltr212.setRingBuffer(new RingBuffer(ltr212.getData().length * 10));
+        ltr212.setTimeMarks(new double[ltr212.getData().length * 4]);
+        ltr212.setReceivedData(new RingBuffer(ltr212.getData().length * 10));
+        ltr212.setReceivedDataBuffer(new double[ltr212.getData().length]);
+        ltr212.setReceivedTimeMarks(new RingBuffer(ltr212.getTimeMarks().length * 10));
+        ltr212.setReceivedTimeMarksBuffer(new double[ltr212.getTimeMarks().length]);
     }
 
     private void runInstructions() {
@@ -188,7 +195,6 @@ public class SignalGraphModel {
         this.averageCount = averageCount;
         addReceivingDataInstructions();
         runInstructions();
-        processData();
     }
 
     private void addReceivingDataInstructions() {
@@ -199,7 +205,7 @@ public class SignalGraphModel {
 
     private void getLTR24Data() {
         double[] data = ltr24.getData();
-        RingBuffer ringBuffer = ltr24.getRingBuffer();
+        RingBuffer ringBuffer = ltr24.getReceivedData();
 
         ltr24.receive(data);
         ringBuffer.put(data);
@@ -207,26 +213,29 @@ public class SignalGraphModel {
 
     private void getLTR212Data() {
         double[] data = ltr212.getData();
-        RingBuffer ringBuffer = ltr212.getRingBuffer();
+        double[] timeMarks = ltr212.getTimeMarks();
+        RingBuffer receivedData = ltr212.getReceivedData();
+        RingBuffer receivedTimeMarks = ltr212.getReceivedTimeMarks();
 
         ltr212.receive(data);
-        ringBuffer.put(data);
+        receivedData.put(data);
+        receivedTimeMarks.put(timeMarks);
     }
 
-    private void processData() {
+    public void processData() {
         fillBuffer();
         calculate();
         getSignalParameters();
     }
 
     private void fillBuffer() {
-        buffer = adc.getBuffer();
-        adc.getRingBuffer().take(buffer, adc.getData().length);
+        receivedDataBuffer = adc.getReceivedDataBuffer();
+//        adc.getReceivedData().take(receivedDataBuffer, discretizationFrequency);
     }
 
     private void calculate() {
         receivedSignal.setFields(adc, channel);
-        receivedSignal.calculateParameters(buffer, averageCount, calibrationExists);
+        receivedSignal.calculateParameters(receivedDataBuffer, averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {
@@ -243,8 +252,8 @@ public class SignalGraphModel {
         return amplitude;
     }
 
-    public double[] getBuffer() {
-        return buffer;
+    public double[] getReceivedDataBuffer() {
+        return receivedDataBuffer;
     }
 
     public int getChannel() {
@@ -283,7 +292,9 @@ public class SignalGraphModel {
         return upperBound;
     }
 
-    public String getValueName() { return valueName; }
+    public String getValueName() {
+        return valueName;
+    }
 
     public double getZeroShift() {
         return zeroShift;
