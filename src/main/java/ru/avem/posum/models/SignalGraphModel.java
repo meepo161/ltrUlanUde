@@ -17,7 +17,7 @@ public class SignalGraphModel {
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private boolean isICPMode;
-    private boolean isPeriodDefined;
+    public volatile boolean isPeriodDefined;
     private double lowerBound;
     private LTR24 ltr24;
     private LTR212 ltr212;
@@ -216,13 +216,7 @@ public class SignalGraphModel {
         receivedTimeMarks.put(ltr212.getTimeMarks());
     }
 
-    public void processData() {
-        fillBuffer();
-        calculate();
-        getSignalParameters();
-    }
-
-    private void fillBuffer() {
+    public void definePeriod() {
         bufferedTimeMarks = new double[adc.getTimeMarks().length * 5];
         adc.getReceivedTimeMarks().take(bufferedTimeMarks, bufferedTimeMarks.length);
         int index = 0;
@@ -237,9 +231,6 @@ public class SignalGraphModel {
                 index += step;
             }
         }
-
-        bufferedData = new double[2048];
-        adc.getReceivedData().take(bufferedData, bufferedData.length);
     }
 
     private void definePeriodSamplesCount(double timeMark) {
@@ -250,16 +241,26 @@ public class SignalGraphModel {
 
         if (timeMark <= adc.getBufferedTimeMark()) {
             adc.setArraysCounter(adc.getArraysCounter() + 1);
-            System.out.println("Array counter: " + adc.getArraysCounter());
+            isPeriodDefined = false;
+            System.out.println("isPeriodDefined = false;");
         } else {
             adc.setArraysPerSecond(adc.getArraysCounter());
             adc.setArraysCounter(0);
             isPeriodDefined = true;
-            System.out.println(adc.getArraysPerSecond());
+
+            System.out.println("isPeriodDefined = true;");
+//            System.out.println("Defined: " + adc.getArraysPerSecond());
         }
     }
 
+    public void processData() {
+        calculate();
+        getSignalParameters();
+    }
+
     private void calculate() {
+        bufferedData = new double[adc.getData().length * adc.getArraysPerSecond()];
+        adc.getReceivedData().take(bufferedData, bufferedData.length);
         receivedSignal.setFields(adc, channel);
         receivedSignal.calculateParameters(bufferedData, averageCount, calibrationExists);
     }
@@ -332,5 +333,9 @@ public class SignalGraphModel {
 
     public void setCalibrationExists(boolean calibrationExists) {
         this.calibrationExists = calibrationExists;
+    }
+
+    public boolean isPeriodDefined() {
+        return isPeriodDefined;
     }
 }

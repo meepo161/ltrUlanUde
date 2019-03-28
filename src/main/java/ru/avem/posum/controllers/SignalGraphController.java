@@ -239,18 +239,21 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed()) {
                 getData();
-                Utils.sleep(10);
+                Utils.sleep(100);
             }
             isDone = true;
         }).start();
 
         new Thread(() -> {
             while (!cm.isClosed()) {
-                signalGraphModel.processData();
-                clearSeries();
-                fillSeries();
-                showData();
-                Utils.sleep(100);
+                signalGraphModel.definePeriod();
+                if (signalGraphModel.isPeriodDefined) {
+                    signalGraphModel.processData();
+                    clearSeries();
+                    fillSeries();
+                    showData();
+                }
+                sleep(1000);
             }
         }).start();
     }
@@ -290,6 +293,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void showData() {
+        System.out.println("Shown");
         double amplitude = Utils.roundValue(signalGraphModel.getAmplitude(), decimalFormatScale);
         double frequency = Utils.roundValue(signalGraphModel.getFrequency(), decimalFormatScale);
         double phase = Utils.roundValue(signalGraphModel.getPhase(), decimalFormatScale);
