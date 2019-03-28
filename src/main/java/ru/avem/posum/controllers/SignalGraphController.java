@@ -243,6 +243,7 @@ public class SignalGraphController implements BaseController {
                 getData();
                 showData();
                 pause();
+                System.out.println("Hello");
             }
             isDone = true;
         }).start();
