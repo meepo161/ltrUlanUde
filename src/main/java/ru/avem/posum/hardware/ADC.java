@@ -25,21 +25,20 @@ public abstract class ADC extends Module {
         }
     }
 
-    int arraysCounter;
-    int arraysPerSecond;
-    double bufferedTimeMark;
+    private int arraysCounter;
+    private int arraysPerSecond;
+    private double bufferedTimeMark;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
     private String[] channelsDescription;
     private int[] channelsTypes;
     private double[] data;
-    private double[] dataBuffer;
     private int[] measuringRanges;
     HashMap<String, Integer> moduleSettings;
     private RingBuffer receivedData;
     private RingBuffer receivedTimeMarks;
-    double[] timeMarks;
+    private double[] timeMarks;
 
     ADC() {
         channelsCount = CHANNELS;
@@ -155,14 +154,6 @@ public abstract class ADC extends Module {
 
     public void setReceivedTimeMarks(RingBuffer receivedTimeMarks) {
         this.receivedTimeMarks = receivedTimeMarks;
-    }
-
-    public double[] getDataBuffer() {
-        return dataBuffer;
-    }
-
-    public void setDataBuffer(double[] dataBuffer) {
-        this.dataBuffer = dataBuffer;
     }
 
     public double[] getTimeMarks() {

@@ -239,7 +239,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed()) {
                 getData();
-//                pause();
+                Utils.sleep(10);
             }
             isDone = true;
         }).start();
@@ -250,7 +250,7 @@ public class SignalGraphController implements BaseController {
                 clearSeries();
                 fillSeries();
                 showData();
-                pause();
+                Utils.sleep(100);
             }
         }).start();
     }
@@ -271,7 +271,7 @@ public class SignalGraphController implements BaseController {
             scale = 32;
         }
 
-        double[] buffer = signalGraphModel.getReceivedDataBuffer();
+        double[] buffer = signalGraphModel.getBufferedData();
         int channels = signalGraphModel.getAdc().getChannelsCount();
         for (int index = signalGraphModel.getChannel(); index < buffer.length; index += channels * scale) {
             addPointToGraph(index);
@@ -279,7 +279,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void addPointToGraph(int index) {
-        double[] buffer = signalGraphModel.getReceivedDataBuffer();
+        double[] buffer = signalGraphModel.getBufferedData();
         if (signalGraphModel.isCalibrationExists()) {
             ReceivedSignal receivedSignal = signalGraphModel.getReceivedSignal();
             double calibratedValue = receivedSignal.applyCalibration(signalGraphModel.getAdc(), buffer[index]);
