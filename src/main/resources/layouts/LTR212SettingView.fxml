@@ -17,7 +17,7 @@
    <children>
       <GridPane layoutX="104.0" layoutY="113.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
             <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
             <ColumnConstraints hgrow="SOMETIMES" />
@@ -26,7 +26,7 @@
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
             <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
@@ -37,9 +37,11 @@
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
@@ -52,10 +54,10 @@
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
+            <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR212" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
-            <Label styleClass="title" text="Настройки модуля LTR212" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <Label text="Каналы:" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Описание:" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <CheckBox fx:id="applyForAllCheckBox" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Назначение канала:" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -90,7 +92,7 @@
                   <Insets />
                </GridPane.margin>
             </CheckBox>
-            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="2" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="2" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -110,7 +112,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="4" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="4" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -130,7 +132,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="6" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="6" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -150,7 +152,7 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Назначение канала" GridPane.columnIndex="8" GridPane.rowIndex="3">
+            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="8" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -170,18 +172,26 @@
                   <Insets />
                </GridPane.margin>
             </Button>
-            <Button fx:id="initializeButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="19" GridPane.valignment="BOTTOM">
+            <Button fx:id="initializeButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="BOTTOM">
                <GridPane.margin>
-                  <Insets left="-160.0" />
+                  <Insets right="270.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="19" GridPane.valignment="BOTTOM">
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="BOTTOM">
                <GridPane.margin>
-                  <Insets right="-160.0" />
+                  <Insets left="270.0" />
                </GridPane.margin>
             </Button>
-            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="20" />
-            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="20" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="22" />
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="22" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="9" GridPane.rowSpan="4" />
+            <Label text="Режим сбора данных:" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <ComboBox fx:id="moduleModesComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+            <Label text="Опорное напряжение:" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <ComboBox fx:id="referenceVoltageComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+            <CheckBox fx:id="useCalibrationCheckBox" mnemonicParsing="false" text="Исп. калиб. коэф." GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+            <CheckBox fx:id="useFabricCalibrationCheckBox" mnemonicParsing="false" text="Завод. калиб. коэф." GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="11" />
+            <CheckBox fx:id="referenceVoltageTypeCheckBox" mnemonicParsing="false" text="Пост. опорн. напр." GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.rowIndex="10" />
          </children>
       </GridPane>
    </children>

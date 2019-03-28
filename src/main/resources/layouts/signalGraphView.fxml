@@ -4,6 +4,8 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -16,8 +18,20 @@
    <children>
       <GridPane layoutX="196.0" layoutY="211.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
             <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
@@ -25,49 +39,56 @@
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="200.0" prefHeight="200.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="70.0" minHeight="70.0" prefHeight="70.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="2" GridPane.rowIndex="2" GridPane.rowSpan="5" />
-            <Label styleClass="title" text="Текущая нагрузка на канале" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-             <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" title="Принятый сигнал" GridPane.columnSpan="2" GridPane.rowIndex="2">
+            <Label fx:id="titleLabel" styleClass="title" text="Текущая нагрузка на канале" GridPane.columnSpan="9" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="9" GridPane.rowIndex="2" />
+             <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" title="Принятый сигнал" GridPane.columnSpan="9" GridPane.rowIndex="2">
                  <xAxis>
                      <NumberAxis autoRanging="false" label="Время, с" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                  </xAxis>
                  <yAxis>
-                     <NumberAxis fx:id="yAxis" animated="false" label="Напряжение, В" lowerBound="-10.0" side="LEFT" tickUnit="1.0" upperBound="10.0" />
+                     <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="Напряжение, В" lowerBound="-10.0" side="LEFT" tickUnit="2.0" upperBound="10.0" />
                  </yAxis>
              </LineChart>
-            <StatusBar text="" GridPane.rowIndex="9" />
-            <Label text="Значение:" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
-               <GridPane.margin>
-                  <Insets right="110.0" />
-               </GridPane.margin>
-            </Label>
-            <TextField fx:id="valueTextField" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" prefWidth="200.0" promptText="Вольт" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+            <Label fx:id="amplitudeLabel" text="Амплитуда:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="amplitudeTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Button maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleClear" text="Очистить" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+            <Label fx:id="frequencyLabel" text="Частота:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="frequencyTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+            <Label fx:id="phaseLabel" text="Фаза:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="phaseTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+            <Label fx:id="zeroShiftLabel" text="Статика:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <TextField fx:id="zeroShiftTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="7" GridPane.rowIndex="5" />
+            <CheckBox fx:id="autoScaleCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <CheckBox fx:id="calibrationCheckBox" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+            <CheckBox fx:id="averageCheckBox" mnemonicParsing="false" text="Усреднять по:" GridPane.columnIndex="5" GridPane.rowIndex="7" />
+            <TextField fx:id="averageTextField" disable="true" GridPane.columnIndex="7" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
+            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnSpan="9" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
                <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-            </Button>
-            <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Тарировка" GridPane.halignment="RIGHT" GridPane.rowIndex="8">
-               <GridPane.margin>
-                  <Insets right="10.0" />
-               </GridPane.margin>
-            </Button>
-            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8">
-               <GridPane.margin>
-                  <Insets left="10.0" />
+                  <Insets right="270.0" />
                </GridPane.margin></Button>
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="9" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets left="270.0" />
+               </GridPane.margin></Button>
+            <StatusBar text="" GridPane.columnSpan="9" GridPane.rowIndex="14" />
+            <ComboBox fx:id="decimalFormatComboBox" maxWidth="150.0" minWidth="150.0" onAction="#setDecimalFormatScale" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <Label text="Выводить знаков после запятой:" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="9" />
          </children>
       </GridPane>
    </children>
