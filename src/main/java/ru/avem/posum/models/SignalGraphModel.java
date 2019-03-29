@@ -27,6 +27,8 @@ public class SignalGraphModel {
     private double upperBound;
     private String valueName = "В";
     private double zeroShift;
+    private int puttedDataArraysCounter;
+    private int tookDataArraysCounter;
 
     public void setFields(String moduleType, int slot, int channel) {
         this.moduleType = moduleType;
@@ -53,15 +55,17 @@ public class SignalGraphModel {
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[39064]);
-        ltr24.setBuffer(new double[ltr24.getData().length]);
-        ltr24.setRingBuffer(new RingBuffer(ltr24.getData().length * 100));
+        ltr24.setDataBuffer(new double[ltr24.getData().length]);
+        ltr24.setDataRingBuffer(new RingBuffer(ltr24.getData().length * 100));
     }
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
-        ltr212.setData(new double[15360]);
-        ltr212.setBuffer(new double[ltr212.getData().length]);
-        ltr212.setRingBuffer(new RingBuffer(ltr212.getData().length * 10));
+        ltr212.setData(new double[30720]);
+        ltr212.setDataBuffer(new double[ltr212.getData().length]);
+        ltr212.setTimeMarks(new double[61440]);
+        ltr212.setDataRingBuffer(new RingBuffer(ltr212.getData().length * 100));
+        ltr212.setTimeMarksRingBuffer(new RingBuffer(ltr212.getTimeMarks().length * 100));
     }
 
     private void runInstructions() {
@@ -188,7 +192,6 @@ public class SignalGraphModel {
         this.averageCount = averageCount;
         addReceivingDataInstructions();
         runInstructions();
-        processData();
     }
 
     private void addReceivingDataInstructions() {
@@ -199,7 +202,7 @@ public class SignalGraphModel {
 
     private void getLTR24Data() {
         double[] data = ltr24.getData();
-        RingBuffer ringBuffer = ltr24.getRingBuffer();
+        RingBuffer ringBuffer = ltr24.getDataRingBuffer();
 
         ltr24.receive(data);
         ringBuffer.put(data);
@@ -208,22 +211,82 @@ public class SignalGraphModel {
     private void getLTR212Data() {
         double[] data = ltr212.getData();
         double[] timeMarks = ltr212.getTimeMarks();
-        RingBuffer ringBuffer = ltr212.getRingBuffer();
+        RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
+        RingBuffer timeMarksRingBuffer = ltr212.getTimeMarksRingBuffer();
 
         ltr212.receive(data, timeMarks);
-        ringBuffer.put(data);
-        System.out.println(ltr212.getFrequency());
+        dataRingBuffer.put(data);
+        System.out.println(String.format("Putted data arrays: %d", puttedDataArraysCounter++));
+        timeMarksRingBuffer.put(timeMarks);
+//        printTimeMarks();
     }
 
-    private void processData() {
+    public void processData() {
+//        defineBufferLength();
         fillBuffer();
         calculate();
         getSignalParameters();
     }
 
+    private void printTimeMarks() {
+        double[] timeMarks = adc.getTimeMarks();
+        int bufferedTimeMarkCounter = 0;
+        int timeMarkCounter = 0;
+        double bufferedTimeMark = 0;
+        double timeMark = 0;
+
+
+        for (double tMark : timeMarks) {
+            if (tMark != 0) {
+                if (bufferedTimeMark == 0) {
+                    bufferedTimeMark = tMark;
+                }
+
+                if (bufferedTimeMark == tMark) {
+                    bufferedTimeMarkCounter++;
+                } else if (tMark == bufferedTimeMark + 1) {
+                    timeMarkCounter++;
+                    timeMark = tMark;
+                }
+
+            }
+        }
+        System.out.println(String.format("Time mark: %.1f had found %d times. Time mark: %.1f had found %d times.",
+                bufferedTimeMark, bufferedTimeMarkCounter, timeMark, timeMarkCounter));
+    }
+
+    private void defineBufferLength() {
+        RingBuffer timeMarks = adc.getTimeMarksRingBuffer();
+        adc.setTimeMarksBuffer(new double[timeMarks.capacity]);
+        double[] timeMarksBuffer = adc.getTimeMarksBuffer();
+        timeMarks.take(timeMarksBuffer, timeMarksBuffer.length);
+        int samplesPerSecond;
+        int samplesCounter = 0;
+        double bufferedTimeMark = 0;
+
+        for (double timeMark : timeMarksBuffer) {
+            if (timeMark != 0) {
+                if (bufferedTimeMark == 0) {
+                    bufferedTimeMark = timeMark;
+                }
+
+                if (bufferedTimeMark == timeMark) {
+                    samplesCounter++;
+                } else {
+                    samplesPerSecond = samplesCounter;
+                    System.out.println(String.format("First time mark: %.1f. Second time mark: %.1f. Samples per second: %d",
+                            bufferedTimeMark, timeMark, samplesPerSecond));
+                    break;
+                }
+            }
+        }
+
+    }
+
     private void fillBuffer() {
-        buffer = adc.getBuffer();
-        adc.getRingBuffer().take(buffer, adc.getData().length);
+        buffer = adc.getDataBuffer();
+        adc.getDataRingBuffer().take(buffer, buffer.length);
+        System.out.println(String.format("Took data arrays: %d", tookDataArraysCounter++));
     }
 
     private void calculate() {
@@ -285,7 +348,9 @@ public class SignalGraphModel {
         return upperBound;
     }
 
-    public String getValueName() { return valueName; }
+    public String getValueName() {
+        return valueName;
+    }
 
     public double getZeroShift() {
         return zeroShift;

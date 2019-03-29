@@ -241,18 +241,24 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed()) {
                 getData();
-                showData();
-                pause();
             }
             isDone = true;
+        }).start();
+
+        new Thread(() -> {
+            while (!cm.isClosed()) {
+                signalGraphModel.processData();
+                clearSeries();
+                fillSeries();
+                showData();
+                Utils.sleep(1000);
+            }
         }).start();
     }
 
     private void getData() {
         if (!signalGraphModel.getAdc().isBusy()) {
             signalGraphModel.getData(averageCount);
-            clearSeries();
-            fillSeries();
         }
     }
 
@@ -261,7 +267,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void fillSeries() {
-        int scale = 1;
+        int scale = 10;
         if (signalGraphModel.getModuleType().equals(CrateModel.LTR24)) {
             scale = 32;
         }
@@ -303,7 +309,7 @@ public class SignalGraphController implements BaseController {
 
     private void pause() {
         while (!isDone && !cm.isClosed()) {
-            sleep(1000);
+            sleep(100);
         }
     }
 
