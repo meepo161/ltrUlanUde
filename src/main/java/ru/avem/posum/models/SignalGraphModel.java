@@ -59,7 +59,7 @@ public class SignalGraphModel {
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
-        ltr212.setData(new double[2048]);
+        ltr212.setData(new double[15360]);
         ltr212.setBuffer(new double[ltr212.getData().length]);
         ltr212.setRingBuffer(new RingBuffer(ltr212.getData().length * 10));
     }
@@ -207,10 +207,12 @@ public class SignalGraphModel {
 
     private void getLTR212Data() {
         double[] data = ltr212.getData();
+        double[] timeMarks = ltr212.getTimeMarks();
         RingBuffer ringBuffer = ltr212.getRingBuffer();
 
-        ltr212.receive(data);
+        ltr212.receive(data, timeMarks);
         ringBuffer.put(data);
+        System.out.println(ltr212.getFrequency());
     }
 
     private void processData() {

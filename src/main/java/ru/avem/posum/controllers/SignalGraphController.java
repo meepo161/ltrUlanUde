@@ -243,7 +243,6 @@ public class SignalGraphController implements BaseController {
                 getData();
                 showData();
                 pause();
-                System.out.println("Hello");
             }
             isDone = true;
         }).start();
@@ -304,7 +303,7 @@ public class SignalGraphController implements BaseController {
 
     private void pause() {
         while (!isDone && !cm.isClosed()) {
-            sleep(10);
+            sleep(1000);
         }
     }
 

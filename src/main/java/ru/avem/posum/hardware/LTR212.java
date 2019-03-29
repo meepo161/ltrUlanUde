@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LTR212 extends ADC {
+    private double frequency;
+
     public LTR212() {
         initModuleSettings();
     }
@@ -65,9 +67,9 @@ public class LTR212 extends ADC {
 
     public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
 
-    public void receive(double[] data) {
+    public void receive(double[] data, double[] timeMarks) {
         clearStatus();
-        status = fillArray(getSlot(), data, getTimeMarks());
+        status = fillArray(getSlot(), data, timeMarks);
         checkStatus();
     }
 
@@ -112,6 +114,10 @@ public class LTR212 extends ADC {
         moduleSettings.put(Settings.TAP.getSettingName(), Integer.valueOf(separatedSettings[7]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE.getSettingName(), Integer.valueOf(separatedSettings[8]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), Integer.valueOf(separatedSettings[9]));
+    }
+
+    public double getFrequency() {
+        return frequency;
     }
 
     static {

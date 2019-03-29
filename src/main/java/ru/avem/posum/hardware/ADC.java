@@ -42,7 +42,7 @@ public abstract class ADC extends Module {
         checkedChannels = new boolean[channelsCount];
         channelsTypes = new int[channelsCount];
         measuringRanges = new int[channelsCount];
-        timeMarks = new double[4096];
+        timeMarks = new double[30720];
         channelsDescription = new String[channelsCount];
         calibrationCoefficients = new ArrayList<>();
         calibrationSettings = new ArrayList<>();
