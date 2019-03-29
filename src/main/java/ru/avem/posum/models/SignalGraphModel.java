@@ -64,8 +64,8 @@ public class SignalGraphModel {
         ltr212.setData(new double[30720]);
         ltr212.setDataBuffer(new double[ltr212.getData().length]);
         ltr212.setTimeMarks(new double[61440]);
-        ltr212.setDataRingBuffer(new RingBuffer(ltr212.getData().length * 100));
-        ltr212.setTimeMarksRingBuffer(new RingBuffer(ltr212.getTimeMarks().length * 100));
+        ltr212.setDataRingBuffer(new RingBuffer(ltr212.getData().length));
+        ltr212.setTimeMarksRingBuffer(new RingBuffer(ltr212.getTimeMarks().length));
     }
 
     private void runInstructions() {

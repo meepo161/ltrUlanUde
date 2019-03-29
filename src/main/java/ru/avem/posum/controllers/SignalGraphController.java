@@ -295,10 +295,15 @@ public class SignalGraphController implements BaseController {
         double phase = Utils.roundValue(signalGraphModel.getPhase(), decimalFormatScale);
         double zeroShift = Utils.roundValue(signalGraphModel.getZeroShift(), decimalFormatScale);
 
+        new Thread(() -> {
+        graphSeries.getData().clear();
+            for (int i = 0; i < intermediateList.size(); i++) {
+                graphSeries.getData().add(intermediateList.get(i));
+                Utils.sleep(5);
+            }
+        }).start();
         isDone = false;
         Platform.runLater(() -> {
-            graphSeries.getData().clear();
-            graphSeries.getData().addAll(intermediateList);
             amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
             frequencyTextField.setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
             phaseTextField.setText(Utils.convertFromExponentialFormat(phase, decimalFormatScale));
