@@ -17,6 +17,7 @@ public class SignalParametersModel {
     private double[] data;
     private double firstPointLoadValue;
     private double firstPointChannelValue;
+    private int frequency;
     private double lowerBound;
     private double maxValue;
     private double minValue;
@@ -181,31 +182,35 @@ public class SignalParametersModel {
         tickUnit = maxLoadValue / GRAPH_SCALE;
     }
 
-    public double getAmplitude() {
+    double getAmplitude() {
         return amplitude;
     }
 
-    public double getLowerBound() {
+    int getFrequency() {
+        return 100;
+    }
+
+    double getLowerBound() {
         return lowerBound;
     }
 
-    public double getPhase() {
+    double getPhase() {
         return phase;
     }
 
-    public double getTickUnit() {
+    double getTickUnit() {
         return tickUnit;
     }
 
-    public double getUpperBound() {
+    double getUpperBound() {
         return upperBound;
     }
 
-    public String getValueName() {
+    String getValueName() {
         return valueName;
     }
 
-    public double getZeroShift() {
+    double getZeroShift() {
         return zeroShift;
     }
 }

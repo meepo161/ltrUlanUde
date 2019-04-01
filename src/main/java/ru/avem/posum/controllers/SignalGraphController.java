@@ -14,9 +14,11 @@ import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.models.GraphModel;
-import ru.avem.posum.models.SignalParametersModel;
 import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.Utils;
+
+import java.sql.SQLOutput;
+import java.util.List;
 
 public class SignalGraphController implements BaseController {
     @FXML
@@ -78,10 +80,19 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
+        clearGraph();
         clearSeries();
-        addGraphSeries();
         initializeGraphScale();
+        showGraph();
         toggleAutoScale(false);
+    }
+
+    private void clearGraph() {
+        Platform.runLater(() -> {
+            graph.getData().clear();
+            graph.getData().add(graphSeries);
+        });
+        Utils.sleep(50);
     }
 
     private void clearSeries() {
@@ -90,11 +101,6 @@ public class SignalGraphController implements BaseController {
             graphSeries.getData().clear();
         });
         Utils.sleep(50);
-    }
-
-    private void addGraphSeries() {
-        graphSeries.getData().addAll(signalModel.getIntermediateList());
-        graph.getData().add(graphSeries);
     }
 
     private void initializeGraphScale() {
@@ -231,7 +237,7 @@ public class SignalGraphController implements BaseController {
                 setValueNameToGraph();
                 setGraphBounds();
                 clearSeries();
-                addGraphSeries();
+                showGraph();
                 setSignalParametersLabels();
                 setCalibrationExists(true);
             } else {
@@ -302,14 +308,14 @@ public class SignalGraphController implements BaseController {
     }
 
     private void startShow() {
-        isStopped(false);
+        cm.setStopped(false);
         receiveData();
         show();
     }
 
     private void receiveData() {
         new Thread(() -> {
-            while (!cm.isClosed()) {
+            while (!cm.isClosed() || !cm.isStopped()) {
                 signalModel.getData(averageCount);
                 Utils.sleep(100);
             }
@@ -318,11 +324,10 @@ public class SignalGraphController implements BaseController {
 
     private void show() {
         new Thread(() -> {
-            while (!cm.isClosed()) {
+            while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.processData();
                 signalModel.fillSeries();
                 showData();
-                Utils.sleep(1000);
             }
         }).start();
     }
@@ -333,8 +338,44 @@ public class SignalGraphController implements BaseController {
     }
 
     private void showGraph() {
-        graphSeries.getData().clear();
-        graphSeries.getData().addAll(signalModel.getIntermediateList());
+        List<XYChart.Data<Number, Number>> intermediateList = signalModel.getIntermediateList();
+        String selectedScale = horizontalScalesComboBox.getSelectionModel().getSelectedItem();
+        graphModel.parseScale(selectedScale);
+        graphModel.calculateBounds();
+
+        Platform.runLater(() -> graphSeries.getData().clear());
+        Utils.sleep(50);
+
+        int scale;
+        if (signalModel.getFrequency() < 10) {
+            scale = 10;
+        } else if (signalModel.getFrequency() < 50) {
+            scale = 2;
+        } else {
+            scale = 1;
+        }
+
+        int index;
+        for (index = 0; index < intermediateList.size() && !cm.isStopped(); index += scale) {
+            XYChart.Data point = intermediateList.get(index);
+            Runnable addPoint = () -> graphSeries.getData().add(point);
+
+            if ((double) point.getXValue() < graphModel.getUpperBound()) {
+                Platform.runLater(addPoint);
+                Utils.sleep(1);
+                index += scale;
+            }
+
+            if (index == intermediateList.size() - scale) {
+                XYChart.Data lastPoint = new XYChart.Data(graphModel.getUpperBound(), intermediateList.get(0).getYValue());
+                Platform.runLater(() -> graphSeries.getData().add(lastPoint));
+                Utils.sleep(100);
+            } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
+                Platform.runLater(addPoint);
+                Utils.sleep(100);
+                break;
+            }
+        }
     }
 
     private void showValues() {
@@ -351,7 +392,6 @@ public class SignalGraphController implements BaseController {
         });
     }
 
-
     @FXML
     private void handleCalibrate() {
         cm.loadDefaultCalibrationSettings(signalModel);
@@ -361,12 +401,11 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleBackButton() {
+        cm.setStopped(true);
         String moduleType = signalModel.getModuleType();
         int slot = signalModel.getSlot();
-
         wm.setModuleScene(moduleType, slot - 1);
         cm.loadItemsForModulesTableView();
-        isStopped(true);
         disableAutoRange();
         disableAverage();
         disableCalibration();
@@ -397,10 +436,6 @@ public class SignalGraphController implements BaseController {
 
     public void setDecimalFormatScale() {
         decimalFormatScale = (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
-    }
-
-    private void isStopped(boolean isStopped) {
-        cm.setStopped(isStopped);
     }
 
     @Override

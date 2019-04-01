@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
+    private volatile boolean closed;
     private LoginController loginController;
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
     private LTR24SettingController ltr24SettingController;
@@ -48,7 +49,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private SignalGraphController signalGraphController;
     private Stage loginStage;
     private Stage primaryStage;
-    private volatile boolean closed;
+    private boolean stopped;
 
     @Override
     public void init() throws IOException {
@@ -296,6 +297,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    @Override
     public void loadDefaultCalibrationSettings(SignalModel signalModel) {
         calibrationController.loadDefaults(signalModel);
     }
@@ -337,13 +343,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void setStopped(boolean closed) {
+    public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
     @Override
     public void setEditMode(boolean editMode) {
         settingsController.setEditMode(editMode);
+    }
+    @Override
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 
     @Override

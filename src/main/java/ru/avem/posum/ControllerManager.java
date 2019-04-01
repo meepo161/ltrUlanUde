@@ -35,6 +35,8 @@ public interface ControllerManager {
 
     boolean isClosed();
 
+    boolean isStopped();
+
     void loadDefaultCalibrationSettings(SignalModel signalModel);
 
     void loadDefaultSettings();
@@ -45,7 +47,9 @@ public interface ControllerManager {
 
     void loadModuleSettings(int selectedModuleIndex, String moduleName);
 
-    void setStopped(boolean closed);
+    void setClosed(boolean closed);
+
+    void setStopped(boolean stopped);
 
     void setEditMode(boolean editMode);
 
