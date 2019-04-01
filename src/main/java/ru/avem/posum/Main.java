@@ -13,12 +13,10 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
-import ru.avem.posum.models.SignalGraphModel;
+import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
@@ -269,17 +267,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public String getValueName() {
-        return signalGraphController.getSignalGraphModel().getValueName();
+        return signalGraphController.getSignalModel().getValueName();
     }
 
     @Override
     public double getZeroShift() {
-        return signalGraphController.getSignalGraphModel().getZeroShift();
+        return signalGraphController.getSignalModel().getZeroShift();
     }
 
     @Override
     public void giveChannelInfo(int channel, String moduleType, int slot) {
-        signalGraphController.getSignalGraphModel().setFields(moduleType, slot, channel);
+        signalGraphController.getSignalModel().setFields(moduleType, slot, channel);
     }
 
     @Override
@@ -298,8 +296,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadDefaultCalibrationSettings(SignalGraphModel signalGraphModel) {
-        calibrationController.loadDefaults(signalGraphModel);
+    public void loadDefaultCalibrationSettings(SignalModel signalModel) {
+        calibrationController.loadDefaults(signalModel);
     }
 
     @Override

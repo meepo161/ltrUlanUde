@@ -15,7 +15,7 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.CalibrationPoint;
 import ru.avem.posum.models.CalibrationModel;
-import ru.avem.posum.models.SignalGraphModel;
+import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -61,7 +61,7 @@ public class CalibrationController implements BaseController {
     private ContextMenu contextMenu = new ContextMenu();
     private ControllerManager cm;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private SignalGraphModel signalGraphModel;
+    private SignalModel signalModel;
     private StatusBarLine statusBarLine = new StatusBarLine();
     private boolean stopped;
     private WindowsManager wm;
@@ -233,9 +233,9 @@ public class CalibrationController implements BaseController {
         checkNumberOfCalibrationPoints();
     }
 
-    public void loadDefaults(SignalGraphModel signalGraphModel) {
+    public void loadDefaults(SignalModel signalModel) {
         this.stopped = false;
-        this.signalGraphModel = signalGraphModel;
+        this.signalModel = signalModel;
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
         setTitleLabel();
         loadDefaultUiElementsState();
@@ -245,8 +245,8 @@ public class CalibrationController implements BaseController {
     }
 
     private void setTitleLabel() {
-        titleLabel.setText("Градуировка " + (signalGraphModel.getChannel() + 1) + " канала" + " ("
-                + signalGraphModel.getModuleType() + " слот " + signalGraphModel.getSlot() + ")");
+        titleLabel.setText("Градуировка " + (signalModel.getChannel() + 1) + " канала" + " ("
+                + signalModel.getModuleType() + " слот " + signalModel.getSlot() + ")");
     }
 
     private void loadDefaultUiElementsState() {
@@ -259,8 +259,8 @@ public class CalibrationController implements BaseController {
     }
 
     private void loadCalibrationSettings() {
-        ADC adc = signalGraphModel.getAdc();
-        int channel = signalGraphModel.getChannel();
+        ADC adc = signalModel.getAdc();
+        int channel = signalModel.getChannel();
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
         for (String calibration : calibrationSettings) {
@@ -279,7 +279,7 @@ public class CalibrationController implements BaseController {
     }
 
     private void addCalibrationPointToTable() {
-        int channel = signalGraphModel.getChannel();
+        int channel = signalModel.getChannel();
 
         CalibrationPoint point = new CalibrationPoint(channel, calibrationModel);
         calibrationModel.getCalibrationPoints().add(point);
@@ -367,8 +367,8 @@ public class CalibrationController implements BaseController {
     }
 
     private void savePoints() {
-        ADC adc = signalGraphModel.getAdc();
-        int channel = signalGraphModel.getChannel();
+        ADC adc = signalModel.getAdc();
+        int channel = signalModel.getChannel();
 
         adc.getCalibrationSettings().get(channel).clear();
         adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationModel.getCalibrationPoints()));
