@@ -1,8 +1,10 @@
 package ru.avem.posum.models;
 
+import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.utils.RingBuffer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,14 +15,16 @@ public class SignalModel {
     private double[] buffer;
     private boolean calibrationExists;
     private int channel;
+    private volatile boolean dataReceived;
     private HashMap<String, Actionable> instructions = new HashMap<>();
+    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private boolean isICPMode;
     private double loadsCounter;
     private double lowerBound;
     private LTR24 ltr24;
     private LTR212 ltr212;
     private String moduleType;
-    private ReceivedSignal receivedSignal = new ReceivedSignal();
+    private SignalParametersModel signalParametersModel = new SignalParametersModel();
     private double rms;
     private int slot;
     private double tickUnit;
@@ -59,13 +63,14 @@ public class SignalModel {
     }
 
     private void initLTR212Module() {
+        final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
-        ltr212.setData(new double[30720]);
-        ltr212.setTimeMarks(new double[61440]);
+        ltr212.setData(new double[SAMPLES]);
+        ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setDataBuffer(new double[ltr212.getData().length]);
-        ltr212.setDataRingBuffer(new RingBuffer(ltr212.getData().length * 100));
+        ltr212.setDataRingBuffer(new RingBuffer(ltr212.getData().length));
         ltr212.setTimeMarksBuffer(new double[ltr212.getTimeMarks().length]);
-        ltr212.setTimeMarksRingBuffer(new RingBuffer(ltr212.getTimeMarks().length * 100));
+        ltr212.setTimeMarksRingBuffer(new RingBuffer(ltr212.getTimeMarks().length));
     }
 
     private void runInstructions() {
@@ -82,20 +87,20 @@ public class SignalModel {
 
     public void parseCalibration() {
         if (calibrationExists) {
-            receivedSignal.defineCalibratedBounds(adc);
+            signalParametersModel.defineCalibratedBounds(adc);
             setBounds();
             setValueName();
         }
     }
 
     private void setBounds() {
-        this.lowerBound = receivedSignal.getLowerBound();
-        this.upperBound = receivedSignal.getUpperBound();
-        this.tickUnit = receivedSignal.getTickUnit();
+        this.lowerBound = signalParametersModel.getLowerBound();
+        this.upperBound = signalParametersModel.getUpperBound();
+        this.tickUnit = signalParametersModel.getTickUnit();
     }
 
     private void setValueName() {
-        this.valueName = receivedSignal.getValueName();
+        this.valueName = signalParametersModel.getValueName();
     }
 
     public void setDefaultValueName() {
@@ -108,6 +113,7 @@ public class SignalModel {
 
     public void getData(int averageCount) {
         this.averageCount = averageCount;
+        dataReceived = false;
         addReceivingDataInstructions();
         runInstructions();
     }
@@ -133,89 +139,51 @@ public class SignalModel {
         RingBuffer timeMarksRingBuffer = ltr212.getTimeMarksRingBuffer();
 
         ltr212.receive(data, timeMarks);
+        dataRingBuffer.reset();
         dataRingBuffer.put(data);
-        System.out.println(String.format("Putted: %d arrays", dataArrayCounter));
+        timeMarksRingBuffer.reset();
         timeMarksRingBuffer.put(timeMarks);
-        printTimeMarks();
+        dataReceived = true;
     }
 
     public void processData() {
-//        defineBufferLength();
         fillBuffer();
         calculate();
         getSignalParameters();
     }
 
-    private void printTimeMarks() {
-        double[] timeMarks = adc.getTimeMarks();
-        int bufferedTimeMarkCounter = 0;
-        int timeMarkCounter = 0;
-        double bufferedTimeMark = 0;
-        double timeMark = 0;
-
-
-        for (double tMark : timeMarks) {
-            if (tMark != 0) {
-                if (bufferedTimeMark == 0) {
-                    bufferedTimeMark = tMark;
-                }
-
-                if (bufferedTimeMark == tMark) {
-                    bufferedTimeMarkCounter++;
-                } else if (tMark == bufferedTimeMark + 1) {
-                    timeMarkCounter++;
-                    timeMark = tMark;
-                }
-
-            }
-        }
-        System.out.println(String.format("Time mark: %.1f had found %d times. Time mark: %.1f had found %d times.",
-                bufferedTimeMark, bufferedTimeMarkCounter, timeMark, timeMarkCounter));
-    }
-
-    private void defineBufferLength() {
-        RingBuffer timeMarks = adc.getTimeMarksRingBuffer();
-        adc.setTimeMarksBuffer(new double[timeMarks.capacity]);
-        double[] timeMarksBuffer = adc.getTimeMarksBuffer();
-        timeMarks.take(timeMarksBuffer, timeMarksBuffer.length);
-        int samplesPerSecond;
-        int samplesCounter = 0;
-        double bufferedTimeMark = 0;
-
-        for (double timeMark : timeMarksBuffer) {
-            if (timeMark != 0) {
-                if (bufferedTimeMark == 0) {
-                    bufferedTimeMark = timeMark;
-                }
-
-                if (bufferedTimeMark == timeMark) {
-                    samplesCounter++;
-                } else {
-                    samplesPerSecond = samplesCounter;
-                    System.out.println(String.format("First time mark: %.1f. Second time mark: %.1f. Samples per second: %d",
-                            bufferedTimeMark, timeMark, samplesPerSecond));
-                    break;
-                }
-            }
-        }
-
-    }
-
     private void fillBuffer() {
         buffer = adc.getDataBuffer();
         adc.getDataRingBuffer().take(buffer, buffer.length);
-//        System.out.println("Buffer[last] = " + buffer[buffer.length - 1]);
     }
 
     private void calculate() {
-        receivedSignal.setFields(adc, channel);
-        receivedSignal.calculateParameters(buffer, averageCount, calibrationExists);
+        signalParametersModel.setFields(adc, channel);
+        signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {
-        amplitude = receivedSignal.getAmplitude();
-        rms = receivedSignal.getPhase();
-        zeroShift = receivedSignal.getZeroShift();
+        amplitude = signalParametersModel.getAmplitude();
+        rms = signalParametersModel.getPhase();
+        zeroShift = signalParametersModel.getZeroShift();
+    }
+
+    public void fillSeries() {
+        intermediateList.clear();
+        double[] buffer = getBuffer();
+        int channels = adc.getChannelsCount();
+        for (int valueIndex = channels; valueIndex < buffer.length; valueIndex += channels) {
+            addPointToGraph(buffer, valueIndex);
+        }
+    }
+
+    private void addPointToGraph(double[] buffer, int valueIndex) {
+        if (calibrationExists) {
+            double calibratedValue = signalParametersModel.applyCalibration(adc, buffer[valueIndex]);
+            intermediateList.add(new XYChart.Data<>((double) valueIndex / buffer.length, calibratedValue));
+        } else {
+            intermediateList.add(new XYChart.Data<>((double) valueIndex / buffer.length, buffer[valueIndex]));
+        }
     }
 
     public ADC getAdc() {
@@ -234,6 +202,10 @@ public class SignalModel {
         return channel;
     }
 
+    public List<XYChart.Data<Number, Number>> getIntermediateList() {
+        return intermediateList;
+    }
+
     public double getLoadsCounter() {
         return loadsCounter;
     }
@@ -250,8 +222,8 @@ public class SignalModel {
         return rms;
     }
 
-    public ReceivedSignal getReceivedSignal() {
-        return receivedSignal;
+    public SignalParametersModel getSignalParametersModel() {
+        return signalParametersModel;
     }
 
     public int getSlot() {

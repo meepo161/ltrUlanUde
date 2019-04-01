@@ -5,7 +5,7 @@ import ru.avem.posum.utils.Complex;
 
 import java.util.List;
 
-public class ReceivedSignal {
+public class SignalParametersModel {
     private ADC adc;
     private int averageIterator;
     private double amplitude;

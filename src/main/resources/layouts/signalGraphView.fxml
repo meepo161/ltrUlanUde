@@ -73,9 +73,9 @@
                   <Insets />
                </GridPane.margin>
             </TextField>
-            <Label fx:id="frequencyLabel" text="Нагружений:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Label fx:id="loadsCounterLabel" text="Нагружений:" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="loadsCounterTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
-            <Label fx:id="phaseLabel" text="RMS:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+            <Label fx:id="rmsLabel" text="RMS:" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="rmsTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
             <Label fx:id="zeroShiftLabel" text="Статика:" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
             <TextField fx:id="zeroShiftTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="5" />

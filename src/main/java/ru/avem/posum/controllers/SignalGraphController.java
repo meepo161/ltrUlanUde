@@ -13,14 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.GraphModel;
-import ru.avem.posum.models.ReceivedSignal;
+import ru.avem.posum.models.SignalParametersModel;
 import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SignalGraphController implements BaseController {
     @FXML
@@ -38,7 +34,7 @@ public class SignalGraphController implements BaseController {
     @FXML
     private ComboBox<String> decimalFormatComboBox;
     @FXML
-    private Label frequencyLabel;
+    private Label loadsCounterLabel;
     @FXML
     private LineChart<Number, Number> graph;
     @FXML
@@ -46,7 +42,7 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField loadsCounterTextField;
     @FXML
-    private Label phaseLabel;
+    private Label rmsLabel;
     @FXML
     private TextField rmsTextField;
     @FXML
@@ -63,8 +59,6 @@ public class SignalGraphController implements BaseController {
     private int decimalFormatScale = 100;
     private GraphModel graphModel = new GraphModel();
     private volatile XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-    private volatile boolean isDone;
     private SignalModel signalModel = new SignalModel();
     private WindowsManager wm;
 
@@ -84,19 +78,22 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
-        addGraphSeries();
         clearSeries();
+        addGraphSeries();
         initializeGraphScale();
         toggleAutoScale(false);
     }
 
     private void clearSeries() {
-        intermediateList.clear();
-        graphSeries.getData().clear();
+        Platform.runLater(() -> {
+            signalModel.getIntermediateList().clear();
+            graphSeries.getData().clear();
+        });
+        Utils.sleep(50);
     }
 
     private void addGraphSeries() {
-        graphSeries.getData().addAll(intermediateList);
+        graphSeries.getData().addAll(signalModel.getIntermediateList());
         graph.getData().add(graphSeries);
     }
 
@@ -262,8 +259,8 @@ public class SignalGraphController implements BaseController {
 
     private void setSignalParametersLabels() {
         amplitudeLabel.setText(String.format("Амлитуда, %s:", signalModel.getValueName()));
-        frequencyLabel.setText("Частота, Гц:");
-        phaseLabel.setText("Фаза, °:");
+        loadsCounterLabel.setText("Нагружений:");
+        rmsLabel.setText("RMS, В:");
         zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
     }
 
@@ -313,71 +310,47 @@ public class SignalGraphController implements BaseController {
     private void receiveData() {
         new Thread(() -> {
             while (!cm.isClosed()) {
-                getData();
+                signalModel.getData(averageCount);
                 Utils.sleep(100);
             }
-            isDone = true;
         }).start();
-    }
-
-    private void getData() {
-        if (!signalModel.getAdc().isBusy()) {
-            signalModel.getData(averageCount);
-        }
     }
 
     private void show() {
         new Thread(() -> {
             while (!cm.isClosed()) {
                 signalModel.processData();
-                intermediateList.clear();
-                fillSeries();
+                signalModel.fillSeries();
                 showData();
                 Utils.sleep(1000);
             }
         }).start();
     }
 
-    private void fillSeries() {
-        int scale = 1;
-        if (signalModel.getModuleType().equals(CrateModel.LTR24)) {
-            scale = 32;
-        }
-
-        double[] buffer = signalModel.getBuffer();
-        int channels = signalModel.getAdc().getChannelsCount();
-        for (int i = signalModel.getChannel(); i < buffer.length; i += channels * scale) {
-            addPointToGraph(buffer, i);
-        }
-    }
-
-    private void addPointToGraph(double[] buffer, int i) {
-        if (signalModel.isCalibrationExists()) {
-            ReceivedSignal receivedSignal = signalModel.getReceivedSignal();
-            double calibratedValue = receivedSignal.applyCalibration(signalModel.getAdc(), buffer[i]);
-            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, calibratedValue));
-        } else {
-            intermediateList.add(new XYChart.Data<>((double) i / buffer.length, buffer[i]));
-        }
-    }
-
     private void showData() {
+        showGraph();
+        showValues();
+    }
+
+    private void showGraph() {
+        graphSeries.getData().clear();
+        graphSeries.getData().addAll(signalModel.getIntermediateList());
+    }
+
+    private void showValues() {
         double amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
         double loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
         double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
         double zeroShift = Utils.roundValue(signalModel.getZeroShift(), decimalFormatScale);
 
-        isDone = false;
         Platform.runLater(() -> {
-            graphSeries.getData().clear();
-            graphSeries.getData().addAll(intermediateList);
             amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
             loadsCounterTextField.setText(Utils.convertFromExponentialFormat(loadsCounter, decimalFormatScale));
             rmsTextField.setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
             zeroShiftTextField.setText(Utils.convertFromExponentialFormat(zeroShift, decimalFormatScale));
-            isDone = true;
         });
     }
+
 
     @FXML
     private void handleCalibrate() {
