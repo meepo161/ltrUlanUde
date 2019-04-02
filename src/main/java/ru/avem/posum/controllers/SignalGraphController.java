@@ -36,6 +36,8 @@ public class SignalGraphController implements BaseController {
     @FXML
     private ComboBox<String> decimalFormatComboBox;
     @FXML
+    private TextField frequencyTextField;
+    @FXML
     private Label loadsCounterLabel;
     @FXML
     private LineChart<Number, Number> graph;
@@ -83,7 +85,6 @@ public class SignalGraphController implements BaseController {
         clearGraph();
         clearSeries();
         initializeGraphScale();
-        showGraph();
         toggleAutoScale(false);
     }
 
@@ -310,6 +311,7 @@ public class SignalGraphController implements BaseController {
     private void startShow() {
         cm.setStopped(false);
         receiveData();
+        calculate();
         show();
     }
 
@@ -322,23 +324,25 @@ public class SignalGraphController implements BaseController {
         }).start();
     }
 
-    private void show() {
+    private void calculate() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.processData();
-                signalModel.fillSeries();
-                showData();
+                showValues();
+                Utils.sleep(100);
             }
         }).start();
     }
 
-    private void showData() {
-        showGraph();
-        showValues();
+    private void show() {
+        new Thread(() -> {
+            while (!cm.isClosed() && !cm.isStopped()) {
+                showGraph();
+            }
+        }).start();
     }
 
     private void showGraph() {
-        List<XYChart.Data<Number, Number>> intermediateList = signalModel.getIntermediateList();
         String selectedScale = horizontalScalesComboBox.getSelectionModel().getSelectedItem();
         graphModel.parseScale(selectedScale);
         graphModel.calculateBounds();
@@ -348,7 +352,7 @@ public class SignalGraphController implements BaseController {
 
         int scale;
         if (signalModel.getFrequency() < 10) {
-            scale = 10;
+            scale = 15;
         } else if (signalModel.getFrequency() < 50) {
             scale = 2;
         } else {
@@ -356,23 +360,25 @@ public class SignalGraphController implements BaseController {
         }
 
         int index;
-        for (index = 0; index < intermediateList.size() && !cm.isStopped(); index += scale) {
-            XYChart.Data point = intermediateList.get(index);
+        int channel = signalModel.getChannel();
+        int channels = signalModel.getAdc().getChannelsCount();
+        double[] data = signalModel.getBuffer();
+        for (index = channel; index < data.length && !cm.isStopped(); index += channels * scale) {
+            XYChart.Data point = signalModel.getPoint(index);
             Runnable addPoint = () -> graphSeries.getData().add(point);
 
             if ((double) point.getXValue() < graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
                 Utils.sleep(1);
-                index += scale;
             }
 
-            if (index == intermediateList.size() - scale) {
-                XYChart.Data lastPoint = new XYChart.Data(graphModel.getUpperBound(), intermediateList.get(0).getYValue());
+            if ((index == data.length - channels * scale) || index == data.length - 1) {
+                XYChart.Data lastPoint = new XYChart.Data(graphModel.getUpperBound(), data[0]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(100);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
-                Utils.sleep(100);
+                Utils.sleep(400);
                 break;
             }
         }
@@ -380,12 +386,14 @@ public class SignalGraphController implements BaseController {
 
     private void showValues() {
         double amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
+        double frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
         double loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
         double rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
         double zeroShift = Utils.roundValue(signalModel.getZeroShift(), decimalFormatScale);
 
         Platform.runLater(() -> {
             amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
+            frequencyTextField.setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
             loadsCounterTextField.setText(Utils.convertFromExponentialFormat(loadsCounter, decimalFormatScale));
             rmsTextField.setText(Utils.convertFromExponentialFormat(rms, decimalFormatScale));
             zeroShiftTextField.setText(Utils.convertFromExponentialFormat(zeroShift, decimalFormatScale));

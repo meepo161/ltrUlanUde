@@ -17,7 +17,7 @@ public class SignalModel {
     private int channel;
     private int dataArrayCounter;
     private volatile boolean dataReceived;
-    private int frequency;
+    private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private boolean isICPMode;
@@ -68,10 +68,10 @@ public class SignalModel {
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
-        ltr212.setDataBuffer(new double[ltr212.getData().length]);
-        ltr212.setDataRingBuffer(new RingBuffer(ltr212.getData().length));
-        ltr212.setTimeMarksBuffer(new double[ltr212.getTimeMarks().length]);
-        ltr212.setTimeMarksRingBuffer(new RingBuffer(ltr212.getTimeMarks().length));
+        ltr212.setDataBuffer(new double[SAMPLES]);
+        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr212.setTimeMarksBuffer(new double[SAMPLES * 2]);
+        ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
     private void runInstructions() {
@@ -166,30 +166,21 @@ public class SignalModel {
     private void getSignalParameters() {
         amplitude = signalParametersModel.getAmplitude();
         frequency = signalParametersModel.getFrequency();
-        rms = signalParametersModel.getPhase();
+//        rms = signalParametersModel.getPhase();
         zeroShift = signalParametersModel.getZeroShift();
     }
 
-    public void fillSeries() {
-        intermediateList.clear();
-        double[] buffer = getBuffer();
-        int channels = adc.getChannelsCount();
-        for (int valueIndex = channels; valueIndex < buffer.length; valueIndex += channels) {
-            addPoint(buffer, valueIndex - channels);
-        }
-    }
-
-    private void addPoint(double[] buffer, int valueIndex) {
+    public XYChart.Data getPoint(int valueIndex) {
         if (calibrationExists) {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = signalParametersModel.applyCalibration(adc, buffer[valueIndex]);
             XYChart.Data<Number, Number> calibratedPoint = new XYChart.Data<>(xValue, yValue);
-            intermediateList.add(calibratedPoint);
+            return calibratedPoint;
         } else {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = buffer[valueIndex];
             XYChart.Data<Number, Number> point = new XYChart.Data<>(xValue, yValue);
-            intermediateList.add(point);
+            return point;
         }
     }
 
@@ -201,7 +192,7 @@ public class SignalModel {
         return amplitude;
     }
 
-    private double[] getBuffer() {
+    public double[] getBuffer() {
         return buffer;
     }
 
@@ -209,7 +200,7 @@ public class SignalModel {
         return channel;
     }
 
-    public int getFrequency() {
+    public double getFrequency() {
         return frequency;
     }
 

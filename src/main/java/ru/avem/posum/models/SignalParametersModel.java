@@ -10,18 +10,19 @@ public class SignalParametersModel {
     private int averageIterator;
     private double amplitude;
     private double bufferedAmplitude;
-    private double bufferedPhase;
+    private double bufferedFrequency;
     private double bufferedZeroShift;
     private double calibratedValue;
     private int channel;
+    private final int CHANNELS = 4;
     private double[] data;
     private double firstPointLoadValue;
     private double firstPointChannelValue;
-    private int frequency;
+    private double frequency;
     private double lowerBound;
     private double maxValue;
     private double minValue;
-    private double phase;
+    private double rms;
     private double secondPointLoadValue;
     private double secondPointChannelValue;
     private double tickUnit;
@@ -36,18 +37,17 @@ public class SignalParametersModel {
 
     public void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
         calculate(signal, channel);
-
         if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
             bufferedZeroShift += calculateZeroShift();
-            bufferedPhase += phase;
+            bufferedFrequency += calculateFrequency();
             averageIterator++;
         } else {
             amplitude = bufferedAmplitude / averageCount;
+            frequency = bufferedFrequency / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
-            phase = bufferedZeroShift / averageCount;
             averageIterator = 0;
-            bufferedAmplitude = bufferedZeroShift = bufferedPhase = 0;
+            bufferedAmplitude = bufferedZeroShift = bufferedFrequency = 0;
 
             checkCalibration(isCalibrationExists);
         }
@@ -67,7 +67,7 @@ public class SignalParametersModel {
         maxValue = -999_999_999;
         minValue = 999_999_999;
 
-        for (int i = channel; i < data.length; i += 4) {
+        for (int i = channel; i < data.length; i += CHANNELS) {
             if (data[i] > maxValue) {
                 maxValue = data[i];
             }
@@ -83,16 +83,23 @@ public class SignalParametersModel {
     }
 
     private double calculateZeroShift() {
-        return  (maxValue + minValue) / 2;
+        return (maxValue + minValue) / 2;
     }
 
-    private void calculatePhase() {
-        createComplexArray();
-    }
+    private double calculateFrequency() {
+        boolean positivePartOfSignal = false;
+        double frequency = 0;
 
-    private void createComplexArray() {
-        Complex complexNumber = new Complex(zeroShift, 0);
-        phase = complexNumber.phase();
+        for (int i = channel; i < data.length; i += CHANNELS) {
+            if ((data[i] > zeroShift * 1.8) && !positivePartOfSignal) {
+                frequency++;
+                positivePartOfSignal = true;
+            } else if (data[i] < zeroShift * 1.8){
+                positivePartOfSignal = false;
+            }
+        }
+        System.out.println("Frequency: " + frequency);
+        return frequency;
     }
 
     private void checkCalibration(boolean isCalibrationExists) {
@@ -109,7 +116,7 @@ public class SignalParametersModel {
     private double applyCalibration(double value) {
         defineBounds();
         setBounds();
-        return calibratedValue =  value / (Math.abs(lowerBound) + Math.abs(upperBound)) * secondPointLoadValue;
+        return calibratedValue = value / (Math.abs(lowerBound) + Math.abs(upperBound)) * secondPointLoadValue;
     }
 
     private void defineBounds() {
@@ -186,16 +193,12 @@ public class SignalParametersModel {
         return amplitude;
     }
 
-    int getFrequency() {
-        return 100;
+    double getFrequency() {
+        return frequency;
     }
 
     double getLowerBound() {
         return lowerBound;
-    }
-
-    double getPhase() {
-        return phase;
     }
 
     double getTickUnit() {
