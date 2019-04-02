@@ -148,19 +148,18 @@ public class SignalModel {
     }
 
     public void processData() {
-        fillBuffer();
         calculate();
         getSignalParameters();
     }
 
-    private void fillBuffer() {
+    public void fillBuffer() {
         buffer = adc.getDataBuffer();
         adc.getDataRingBuffer().take(buffer, buffer.length);
     }
 
     private void calculate() {
         signalParametersModel.setFields(adc, channel);
-        signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
+        signalParametersModel.calculateParameters(adc.getData(), averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {

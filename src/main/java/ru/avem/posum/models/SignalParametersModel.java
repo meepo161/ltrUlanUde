@@ -91,14 +91,14 @@ public class SignalParametersModel {
         double frequency = 0;
 
         for (int i = channel; i < data.length; i += CHANNELS) {
-            if ((data[i] > zeroShift * 1.8) && !positivePartOfSignal) {
+            if ((data[i] > zeroShift * 1.9) && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[i] < zeroShift * 1.8){
+            } else if (data[i] < zeroShift * 1.9){
                 positivePartOfSignal = false;
             }
         }
-        System.out.println("Frequency: " + frequency);
+
         return frequency;
     }
 
