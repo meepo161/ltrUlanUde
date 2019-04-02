@@ -518,6 +518,7 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
+        ltr212.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR212, ltr212.getSlot());
         cm.initializeSignalGraphView();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);

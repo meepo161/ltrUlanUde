@@ -67,6 +67,8 @@ public class LTR212 extends ADC {
 
     public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
 
+    public native String start(int slot);
+
     public void receive(double[] data, double[] timeMarks) {
         clearStatus();
         status = fillArray(getSlot(), data, timeMarks);
@@ -74,6 +76,8 @@ public class LTR212 extends ADC {
     }
 
     public native String fillArray(int slot, double[] data, double[] timeMarks);
+
+    public native String stop(int slot);
 
     public void closeConnection() {
         close(getSlot());

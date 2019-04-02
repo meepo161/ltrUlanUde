@@ -68,10 +68,10 @@ public class SignalModel {
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
-        ltr212.setDataBuffer(new double[SAMPLES]);
-        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr212.setDataBuffer(new double[SAMPLES * 4]);
+        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES * 10));
         ltr212.setTimeMarksBuffer(new double[SAMPLES * 2]);
-        ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
+        ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2 * 10));
     }
 
     private void runInstructions() {
@@ -155,6 +155,10 @@ public class SignalModel {
     public void fillBuffer() {
         buffer = adc.getDataBuffer();
         adc.getDataRingBuffer().take(buffer, buffer.length);
+
+        for (int i = 0; i < buffer.length; i += 4) {
+            System.out.printf("Value: %f, index: %d\n", buffer[i], i);
+        }
     }
 
     private void calculate() {

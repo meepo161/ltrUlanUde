@@ -319,7 +319,6 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() || !cm.isStopped()) {
                 signalModel.getData(averageCount);
-                Utils.sleep(100);
             }
         }).start();
     }
@@ -353,7 +352,7 @@ public class SignalGraphController implements BaseController {
 
         int scale;
         if (signalModel.getFrequency() < 10) {
-            scale = 15;
+            scale = 10;
         } else if (signalModel.getFrequency() < 50) {
             scale = 2;
         } else {
@@ -376,7 +375,7 @@ public class SignalGraphController implements BaseController {
             if ((index == data.length - channels * scale) || index == data.length - 1) {
                 XYChart.Data lastPoint = new XYChart.Data(graphModel.getUpperBound(), data[0]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
-                Utils.sleep(10000);
+                Utils.sleep(100);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
                 Utils.sleep(400);
