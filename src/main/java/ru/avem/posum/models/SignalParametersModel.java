@@ -91,10 +91,10 @@ public class SignalParametersModel {
         double frequency = 0;
 
         for (int i = channel; i < data.length; i += CHANNELS) {
-            if ((data[i] > zeroShift * 1.9) && !positivePartOfSignal) {
+            if ((data[i] > amplitude / 1.1) && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[i] < zeroShift * 1.9){
+            } else if (data[i] < amplitude / 2){
                 positivePartOfSignal = false;
             }
         }

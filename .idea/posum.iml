@@ -41,7 +41,7 @@
     <orderEntry type="module-library">
       <library name="Maven: javafx-packager:javafx-packager:1.8.0_20">
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/javafx-packager/javafx-packager/1.8.0_20/javafx-packager-1.8.0_20.jar!/" />
+          <root url="jar://C:/Program Files (x86)/Java/jdk1.8.0_201/lib/ant-javafx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
