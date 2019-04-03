@@ -1,5 +1,9 @@
 package ru.avem.posum.models;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.integration.SimpsonIntegrator;
+import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.utils.Complex;
 
@@ -11,6 +15,8 @@ public class SignalParametersModel {
     private double amplitude;
     private double bufferedAmplitude;
     private double bufferedFrequency;
+    private double bufferedLoadsCounter;
+    private double bufferedRMS;
     private double bufferedZeroShift;
     private double calibratedValue;
     private int channel;
@@ -20,6 +26,7 @@ public class SignalParametersModel {
     private double firstPointChannelValue;
     private double frequency;
     private double lowerBound;
+    private double loadsCounter;
     private double maxValue;
     private double minValue;
     private double rms;
@@ -37,17 +44,27 @@ public class SignalParametersModel {
 
     public void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
         calculate(signal, channel);
-        if (averageIterator < averageCount) {
+        if (averageCount == 1) {
+            bufferedAmplitude = amplitude = calculateAmplitude();
+            bufferedFrequency = frequency = calculateFrequency();
+            bufferedLoadsCounter = loadsCounter += frequency;
+            bufferedRMS = rms = calculateRMS();
+            bufferedZeroShift = zeroShift = calculateZeroShift();
+        } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
-            bufferedZeroShift += calculateZeroShift();
             bufferedFrequency += calculateFrequency();
+            bufferedLoadsCounter += frequency;
+            bufferedRMS += calculateRMS();
+            bufferedZeroShift += calculateZeroShift();
             averageIterator++;
         } else {
             amplitude = bufferedAmplitude / averageCount;
             frequency = bufferedFrequency / averageCount;
+            loadsCounter += bufferedLoadsCounter / averageCount;
+            rms = bufferedRMS / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
             averageIterator = 0;
-            bufferedAmplitude = bufferedZeroShift = bufferedFrequency = 0;
+            bufferedAmplitude = bufferedZeroShift = bufferedFrequency = bufferedLoadsCounter = bufferedRMS = 0;
 
             checkCalibration(isCalibrationExists);
         }
@@ -94,13 +111,40 @@ public class SignalParametersModel {
             if ((data[i] > amplitude / 1.1) && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[i] < amplitude / 2){
+            } else if (data[i] < amplitude / 2) {
                 positivePartOfSignal = false;
             }
         }
 
         return frequency;
     }
+
+    private double calculateRMS() {
+        SimpsonIntegrator simpson = new SimpsonIntegrator();
+        double[] data = {3, 3, 3};
+
+        UnivariateFunction uf = new PolynomialFunction(data);
+
+        double i = simpson.integrate(10, uf, 1, 3);
+        System.out.println("Simpson integral : " + i);
+
+        return 0;
+    }
+
+    /*
+    private double calculateRMS() {
+        double squaresSum = 0;
+        if (frequency != 0) {
+            int samplesPerPeriod = (int) (data.length / frequency);
+
+            for (int i = 0; i < samplesPerPeriod; i++) {
+                squaresSum += data[i] * data[i];
+            }
+
+            return Math.sqrt(squaresSum / samplesPerPeriod);
+        } else return amplitude;
+    }
+    */
 
     private void checkCalibration(boolean isCalibrationExists) {
         if (isCalibrationExists) {
@@ -197,8 +241,16 @@ public class SignalParametersModel {
         return frequency;
     }
 
+    public double getLoadsCounter() {
+        return loadsCounter;
+    }
+
     double getLowerBound() {
         return lowerBound;
+    }
+
+    public double getRms() {
+        return rms;
     }
 
     double getTickUnit() {
