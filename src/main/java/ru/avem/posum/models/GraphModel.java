@@ -7,7 +7,7 @@ public class GraphModel {
     private double upperBound;
     private String valueName;
 
-    public void calculateBounds() {
+    public void calculateGraphBounds() {
         if (valueName.equals("В")) {
             lowerBound = -scale * 10;
             tickUnit = scale * 2;
@@ -20,7 +20,7 @@ public class GraphModel {
 
     }
 
-    public void parseScale(String scale) {
+    public void parseGraphScale(String scale) {
         String[] separatedScale = scale.split(" ");
         double digits = Double.parseDouble(separatedScale[0]);
         String suffix = separatedScale[1].substring(0, 1);

@@ -15,11 +15,9 @@ public class SignalModel {
     private double[] buffer;
     private boolean calibrationExists;
     private int channel;
-    private int dataArrayCounter;
-    private volatile boolean dataReceived;
+    private int dataRarefactionCoefficient;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
-    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
     private boolean isICPMode;
     private double loadsCounter;
     private double lowerBound;
@@ -67,11 +65,9 @@ public class SignalModel {
         final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
-        ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setDataBuffer(new double[SAMPLES]);
-        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksBuffer(new double[SAMPLES * 2]);
-        ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
     private void runInstructions() {
@@ -83,11 +79,6 @@ public class SignalModel {
 
         if (!calibrationCoefficients.isEmpty()) {
             setCalibrationExists(true);
-        }
-    }
-
-    public void parseCalibration() {
-        if (calibrationExists) {
             signalParametersModel.defineCalibratedBounds(adc);
             setBounds();
             setValueName();
@@ -112,9 +103,7 @@ public class SignalModel {
         this.isICPMode = isICPMode;
     }
 
-    public void getData(int averageCount) {
-        this.averageCount = averageCount;
-        dataReceived = false;
+    public void getData() {
         addReceivingDataInstructions();
         runInstructions();
     }
@@ -136,25 +125,13 @@ public class SignalModel {
     private void getLTR212Data() {
         double[] data = ltr212.getData();
         double[] timeMarks = ltr212.getTimeMarks();
-        RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
-        RingBuffer timeMarksRingBuffer = ltr212.getTimeMarksRingBuffer();
 
-        ltr212.receive(data, timeMarks);
-        dataRingBuffer.put(data);
-
-        timeMarksRingBuffer.reset();
-        timeMarksRingBuffer.put(timeMarks);
-        dataReceived = true;
+        ltr212.write(data, timeMarks);
     }
 
-    public void processData() {
+    public void calculateData() {
         calculate();
         getSignalParameters();
-    }
-
-    public void fillBuffer() {
-        buffer = adc.getDataBuffer();
-        adc.getDataRingBuffer().take(buffer, buffer.length);
     }
 
     private void calculate() {
@@ -165,7 +142,6 @@ public class SignalModel {
     private void getSignalParameters() {
         amplitude = signalParametersModel.getAmplitude();
         frequency = signalParametersModel.getFrequency();
-        loadsCounter = signalParametersModel.getLoadsCounter();
         rms = signalParametersModel.getRms();
         zeroShift = signalParametersModel.getZeroShift();
     }
@@ -184,6 +160,16 @@ public class SignalModel {
         }
     }
 
+    public void defineDataRarefactionCoefficient() {
+        if (frequency < 10) {
+            dataRarefactionCoefficient = 10;
+        } else if (frequency < 50) {
+            dataRarefactionCoefficient = 2;
+        } else {
+            dataRarefactionCoefficient = 1;
+        }
+    }
+
     public ADC getAdc() {
         return adc;
     }
@@ -192,20 +178,16 @@ public class SignalModel {
         return amplitude;
     }
 
-    public double[] getBuffer() {
-        return buffer;
-    }
-
     public int getChannel() {
         return channel;
     }
 
-    public double getFrequency() {
-        return frequency;
+    public int getDataRarefactionCoefficient() {
+        return dataRarefactionCoefficient;
     }
 
-    public List<XYChart.Data<Number, Number>> getIntermediateList() {
-        return intermediateList;
+    public double getFrequency() {
+        return frequency;
     }
 
     public double getLoadsCounter() {
@@ -246,6 +228,10 @@ public class SignalModel {
 
     public boolean isCalibrationExists() {
         return calibrationExists;
+    }
+
+    public void setAverageCount(double averageCount) {
+        this.averageCount = averageCount;
     }
 
     public void setCalibrationExists(boolean calibrationExists) {

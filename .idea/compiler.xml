@@ -6,11 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Posum" />
         <module name="posum" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="posum" target="1.8" />
+      <module name="Posum" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

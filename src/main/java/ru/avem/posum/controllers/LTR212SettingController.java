@@ -430,7 +430,7 @@ public class LTR212SettingController implements BaseController {
             ltr212.openConnection();
         }
 
-        ltr212.initModule();
+        ltr212.initializeModule();
     }
 
     private void checkResult() {

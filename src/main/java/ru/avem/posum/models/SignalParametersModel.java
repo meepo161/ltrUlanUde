@@ -1,9 +1,5 @@
 package ru.avem.posum.models;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.integration.SimpsonIntegrator;
-import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.utils.Complex;
 
@@ -15,8 +11,7 @@ public class SignalParametersModel {
     private double amplitude;
     private double bufferedAmplitude;
     private double bufferedFrequency;
-    private double bufferedLoadsCounter;
-    private double bufferedRMS;
+    private double bufferedRms;
     private double bufferedZeroShift;
     private double calibratedValue;
     private int channel;
@@ -26,7 +21,6 @@ public class SignalParametersModel {
     private double firstPointChannelValue;
     private double frequency;
     private double lowerBound;
-    private double loadsCounter;
     private double maxValue;
     private double minValue;
     private double rms;
@@ -37,42 +31,16 @@ public class SignalParametersModel {
     private String valueName;
     private double zeroShift;
 
-    public void setFields(ADC adc, int channel) {
+    void setFields(ADC adc, int channel) {
         this.adc = adc;
         this.channel = channel;
     }
 
-    public void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
-        calculate(signal, channel);
-        if (averageCount == 1) {
-            bufferedAmplitude = amplitude = calculateAmplitude();
-            bufferedFrequency = frequency = calculateFrequency();
-            bufferedLoadsCounter = loadsCounter += frequency;
-            bufferedRMS = rms = calculateRMS();
-            bufferedZeroShift = zeroShift = calculateZeroShift();
-        } else if (averageIterator < averageCount) {
-            bufferedAmplitude += calculateAmplitude();
-            bufferedFrequency += calculateFrequency();
-            bufferedLoadsCounter += frequency;
-            bufferedRMS += calculateRMS();
-            bufferedZeroShift += calculateZeroShift();
-            averageIterator++;
-        } else {
-            amplitude = bufferedAmplitude / averageCount;
-            frequency = bufferedFrequency / averageCount;
-            loadsCounter += bufferedLoadsCounter / averageCount;
-            rms = bufferedRMS / averageCount;
-            zeroShift = bufferedZeroShift / averageCount;
-            averageIterator = 0;
-            bufferedAmplitude = bufferedZeroShift = bufferedFrequency = bufferedLoadsCounter = bufferedRMS = 0;
-
-            checkCalibration(isCalibrationExists);
-        }
-    }
-
-    private void calculate(double[] rawData, int channel) {
-        setFields(rawData, channel);
+    void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
+        setFields(signal, channel);
         calculateMinAndMaxValues();
+        calculateParameters(averageCount);
+        checkCalibration(isCalibrationExists);
     }
 
     private void setFields(double[] rawData, int channel) {
@@ -95,12 +63,30 @@ public class SignalParametersModel {
         }
     }
 
-    private double calculateAmplitude() {
-        return (maxValue - minValue) / 2;
+    private void calculateParameters(double averageCount) {
+        if (averageCount == 1) {
+            bufferedAmplitude = amplitude = calculateAmplitude();
+            bufferedFrequency = frequency = calculateFrequency();
+            bufferedRms = rms = calculateRms();
+            bufferedZeroShift = zeroShift = calculateZeroShift();
+        } else if (averageIterator < averageCount) {
+            bufferedAmplitude += calculateAmplitude();
+            bufferedFrequency += calculateFrequency();
+            bufferedRms += calculateRms();
+            bufferedZeroShift += calculateZeroShift();
+            averageIterator++;
+        } else {
+            amplitude = bufferedAmplitude / averageCount;
+            frequency = bufferedFrequency / averageCount;
+            rms = bufferedRms / averageCount;
+            zeroShift = bufferedZeroShift / averageCount;
+            averageIterator = 0;
+            bufferedAmplitude = bufferedFrequency = bufferedRms = bufferedZeroShift = 0;
+        }
     }
 
-    private double calculateZeroShift() {
-        return (maxValue + minValue) / 2;
+    private double calculateAmplitude() {
+        return (maxValue - minValue) / 2;
     }
 
     private double calculateFrequency() {
@@ -119,32 +105,20 @@ public class SignalParametersModel {
         return frequency;
     }
 
-    private double calculateRMS() {
-        SimpsonIntegrator simpson = new SimpsonIntegrator();
-        double[] data = {3, 3, 3};
-
-        UnivariateFunction uf = new PolynomialFunction(data);
-
-        double i = simpson.integrate(10, uf, 1, 3);
-        System.out.println("Simpson integral : " + i);
-
-        return 0;
-    }
-
-    /*
-    private double calculateRMS() {
+    private double calculateRms() {
         double squaresSum = 0;
-        if (frequency != 0) {
-            int samplesPerPeriod = (int) (data.length / frequency);
+        int samplesPerPeriod = (int) (data.length / frequency);
 
-            for (int i = 0; i < samplesPerPeriod; i++) {
-                squaresSum += data[i] * data[i];
-            }
+        for (int i = 0; i < samplesPerPeriod; i++) {
+            squaresSum += data[i] * data[i];
+        }
 
-            return Math.sqrt(squaresSum / samplesPerPeriod);
-        } else return amplitude;
+        return Math.sqrt(squaresSum / samplesPerPeriod);
     }
-    */
+
+    private double calculateZeroShift() {
+        return (maxValue + minValue) / 2;
+    }
 
     private void checkCalibration(boolean isCalibrationExists) {
         if (isCalibrationExists) {
@@ -179,7 +153,7 @@ public class SignalParametersModel {
         upperBound = secondPointChannelValue;
     }
 
-    public double applyCalibration(ADC adc, double value) {
+    double applyCalibration(ADC adc, double value) {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
@@ -210,7 +184,7 @@ public class SignalParametersModel {
         }
     }
 
-    public void defineCalibratedBounds(ADC adc) {
+    void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
         double minLoadValue = 999_999_999;
@@ -241,15 +215,11 @@ public class SignalParametersModel {
         return frequency;
     }
 
-    public double getLoadsCounter() {
-        return loadsCounter;
-    }
-
     double getLowerBound() {
         return lowerBound;
     }
 
-    public double getRms() {
+    double getRms() {
         return rms;
     }
 

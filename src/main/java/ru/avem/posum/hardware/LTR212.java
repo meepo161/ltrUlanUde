@@ -1,18 +1,67 @@
 package ru.avem.posum.hardware;
 
-import javax.lang.model.element.NestingKind;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class LTR212 extends ADC {
-    private double frequency;
-
     public LTR212() {
-        initModuleSettings();
+        initializeModuleSettings();
     }
 
-    private void initModuleSettings() {
+    public void openConnection() {
+        status = openConnection(crate, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
+        checkStatus();
+    }
+
+    public void testEEPROM() {
+        status = testEEPROM(getSlot());
+        checkStatus();
+    }
+
+    public void initializeModule() {
+        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings());
+        checkStatus();
+    }
+
+    public void start() {
+        status = start(getSlot());
+        checkStatus();
+    }
+
+    public void write(double[] data, double[] timeMarks) {
+        status = write(getSlot(), data, timeMarks);
+        checkStatus();
+    }
+
+    public void stop() {
+        status = stop(getSlot());
+        checkStatus();
+    }
+
+    public void closeConnection() {
+        closeConnection(getSlot());
+        checkStatus();
+    }
+
+    public native String openConnection(String crate, int slot, String path);
+
+    public native String testEEPROM(int slot);
+
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
+
+    public native String start(int slot);
+
+    public native String write(int slot, double[] data, double[] timeMarks);
+
+    public native String stop(int slot);
+
+    public native String closeConnection(int slot);
+
+    static {
+        System.loadLibrary( "LTR212Library");
+    }
+
+    private void initializeModuleSettings() {
         getModuleSettings().put(Settings.ADC_MODE.getSettingName(), 0); // режим работы каналов
         getModuleSettings().put(Settings.CALIBRATION_COEFFICIENTS.getSettingName(), 0); // использование калибровочных коэффициентов
         getModuleSettings().put(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), 0); // использование заводских калибровочных коэфффициентов
@@ -23,24 +72,6 @@ public class LTR212 extends ADC {
         getModuleSettings().put(Settings.TAP.getSettingName(), 0); // порядок фильтра
         getModuleSettings().put(Settings.REFERENCE_VOLTAGE.getSettingName(), 1); // опорное напряжение
         getModuleSettings().put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), 1); // тип опорного напряжения
-    }
-
-    public void openConnection() {
-        clearStatus();
-        status = open(crate, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
-        checkStatus();
-    }
-
-    private void clearStatus() {
-        status = "";
-    }
-
-    public native String open(String crate, int slot, String path);
-
-    public void initModule() {
-        clearStatus();
-        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings());
-        checkStatus();
     }
 
     private int[] getLTR212ModuleSettings() {
@@ -64,27 +95,6 @@ public class LTR212 extends ADC {
 
         return settings;
     }
-
-    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
-
-    public native String start(int slot);
-
-    public void receive(double[] data, double[] timeMarks) {
-        clearStatus();
-        status = fillArray(getSlot(), data, timeMarks);
-        checkStatus();
-    }
-
-    public native String fillArray(int slot, double[] data, double[] timeMarks);
-
-    public native String stop(int slot);
-
-    public void closeConnection() {
-        close(getSlot());
-        checkStatus();
-    }
-
-    public native String close(int slot);
 
     @Override
     public StringBuilder moduleSettingsToString() {
@@ -118,13 +128,5 @@ public class LTR212 extends ADC {
         moduleSettings.put(Settings.TAP.getSettingName(), Integer.valueOf(separatedSettings[7]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE.getSettingName(), Integer.valueOf(separatedSettings[8]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), Integer.valueOf(separatedSettings[9]));
-    }
-
-    public double getFrequency() {
-        return frequency;
-    }
-
-    static {
-        System.loadLibrary( "LTR212Library");
     }
 }
