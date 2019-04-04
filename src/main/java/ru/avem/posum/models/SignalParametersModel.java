@@ -26,6 +26,7 @@ public class SignalParametersModel {
     private double rms;
     private double secondPointLoadValue;
     private double secondPointChannelValue;
+    private int samplesPerPeriod;
     private double tickUnit;
     private double upperBound;
     private String valueName;
@@ -92,8 +93,11 @@ public class SignalParametersModel {
     private double calculateFrequency() {
         boolean positivePartOfSignal = false;
         double frequency = 0;
+        samplesPerPeriod = 0;
 
         for (int i = channel; i < data.length; i += CHANNELS) {
+            countSamples(frequency);
+
             if (amplitude + zeroShift > 0) {
                 if (zeroShift > 0) {
                     if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
@@ -120,7 +124,13 @@ public class SignalParametersModel {
             }
         }
 
-        return frequency;
+        return samplesPerPeriod == 0 ? 0 : (1 / ((double) 1 / 7680 * samplesPerPeriod));
+    }
+
+    private void countSamples(double frequency) {
+        if (frequency == 2) {
+            samplesPerPeriod++;
+        }
     }
 
     private double calculateRms() {
