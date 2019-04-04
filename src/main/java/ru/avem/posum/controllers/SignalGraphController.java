@@ -77,6 +77,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
+        graph.getData().add(graphSeries);
         clearSeries();
         initializeGraphScale();
         toggleAutoScale(false);
