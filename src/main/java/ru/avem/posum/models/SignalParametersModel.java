@@ -90,14 +90,28 @@ public class SignalParametersModel {
     }
 
     private double calculateFrequency() {
+        double frequency = 0;
+        final int MEASURING_RANGE = Math.abs(adc.getBounds().get("Lower bound")) + Math.abs(adc.getBounds().get("Upper bound"));
+
+        if ((amplitude - zeroShift) > MEASURING_RANGE / 100) {
+            frequency = definePeriod();
+
+        }
+
+
+        return frequency;
+    }
+
+    private double definePeriod() {
         boolean positivePartOfSignal = false;
         double frequency = 0;
+        double SHIFT = 1_000_000;
 
-        for (int i = channel; i < data.length; i += CHANNELS) {
-            if ((data[i] > amplitude / 1.1) && !positivePartOfSignal) {
+        for (int i = channel; i < data.length ; i += CHANNELS) {
+            if ((data[i] + SHIFT > (amplitude + SHIFT) / 1.1) && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[i] < amplitude / 2) {
+            } else if (data[i] + SHIFT < (amplitude + SHIFT) / 2) {
                 positivePartOfSignal = false;
             }
         }

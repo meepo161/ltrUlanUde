@@ -518,10 +518,20 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
+        saveBounds(channel);
         ltr212.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR212, ltr212.getSlot());
         cm.initializeSignalGraphView();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    private void saveBounds(int channel) {
+        HashMap<String, Integer> bounds = ltr212.getBounds();
+        String boundsInText = measuringRangesComboBoxes.get(channel).getSelectionModel().getSelectedItem();
+        int lowerBound = Integer.parseInt(boundsInText.split(" мВ/")[0]);
+        int upperBound = Integer.parseInt(boundsInText.split(" мВ/")[1].substring(1, 3));
+        bounds.put("Lower bound", lowerBound);
+        bounds.put("Upper bound", upperBound);
     }
 
     public void handleValueOfChannelN2() {
