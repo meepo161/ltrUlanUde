@@ -76,6 +76,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
+        graph.getData().add(graphSeries);
         clearSeries();
         initializeGraphScale();
         toggleAutoScale(false);
@@ -280,7 +281,6 @@ public class SignalGraphController implements BaseController {
     private void startShow() {
         cm.setStopped(false);
         receiveData();
-        signalModel.calculateData();
         showData();
     }
 
@@ -295,6 +295,7 @@ public class SignalGraphController implements BaseController {
     private void showData() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.calculateData();
                 showCalculatedValues();
                 Utils.sleep(100);
             }

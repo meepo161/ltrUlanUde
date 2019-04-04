@@ -11,7 +11,7 @@ import java.util.List;
 public class SignalModel {
     private ADC adc;
     private double amplitude;
-    private double averageCount;
+    private double averageCount = 1;
     private double[] buffer;
     private boolean calibrationExists;
     private int channel;
@@ -58,7 +58,6 @@ public class SignalModel {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[39064]);
         ltr24.setDataBuffer(new double[ltr24.getData().length]);
-        ltr24.setDataRingBuffer(new RingBuffer(ltr24.getData().length * 100));
     }
 
     private void initLTR212Module() {
@@ -116,10 +115,8 @@ public class SignalModel {
 
     private void getLTR24Data() {
         double[] data = ltr24.getData();
-        RingBuffer ringBuffer = ltr24.getDataRingBuffer();
 
         ltr24.receive(data);
-        ringBuffer.put(data);
     }
 
     private void getLTR212Data() {
@@ -144,17 +141,22 @@ public class SignalModel {
         frequency = signalParametersModel.getFrequency();
         rms = signalParametersModel.getRms();
         zeroShift = signalParametersModel.getZeroShift();
+
+//        System.out.printf("Amplitude: %f, frequency: %f, loads counter: %f, rms: %f, zero shift: %f\n",
+//                amplitude, frequency, loadsCounter, rms, zeroShift);
     }
 
     public XYChart.Data getPoint(int valueIndex) {
+        double[] data = adc.getData();
+
         if (calibrationExists) {
-            double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
-            double yValue = signalParametersModel.applyCalibration(adc, buffer[valueIndex]);
+            double xValue = (double) (valueIndex - adc.getChannelsCount()) / data.length;
+            double yValue = signalParametersModel.applyCalibration(adc, data[valueIndex]);
             XYChart.Data<Number, Number> calibratedPoint = new XYChart.Data<>(xValue, yValue);
             return calibratedPoint;
         } else {
-            double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
-            double yValue = buffer[valueIndex];
+            double xValue = (double) (valueIndex - adc.getChannelsCount()) / data.length;
+            double yValue = data[valueIndex];
             XYChart.Data<Number, Number> point = new XYChart.Data<>(xValue, yValue);
             return point;
         }

@@ -90,29 +90,33 @@ public class SignalParametersModel {
     }
 
     private double calculateFrequency() {
-        double frequency = 0;
-        final int MEASURING_RANGE = Math.abs(adc.getBounds().get("Lower bound")) + Math.abs(adc.getBounds().get("Upper bound"));
-
-        if ((amplitude - zeroShift) > MEASURING_RANGE / 100) {
-            frequency = definePeriod();
-
-        }
-
-
-        return frequency;
-    }
-
-    private double definePeriod() {
         boolean positivePartOfSignal = false;
         double frequency = 0;
-        double SHIFT = 1_000_000;
 
-        for (int i = channel; i < data.length ; i += CHANNELS) {
-            if ((data[i] + SHIFT > (amplitude + SHIFT) / 1.1) && !positivePartOfSignal) {
-                frequency++;
-                positivePartOfSignal = true;
-            } else if (data[i] + SHIFT < (amplitude + SHIFT) / 2) {
-                positivePartOfSignal = false;
+        for (int i = channel; i < data.length; i += CHANNELS) {
+            if (amplitude + zeroShift > 0) {
+                if (zeroShift > 0) {
+                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
+                        frequency++;
+                        positivePartOfSignal = true;
+                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
+                        positivePartOfSignal = false;
+                    }
+                } else {
+                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
+                        frequency++;
+                        positivePartOfSignal = true;
+                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
+                        positivePartOfSignal = false;
+                    }
+                }
+            } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
+                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
+                    frequency++;
+                    positivePartOfSignal = true;
+                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
+                    positivePartOfSignal = false;
+                }
             }
         }
 
@@ -121,13 +125,12 @@ public class SignalParametersModel {
 
     private double calculateRms() {
         double squaresSum = 0;
-        int samplesPerPeriod = (int) (data.length / frequency);
 
-        for (int i = 0; i < samplesPerPeriod; i++) {
-            squaresSum += data[i] * data[i];
+        for (double datum : data) {
+            squaresSum += datum * datum;
         }
 
-        return Math.sqrt(squaresSum / samplesPerPeriod);
+        return Math.sqrt(squaresSum / data.length);
     }
 
     private double calculateZeroShift() {
