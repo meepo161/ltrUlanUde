@@ -11,6 +11,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.models.GraphModel;
@@ -87,6 +88,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraphScale() {
+        graph.getData().add(graphSeries);
         addVerticalScaleValues();
         addHorizontalScaleValues();
         setDefaultScales();
@@ -280,7 +282,6 @@ public class SignalGraphController implements BaseController {
     private void startShow() {
         cm.setStopped(false);
         receiveData();
-        signalModel.calculateData();
         showData();
     }
 
@@ -295,6 +296,7 @@ public class SignalGraphController implements BaseController {
     private void showData() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.calculateData();
                 showCalculatedValues();
                 Utils.sleep(100);
             }
@@ -303,6 +305,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.defineDataRarefactionCoefficient();
+                signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
             }
@@ -332,7 +335,7 @@ public class SignalGraphController implements BaseController {
         int index;
         int channel = signalModel.getChannel();
         int channels = signalModel.getAdc().getChannelsCount();
-        double[] data = signalModel.getAdc().getData();
+        double[] data = signalModel.getBuffer();
         int scale = signalModel.getDataRarefactionCoefficient();
 
         for (index = channel; index < data.length && !cm.isStopped(); index += channels * scale) {
@@ -345,9 +348,9 @@ public class SignalGraphController implements BaseController {
             }
 
             if ((index == data.length - channels * scale) || index == data.length - 1) {
-                XYChart.Data lastPoint = new XYChart.Data(graphModel.getUpperBound(), data[0]);
+                XYChart.Data lastPoint = new XYChart.Data(1.01, data[data.length - channels * scale]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
-                Utils.sleep(100);
+                Utils.sleep(400);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
                 Utils.sleep(400);

@@ -3,6 +3,7 @@ package ru.avem.posum.models;
 import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.utils.RingBuffer;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.List;
 public class SignalModel {
     private ADC adc;
     private double amplitude;
-    private double averageCount;
+    private double averageCount = 1;
     private double[] buffer;
     private boolean calibrationExists;
     private int channel;
@@ -57,7 +58,6 @@ public class SignalModel {
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[39064]);
-        ltr24.setDataBuffer(new double[ltr24.getData().length]);
         ltr24.setDataRingBuffer(new RingBuffer(ltr24.getData().length * 100));
     }
 
@@ -65,9 +65,9 @@ public class SignalModel {
         final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
-        ltr212.setDataBuffer(new double[SAMPLES]);
+        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
-        ltr212.setTimeMarksBuffer(new double[SAMPLES * 2]);
+        ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
     private void runInstructions() {
@@ -125,8 +125,10 @@ public class SignalModel {
     private void getLTR212Data() {
         double[] data = ltr212.getData();
         double[] timeMarks = ltr212.getTimeMarks();
+        RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
 
         ltr212.write(data, timeMarks);
+        dataRingBuffer.put(data);
     }
 
     public void calculateData() {
@@ -144,6 +146,11 @@ public class SignalModel {
         frequency = signalParametersModel.getFrequency();
         rms = signalParametersModel.getRms();
         zeroShift = signalParametersModel.getZeroShift();
+    }
+
+    public void fillBuffer() {
+        buffer = new double[adc.getData().length];
+        adc.getDataRingBuffer().take(buffer, buffer.length);
     }
 
     public XYChart.Data getPoint(int valueIndex) {
@@ -176,6 +183,10 @@ public class SignalModel {
 
     public double getAmplitude() {
         return amplitude;
+    }
+
+    public double[] getBuffer() {
+        return buffer;
     }
 
     public int getChannel() {
