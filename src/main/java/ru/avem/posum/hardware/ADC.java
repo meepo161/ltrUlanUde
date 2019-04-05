@@ -1,5 +1,7 @@
 package ru.avem.posum.hardware;
 
+import ru.avem.posum.utils.RingBuffer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,17 +26,17 @@ public abstract class ADC extends Module {
     }
 
     private HashMap<String, Integer> bounds = new HashMap<>();
+    private RingBuffer dataRingBuffer;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
     private String[] channelsDescription;
     private int[] channelsTypes;
     private double[] data;
-    private double[] dataBuffer;
     private int[] measuringRanges;
     HashMap<String, Integer> moduleSettings;
     private double[] timeMarks;
-    private double[] timeMarksBuffer;
+    private RingBuffer timeMarksRingBuffer;
 
     ADC() {
         channelsCount = CHANNELS;
@@ -75,8 +77,8 @@ public abstract class ADC extends Module {
         return data;
     }
 
-    public double[] getDataBuffer() {
-        return dataBuffer;
+    public RingBuffer getDataRingBuffer() {
+        return dataRingBuffer;
     }
 
     public int[] getMeasuringRanges() {
@@ -91,16 +93,12 @@ public abstract class ADC extends Module {
         return timeMarks;
     }
 
-    public double[] getTimeMarksBuffer() {
-        return timeMarksBuffer;
+    public RingBuffer getTimeMarksRingBuffer() {
+        return timeMarksRingBuffer;
     }
 
     public void setBounds(HashMap<String, Integer> bounds) {
         this.bounds = bounds;
-    }
-
-    public void setDataBuffer(double[] dataBuffer) {
-        this.dataBuffer = dataBuffer;
     }
 
     public void setCalibrationCoefficients(ArrayList<List<Double>> calibrationCoefficients) {
@@ -115,11 +113,15 @@ public abstract class ADC extends Module {
         this.data = data;
     }
 
+    public void setDataRingBuffer(RingBuffer dataRingBuffer) {
+        this.dataRingBuffer = dataRingBuffer;
+    }
+
     public void setTimeMarks(double[] timeMarks) {
         this.timeMarks = timeMarks;
     }
 
-    public void setTimeMarksBuffer(double[] timeMarksBuffer) {
-        this.timeMarksBuffer = timeMarksBuffer;
+    public void setTimeMarksRingBuffer(RingBuffer timeMarksRingBuffer) {
+        this.timeMarksRingBuffer = timeMarksRingBuffer;
     }
 }

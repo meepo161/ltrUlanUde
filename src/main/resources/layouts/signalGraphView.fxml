@@ -88,7 +88,7 @@
             <Label text="Горизонт. масштаб:" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="9" />
             <ComboBox fx:id="horizontalScalesComboBox" prefWidth="150.0" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
             <Label text="Десятичн. знаков:" GridPane.columnIndex="6" GridPane.halignment="LEFT" GridPane.rowIndex="9" />
-            <ComboBox fx:id="decimalFormatComboBox" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
+            <ComboBox fx:id="decimalFormatComboBox" maxWidth="150.0" minWidth="150.0" onAction="#getDecimalFormatScale" prefWidth="150.0" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="11" />
             <CheckBox fx:id="averageCheckBox" mnemonicParsing="false" text="Усреднять по:" GridPane.columnIndex="8" GridPane.rowIndex="9" />
             <TextField fx:id="averageTextField" disable="true" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" GridPane.columnIndex="8" GridPane.halignment="LEFT" GridPane.rowIndex="11" />
             <CheckBox fx:id="calibrationCheckBox" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="10" GridPane.rowIndex="9" />

@@ -1,7 +1,6 @@
 package ru.avem.posum.models;
 
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.utils.Complex;
 
 import java.util.List;
 
@@ -17,17 +16,24 @@ public class SignalParametersModel {
     private int channel;
     private final int CHANNELS = 4;
     private double[] data;
+    private volatile boolean firstPeriod = true;
     private double firstPointLoadValue;
     private double firstPointChannelValue;
     private double frequency;
+    private int frequencyBuffer;
     private double lowerBound;
     private double maxValue;
     private double minValue;
+    private boolean positivePartOfSignal;
     private double rms;
     private double secondPointLoadValue;
     private double secondPointChannelValue;
+    private int samplesPerPeriod;
+    private long semiPeriodTime;
+    private long startTime;
     private double tickUnit;
     private double upperBound;
+    private double valueBuffer;
     private String valueName;
     private double zeroShift;
 
@@ -90,37 +96,77 @@ public class SignalParametersModel {
     }
 
     private double calculateFrequency() {
-        boolean positivePartOfSignal = false;
-        double frequency = 0;
+        frequencyBuffer = 0;
+        valueBuffer = data[channel];
+        firstPeriod = true;
+        positivePartOfSignal = false;
+        samplesPerPeriod = 0;
 
-        for (int i = channel; i < data.length; i += CHANNELS) {
+        for (int index = channel; index < data.length; index += CHANNELS) {
+            countSamples();
             if (amplitude + zeroShift > 0) {
-                if (zeroShift > 0) {
-                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                } else {
-                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                }
+                calculateFrequencyInPositiveAxisPart(index);
             } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
-                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
-                    frequency++;
-                    positivePartOfSignal = true;
-                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
-                    positivePartOfSignal = false;
-                }
+                calculateFrequencyInNegativeSignalPart(index);
+            }
+        }
+        System.out.println("Samples: " + samplesPerPeriod * 2);
+        return samplesPerPeriod == 0 ? 0 : (1.0 / ((samplesPerPeriod * 2) / 7680.0));
+    }
+
+    private void countSamples() {
+        if (frequencyBuffer == 1) {
+            samplesPerPeriod++;
+        }
+    }
+
+    private double calculateFrequencyInPositiveAxisPart(int index) {
+        if (valueBuffer < 0) {
+            if (data[index] > zeroShift && !positivePartOfSignal) {
+                missFirsPeriod();
+            } else if (data[index] < zeroShift && samplesPerPeriod > 50) {
+                countFrequency();
+            }
+        } else {
+            if (data[index] > zeroShift && samplesPerPeriod > 50) {
+                countFrequency();
+            } else if (data[index] < zeroShift) {
+                missFirsPeriod();
             }
         }
 
         return frequency;
+    }
+
+    private double calculateFrequencyInNegativeSignalPart(int index) {
+        if (data[index] < zeroShift && !positivePartOfSignal) {
+            if (valueBuffer < 0) {
+                missFirsPeriod();
+            } else {
+                countFrequency();
+            }
+        } else if (data[index] > zeroShift && positivePartOfSignal && samplesPerPeriod > 10) {
+            if (valueBuffer < 0) {
+                countFrequency();
+            } else {
+                missFirsPeriod();
+            }
+
+        }
+        return frequency;
+    }
+
+    private void missFirsPeriod() {
+        if (firstPeriod) {
+            frequencyBuffer++;
+        }
+        firstPeriod = false;
+        positivePartOfSignal = true;
+    }
+
+    private void countFrequency() {
+        frequencyBuffer++;
+        positivePartOfSignal = false;
     }
 
     private double calculateRms() {
