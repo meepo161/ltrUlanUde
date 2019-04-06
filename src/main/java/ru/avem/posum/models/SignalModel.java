@@ -3,9 +3,7 @@ package ru.avem.posum.models;
 import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.utils.RingBuffer;
-import ru.avem.posum.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,7 +90,7 @@ public class SignalModel {
     }
 
     private void setValueName() {
-        this.valueName = signalParametersModel.getValueName();
+        this.valueName = signalParametersModel.getCalibrationValueName();
     }
 
     public void setDefaultValueName() {
@@ -143,7 +141,7 @@ public class SignalModel {
 
     private void getSignalParameters() {
         amplitude = signalParametersModel.getAmplitude();
-        frequency = signalParametersModel.getFrequency();
+        frequency = signalParametersModel.getSignalFrequency();
         rms = signalParametersModel.getRms();
         zeroShift = signalParametersModel.getZeroShift();
     }

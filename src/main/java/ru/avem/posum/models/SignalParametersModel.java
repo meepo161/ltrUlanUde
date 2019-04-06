@@ -13,30 +13,28 @@ public class SignalParametersModel {
     private double bufferedRms;
     private double bufferedZeroShift;
     private double calibratedValue;
+    private double calibrationFirstPointLoadValue;
+    private double calibrationFirstPointChannelValue;
+    private double calibrationSecondPointLoadValue;
+    private double calibrationSecondPointChannelValue;
+    private String calibrationValueName;
     private int channel;
-    private final int CHANNELS = 4;
+    private int channels;
     private double[] data;
-    private double firstPointLoadValue;
-    private double firstPointChannelValue;
-    private double frequency;
     private double lowerBound;
-    private double maxValue;
-    private double minValue;
-    private boolean positivePartOfSignal;
+    private double maxSignalValue;
+    private double minSignalValue;
     private double rms;
-    private double secondPointLoadValue;
-    private double secondPointChannelValue;
     private int samplesPerSemiPeriod;
-    private long semiPeriodTime;
-    private long startTime;
+    private double signalFrequency;
     private double tickUnit;
     private double upperBound;
-    private String valueName;
     private double zeroShift;
 
     void setFields(ADC adc, int channel) {
         this.adc = adc;
         this.channel = channel;
+        this.channels = adc.getChannelsCount();
     }
 
     void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
@@ -52,16 +50,16 @@ public class SignalParametersModel {
     }
 
     private void calculateMinAndMaxValues() {
-        maxValue = -999_999_999;
-        minValue = 999_999_999;
+        maxSignalValue = -999_999_999;
+        minSignalValue = 999_999_999;
 
-        for (int i = channel; i < data.length; i += CHANNELS) {
-            if (data[i] > maxValue) {
-                maxValue = data[i];
+        for (int i = channel; i < data.length; i += channels) {
+            if (data[i] > maxSignalValue) {
+                maxSignalValue = data[i];
             }
 
-            if (data[i] < minValue) {
-                minValue = data[i];
+            if (data[i] < minSignalValue) {
+                minSignalValue = data[i];
             }
         }
     }
@@ -69,7 +67,7 @@ public class SignalParametersModel {
     private void calculateParameters(double averageCount) {
         if (averageCount == 1) {
             bufferedAmplitude = amplitude = calculateAmplitude();
-            bufferedFrequency = frequency = calculateFrequency();
+            bufferedFrequency = signalFrequency = calculateFrequency();
             bufferedRms = rms = calculateRms();
             bufferedZeroShift = zeroShift = calculateZeroShift();
         } else if (averageIterator < averageCount) {
@@ -80,7 +78,7 @@ public class SignalParametersModel {
             averageIterator++;
         } else {
             amplitude = bufferedAmplitude / averageCount;
-            frequency = bufferedFrequency / averageCount;
+            signalFrequency = bufferedFrequency / averageCount;
             rms = bufferedRms / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
             averageIterator = 0;
@@ -89,7 +87,7 @@ public class SignalParametersModel {
     }
 
     private double calculateAmplitude() {
-        return (maxValue - minValue) / 2;
+        return (maxSignalValue - minSignalValue) / 2;
     }
 
     private double calculateFrequency() {
@@ -97,17 +95,17 @@ public class SignalParametersModel {
         double firstValue = data[channel] + shift;
         double zeroTransitionCounter = 0;
         boolean firstPeriod = true;
-        positivePartOfSignal = !(firstValue > (zeroShift + shift));
+        boolean positivePartOfSignal = !(firstValue > (zeroShift + shift));
         samplesPerSemiPeriod = 0;
 
-        for (int index = channel; index < data.length; index += CHANNELS) {
+        for (int index = channel; index < data.length; index += channels) {
             double value = data[index] + shift;
             double centerOfSignal = zeroShift + shift;
 
             countSamples(zeroTransitionCounter);
 
             if (firstValue > centerOfSignal) {
-                if (value > centerOfSignal && firstPeriod && (index > CHANNELS * 10)) {
+                if (value > centerOfSignal && firstPeriod && (index > channels * 10)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
@@ -120,7 +118,7 @@ public class SignalParametersModel {
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index > CHANNELS * 10)) {
+                if (value < centerOfSignal && firstPeriod && (index > channels * 10)) {
                     positivePartOfSignal = false;
                 } else if ((value > centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
@@ -133,7 +131,7 @@ public class SignalParametersModel {
             }
         }
 
-        double frequency = semiPeriodTime == 0 ? 0 : adc.getFrequency() / (samplesPerSemiPeriod * 2);
+        double frequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
         if (frequency > 50) {
             frequency = calculateFrequencyBeyond50Hz();
         }
@@ -150,7 +148,7 @@ public class SignalParametersModel {
         boolean positivePartOfSignal = false;
         double frequency = 0;
 
-        for (int i = channel; i < data.length; i += CHANNELS) {
+        for (int i = channel; i < data.length; i += channels) {
             if ((data[i] > zeroShift * 1.9) && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
@@ -173,12 +171,12 @@ public class SignalParametersModel {
     }
 
     private double calculateZeroShift() {
-        return (maxValue + minValue) / 2;
+        return (maxSignalValue + minSignalValue) / 2;
     }
 
     private void checkCalibration(boolean isCalibrationExists) {
         if (isCalibrationExists) {
-            if (lowerBound < 0 & firstPointLoadValue >= 0) {
+            if (lowerBound < 0 & calibrationFirstPointLoadValue >= 0) {
                 amplitude = applyCalibration(amplitude);
             } else {
                 amplitude = applyCalibration(adc, amplitude);
@@ -190,23 +188,23 @@ public class SignalParametersModel {
     private double applyCalibration(double value) {
         defineBounds();
         setBounds();
-        return calibratedValue = value / (Math.abs(lowerBound) + Math.abs(upperBound)) * secondPointLoadValue;
+        return calibratedValue = value / (Math.abs(lowerBound) + Math.abs(upperBound)) * calibrationSecondPointLoadValue;
     }
 
     private void defineBounds() {
-        if (firstPointChannelValue > secondPointChannelValue) {
-            double loadValueBuffer = firstPointLoadValue;
-            double channelValueBuffer = firstPointChannelValue;
-            firstPointLoadValue = secondPointLoadValue;
-            firstPointChannelValue = secondPointChannelValue;
-            secondPointLoadValue = loadValueBuffer;
-            secondPointChannelValue = channelValueBuffer;
+        if (calibrationFirstPointChannelValue > calibrationSecondPointChannelValue) {
+            double loadValueBuffer = calibrationFirstPointLoadValue;
+            double channelValueBuffer = calibrationFirstPointChannelValue;
+            calibrationFirstPointLoadValue = calibrationSecondPointLoadValue;
+            calibrationFirstPointChannelValue = calibrationSecondPointChannelValue;
+            calibrationSecondPointLoadValue = loadValueBuffer;
+            calibrationSecondPointChannelValue = channelValueBuffer;
         }
     }
 
     private void setBounds() {
-        lowerBound = firstPointChannelValue;
-        upperBound = secondPointChannelValue;
+        lowerBound = calibrationFirstPointChannelValue;
+        upperBound = calibrationSecondPointChannelValue;
     }
 
     double applyCalibration(ADC adc, double value) {
@@ -226,23 +224,23 @@ public class SignalParametersModel {
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
-        firstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
-        firstPointLoadValue = CalibrationPoint.parseLoadValue(firstCalibrationPoint);
-        secondPointChannelValue = CalibrationPoint.parseChannelValue(secondCalibrationPoint);
-        secondPointLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
+        calibrationFirstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
+        calibrationFirstPointLoadValue = CalibrationPoint.parseLoadValue(firstCalibrationPoint);
+        calibrationSecondPointChannelValue = CalibrationPoint.parseChannelValue(secondCalibrationPoint);
+        calibrationSecondPointLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
     }
 
     private void calibrate(double value) {
         if (value > lowerBound * 1.2 & value <= upperBound * 1.2) {
-            double k = (secondPointLoadValue - firstPointLoadValue) / (secondPointChannelValue - firstPointChannelValue);
-            double b = firstPointLoadValue - k * firstPointChannelValue;
+            double k = (calibrationSecondPointLoadValue - calibrationFirstPointLoadValue) / (calibrationSecondPointChannelValue - calibrationFirstPointChannelValue);
+            double b = calibrationFirstPointLoadValue - k * calibrationFirstPointChannelValue;
             calibratedValue = k * value + b;
         }
     }
 
     void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-        valueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
+        calibrationValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
         double minLoadValue = 999_999_999;
         double maxLoadValue = -999_999_999;
         int GRAPH_SCALE = 5;
@@ -267,8 +265,8 @@ public class SignalParametersModel {
         return amplitude;
     }
 
-    double getFrequency() {
-        return frequency;
+    double getSignalFrequency() {
+        return signalFrequency;
     }
 
     double getLowerBound() {
@@ -287,8 +285,8 @@ public class SignalParametersModel {
         return upperBound;
     }
 
-    String getValueName() {
-        return valueName;
+    String getCalibrationValueName() {
+        return calibrationValueName;
     }
 
     double getZeroShift() {
