@@ -4,7 +4,7 @@ import ru.avem.posum.hardware.ADC;
 
 import java.util.List;
 
-public class SignalParametersModel {
+class SignalParametersModel {
     private ADC adc;
     private int averageIterator;
     private double amplitude;
@@ -161,13 +161,13 @@ public class SignalParametersModel {
     }
 
     private double calculateRms() {
-        double squaresSum = 0;
+        double sum = 0;
 
-        for (double datum : data) {
-            squaresSum += datum * datum;
+        for (int index = channel; index < data.length; index += channels) {
+            sum += data[index];
         }
 
-        return Math.sqrt(squaresSum / data.length);
+        return Math.sqrt(sum / data.length);
     }
 
     private double calculateZeroShift() {
