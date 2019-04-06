@@ -1,7 +1,6 @@
 package ru.avem.posum.models;
 
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.utils.Complex;
 
 import java.util.List;
 
@@ -23,10 +22,13 @@ public class SignalParametersModel {
     private double lowerBound;
     private double maxValue;
     private double minValue;
+    private boolean positivePartOfSignal;
     private double rms;
     private double secondPointLoadValue;
     private double secondPointChannelValue;
-    private int samplesPerPeriod;
+    private int samplesPerSemiPeriod;
+    private long semiPeriodTime;
+    private long startTime;
     private double tickUnit;
     private double upperBound;
     private String valueName;
@@ -91,45 +93,52 @@ public class SignalParametersModel {
     }
 
     private double calculateFrequency() {
-        boolean positivePartOfSignal = false;
-        double frequency = 0;
-        samplesPerPeriod = 0;
+        int shift = 1_000;
+        double firstValue = data[channel] + shift;
+        double zeroTransitionCounter = 0;
+        boolean firstPeriod = true;
+        positivePartOfSignal = !(firstValue > (zeroShift + shift));
+        samplesPerSemiPeriod = 0;
 
-        for (int i = channel; i < data.length; i += CHANNELS) {
-            countSamples(frequency);
+        for (int index = channel; index < data.length; index += CHANNELS) {
+            double value = data[index] + shift;
+            double centerOfSignal = zeroShift + shift;
 
-            if (amplitude + zeroShift > 0) {
-                if (zeroShift > 0) {
-                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                } else {
-                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                }
-            } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
-                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
-                    frequency++;
+            countSamples(zeroTransitionCounter);
+
+            if (firstValue > centerOfSignal) {
+                if (value > centerOfSignal && firstPeriod && (index > CHANNELS * 10)) {
                     positivePartOfSignal = true;
-                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
+                } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod == 0)) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = false;
+                    firstPeriod = false;
+                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod > 10) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = true;
+                }
+            }
+
+            if (firstValue < centerOfSignal) {
+                if (value < centerOfSignal && firstPeriod && (index > CHANNELS * 10)) {
+                    positivePartOfSignal = false;
+                } else if ((value > centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod == 0)) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = true;
+                    firstPeriod = false;
+                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod > 10) {
+                    zeroTransitionCounter++;
                     positivePartOfSignal = false;
                 }
             }
         }
 
-        return samplesPerPeriod == 0 ? 0 : (1 / ((double) 1 / 7680 * samplesPerPeriod));
+        return semiPeriodTime == 0 ? 0 : adc.getFrequency() / (samplesPerSemiPeriod * 2);
     }
 
     private void countSamples(double frequency) {
-        if (frequency == 2) {
-            samplesPerPeriod++;
+        if (frequency == 1) {
+            samplesPerSemiPeriod++;
         }
     }
 

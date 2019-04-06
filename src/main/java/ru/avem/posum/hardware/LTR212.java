@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR212 extends ADC {
+    private double frequency;
+
     public LTR212() {
         initializeModuleSettings();
     }
@@ -21,6 +23,13 @@ public class LTR212 extends ADC {
     public void initializeModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings());
         checkStatus();
+    }
+
+    @Override
+    public double getFrequency() {
+        status = getFrequency(getSlot());
+        checkStatus();
+        return frequency;
     }
 
     public void start() {
@@ -48,6 +57,8 @@ public class LTR212 extends ADC {
     public native String testEEPROM(int slot);
 
     public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
+
+    public native String getFrequency(int slot);
 
     public native String start(int slot);
 

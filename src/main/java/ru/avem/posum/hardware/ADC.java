@@ -53,6 +53,8 @@ public abstract class ADC extends Module {
 
     public abstract void parseModuleSettings(String settings);
 
+    public abstract double getFrequency();
+
     public HashMap<String, Integer> getBounds() {
         return bounds;
     }

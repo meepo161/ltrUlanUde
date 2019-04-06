@@ -309,6 +309,7 @@ public class SignalGraphController implements BaseController {
                 signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
+                Utils.sleep(500);
             }
         }).start();
     }
