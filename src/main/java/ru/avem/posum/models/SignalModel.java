@@ -142,6 +142,7 @@ public class SignalModel {
     private void getSignalParameters() {
         amplitude = signalParametersModel.getAmplitude();
         frequency = signalParametersModel.getSignalFrequency();
+        loadsCounter = signalParametersModel.getLoadsCounter();
         rms = signalParametersModel.getRms();
         zeroShift = signalParametersModel.getZeroShift();
     }

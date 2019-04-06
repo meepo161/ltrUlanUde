@@ -10,6 +10,7 @@ class SignalParametersModel {
     private double amplitude;
     private double bufferedAmplitude;
     private double bufferedFrequency;
+    private double bufferedLoadsCounter;
     private double bufferedRms;
     private double bufferedZeroShift;
     private double calibratedValue;
@@ -21,6 +22,7 @@ class SignalParametersModel {
     private int channel;
     private int channels;
     private double[] data;
+    private double loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
     private double minSignalValue;
@@ -68,17 +70,20 @@ class SignalParametersModel {
         if (averageCount == 1) {
             bufferedAmplitude = amplitude = calculateAmplitude();
             bufferedFrequency = signalFrequency = calculateFrequency();
+            bufferedLoadsCounter = loadsCounter = calculateLoadsCounter();
             bufferedRms = rms = calculateRms(2);
             bufferedZeroShift = zeroShift = calculateZeroShift();
         } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
             bufferedFrequency += calculateFrequency();
+            bufferedLoadsCounter += calculateLoadsCounter();
             bufferedRms += calculateRms(2);
             bufferedZeroShift += calculateZeroShift();
             averageIterator++;
         } else {
             amplitude = bufferedAmplitude / averageCount;
             signalFrequency = bufferedFrequency / averageCount;
+            loadsCounter = bufferedLoadsCounter / averageCount;
             rms = bufferedRms / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
             averageIterator = 0;
@@ -158,6 +163,10 @@ class SignalParametersModel {
         }
 
         return frequency;
+    }
+
+    private double calculateLoadsCounter() {
+        return calculateFrequencyBeyond50Hz();
     }
 
     private double calculateRms(int power) {
@@ -271,6 +280,10 @@ class SignalParametersModel {
 
     double getLowerBound() {
         return lowerBound;
+    }
+
+    public double getLoadsCounter() {
+        return loadsCounter;
     }
 
     double getRms() {
