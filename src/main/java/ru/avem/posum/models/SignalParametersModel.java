@@ -68,12 +68,12 @@ class SignalParametersModel {
         if (averageCount == 1) {
             bufferedAmplitude = amplitude = calculateAmplitude();
             bufferedFrequency = signalFrequency = calculateFrequency();
-            bufferedRms = rms = calculateRms();
+            bufferedRms = rms = calculateRms(2);
             bufferedZeroShift = zeroShift = calculateZeroShift();
         } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
             bufferedFrequency += calculateFrequency();
-            bufferedRms += calculateRms();
+            bufferedRms += calculateRms(2);
             bufferedZeroShift += calculateZeroShift();
             averageIterator++;
         } else {
@@ -160,11 +160,11 @@ class SignalParametersModel {
         return frequency;
     }
 
-    private double calculateRms() {
+    private double calculateRms(int power) {
         double sum = 0;
 
         for (int index = channel; index < data.length; index += channels) {
-            sum += data[index];
+            sum += Math.pow(data[index], power);
         }
 
         return Math.sqrt(sum / data.length);
