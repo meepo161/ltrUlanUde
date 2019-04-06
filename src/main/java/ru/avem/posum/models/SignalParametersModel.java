@@ -133,13 +133,33 @@ public class SignalParametersModel {
             }
         }
 
-        return semiPeriodTime == 0 ? 0 : adc.getFrequency() / (samplesPerSemiPeriod * 2);
+        double frequency = semiPeriodTime == 0 ? 0 : adc.getFrequency() / (samplesPerSemiPeriod * 2);
+        if (frequency > 50) {
+            frequency = calculateFrequencyBeyond50Hz();
+        }
+        return frequency;
     }
 
     private void countSamples(double frequency) {
         if (frequency == 1) {
             samplesPerSemiPeriod++;
         }
+    }
+
+    private double calculateFrequencyBeyond50Hz() {
+        boolean positivePartOfSignal = false;
+        double frequency = 0;
+
+        for (int i = channel; i < data.length; i += CHANNELS) {
+            if ((data[i] > zeroShift * 1.9) && !positivePartOfSignal) {
+                frequency++;
+                positivePartOfSignal = true;
+            } else if (data[i] < zeroShift * 1.9){
+                positivePartOfSignal = false;
+            }
+        }
+
+        return frequency;
     }
 
     private double calculateRms() {
