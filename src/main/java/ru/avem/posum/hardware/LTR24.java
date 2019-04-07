@@ -8,6 +8,11 @@ public class LTR24 extends ADC {
 
     public native String open(String crate, int slot);
 
+    @Override
+    public double getFrequency() {
+        return 0;
+    }
+
     public void initModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges());
         checkStatus();
