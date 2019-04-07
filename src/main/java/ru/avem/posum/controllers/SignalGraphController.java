@@ -156,6 +156,7 @@ public class SignalGraphController implements BaseController {
     private void toggleAutoScale(boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         yAxis.setAutoRanging(isAutoRangeEnabled);
+        Utils.sleep(100);
     }
 
     private void initializeTextFields() {
@@ -235,14 +236,19 @@ public class SignalGraphController implements BaseController {
                 toggleAutoScale(true);
             } else {
                 toggleAutoScale(false);
-                setGraphBounds();
+                int selectedRange = verticalScalesComboBox.getSelectionModel().getSelectedIndex();
+                if (selectedRange != 0) {
+                    verticalScalesComboBox.getSelectionModel().select(0);
+                } else {
+                    verticalScalesComboBox.getSelectionModel().select(1);
+                }
+                verticalScalesComboBox.getSelectionModel().select(selectedRange);
             }
         });
     }
 
     private void setGraphBounds() {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-
         yAxis.setLowerBound(signalModel.getLowerBound());
         yAxis.setUpperBound(signalModel.getUpperBound());
         yAxis.setTickUnit(signalModel.getTickUnit());
