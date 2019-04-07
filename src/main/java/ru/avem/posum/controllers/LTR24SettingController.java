@@ -394,7 +394,7 @@ public class LTR24SettingController implements BaseController {
             ltr24.openConnection();
         }
 
-        ltr24.initModule();
+        ltr24.initializeModule();
     }
 
     private void checkResult() {

@@ -1,38 +1,58 @@
 package ru.avem.posum.hardware;
 
 public class LTR24 extends ADC {
+    private double frequency;
+
     public void openConnection() {
-        status = open(crate, getSlot());
+        status = openConnection(crate, getSlot());
         checkStatus();
     }
 
-    public native String open(String crate, int slot);
-
-    @Override
-    public double getFrequency() {
-        return 0;
-    }
-
-    public void initModule() {
+    public void initializeModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges());
         checkStatus();
     }
 
-    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
+    @Override
+    public double getFrequency() {
+        status = getFrequency(getSlot());
+        checkStatus();
+        return frequency;
+    }
 
-    public void receive(double[] data) {
-        status = fillArray(getSlot(), data);
+    public void start() {
+        status = start(getSlot());
         checkStatus();
     }
 
-    public native String fillArray(int slot, double[] data);
+    public void write(double[] data, double[] timeMarks) {
+        status = write(getSlot(), data, timeMarks);
+        checkStatus();
+    }
+
+    public void stop() {
+        status = stop(getSlot());
+        checkStatus();
+    }
 
     public void closeConnection() {
-        close(getSlot());
+        closeConnection(getSlot());
         checkStatus();
     }
 
-    public native String close(int slot);
+    public native String openConnection(String crate, int slot);
+
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
+
+    public native String getFrequency(int slot);
+
+    public native String start(int slot);
+
+    public native String write(int slot, double[] data, double[] timeMarks);
+
+    public native String stop(int slot);
+
+    public native String closeConnection(int slot);
 
     @Override
     public StringBuilder moduleSettingsToString() {

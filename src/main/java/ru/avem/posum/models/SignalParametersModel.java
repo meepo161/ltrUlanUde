@@ -250,8 +250,8 @@ class SignalParametersModel {
     void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         calibrationValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
-        double minLoadValue = 999_999_999;
-        double maxLoadValue = -999_999_999;
+        double minLoadValue = Double.MAX_VALUE;
+        double maxLoadValue = Double.MIN_VALUE;
         int GRAPH_SCALE = 5;
 
         for (String calibrationSetting : calibrationSettings) {
