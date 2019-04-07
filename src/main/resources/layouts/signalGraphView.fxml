@@ -101,7 +101,7 @@
                <GridPane.margin>
                   <Insets left="270.0" />
                </GridPane.margin></Button>
-            <StatusBar text="" GridPane.columnIndex="2" GridPane.columnSpan="9" GridPane.rowIndex="15" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="13" GridPane.rowIndex="15" />
          </children>
       </GridPane>
    </children>

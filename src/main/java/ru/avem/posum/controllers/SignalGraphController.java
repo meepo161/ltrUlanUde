@@ -11,11 +11,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
+import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.models.GraphModel;
 import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
 public class SignalGraphController implements BaseController {
@@ -36,11 +37,11 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField frequencyTextField;
     @FXML
-    private Label loadsCounterLabel;
-    @FXML
     private LineChart<Number, Number> graph;
     @FXML
     private ComboBox<String> horizontalScalesComboBox;
+    @FXML
+    private Label loadsCounterLabel;
     @FXML
     private TextField loadsCounterTextField;
     @FXML
@@ -48,13 +49,17 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField rmsTextField;
     @FXML
-    private Label zeroShiftLabel;
+    private StatusBar statusBar;
     @FXML
-    private TextField zeroShiftTextField;
+    private StatusBarLine statusBarLine = new StatusBarLine();
     @FXML
     private Label titleLabel;
     @FXML
     private ComboBox<String> verticalScalesComboBox;
+    @FXML
+    private Label zeroShiftLabel;
+    @FXML
+    private TextField zeroShiftTextField;
 
     private ControllerManager cm;
     private GraphModel graphModel = new GraphModel();
@@ -236,13 +241,7 @@ public class SignalGraphController implements BaseController {
                 toggleAutoScale(true);
             } else {
                 toggleAutoScale(false);
-                int selectedRange = verticalScalesComboBox.getSelectionModel().getSelectedIndex();
-                if (selectedRange != 0) {
-                    verticalScalesComboBox.getSelectionModel().select(0);
-                } else {
-                    verticalScalesComboBox.getSelectionModel().select(1);
-                }
-                verticalScalesComboBox.getSelectionModel().select(selectedRange);
+                resetGraphBounds();
             }
         });
     }
@@ -254,21 +253,27 @@ public class SignalGraphController implements BaseController {
         yAxis.setTickUnit(signalModel.getTickUnit());
     }
 
+    private void resetGraphBounds() {
+        int selectedRange = verticalScalesComboBox.getSelectionModel().getSelectedIndex();
+        if (selectedRange != 0) {
+            verticalScalesComboBox.getSelectionModel().select(0);
+        } else {
+            verticalScalesComboBox.getSelectionModel().select(1);
+        }
+        verticalScalesComboBox.getSelectionModel().select(selectedRange);
+    }
+
     private void listenCalibrationCheckBox() {
         calibrationCheckBox.selectedProperty().addListener(observable -> {
             if (calibrationCheckBox.isSelected()) {
-                signalModel.setCalibrationExists(true);
                 checkCalibration();
-                setValueNameToGraph();
-                setGraphBounds();
-                setSignalParametersLabels();
-                clearSeries();
-                showGraph();
             } else {
                 signalModel.setCalibrationExists(false);
                 signalModel.setDefaultValueName();
+                verticalScalesComboBox.setDisable(false);
                 setValueNameToGraph();
                 setSignalParametersLabels();
+                resetGraphBounds();
             }
         });
     }
@@ -279,6 +284,14 @@ public class SignalGraphController implements BaseController {
 
         if (signalModel.isCalibrationExists()) {
             calibrationCheckBox.setSelected(true);
+            verticalScalesComboBox.setDisable(true);
+            setValueNameToGraph();
+            setGraphBounds();
+            setSignalParametersLabels();
+            clearSeries();
+            showGraph();
+        } else {
+            statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", statusBar);
         }
     }
 
@@ -315,7 +328,7 @@ public class SignalGraphController implements BaseController {
                 signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
-                Utils.sleep(500);
+                Utils.sleep(100);
             }
         }).start();
     }
