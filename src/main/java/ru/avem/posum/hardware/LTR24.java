@@ -16,7 +16,6 @@ public class LTR24 extends ADC {
     @Override
     public double getFrequency() {
         status = getFrequency(getSlot());
-        checkStatus();
         return frequency;
     }
 
@@ -26,7 +25,7 @@ public class LTR24 extends ADC {
     }
 
     public void write(double[] data, double[] timeMarks) {
-        status = write(getSlot(), data, timeMarks);
+        status = write(getSlot(), data, timeMarks, data.length, 1000);
         checkStatus();
     }
 
@@ -48,7 +47,7 @@ public class LTR24 extends ADC {
 
     public native String start(int slot);
 
-    public native String write(int slot, double[] data, double[] timeMarks);
+    public native String write(int slot, double[] data, double[] timeMarks, int length, int timeout);
 
     public native String stop(int slot);
 
