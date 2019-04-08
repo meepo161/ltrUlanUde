@@ -43,9 +43,7 @@ class SignalParametersModel {
         setFields(signal, channel);
         calculateMinAndMaxValues();
         calculateParameters(averageCount);
-        System.out.println("Frequency before calibration: " + signalFrequency);
         checkCalibration(isCalibrationExists);
-        System.out.println("Frequency before calibration: " + signalFrequency);
     }
 
     private void setFields(double[] rawData, int channel) {
@@ -71,23 +69,23 @@ class SignalParametersModel {
     private void calculateParameters(double averageCount) {
         if (averageCount == 1) {
             bufferedAmplitude = amplitude = calculateAmplitude();
-            bufferedFrequency = signalFrequency = calculateFrequency();
-            loadsCounter += calculateLoadsCounter();
             bufferedRms = rms = calculateRms();
             bufferedZeroShift = zeroShift = calculateZeroShift();
+            bufferedFrequency = signalFrequency = calculateFrequency();
+            loadsCounter += calculateLoadsCounter();
         } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
-            bufferedFrequency += calculateFrequency();
-            bufferedLoadsCounter += calculateLoadsCounter();
             bufferedRms += calculateRms();
             bufferedZeroShift += calculateZeroShift();
+            bufferedFrequency += calculateFrequency();
+            bufferedLoadsCounter += calculateLoadsCounter();
             averageIterator++;
         } else {
             amplitude = bufferedAmplitude / averageCount;
-            signalFrequency = bufferedFrequency / averageCount;
-            loadsCounter += bufferedLoadsCounter / averageCount;
             rms = bufferedRms / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
+            signalFrequency = bufferedFrequency / averageCount;
+            loadsCounter += bufferedLoadsCounter / averageCount;
             bufferedAmplitude = bufferedFrequency = bufferedLoadsCounter = bufferedRms = bufferedZeroShift = 0;
             averageIterator = 0;
         }
