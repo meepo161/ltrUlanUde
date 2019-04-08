@@ -39,7 +39,6 @@ public class LTR212 extends ADC {
 
     public void write(double[] data, double[] timeMarks) {
         status = write(getSlot(), data, timeMarks);
-        checkStatus();
     }
 
     public void stop() {

@@ -184,7 +184,7 @@ public class SignalGraphController implements BaseController {
     private void setSignalParametersLabels() {
         amplitudeLabel.setText(String.format("Амлитуда, %s:", signalModel.getValueName()));
         loadsCounterLabel.setText("Нагружений:");
-        rmsLabel.setText("RMS, В:");
+        rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
         zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
     }
 
@@ -309,6 +309,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
+                Utils.sleep(100);
             }
         }).start();
     }
@@ -361,7 +362,10 @@ public class SignalGraphController implements BaseController {
 
         for (index = channel; index < data.length && !cm.isStopped(); index += channels * scale) {
             XYChart.Data point = signalModel.getPoint(index);
-            Runnable addPoint = () -> graphSeries.getData().add(point);
+            Runnable addPoint = () -> {
+                if (!graphSeries.getData().contains(point))
+                    graphSeries.getData().add(point);
+            };
 
             if ((double) point.getXValue() < graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);

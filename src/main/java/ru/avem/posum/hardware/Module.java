@@ -8,7 +8,7 @@ public class Module {
     private int slot;
     private long moduleId;
     boolean[] checkedChannels;
-    protected String status;
+    protected volatile String status;
     private TextEncoder textEncoder = new TextEncoder();
     private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 

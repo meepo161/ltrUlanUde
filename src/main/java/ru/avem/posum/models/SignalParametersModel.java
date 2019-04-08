@@ -43,7 +43,9 @@ class SignalParametersModel {
         setFields(signal, channel);
         calculateMinAndMaxValues();
         calculateParameters(averageCount);
+        System.out.println("Frequency before calibration: " + signalFrequency);
         checkCalibration(isCalibrationExists);
+        System.out.println("Frequency before calibration: " + signalFrequency);
     }
 
     private void setFields(double[] rawData, int channel) {
@@ -86,8 +88,8 @@ class SignalParametersModel {
             loadsCounter += bufferedLoadsCounter / averageCount;
             rms = bufferedRms / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
-            averageIterator = 0;
             bufferedAmplitude = bufferedFrequency = bufferedLoadsCounter = bufferedRms = bufferedZeroShift = 0;
+            averageIterator = 0;
         }
     }
 
@@ -110,26 +112,26 @@ class SignalParametersModel {
             countSamples(zeroTransitionCounter);
 
             if (firstValue > centerOfSignal) {
-                if (value > centerOfSignal && firstPeriod && (index > channels * 10)) {
+                if (value > centerOfSignal && firstPeriod && (index > channels * 50)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod > 10) {
+                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod > 50) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index > channels * 10)) {
+                if (value < centerOfSignal && firstPeriod && (index > channels * 50)) {
                     positivePartOfSignal = false;
                 } else if ((value > centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod > 10) {
+                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod > 50) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = false;
                 }
@@ -188,7 +190,11 @@ class SignalParametersModel {
     }
 
     private double calculateRms() {
-        return amplitude / Math.sqrt(2);
+        double summ = 0;
+        for (int i = channel; i < data.length; i += channels) {
+            summ += data[i] * data[i];
+        }
+        return Math.sqrt(summ / data.length * channels);
     }
 
     private double calculateZeroShift() {
@@ -202,6 +208,7 @@ class SignalParametersModel {
             } else {
                 amplitude = applyCalibration(adc, amplitude);
             }
+            rms = applyCalibration(adc, rms);
             zeroShift = applyCalibration(adc, zeroShift);
         }
     }
@@ -294,7 +301,7 @@ class SignalParametersModel {
         return lowerBound;
     }
 
-    public double getLoadsCounter() {
+    double getLoadsCounter() {
         return loadsCounter;
     }
 

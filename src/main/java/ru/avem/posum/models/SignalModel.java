@@ -167,8 +167,9 @@ public class SignalModel {
         }
     }
 
+    /* Определяет коэффициент для прореживания отображаемых точек на графике сигнала */
     public void defineDataRarefactionCoefficient() {
-        if (frequency < 10) {
+        if (frequency < 25) {
             dataRarefactionCoefficient = 10;
         } else if (frequency < 50) {
             dataRarefactionCoefficient = 2;
