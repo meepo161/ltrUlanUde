@@ -595,7 +595,6 @@ public class LTR34SettingController implements BaseController {
         new Thread(() -> {
             findLTR34Module();
             saveChannelsSettings();
-            handleStopSignal();
             prepareSettingsScene();
         }).start();
 

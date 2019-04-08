@@ -1,13 +1,14 @@
 package ru.avem.posum;
 
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.SignalModel;
 
 import java.util.List;
 
 public interface ControllerManager {
+
     void checkCalibration();
 
     void createListModulesControllers(List<String> modulesNames);
@@ -15,6 +16,8 @@ public interface ControllerManager {
     String getCrate();
 
     CrateModel getCrateModelInstance();
+
+    int getDecimalFormatScale();
 
     ExperimentModel getExperimentModel();
 
@@ -24,11 +27,17 @@ public interface ControllerManager {
 
     double getZeroShift();
 
+    void giveChannelInfo(int channel, String moduleType, int slot);
+
     void hideRequiredFieldsSymbols();
+
+    void initializeSignalGraphView();
 
     boolean isClosed();
 
-    void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel);
+    boolean isStopped();
+
+    void loadDefaultCalibrationSettings(SignalModel signalModel);
 
     void loadDefaultSettings();
 
@@ -40,9 +49,9 @@ public interface ControllerManager {
 
     void setClosed(boolean closed);
 
-    void setEditMode(boolean editMode);
+    void setStopped(boolean stopped);
 
-    void showChannelData(String moduleType, int slot, int channel);
+    void setEditMode(boolean editMode);
 
     void showChannelValue();
 

@@ -13,20 +13,22 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
+    private volatile boolean closed;
     private LoginController loginController;
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
     private LTR24SettingController ltr24SettingController;
+    private LTR27SettingController ltr27SettingController;
     private LTR34SettingController ltr34SettingController;
     private LTR212SettingController ltr212SettingController;
     private CalibrationController calibrationController;
@@ -39,6 +41,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene settingsScene;
     private Scene processScene;
     private Scene ltr24Scene;
+    private Scene ltr27Scene;
     private Scene ltr34Scene;
     private Scene ltr212Scene;
     private Scene signalGraphScene;
@@ -46,7 +49,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private SignalGraphController signalGraphController;
     private Stage loginStage;
     private Stage primaryStage;
-    private volatile boolean closed;
+    private boolean stopped;
 
     @Override
     public void init() throws IOException {
@@ -185,6 +188,190 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void checkCalibration() {
+        Utils.sleep(500);
+        signalGraphController.checkCalibration();
+    }
+
+    @Override
+    public void createListModulesControllers(List<String> modulesNames) {
+        modulesPairs.clear();
+        for (String module : modulesNames) {
+            String layoutPath = null;
+            switch (Utils.parseModuleType(module)) {
+                case CrateModel.LTR24:
+                    layoutPath = "/layouts/LTR24SettingView.fxml";
+                    break;
+                case CrateModel.LTR27:
+                    layoutPath = "/layouts/LTR27SettingView.fxml";
+                    break;
+                case CrateModel.LTR34:
+                    layoutPath = "/layouts/LTR34SettingView.fxml";
+                    break;
+                case CrateModel.LTR212:
+                    layoutPath = "/layouts/LTR212SettingView.fxml";
+                    break;
+            }
+            try {
+                Pair<BaseController, Scene> pair = loadScene(layoutPath);
+                modulesPairs.add(pair);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Pair<BaseController, Scene> loadScene(String layoutPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(Main.class.getResource(layoutPath));
+        Parent parent = loader.load();
+        BaseController baseController = loader.getController();
+        baseController.setWindowManager(this);
+        baseController.setControllerManager(this);
+
+        return new Pair<>(baseController, new Scene(parent, 1280, 720));
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void stop() {
+        closed = true;
+    }
+
+    @Override
+    public String getCrate() {
+        return settingsController.getCrate();
+    }
+
+    @Override
+    public CrateModel getCrateModelInstance() {
+        return settingsController.getCrateModel();
+    }
+
+    @Override
+    public int getDecimalFormatScale() {
+        return signalGraphController.getDecimalFormatScale();
+    }
+
+    @Override
+    public ExperimentModel getExperimentModel() {
+        return processController.getExperimentModel();
+    }
+
+    @Override
+    public boolean getICPMode() {
+        return ltr24SettingController.isIcpMode();
+    }
+
+    @Override
+    public String getValueName() {
+        return signalGraphController.getSignalModel().getValueName();
+    }
+
+    @Override
+    public double getZeroShift() {
+        return signalGraphController.getSignalModel().getZeroShift();
+    }
+
+    @Override
+    public void giveChannelInfo(int channel, String moduleType, int slot) {
+        signalGraphController.getSignalModel().setFields(moduleType, slot, channel);
+    }
+
+    @Override
+    public void hideRequiredFieldsSymbols() {
+        settingsController.hideRequiredFieldsSymbols();
+    }
+
+    @Override
+    public void initializeSignalGraphView() {
+        signalGraphController.initializeView();
+    }
+
+    @Override
+    public boolean isClosed() {
+        return closed;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    @Override
+    public void loadDefaultCalibrationSettings(SignalModel signalModel) {
+        calibrationController.loadDefaults(signalModel);
+    }
+
+    @Override
+    public void loadDefaultSettings() {
+        settingsController.loadDefaultSettings();
+    }
+
+    @Override
+    public void loadItemsForMainTableView() {
+        mainController.getTestPrograms();
+        mainController.showTestPrograms();
+    }
+
+    @Override
+    public void loadItemsForModulesTableView() {
+        settingsController.refreshModulesList();
+    }
+
+    @Override
+    public void loadModuleSettings(int id, String moduleName) {
+        String moduleType = (moduleName + " ").substring(0, 6).trim();
+
+        switch (moduleType) {
+            case CrateModel.LTR24:
+                ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
+                ltr24SettingController.loadSettings(moduleName);
+                break;
+            case CrateModel.LTR34:
+                ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
+                ltr34SettingController.loadSettings(moduleName);
+                break;
+            case CrateModel.LTR212:
+                ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
+                ltr212SettingController.loadSettings(moduleName);
+                break;
+        }
+    }
+
+    @Override
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    @Override
+    public void setEditMode(boolean editMode) {
+        settingsController.setEditMode(editMode);
+    }
+    @Override
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+
+    @Override
+    public void showChannelValue() {
+        calibrationController.showChannelValue();
+    }
+
+    @Override
+    public void showTestProgram(TestProgram testProgram) {
+        settingsController.showTestProgram(testProgram);
+    }
+
+    @Override
+    public void toggleSettingsSceneButtons(boolean isDisable) {
+        settingsController.toggleButtons(isDisable);
+    }
+
+    @Override
     public void setScene(WindowsManager.Scenes scene) {
         switch (scene) {
             case LOGIN_SCENE:
@@ -230,166 +417,5 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void setModuleScene(String moduleName, int id) {
         primaryStage.setTitle("Настройки модуля " + moduleName);
         primaryStage.setScene(modulesPairs.get(id).getValue());
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void loadItemsForMainTableView() {
-        mainController.getTestPrograms();
-        mainController.showTestPrograms();
-    }
-
-    @Override
-    public void loadItemsForModulesTableView() {
-        settingsController.refreshModulesList();
-    }
-
-    @Override
-    public void loadDefaultSettings() {
-        settingsController.loadDefaultSettings();
-    }
-
-    @Override
-    public void toggleSettingsSceneButtons(boolean isDisable) {
-        settingsController.toggleButtons(isDisable);
-    }
-
-    @Override
-    public void loadModuleSettings(int id, String moduleName) {
-        String moduleType = (moduleName + " ").substring(0, 6).trim();
-
-        switch (moduleType) {
-            case CrateModel.LTR24:
-                ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
-                ltr24SettingController.loadSettings(moduleName);
-                break;
-            case CrateModel.LTR34:
-                ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
-                ltr34SettingController.loadSettings(moduleName);
-                break;
-            case CrateModel.LTR212:
-                ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
-                ltr212SettingController.loadSettings(moduleName);
-                break;
-        }
-    }
-
-    @Override
-    public boolean getICPMode() {
-        return ltr24SettingController.isIcpMode();
-    }
-
-    @Override
-    public String getValueName() {
-        return signalGraphController.getValueName();
-    }
-
-    @Override
-    public void checkCalibration() {
-        signalGraphController.checkCalibration();
-    }
-
-    @Override
-    public void createListModulesControllers(List<String> modulesNames) {
-        modulesPairs.clear();
-        for (String module : modulesNames) {
-            String layoutPath = null;
-            switch (module.split(" ")[0]) {
-                case CrateModel.LTR24:
-                    layoutPath = "/layouts/LTR24SettingView.fxml";
-                    break;
-                case CrateModel.LTR34:
-                    layoutPath = "/layouts/LTR34SettingView.fxml";
-                    break;
-                case CrateModel.LTR212:
-                    layoutPath = "/layouts/LTR212SettingView.fxml";
-                    break;
-            }
-            try {
-                Pair<BaseController, Scene> pair = loadScene(layoutPath);
-                modulesPairs.add(pair);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private Pair<BaseController, Scene> loadScene(String layoutPath) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource(layoutPath));
-        Parent parent = loader.load();
-        BaseController baseController = loader.getController();
-        baseController.setWindowManager(this);
-        baseController.setControllerManager(this);
-
-        return new Pair<>(baseController, new Scene(parent, 1280, 720));
-    }
-
-    @Override
-    public void showChannelData(String moduleType, int slot, int channel) {
-        signalGraphController.initializeView(moduleType, slot, channel);
-    }
-
-    @Override
-    public String getCrate() {
-        return settingsController.getCrate();
-    }
-
-    @Override
-    public CrateModel getCrateModelInstance() {
-        return settingsController.getCrateModel();
-    }
-
-    @Override
-    public ExperimentModel getExperimentModel() {
-        return processController.getExperimentModel();
-    }
-
-    @Override
-    public double getZeroShift() {
-        return signalGraphController.getReceivedSignal().getZeroShift();
-    }
-
-    @Override
-    public void showChannelValue() {
-        calibrationController.showChannelValue();
-    }
-
-    @Override
-    public void showTestProgram(TestProgram testProgram) {
-        settingsController.showTestProgram(testProgram);
-    }
-
-    @Override
-    public void setEditMode(boolean editMode) {
-        settingsController.setEditMode(editMode);
-    }
-
-    @Override
-    public void hideRequiredFieldsSymbols() {
-        settingsController.hideRequiredFieldsSymbols();
-    }
-
-    @Override
-    public void loadDefaultCalibrationSettings(ADC adc, String moduleType, int channel) {
-        calibrationController.loadDefaults(adc, moduleType, channel);
-    }
-
-    @Override
-    public boolean isClosed() {
-        return closed;
-    }
-
-    @Override
-    public void setClosed(boolean cl) {
-        this.closed = cl;
-    }
-
-    @Override
-    public void stop() {
-        closed = true;
     }
 }

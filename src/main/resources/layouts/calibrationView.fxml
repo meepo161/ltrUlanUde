@@ -92,9 +92,8 @@
                     <Label text="Нет данных для отображения" />
                 </placeholder>
               <columns>
-                <TableColumn fx:id="loadChannelColumn" minWidth="250.0" prefWidth="213.0" text="Величина нагрузки" />
-                <TableColumn fx:id="channelValueColumn" minWidth="250.0" prefWidth="208.0" text="Значение на канале" />
-                  <TableColumn fx:id="valueNameColumn" minWidth="250.0" prefWidth="214.0" text="Единицы измерения" />
+                <TableColumn fx:id="loadChannelColumn" minWidth="250.0" prefWidth="380.0" text="Величина нагрузки" />
+                <TableColumn fx:id="channelValueColumn" minWidth="250.0" prefWidth="380.0" text="Значение на канале, В" />
               </columns>
                <GridPane.margin>
                   <Insets left="10.0" top="4.0" />

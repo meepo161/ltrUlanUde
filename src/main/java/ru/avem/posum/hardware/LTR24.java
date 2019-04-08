@@ -1,33 +1,81 @@
 package ru.avem.posum.hardware;
 
 public class LTR24 extends ADC {
+    private double frequency;
+
     public void openConnection() {
-        status = open(crate, slot);
+        status = openConnection(crate, getSlot());
         checkStatus();
     }
 
-    public native String open(String crate, int slot);
-
-    public void initModule() {
-        status = initialize(slot, channelsTypes, measuringRanges);
+    public void initializeModule() {
+        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges());
         checkStatus();
     }
+
+    @Override
+    public double getFrequency() {
+        status = getFrequency(getSlot());
+        checkStatus();
+        return frequency;
+    }
+
+    public void start() {
+        status = start(getSlot());
+        checkStatus();
+    }
+
+    public void write(double[] data, double[] timeMarks) {
+        status = write(getSlot(), data, timeMarks);
+        checkStatus();
+    }
+
+    public void stop() {
+        status = stop(getSlot());
+        checkStatus();
+    }
+
+    public void closeConnection() {
+        closeConnection(getSlot());
+        checkStatus();
+    }
+
+    public native String openConnection(String crate, int slot);
 
     public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
 
-    public void receive(double[] data) {
-        status = fillArray(slot, data);
-        checkStatus();
+    public native String getFrequency(int slot);
+
+    public native String start(int slot);
+
+    public native String write(int slot, double[] data, double[] timeMarks);
+
+    public native String stop(int slot);
+
+    public native String closeConnection(int slot);
+
+    @Override
+    public StringBuilder moduleSettingsToString() {
+        StringBuilder settings = new StringBuilder();
+
+        settings.append(moduleSettings.get(Settings.ADC_MODE.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.IIR_FILTER.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FIR_FILTER.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.DECIMATION.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.TAP.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
+
+        return settings;
     }
 
-    public native String fillArray(int slot, double[] data);
+    @Override
+    public void parseModuleSettings(String settings) {
 
-    public void closeConnection() {
-        close(slot);
-        checkStatus();
     }
-
-    public native String close(int slot);
 
     static {
         System.loadLibrary( "LTR24Library");

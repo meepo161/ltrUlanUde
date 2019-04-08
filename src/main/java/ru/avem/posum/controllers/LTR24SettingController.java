@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -395,7 +394,7 @@ public class LTR24SettingController implements BaseController {
             ltr24.openConnection();
         }
 
-        ltr24.initModule();
+        ltr24.initializeModule();
     }
 
     private void checkResult() {
@@ -477,7 +476,8 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        cm.showChannelData(CrateModel.LTR24, ltr24.getSlot(), channel);
+        cm.giveChannelInfo(channel, CrateModel.LTR24, ltr24.getSlot());
+        cm.initializeSignalGraphView();
         cm.checkCalibration();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }

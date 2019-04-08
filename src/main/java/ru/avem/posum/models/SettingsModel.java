@@ -2,7 +2,6 @@ package ru.avem.posum.models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.CalibrationsRepository;
@@ -62,6 +61,7 @@ public class SettingsModel implements BaseController {
     private void addInitModuleInstructions() {
         instructions.clear();
         instructions.put(CrateModel.LTR24, this::initLTR24Instance);
+        instructions.put(CrateModel.LTR27, this::initLTR27Instance);
         instructions.put(CrateModel.LTR34, this::initLTR34Instance);
         instructions.put(CrateModel.LTR212, this::initLTR212Instance);
     }
@@ -71,6 +71,10 @@ public class SettingsModel implements BaseController {
         setModuleSettings(adc);
         setDefaultADCSettings(0, 1);
         saveModuleInstance(adc);
+    }
+
+    private void initLTR27Instance() {
+
     }
 
     private void initLTR34Instance() {
@@ -83,7 +87,7 @@ public class SettingsModel implements BaseController {
     private void initLTR212Instance() {
         adc = new LTR212();
         setModuleSettings(adc);
-        setDefaultADCSettings(2, 3);
+        setDefaultADCSettings(0, 3);
         saveModuleInstance(adc);
     }
 
@@ -276,6 +280,7 @@ public class SettingsModel implements BaseController {
                 module.setChannelsTypes(adc.getChannelsTypes());
                 module.setMeasuringRanges(adc.getMeasuringRanges());
                 module.setChannelsDescription(adc.getChannelsDescription());
+                module.setSettings(String.valueOf(adc.moduleSettingsToString()));
 
                 updateModuleSettings(module);
             }
@@ -331,6 +336,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Channels types", String.valueOf(channelsTypesLine));
         moduleSettings.put("Measuring ranges", String.valueOf(measuringRangesLine));
         moduleSettings.put("Channels description", String.valueOf(channelsDescriptionsLine));
+        moduleSettings.put("Module Settings", String.valueOf(adc.moduleSettingsToString()));
     }
 
     private void getDACInstance() {
@@ -446,6 +452,7 @@ public class SettingsModel implements BaseController {
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             parseChannelsSettings(module);
+            parseModuleSettings(module);
             loadCalibrationSettings(module);
         }
     }
@@ -465,6 +472,11 @@ public class SettingsModel implements BaseController {
             measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
             channelsDescription[i] = parsedChannelsDescriptions[i];
         }
+    }
+
+    private void parseModuleSettings(Modules module) {
+        String settings = module.getSettings();
+        adc.parseModuleSettings(settings);
     }
 
     private void loadCalibrationSettings(Modules module) {
