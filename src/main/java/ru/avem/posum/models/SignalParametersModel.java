@@ -71,13 +71,13 @@ class SignalParametersModel {
             bufferedAmplitude = amplitude = calculateAmplitude();
             bufferedFrequency = signalFrequency = calculateFrequency();
             loadsCounter += calculateLoadsCounter();
-            bufferedRms = rms = calculateRms(2);
+            bufferedRms = rms = calculateRms();
             bufferedZeroShift = zeroShift = calculateZeroShift();
         } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
             bufferedFrequency += calculateFrequency();
             bufferedLoadsCounter += calculateLoadsCounter();
-            bufferedRms += calculateRms(2);
+            bufferedRms += calculateRms();
             bufferedZeroShift += calculateZeroShift();
             averageIterator++;
         } else {
@@ -187,14 +187,8 @@ class SignalParametersModel {
         return calculateFrequencyBeyond50Hz();
     }
 
-    private double calculateRms(int power) {
-        double sum = 0;
-
-        for (int index = channel; index < data.length; index += channels) {
-            sum += Math.pow(data[index], power);
-        }
-
-        return Math.sqrt(sum / data.length);
+    private double calculateRms() {
+        return amplitude / Math.sqrt(2);
     }
 
     private double calculateZeroShift() {
