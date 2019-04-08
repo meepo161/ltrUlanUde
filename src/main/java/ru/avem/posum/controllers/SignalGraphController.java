@@ -82,6 +82,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
+        graph.getData().removeAll();
         graph.getData().add(graphSeries);
         clearSeries();
         initializeGraphScale();
@@ -94,7 +95,6 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraphScale() {
-        graph.getData().add(graphSeries);
         addVerticalScaleValues();
         addHorizontalScaleValues();
         setDefaultScales();
@@ -307,7 +307,7 @@ public class SignalGraphController implements BaseController {
 
     private void receiveData() {
         new Thread(() -> {
-            while (!cm.isClosed() || !cm.isStopped()) {
+            while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
             }
         }).start();

@@ -70,7 +70,7 @@ class SignalParametersModel {
         if (averageCount == 1) {
             bufferedAmplitude = amplitude = calculateAmplitude();
             bufferedFrequency = signalFrequency = calculateFrequency();
-            bufferedLoadsCounter = loadsCounter = calculateLoadsCounter();
+            loadsCounter += calculateLoadsCounter();
             bufferedRms = rms = calculateRms(2);
             bufferedZeroShift = zeroShift = calculateZeroShift();
         } else if (averageIterator < averageCount) {
@@ -83,11 +83,11 @@ class SignalParametersModel {
         } else {
             amplitude = bufferedAmplitude / averageCount;
             signalFrequency = bufferedFrequency / averageCount;
-            loadsCounter = bufferedLoadsCounter / averageCount;
+            loadsCounter += bufferedLoadsCounter / averageCount;
             rms = bufferedRms / averageCount;
             zeroShift = bufferedZeroShift / averageCount;
             averageIterator = 0;
-            bufferedAmplitude = bufferedFrequency = bufferedRms = bufferedZeroShift = 0;
+            bufferedAmplitude = bufferedFrequency = bufferedLoadsCounter = bufferedRms = bufferedZeroShift = 0;
         }
     }
 
