@@ -154,11 +154,29 @@ class SignalParametersModel {
         double frequency = 0;
 
         for (int i = channel; i < data.length; i += channels) {
-            if ((data[i] > zeroShift * 1.9) && !positivePartOfSignal) {
-                frequency++;
-                positivePartOfSignal = true;
-            } else if (data[i] < zeroShift * 1.9){
-                positivePartOfSignal = false;
+            if (amplitude + zeroShift > 0) {
+                if (zeroShift > 0) {
+                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
+                        frequency++;
+                        positivePartOfSignal = true;
+                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
+                        positivePartOfSignal = false;
+                    }
+                } else {
+                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
+                        frequency++;
+                        positivePartOfSignal = true;
+                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
+                        positivePartOfSignal = false;
+                    }
+                }
+            } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
+                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
+                    frequency++;
+                    positivePartOfSignal = true;
+                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
+                    positivePartOfSignal = false;
+                }
             }
         }
 

@@ -114,10 +114,11 @@ public class SignalModel {
 
     private void getLTR24Data() {
         double[] data = ltr24.getData();
-        RingBuffer ringBuffer = ltr24.getDataRingBuffer();
+        double[] timeMarks = ltr24.getTimeMarks();
+        RingBuffer dataRingBuffer = ltr24.getDataRingBuffer();
 
-        ltr24.receive(data);
-        ringBuffer.put(data);
+        ltr24.write(data, timeMarks);
+        dataRingBuffer.put(data);
     }
 
     private void getLTR212Data() {
