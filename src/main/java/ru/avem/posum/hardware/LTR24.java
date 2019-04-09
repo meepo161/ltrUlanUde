@@ -13,10 +13,9 @@ public class LTR24 extends ADC {
         checkStatus();
     }
 
-    @Override
-    public double getFrequency() {
+    public void defineFrequency() {
         status = getFrequency(getSlot());
-        return frequency;
+        checkStatus();
     }
 
     public void start() {
@@ -74,6 +73,11 @@ public class LTR24 extends ADC {
     @Override
     public void parseModuleSettings(String settings) {
 
+    }
+
+    @Override
+    public double getFrequency() {
+        return frequency;
     }
 
     static {

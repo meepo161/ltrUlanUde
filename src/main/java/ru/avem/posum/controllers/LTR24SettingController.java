@@ -476,6 +476,7 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
+        ltr24.defineFrequency();
         ltr24.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR24, ltr24.getSlot());
         cm.initializeSignalGraphView();

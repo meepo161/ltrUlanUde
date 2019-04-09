@@ -25,11 +25,9 @@ public class LTR212 extends ADC {
         checkStatus();
     }
 
-    @Override
-    public double getFrequency() {
+    public void defineFrequency() {
         status = getFrequency(getSlot());
         checkStatus();
-        return frequency;
     }
 
     public void start() {
@@ -138,5 +136,10 @@ public class LTR212 extends ADC {
         moduleSettings.put(Settings.TAP.getSettingName(), Integer.valueOf(separatedSettings[7]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE.getSettingName(), Integer.valueOf(separatedSettings[8]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), Integer.valueOf(separatedSettings[9]));
+    }
+
+    @Override
+    public double getFrequency() {
+        return frequency;
     }
 }

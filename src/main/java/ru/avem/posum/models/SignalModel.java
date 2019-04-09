@@ -58,7 +58,7 @@ public class SignalModel {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[SAMPLES]);
         ltr24.setDataRingBuffer(new RingBuffer(SAMPLES));
-        ltr24.setTimeMarks(new double[SAMPLES * 3]);
+        ltr24.setTimeMarks(new double[SAMPLES * 2]);
         ltr24.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
@@ -66,7 +66,7 @@ public class SignalModel {
         final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
-        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES * 4));
+        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
@@ -115,7 +115,7 @@ public class SignalModel {
         instructions.put(CrateModel.LTR212, this::getLTR212Data);
     }
 
-    private synchronized void getLTR24Data() {
+    private void getLTR24Data() {
         double[] data = ltr24.getData();
         double[] timeMarks = ltr24.getTimeMarks();
         RingBuffer dataRingBuffer = ltr24.getDataRingBuffer();
@@ -125,12 +125,13 @@ public class SignalModel {
         dataRingBuffer.put(data);
     }
 
-    private synchronized void getLTR212Data() {
+    private void getLTR212Data() {
         double[] data = ltr212.getData();
         double[] timeMarks = ltr212.getTimeMarks();
         RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
 
         ltr212.write(data, timeMarks);
+        dataRingBuffer.reset();
         dataRingBuffer.put(data);
     }
 
@@ -139,9 +140,13 @@ public class SignalModel {
         getSignalParameters();
     }
 
-    private synchronized void calculate() {
+    private void calculate() {
+        buffer = new double[adc.getData().length];
+        for (int i = 0; i < buffer.length; i++) {
+            buffer[i] = adc.getData()[i];
+        }
         signalParametersModel.setFields(adc, channel);
-        signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
+        signalParametersModel.calculateParameters(adc.getData(), averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {
@@ -161,13 +166,11 @@ public class SignalModel {
         if (calibrationExists) {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = signalParametersModel.applyCalibration(adc, buffer[valueIndex]);
-            XYChart.Data<Number, Number> calibratedPoint = new XYChart.Data<>(xValue, yValue);
-            return calibratedPoint;
+            return new XYChart.Data<Number, Number>(xValue, yValue);
         } else {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = buffer[valueIndex];
-            XYChart.Data<Number, Number> point = new XYChart.Data<>(xValue, yValue);
-            return point;
+            return new XYChart.Data<Number, Number>(xValue, yValue);
         }
     }
 

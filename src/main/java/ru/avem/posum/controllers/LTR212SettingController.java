@@ -519,6 +519,7 @@ public class LTR212SettingController implements BaseController {
 
     private void showChannelValue(int channel) {
         saveBounds(channel);
+        ltr212.defineFrequency();
         ltr212.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR212, ltr212.getSlot());
         cm.initializeSignalGraphView();
