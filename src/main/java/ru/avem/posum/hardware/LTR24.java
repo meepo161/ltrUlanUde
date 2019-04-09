@@ -2,6 +2,7 @@ package ru.avem.posum.hardware;
 
 public class LTR24 extends ADC {
     private double frequency;
+    private boolean busy;
 
     public void openConnection() {
         status = openConnection(crate, getSlot());
@@ -15,7 +16,6 @@ public class LTR24 extends ADC {
 
     public void defineFrequency() {
         status = getFrequency(getSlot());
-        checkStatus();
     }
 
     public void start() {
@@ -78,6 +78,10 @@ public class LTR24 extends ADC {
     @Override
     public double getFrequency() {
         return frequency;
+    }
+
+    public boolean isBusy() {
+        return busy;
     }
 
     static {

@@ -141,10 +141,6 @@ public class SignalModel {
     }
 
     private void calculate() {
-        buffer = new double[adc.getData().length];
-        for (int i = 0; i < buffer.length; i++) {
-            buffer[i] = adc.getData()[i];
-        }
         signalParametersModel.setFields(adc, channel);
         signalParametersModel.calculateParameters(adc.getData(), averageCount, calibrationExists);
     }

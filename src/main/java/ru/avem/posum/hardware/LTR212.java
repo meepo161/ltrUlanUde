@@ -5,6 +5,7 @@ import java.util.List;
 
 public class LTR212 extends ADC {
     private double frequency;
+    private boolean busy;
 
     public LTR212() {
         initializeModuleSettings();
@@ -141,5 +142,9 @@ public class LTR212 extends ADC {
     @Override
     public double getFrequency() {
         return frequency;
+    }
+
+    public boolean isBusy() {
+        return busy;
     }
 }
