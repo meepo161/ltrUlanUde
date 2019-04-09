@@ -319,7 +319,7 @@ public class SignalGraphController implements BaseController {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.calculateData();
                 showCalculatedValues();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
 

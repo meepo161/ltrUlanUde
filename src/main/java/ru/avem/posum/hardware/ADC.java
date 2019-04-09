@@ -26,7 +26,8 @@ public abstract class ADC extends Module {
     }
 
     private HashMap<String, Integer> bounds = new HashMap<>();
-    private RingBuffer dataRingBuffer;
+    private RingBuffer ringBufferForCalculation;
+    private RingBuffer ringBufferForShow;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
@@ -79,8 +80,12 @@ public abstract class ADC extends Module {
         return data;
     }
 
-    public RingBuffer getDataRingBuffer() {
-        return dataRingBuffer;
+    public RingBuffer getRingBufferForCalculation() {
+        return ringBufferForCalculation;
+    }
+
+    public RingBuffer getRingBufferForShow() {
+        return ringBufferForShow;
     }
 
     public int[] getMeasuringRanges() {
@@ -115,8 +120,12 @@ public abstract class ADC extends Module {
         this.data = data;
     }
 
-    public void setDataRingBuffer(RingBuffer dataRingBuffer) {
-        this.dataRingBuffer = dataRingBuffer;
+    public void setRingBufferForCalculation(RingBuffer ringBufferForCalculation) {
+        this.ringBufferForCalculation = ringBufferForCalculation;
+    }
+
+    public void setRingBufferForShow(RingBuffer ringBufferForShow) {
+        this.ringBufferForShow = ringBufferForShow;
     }
 
     public void setTimeMarks(double[] timeMarks) {

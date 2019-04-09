@@ -57,7 +57,8 @@ public class SignalModel {
         final int SAMPLES = 39064;
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[SAMPLES]);
-        ltr24.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr24.setRingBufferForCalculation(new RingBuffer(SAMPLES));
+        ltr24.setRingBufferForShow(new RingBuffer(SAMPLES));
         ltr24.setTimeMarks(new double[SAMPLES * 2]);
         ltr24.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
@@ -66,7 +67,8 @@ public class SignalModel {
         final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
-        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr212.setRingBufferForCalculation(new RingBuffer(SAMPLES));
+        ltr212.setRingBufferForShow(new RingBuffer(SAMPLES));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
@@ -118,21 +120,27 @@ public class SignalModel {
     private void getLTR24Data() {
         double[] data = ltr24.getData();
         double[] timeMarks = ltr24.getTimeMarks();
-        RingBuffer dataRingBuffer = ltr24.getDataRingBuffer();
+        RingBuffer ringBufferForCalculation = ltr24.getRingBufferForCalculation();
+        RingBuffer ringBufferForShow = ltr24.getRingBufferForShow();
 
         ltr24.write(data, timeMarks);
-        dataRingBuffer.reset();
-        dataRingBuffer.put(data);
+        ringBufferForCalculation.reset();
+        ringBufferForCalculation.put(data);
+        ringBufferForShow.reset();
+        ringBufferForShow.put(data);
     }
 
     private void getLTR212Data() {
         double[] data = ltr212.getData();
         double[] timeMarks = ltr212.getTimeMarks();
-        RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
+        RingBuffer ringBufferForCalculation = ltr212.getRingBufferForCalculation();
+        RingBuffer ringBufferForShow = ltr212.getRingBufferForShow();
 
         ltr212.write(data, timeMarks);
-        dataRingBuffer.reset();
-        dataRingBuffer.put(data);
+        ringBufferForCalculation.reset();
+        ringBufferForCalculation.put(data);
+        ringBufferForShow.reset();
+        ringBufferForShow.put(data);
     }
 
     public void calculateData() {
@@ -141,8 +149,10 @@ public class SignalModel {
     }
 
     private void calculate() {
+        double[] buffer = new double[adc.getData().length];
+        adc.getRingBufferForCalculation().take(buffer, buffer.length);
         signalParametersModel.setFields(adc, channel);
-        signalParametersModel.calculateParameters(adc.getData(), averageCount, calibrationExists);
+        signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {
@@ -155,7 +165,7 @@ public class SignalModel {
 
     public void fillBuffer() {
         buffer = new double[adc.getData().length];
-        adc.getDataRingBuffer().take(buffer, buffer.length);
+        adc.getRingBufferForShow().take(buffer, buffer.length);
     }
 
     public XYChart.Data getPoint(int valueIndex) {
