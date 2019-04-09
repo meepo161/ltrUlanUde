@@ -395,6 +395,7 @@ public class SignalGraphController implements BaseController {
     private void handleBackButton() {
         cm.setStopped(true);
         signalModel.getAdc().stop();
+        signalModel.setLoadsCounter(0);
         disableAutoRange();
         disableAverage();
         disableCalibration();

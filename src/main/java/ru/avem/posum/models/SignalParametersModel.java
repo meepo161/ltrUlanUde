@@ -322,4 +322,8 @@ class SignalParametersModel {
     double getZeroShift() {
         return zeroShift;
     }
+
+    public void setLoadsCounter(double loadsCounter) {
+        this.loadsCounter = loadsCounter;
+    }
 }

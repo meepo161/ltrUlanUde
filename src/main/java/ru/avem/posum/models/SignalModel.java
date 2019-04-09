@@ -262,4 +262,9 @@ public class SignalModel {
     public void setCalibrationExists(boolean calibrationExists) {
         this.calibrationExists = calibrationExists;
     }
+
+    public void setLoadsCounter(double loadsCounter) {
+        this.loadsCounter = loadsCounter;
+        signalParametersModel.setLoadsCounter(loadsCounter);
+    }
 }
