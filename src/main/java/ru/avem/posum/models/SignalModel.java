@@ -58,7 +58,7 @@ public class SignalModel {
         ltr24 = (LTR24) adc;
         ltr24.setData(new double[SAMPLES]);
         ltr24.setDataRingBuffer(new RingBuffer(SAMPLES));
-        ltr24.setTimeMarks(new double[SAMPLES * 2]);
+        ltr24.setTimeMarks(new double[SAMPLES * 3]);
         ltr24.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
@@ -66,7 +66,7 @@ public class SignalModel {
         final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
         ltr212.setData(new double[SAMPLES]);
-        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES * 4));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
@@ -115,16 +115,17 @@ public class SignalModel {
         instructions.put(CrateModel.LTR212, this::getLTR212Data);
     }
 
-    private void getLTR24Data() {
+    private synchronized void getLTR24Data() {
         double[] data = ltr24.getData();
         double[] timeMarks = ltr24.getTimeMarks();
         RingBuffer dataRingBuffer = ltr24.getDataRingBuffer();
 
         ltr24.write(data, timeMarks);
+        dataRingBuffer.reset();
         dataRingBuffer.put(data);
     }
 
-    private void getLTR212Data() {
+    private synchronized void getLTR212Data() {
         double[] data = ltr212.getData();
         double[] timeMarks = ltr212.getTimeMarks();
         RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
@@ -138,9 +139,9 @@ public class SignalModel {
         getSignalParameters();
     }
 
-    private void calculate() {
+    private synchronized void calculate() {
         signalParametersModel.setFields(adc, channel);
-        signalParametersModel.calculateParameters(adc.getData(), averageCount, calibrationExists);
+        signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {

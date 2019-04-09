@@ -190,7 +190,7 @@ class SignalParametersModel {
     private double calculateRms() {
         double summ = 0;
         for (int i = channel; i < data.length; i += channels) {
-            summ += data[i] * data[i];
+            summ += (data[i] - zeroShift) * (data[i] - zeroShift);
         }
         return Math.sqrt(summ / data.length * channels);
     }

@@ -82,7 +82,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
-        graph.getData().removeAll();
+        graph.getData().removeAll(graph.getData());
         graph.getData().add(graphSeries);
         clearSeries();
         initializeGraphScale();
@@ -309,7 +309,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
     }
@@ -317,19 +317,13 @@ public class SignalGraphController implements BaseController {
     private void showData() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.fillBuffer();
+                signalModel.defineDataRarefactionCoefficient();
                 signalModel.calculateData();
                 showCalculatedValues();
-                Utils.sleep(100);
-            }
-        }).start();
-
-        new Thread(() -> {
-            while (!cm.isClosed() && !cm.isStopped()) {
-                signalModel.defineDataRarefactionCoefficient();
-                signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
     }

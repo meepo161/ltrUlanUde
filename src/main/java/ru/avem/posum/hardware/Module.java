@@ -10,7 +10,6 @@ public class Module {
     boolean[] checkedChannels;
     protected volatile String status;
     private TextEncoder textEncoder = new TextEncoder();
-    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
     void checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
@@ -68,13 +67,5 @@ public class Module {
 
     public void setTextEncoder(TextEncoder textEncoder) {
         this.textEncoder = textEncoder;
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
     }
 }
