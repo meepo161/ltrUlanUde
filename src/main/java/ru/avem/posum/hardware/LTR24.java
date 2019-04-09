@@ -28,6 +28,7 @@ public class LTR24 extends ADC {
         checkStatus();
     }
 
+    @Override
     public void stop() {
         status = stop(getSlot());
         checkStatus();

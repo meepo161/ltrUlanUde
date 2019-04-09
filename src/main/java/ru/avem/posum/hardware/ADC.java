@@ -50,11 +50,13 @@ public abstract class ADC extends Module {
         moduleSettings = new HashMap<>();
     }
 
+    public abstract double getFrequency();
+
     public abstract StringBuilder moduleSettingsToString();
 
     public abstract void parseModuleSettings(String settings);
 
-    public abstract double getFrequency();
+    public abstract void stop();
 
     public HashMap<String, Integer> getBounds() {
         return bounds;

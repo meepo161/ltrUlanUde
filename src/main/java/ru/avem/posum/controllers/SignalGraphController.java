@@ -82,7 +82,7 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initializeGraph() {
-        graph.getData().removeAll();
+        graph.getData().removeAll(graph.getData());
         graph.getData().add(graphSeries);
         clearSeries();
         initializeGraphScale();
@@ -394,6 +394,7 @@ public class SignalGraphController implements BaseController {
     @FXML
     private void handleBackButton() {
         cm.setStopped(true);
+        signalModel.getAdc().stop();
         disableAutoRange();
         disableAverage();
         disableCalibration();

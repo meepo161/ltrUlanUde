@@ -40,6 +40,7 @@ public class LTR212 extends ADC {
         status = write(getSlot(), data, timeMarks);
     }
 
+    @Override
     public void stop() {
         status = stop(getSlot());
         checkStatus();
