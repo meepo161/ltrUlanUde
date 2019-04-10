@@ -121,7 +121,7 @@ public class MainController implements BaseController {
         });
     }
 
-    private void createContextMenu () {
+    private void createContextMenu() {
         MenuItem menuItemEdit = new MenuItem("Настроить");
         MenuItem menuItemCopy = new MenuItem("Копировать");
         MenuItem menuItemDelete = new MenuItem("Удалить");
@@ -141,7 +141,7 @@ public class MainController implements BaseController {
                     handleMenuItemEdit();
                 }
 
-                if(event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     contextMenu.show(testProgramTableView, event.getScreenX(), event.getScreenY());
                 } else if (event.getClickCount() == 1) {
                     contextMenu.hide();
@@ -207,7 +207,9 @@ public class MainController implements BaseController {
 
     private int getSelectedItemIndex() {
         selectedIndex = testProgramTableView.getSelectionModel().getSelectedIndex();
-        selectedIndex = testProgramTableView.getItems().get(selectedIndex).getIndex();
+        if (selectedIndex != -1) {
+            selectedIndex = testProgramTableView.getItems().get(selectedIndex).getIndex();
+        }
         return selectedIndex;
     }
 
