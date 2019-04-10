@@ -179,6 +179,7 @@ public class LTR24SettingController implements BaseController {
         frequencies.add("39.06 кГц");
         frequencies.add("29.30 кГц");
         frequencies.add("19.53 кГц");
+        frequencies.add("14.64 кГц");
         frequencies.add("9.77 кГц");
         frequencies.add("7.32 кГц");
         frequencies.add("4.88 кГц");
