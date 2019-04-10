@@ -39,6 +39,8 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private TextField descriptionOfChannelN4;
     @FXML
+    private ComboBox discretizationFrequency;
+    @FXML
     private Button initializeButton;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN1;
