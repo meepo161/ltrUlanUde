@@ -7,13 +7,17 @@ public class LTR24 extends ADC {
     private double frequency;
     private boolean busy;
 
+    public LTR24() {
+        initializeModuleSettings();
+    }
+
     public void openConnection() {
         status = openConnection(crate, getSlot());
         checkStatus();
     }
 
     public void initializeModule() {
-        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges());
+        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR24ModuleSettings());
         checkStatus();
     }
 
@@ -44,7 +48,7 @@ public class LTR24 extends ADC {
 
     public native String openConnection(String crate, int slot);
 
-    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
 
     public native String getFrequency(int slot);
 
@@ -64,7 +68,7 @@ public class LTR24 extends ADC {
         getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 3); // частота дискретизации 39.06 кГц
     }
 
-    private int[] getLTR212ModuleSettings() {
+    private int[] getLTR24ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
         settingsList.add(getModuleSettings().get(Settings.FREQUENCY.getSettingName()));
 
