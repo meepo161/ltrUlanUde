@@ -393,7 +393,8 @@ public class SignalGraphController implements BaseController {
     @FXML
     private void handleBackButton() {
         cm.setStopped(true);
-//        signalModel.getAdc().stop();
+        Utils.sleep(1000);
+        signalModel.getAdc().stop();
         signalModel.setLoadsCounter(0);
         disableAutoRange();
         disableAverage();
