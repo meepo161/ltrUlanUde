@@ -39,7 +39,7 @@ public class LTR24SettingController implements BaseController {
     @FXML
     private TextField descriptionOfChannelN4;
     @FXML
-    private ComboBox discretizationFrequency;
+    private ComboBox<String> discretizationFrequencyComboBox;
     @FXML
     private Button initializeButton;
     @FXML
@@ -103,6 +103,7 @@ public class LTR24SettingController implements BaseController {
         fillListOfChannelsValuesButtons();
 
         addChannelsTypes(channelsTypesComboBoxes);
+        addFrequencies(discretizationFrequencyComboBox);
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
@@ -167,6 +168,27 @@ public class LTR24SettingController implements BaseController {
         for (ComboBox<String> comboBox : measuringRangeComboBoxes) {
             comboBox.getItems().addAll(strings);
         }
+    }
+
+    private void addFrequencies(ComboBox<String> comboBox) {
+        ObservableList<String> frequencies = FXCollections.observableArrayList();
+        frequencies.add("117.19 кГц");
+        frequencies.add("78.13 кГц");
+        frequencies.add("58.59 кГц");
+        frequencies.add("39.06 кГц");
+        frequencies.add("29.30 кГц");
+        frequencies.add("19.53 кГц");
+        frequencies.add("9.77 кГц");
+        frequencies.add("7.32 кГц");
+        frequencies.add("4.88 кГц");
+        frequencies.add("3.66 кГц");
+        frequencies.add("2.44 кГц");
+        frequencies.add("1.83 кГц");
+        frequencies.add("1.22 кГц");
+        frequencies.add("915.53 Гц");
+        frequencies.add("610.35 Гц");
+
+        comboBox.getItems().addAll(frequencies);
     }
 
     private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {

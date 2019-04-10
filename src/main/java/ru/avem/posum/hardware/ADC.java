@@ -12,7 +12,8 @@ public abstract class ADC extends Module {
         FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
         LOGIC_CHANNELS_COUNT("Logic channels count"), IIR_FILTER("IIR filter"),
         FIR_FILTER("FIR filter"), DECIMATION("Decimation"), TAP("Filter order"),
-        REFERENCE_VOLTAGE("Reference voltage"), REFERENCE_VOLTAGE_TYPE("Reference voltage type");
+        REFERENCE_VOLTAGE("Reference voltage"), REFERENCE_VOLTAGE_TYPE("Reference voltage type"),
+        FREQUENCY("Frequency");
 
         private String settingName;
 

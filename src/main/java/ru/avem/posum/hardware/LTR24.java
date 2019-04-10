@@ -1,5 +1,8 @@
 package ru.avem.posum.hardware;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LTR24 extends ADC {
     private double frequency;
     private boolean busy;
@@ -53,27 +56,38 @@ public class LTR24 extends ADC {
 
     public native String closeConnection(int slot);
 
-    @Override
-    public StringBuilder moduleSettingsToString() {
-        StringBuilder settings = new StringBuilder();
+    static {
+        System.loadLibrary( "LTR24Library");
+    }
 
-        settings.append(moduleSettings.get(Settings.ADC_MODE.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.IIR_FILTER.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.FIR_FILTER.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.DECIMATION.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.TAP.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
+    private void initializeModuleSettings() {
+        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 3); // частота дискретизации 39.06 кГц
+    }
+
+    private int[] getLTR212ModuleSettings() {
+        List<Integer> settingsList = new ArrayList<>();
+        settingsList.add(getModuleSettings().get(Settings.FREQUENCY.getSettingName()));
+
+        int[] settings = new int[settingsList.size()];
+
+        for (int i = 0; i < settingsList.size(); i++) {
+            settings[i] = settingsList.get(i);
+        }
 
         return settings;
     }
 
     @Override
-    public void parseModuleSettings(String settings) {
+    public StringBuilder moduleSettingsToString() {
+        StringBuilder settings = new StringBuilder();
+        settings.append(moduleSettings.get(Settings.FREQUENCY.getSettingName())).append(", ");
+        return settings;
+    }
 
+    @Override
+    public void parseModuleSettings(String settings) {
+        String[] separatedSettings = settings.split(", ");
+        moduleSettings.put(Settings.FREQUENCY.getSettingName(), Integer.valueOf(separatedSettings[0]));
     }
 
     @Override
@@ -83,9 +97,5 @@ public class LTR24 extends ADC {
 
     public boolean isBusy() {
         return busy;
-    }
-
-    static {
-        System.loadLibrary( "LTR24Library");
     }
 }
