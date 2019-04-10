@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.hardware.Module;
@@ -359,6 +360,8 @@ public class LTR24SettingController implements BaseController {
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
         }
+        int frequency = ltr24.getModuleSettings().get(ADC.Settings.FREQUENCY.getSettingName());
+        discretizationFrequencyComboBox.getSelectionModel().select(frequency);
     }
 
     public void handleInitialize() {
@@ -366,6 +369,7 @@ public class LTR24SettingController implements BaseController {
 
         new Thread(() -> {
             saveChannelsSettings();
+            saveModuleSettings();
             initializeModule();
             checkResult();
             indicateResult();
@@ -411,6 +415,11 @@ public class LTR24SettingController implements BaseController {
                 measuringRanges[i] = 0;
             }
         }
+    }
+
+    private void saveModuleSettings() {
+        int frequency = discretizationFrequencyComboBox.getSelectionModel().getSelectedIndex();
+        ltr24.getModuleSettings().put(ADC.Settings.FREQUENCY.getSettingName(), frequency);
     }
 
     private void initializeModule() {
@@ -471,6 +480,7 @@ public class LTR24SettingController implements BaseController {
         new Thread(() -> {
             findLTR24Module();
             saveChannelsSettings();
+            saveModuleSettings();
             closeConnection();
             enableChannelsUiElements();
             prepareSettingScene();
