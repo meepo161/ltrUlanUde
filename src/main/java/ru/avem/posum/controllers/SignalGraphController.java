@@ -328,7 +328,7 @@ public class SignalGraphController implements BaseController {
                 signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
     }
@@ -374,10 +374,10 @@ public class SignalGraphController implements BaseController {
             if ((index == data.length - channels * scale) || index == data.length - 1) {
                 XYChart.Data lastPoint = new XYChart.Data(1.01, data[data.length - channels * scale]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
-                Utils.sleep(400);
+                Utils.sleep(1);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
-                Utils.sleep(400);
+                Utils.sleep(1);
                 break;
             }
         }
@@ -393,7 +393,7 @@ public class SignalGraphController implements BaseController {
     @FXML
     private void handleBackButton() {
         cm.setStopped(true);
-        signalModel.getAdc().stop();
+//        signalModel.getAdc().stop();
         signalModel.setLoadsCounter(0);
         disableAutoRange();
         disableAverage();

@@ -65,7 +65,7 @@ public class LTR24 extends ADC {
     }
 
     private void initializeModuleSettings() {
-        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 3); // частота дискретизации 39.06 кГц
+        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 7); // частота дискретизации 9.7 кГц
     }
 
     private int[] getLTR24ModuleSettings() {
