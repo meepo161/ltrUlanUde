@@ -351,6 +351,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void setEditMode(boolean editMode) {
         settingsController.setEditMode(editMode);
     }
+
     @Override
     public void setStopped(boolean stopped) {
         this.stopped = stopped;

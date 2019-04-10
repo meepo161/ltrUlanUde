@@ -31,7 +31,7 @@ public class LTR24 extends ADC {
     }
 
     public void write(double[] data, double[] timeMarks) {
-        status = write(getSlot(), data, timeMarks, data.length, 1000);
+        status = write(getSlot(), data, timeMarks, data.length, 2000);
         checkStatus();
     }
 
