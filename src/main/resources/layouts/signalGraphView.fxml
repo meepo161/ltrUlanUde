@@ -7,6 +7,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -102,6 +103,7 @@
                   <Insets left="270.0" />
                </GridPane.margin></Button>
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="13" GridPane.rowIndex="15" />
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="15" />
          </children>
       </GridPane>
    </children>

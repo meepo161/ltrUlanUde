@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -44,6 +41,8 @@ public class SignalGraphController implements BaseController {
     private Label loadsCounterLabel;
     @FXML
     private TextField loadsCounterTextField;
+    @FXML
+    private ProgressIndicator progressIndicator;
     @FXML
     private Label rmsLabel;
     @FXML
@@ -308,7 +307,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
     }
@@ -392,6 +391,7 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleBackButton() {
+        toggleProgressIndicatorState(false);
         cm.setStopped(true);
         Utils.sleep(1000);
         signalModel.getAdc().stop();
@@ -401,8 +401,17 @@ public class SignalGraphController implements BaseController {
         disableCalibration();
         String moduleType = signalModel.getModuleType();
         int slot = signalModel.getSlot();
+        toggleProgressIndicatorState(true);
         wm.setModuleScene(moduleType, slot - 1);
         cm.loadItemsForModulesTableView();
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            progressIndicator.setStyle("-fx-opacity: 0;");
+        } else {
+            progressIndicator.setStyle("-fx-opacity: 1.0;");
+        }
     }
 
     private void disableAutoRange() {
