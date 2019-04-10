@@ -37,7 +37,7 @@ public class LTR212 extends ADC {
     }
 
     public void write(double[] data, double[] timeMarks) {
-        status = write(getSlot(), data, timeMarks);
+        status = write(getSlot(), data, timeMarks, data.length);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class LTR212 extends ADC {
 
     public native String start(int slot);
 
-    public native String write(int slot, double[] data, double[] timeMarks);
+    public native String write(int slot, double[] data, double[] timeMarks, int size);
 
     public native String stop(int slot);
 
