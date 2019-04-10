@@ -51,8 +51,6 @@ public class SignalGraphController implements BaseController {
     @FXML
     private StatusBar statusBar;
     @FXML
-    private StatusBarLine statusBarLine = new StatusBarLine();
-    @FXML
     private Label titleLabel;
     @FXML
     private ComboBox<String> verticalScalesComboBox;
@@ -65,6 +63,7 @@ public class SignalGraphController implements BaseController {
     private GraphModel graphModel = new GraphModel();
     private volatile XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private SignalModel signalModel = new SignalModel();
+    private StatusBarLine statusBarLine = new StatusBarLine();
     private WindowsManager wm;
 
     public void initializeView() {
