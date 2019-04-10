@@ -54,8 +54,8 @@ public class SignalModel {
     }
 
     private void initLTR24Module() {
-        final int SAMPLES = 39064;
         ltr24 = (LTR24) adc;
+        int SAMPLES = (int) ltr24.getFrequency();
         ltr24.setData(new double[SAMPLES]);
         ltr24.setRingBufferForCalculation(new RingBuffer(SAMPLES));
         ltr24.setRingBufferForShow(new RingBuffer(SAMPLES));
