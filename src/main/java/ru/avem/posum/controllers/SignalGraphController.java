@@ -307,7 +307,7 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
-                Utils.sleep(1000);
+                Utils.sleep(100);
             }
         }).start();
     }
@@ -317,7 +317,7 @@ public class SignalGraphController implements BaseController {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.calculateData();
                 showCalculatedValues();
-                Utils.sleep(1000);
+                Utils.sleep(100);
             }
         }).start();
 
@@ -327,7 +327,7 @@ public class SignalGraphController implements BaseController {
                 signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
-                Utils.sleep(1000);
+                Utils.sleep(100);
             }
         }).start();
     }
