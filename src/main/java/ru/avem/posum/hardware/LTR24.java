@@ -16,13 +16,18 @@ public class LTR24 extends ADC {
         checkStatus();
     }
 
+    public void checkConnection() {
+        status = checkConnection(getSlot());
+        checkStatus();
+    }
+
     public void initializeModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR24ModuleSettings());
         checkStatus();
     }
 
     public void defineFrequency() {
-        status = getFrequency(getSlot());
+        getFrequency(getSlot());
     }
 
     public void start() {
@@ -31,8 +36,7 @@ public class LTR24 extends ADC {
     }
 
     public void write(double[] data, double[] timeMarks) {
-        status = write(getSlot(), data, timeMarks, data.length, 2000);
-        checkStatus();
+        write(getSlot(), data, timeMarks, data.length, 1000);
     }
 
     @Override
@@ -42,11 +46,13 @@ public class LTR24 extends ADC {
     }
 
     public void closeConnection() {
-        closeConnection(getSlot());
+        status = closeConnection(getSlot());
         checkStatus();
     }
 
     public native String openConnection(String crate, int slot);
+
+    private native String checkConnection(int slot);
 
     public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
 

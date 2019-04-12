@@ -30,6 +30,7 @@ public class SignalModel {
     private double upperBound;
     private String valueName = "В";
     private double zeroShift;
+    private int foo;
 
     public void setFields(String moduleType, int slot, int channel) {
         this.moduleType = moduleType;
@@ -124,7 +125,10 @@ public class SignalModel {
         RingBuffer ringBufferForCalculation = ltr24.getRingBufferForCalculation();
         RingBuffer ringBufferForShow = ltr24.getRingBufferForShow();
 
+        ltr24.checkConnection();
+        System.out.printf("Status: %s\n", ltr24.getStatus());
         ltr24.write(data, timeMarks);
+        System.out.printf("Received. Counter: %d\n", foo++);
         ringBufferForCalculation.reset();
         ringBufferForCalculation.put(data);
         ringBufferForShow.reset();
@@ -189,6 +193,15 @@ public class SignalModel {
             dataRarefactionCoefficient = 2;
         } else {
             dataRarefactionCoefficient = 1;
+        }
+
+        double adcFrequency = adc.getFrequency();
+        if (adcFrequency > 10_000 && adcFrequency < 50_000) {
+            dataRarefactionCoefficient *= 10;
+        } else if (adcFrequency > 50_000 && adcFrequency < 100_000) {
+            dataRarefactionCoefficient *= 25;
+        } else if (adcFrequency > 100_000) {
+            dataRarefactionCoefficient *= 50;
         }
     }
 
@@ -256,6 +269,10 @@ public class SignalModel {
         return calibrationExists;
     }
 
+    public void setAccurateFrequencyCalculation(boolean isAccurateCalculation) {
+        signalParametersModel.setAccurateFrequencyCalculation(isAccurateCalculation);
+    }
+
     public void setAverageCount(double averageCount) {
         this.averageCount = averageCount;
     }
@@ -264,8 +281,28 @@ public class SignalModel {
         this.calibrationExists = calibrationExists;
     }
 
+    public void setAmplitude(int amplitude) {
+        signalParametersModel.setAmplitude(amplitude);
+    }
+
+    public void setFrequency(int frequency) {
+        signalParametersModel.setFrequency(frequency);
+    }
+
     public void setLoadsCounter(int loadsCounter) {
         this.loadsCounter = loadsCounter;
         signalParametersModel.setLoadsCounter(loadsCounter);
+    }
+
+    public void setRMS(int rms) {
+        signalParametersModel.setRMS(rms);
+    }
+
+    public void setZeroShift(int zeroShift) {
+        signalParametersModel.setZeroShift(zeroShift);
+    }
+
+    public void setMinSamples(int minSamples) {
+        signalParametersModel.setMinSamples(minSamples);
     }
 }

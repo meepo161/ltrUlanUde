@@ -5,6 +5,7 @@ import ru.avem.posum.hardware.ADC;
 import java.util.List;
 
 class SignalParametersModel {
+    private boolean accurateFrequencyCalculation;
     private ADC adc;
     private int averageIterator;
     private double amplitude;
@@ -25,6 +26,7 @@ class SignalParametersModel {
     private int loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
+    private int minSamples = 5; // минимальное количество сэмплов для расчета частоты
     private double minSignalValue;
     private double rms;
     private int samplesPerSemiPeriod;
@@ -71,13 +73,13 @@ class SignalParametersModel {
             bufferedAmplitude = amplitude = calculateAmplitude();
             bufferedRms = rms = calculateRms();
             bufferedZeroShift = zeroShift = calculateZeroShift();
-            bufferedFrequency = signalFrequency = calculateFrequency();
+            bufferedFrequency = signalFrequency = accurateFrequencyCalculation ? calculateFrequency() : calculateFrequencyBeyond50Hz();
             loadsCounter += calculateLoadsCounter();
         } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
             bufferedRms += calculateRms();
             bufferedZeroShift += calculateZeroShift();
-            bufferedFrequency += calculateFrequency();
+            bufferedFrequency += accurateFrequencyCalculation ? calculateFrequency() : calculateFrequencyBeyond50Hz();
             bufferedLoadsCounter += calculateLoadsCounter();
             averageIterator++;
         } else {
@@ -103,17 +105,6 @@ class SignalParametersModel {
         boolean positivePartOfSignal = !(firstValue > (zeroShift + shift));
         samplesPerSemiPeriod = 0;
         int minSamples = 5;
-        double adcFrequency = adc.getFrequency();
-
-        if (adcFrequency > 1000 && adcFrequency < 10000){
-            minSamples = 50;
-        } else if (adcFrequency > 10000 && adcFrequency < 25000) {
-            minSamples = 250;
-        } else if (adcFrequency > 25000 && adcFrequency < 50000) {
-            minSamples = 500;
-        } else if (adcFrequency > 500000) {
-            minSamples = 1000;
-        }
 
         for (int index = channel; index < data.length; index += channels) {
             double value = data[index] + shift;
@@ -148,11 +139,15 @@ class SignalParametersModel {
             }
         }
 
-        double frequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
-        if (frequency > 50) {
-            frequency = calculateFrequencyBeyond50Hz();
+        double signalFrequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
+
+        if (this.signalFrequency == 0) {
+            return signalFrequency;
+        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5) {
+            return this.signalFrequency;
+        } else {
+            return signalFrequency;
         }
-        return frequency;
     }
 
     private void countSamples(double frequency) {
@@ -335,7 +330,35 @@ class SignalParametersModel {
         return zeroShift;
     }
 
-    public void setLoadsCounter(int loadsCounter) {
+    public boolean isAccurateFrequencyCalculation() {
+        return accurateFrequencyCalculation;
+    }
+
+    public void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {
+        this.accurateFrequencyCalculation = accurateFrequencyCalculation;
+    }
+
+    void setAmplitude(int amplitude) {
+        this.amplitude = amplitude;
+    }
+
+    void setFrequency(int frequency) {
+        this.signalFrequency = frequency;
+    }
+
+    void setLoadsCounter(int loadsCounter) {
         this.loadsCounter = loadsCounter;
+    }
+
+    void setRMS(int rms) {
+        this.rms = rms;
+    }
+
+    void setZeroShift(int zeroShift) {
+        this.zeroShift = zeroShift;
+    }
+
+    public void setMinSamples(int minSamples) {
+        this.minSamples = minSamples;
     }
 }

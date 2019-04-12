@@ -32,6 +32,8 @@ public class SignalGraphController implements BaseController {
     @FXML
     private ComboBox<String> decimalFormatComboBox;
     @FXML
+    private ComboBox<String> frequencyCalculationComboBox;
+    @FXML
     private TextField frequencyTextField;
     @FXML
     private LineChart<Number, Number> graph;
@@ -41,6 +43,8 @@ public class SignalGraphController implements BaseController {
     private Label loadsCounterLabel;
     @FXML
     private TextField loadsCounterTextField;
+    @FXML
+    private TextField minSamplesTextField;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -68,6 +72,7 @@ public class SignalGraphController implements BaseController {
     public void initializeView() {
         setTitleLabel();
         initializeGraph();
+        initializeComboBoxes();
         initializeTextFields();
         initializeCheckBoxes();
         checkCalibration();
@@ -83,7 +88,6 @@ public class SignalGraphController implements BaseController {
         graph.getData().removeAll(graph.getData());
         graph.getData().add(graphSeries);
         clearSeries();
-        initializeGraphScale();
         toggleAutoScale(false);
     }
 
@@ -92,34 +96,39 @@ public class SignalGraphController implements BaseController {
         Utils.sleep(50);
     }
 
-    private void initializeGraphScale() {
+    private void toggleAutoScale(boolean isAutoRangeEnabled) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setAutoRanging(isAutoRangeEnabled);
+        Utils.sleep(100);
+    }
+
+    private void initializeComboBoxes() {
         addVerticalScaleValues();
         addHorizontalScaleValues();
         setDefaultScales();
         listenScalesComboBox(verticalScalesComboBox);
         listenScalesComboBox(horizontalScalesComboBox);
+        addFrequencyCalculations();
+        listenFrequencyCalculationComboBox();
+        addDecimalFormats();
     }
 
     private void addVerticalScaleValues() {
         ObservableList<String> scaleValues = FXCollections.observableArrayList();
-
         scaleValues.add("1 мВ/дел");
         scaleValues.add("10 мВ/дел");
         scaleValues.add("100 мВ/дел");
         scaleValues.add("1 В/дел");
         scaleValues.add("10 В/дел");
         scaleValues.add("100 В/дел");
-
         verticalScalesComboBox.setItems(scaleValues);
     }
 
     private void addHorizontalScaleValues() {
         ObservableList<String> scaleValues = FXCollections.observableArrayList();
-
         scaleValues.add("1 мс/дел");
         scaleValues.add("10 мс/дел");
         scaleValues.add("100 мс/дел");
-
         horizontalScalesComboBox.setItems(scaleValues);
     }
 
@@ -156,16 +165,30 @@ public class SignalGraphController implements BaseController {
         });
     }
 
-    private void toggleAutoScale(boolean isAutoRangeEnabled) {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        yAxis.setAutoRanging(isAutoRangeEnabled);
-        Utils.sleep(100);
+    private void addFrequencyCalculations() {
+        frequencyCalculationComboBox.getItems().clear();
+        ObservableList<String> chooses = FXCollections.observableArrayList();
+        chooses.add("По переходам через статику");
+        chooses.add("По пиковым значениям");
+        frequencyCalculationComboBox.getItems().addAll(chooses);
+        frequencyCalculationComboBox.getSelectionModel().select(0);
     }
 
-    private void initializeTextFields() {
-        addDecimalFormats();
-        decimalFormatComboBox.getSelectionModel().select(1);
-        setSignalParametersLabels();
+    private void listenFrequencyCalculationComboBox() {
+        frequencyCalculationComboBox.valueProperty().addListener(observable -> {
+            switch (frequencyCalculationComboBox.getSelectionModel().getSelectedIndex()) {
+                case 0:
+                    signalModel.setAccurateFrequencyCalculation(true);
+                    minSamplesTextField.setDisable(false);
+                    break;
+                case 1:
+                    signalModel.setAccurateFrequencyCalculation(false);
+                    minSamplesTextField.setDisable(true);
+                    break;
+                default:
+                    signalModel.setAccurateFrequencyCalculation(true);
+            }
+        });
     }
 
     private void addDecimalFormats() {
@@ -174,9 +197,23 @@ public class SignalGraphController implements BaseController {
             for (int i = 1; i <= Utils.getDecimalScaleLimit(); i++) {
                 strings.add(String.format("%d", i));
             }
-
             decimalFormatComboBox.getItems().addAll(strings);
+            decimalFormatComboBox.getSelectionModel().select(1);
         }
+    }
+
+    private void initializeTextFields() {
+        resetCounters();
+        setSignalParametersLabels();
+        listenMinSamplesTextField();
+    }
+
+    private void resetCounters() {
+        signalModel.setAmplitude(0);
+        signalModel.setFrequency(0);
+        signalModel.setLoadsCounter(0);
+        signalModel.setRMS(0);
+        signalModel.setZeroShift(0);
     }
 
     private void setSignalParametersLabels() {
@@ -184,6 +221,19 @@ public class SignalGraphController implements BaseController {
         loadsCounterLabel.setText("Нагружений:");
         rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
         zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
+    }
+
+    private void listenMinSamplesTextField() {
+        minSamplesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+//            minSamplesTextField.setText(newValue.replaceAll("[^1-9][\\d]{2}|[^1-9][\\d][\\d][\\d]|[^1-9][\\d][\\d][\\d][\\d][\\d]|", ""));
+//            if (!newValue.matches("^[1-9]|\\d{2}|^[1-9]|\\d\\d\\d|^[1-9]|\\d\\d\\d\\d|$")) {
+//                minSamplesTextField.setText(oldValue);
+//            }
+
+            if (!minSamplesTextField.getText().isEmpty()) {
+                signalModel.setMinSamples(Integer.parseInt(minSamplesTextField.getText()));
+            }
+        });
     }
 
     private void initializeCheckBoxes() {
@@ -307,7 +357,6 @@ public class SignalGraphController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
-                Utils.sleep(100);
             }
         }).start();
     }
@@ -317,7 +366,7 @@ public class SignalGraphController implements BaseController {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.calculateData();
                 showCalculatedValues();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
 
@@ -327,7 +376,7 @@ public class SignalGraphController implements BaseController {
                 signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
-                Utils.sleep(100);
+                Utils.sleep(1000);
             }
         }).start();
     }

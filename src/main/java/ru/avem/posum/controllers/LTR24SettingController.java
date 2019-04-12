@@ -414,7 +414,7 @@ public class LTR24SettingController implements BaseController {
                 checkedChannels[i] = false; // false - канал не выбран
                 channelsDescriptions[i] = ", ";
                 channelsTypes[i] = 0;
-                measuringRanges[i] = 0;
+                measuringRanges[i] = 1;
             }
         }
     }
