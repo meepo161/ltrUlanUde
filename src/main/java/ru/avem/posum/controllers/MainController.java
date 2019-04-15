@@ -200,9 +200,8 @@ public class MainController implements BaseController {
     }
 
     private void prepareEditSettingsScene() {
-        cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
-        cm.toggleSettingsSceneButtons(false);
         cm.setEditMode(true);
+        cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
     }
 
     private int getSelectedItemIndex() {

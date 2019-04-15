@@ -368,11 +368,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void toggleSettingsSceneButtons(boolean isDisable) {
-        settingsController.toggleButtons(isDisable);
-    }
-
-    @Override
     public void setScene(WindowsManager.Scenes scene) {
         switch (scene) {
             case LOGIN_SCENE:

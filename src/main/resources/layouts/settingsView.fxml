@@ -208,7 +208,7 @@
                                     <Insets right="145.0" />
                                  </GridPane.margin>
                               </Button>
-                              <Button fx:id="saveSettingsButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgramSettings" text="Сохранить" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                              <Button fx:id="saveSettingsButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveTestProgramSettings" text="Сохранить" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
                               <Button fx:id="setupModuleButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSetupModule" text="Настроить" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="BOTTOM">
                                  <GridPane.margin>
                                     <Insets left="145.0" />

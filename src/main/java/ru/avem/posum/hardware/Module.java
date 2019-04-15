@@ -7,6 +7,7 @@ public class Module {
     String crate;
     private int slot;
     private long moduleId;
+    String[] channelsDescription;
     boolean[] checkedChannels;
     protected volatile String status;
     private TextEncoder textEncoder = new TextEncoder();
@@ -17,12 +18,12 @@ public class Module {
         }
     }
 
-    public String getCrate() {
-        return crate;
-    }
-
     public int getChannelsCount() {
         return channelsCount;
+    }
+
+    public String[] getChannelsDescription() {
+        return channelsDescription;
     }
 
     public void setCrate(String crate) {
@@ -49,10 +50,6 @@ public class Module {
         return checkedChannels;
     }
 
-    public void setCheckedChannels(boolean[] checkedChannels) {
-        this.checkedChannels = checkedChannels;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -61,11 +58,4 @@ public class Module {
         this.status = status;
     }
 
-    public TextEncoder getTextEncoder() {
-        return textEncoder;
-    }
-
-    public void setTextEncoder(TextEncoder textEncoder) {
-        this.textEncoder = textEncoder;
-    }
 }

@@ -56,6 +56,4 @@ public interface ControllerManager {
     void showChannelValue();
 
     void showTestProgram(TestProgram testProgram);
-
-    void toggleSettingsSceneButtons(boolean isDisable);
 }

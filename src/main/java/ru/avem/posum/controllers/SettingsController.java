@@ -217,7 +217,6 @@ public class SettingsController implements BaseController {
         cratesListView.setDisable(crate);
         chooseCrateButton.setDisable(crate);
         modulesListView.setDisable(module);
-        saveSettingsButton.setDisable(module);
         setupModuleButton.setDisable(module);
     }
 
@@ -325,18 +324,12 @@ public class SettingsController implements BaseController {
     }
 
     private void toggleUiElements() {
-        toggleButtons(true);
+        setupModuleButton.setDisable(true);
         hideRequiredFieldsSymbols();
 
         Platform.runLater(() -> {
             toggleProgressIndicatorState(false);
         });
-    }
-
-    public void toggleButtons(boolean isDisable) {
-        saveSettingsButton.setDisable(isDisable);
-        setupModuleButton.setDisable(true);
-        backButton.setDisable(isDisable);
     }
 
     public void hideRequiredFieldsSymbols() {
@@ -445,7 +438,6 @@ public class SettingsController implements BaseController {
         modulesListView.getItems().clear();
 
         toggleUiElements(false, true);
-        toggleButtons(false);
     }
 
     @FXML

@@ -32,7 +32,6 @@ public abstract class ADC extends Module {
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
-    private String[] channelsDescription;
     private int[] channelsTypes;
     private double[] data;
     private int[] measuringRanges;
