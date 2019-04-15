@@ -139,10 +139,11 @@ class SignalParametersModel {
         }
 
         double signalFrequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
+        signalFrequency = signalFrequency > 1000 ? 0 : signalFrequency;
 
-        if (this.signalFrequency == 0 && signalFrequency < 1000) {
+        if (this.signalFrequency == 0) {
             return signalFrequency;
-        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5 || signalFrequency > 1000) {
+        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5) {
             return this.signalFrequency;
         } else {
             return signalFrequency;
