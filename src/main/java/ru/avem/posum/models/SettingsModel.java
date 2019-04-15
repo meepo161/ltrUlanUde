@@ -1,6 +1,5 @@
 package ru.avem.posum.models;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.controllers.BaseController;

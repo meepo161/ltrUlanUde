@@ -104,7 +104,6 @@ class SignalParametersModel {
         boolean firstPeriod = true;
         boolean positivePartOfSignal = !(firstValue > (zeroShift + shift));
         samplesPerSemiPeriod = 0;
-        int minSamples = 5;
 
         for (int index = channel; index < data.length; index += channels) {
             double value = data[index] + shift;
