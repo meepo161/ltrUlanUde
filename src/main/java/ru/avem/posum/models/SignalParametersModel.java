@@ -140,9 +140,9 @@ class SignalParametersModel {
 
         double signalFrequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
 
-        if (this.signalFrequency == 0) {
+        if (this.signalFrequency == 0 && signalFrequency < 1000) {
             return signalFrequency;
-        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5) {
+        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5 || signalFrequency > 1000) {
             return this.signalFrequency;
         } else {
             return signalFrequency;
@@ -272,25 +272,27 @@ class SignalParametersModel {
 
     void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-        calibrationValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
-        double minLoadValue = Double.MAX_VALUE;
-        double maxLoadValue = Double.MIN_VALUE;
-        int GRAPH_SCALE = 5;
+        if (!calibrationSettings.isEmpty()) {
+            calibrationValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
+            double minLoadValue = Double.MAX_VALUE;
+            double maxLoadValue = Double.MIN_VALUE;
+            int GRAPH_SCALE = 5;
 
-        for (String calibrationSetting : calibrationSettings) {
-            double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
+            for (String calibrationSetting : calibrationSettings) {
+                double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
 
-            if (minLoadValue > loadValue) {
-                minLoadValue = loadValue;
+                if (minLoadValue > loadValue) {
+                    minLoadValue = loadValue;
+                }
+                if (maxLoadValue < loadValue) {
+                    maxLoadValue = loadValue;
+                }
             }
-            if (maxLoadValue < loadValue) {
-                maxLoadValue = loadValue;
-            }
+
+            lowerBound = minLoadValue;
+            upperBound = maxLoadValue;
+            tickUnit = maxLoadValue / GRAPH_SCALE;
         }
-
-        lowerBound = minLoadValue;
-        upperBound = maxLoadValue;
-        tickUnit = maxLoadValue / GRAPH_SCALE;
     }
 
     double getAmplitude() {

@@ -53,6 +53,16 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void init() throws IOException {
+//        List<List<Double>> doubles = new ArrayList<>();
+//
+//        for (int i = 0; i < 10000; i++) {
+//            doubles.add(i, new ArrayList<>());
+//            for (int j = 0; j < 10000; j++) {
+//                doubles.get(i).add((double) i);
+//            }
+//        }
+//        System.exit(0);
+
         DataBaseRepository.init(false);
 
         crateLoginScene();
