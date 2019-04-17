@@ -2,7 +2,7 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-public class Module {
+public abstract class Module {
     int channelsCount;
     String crate;
     private int slot;
@@ -17,6 +17,8 @@ public class Module {
             status = textEncoder.cp2utf(status);
         }
     }
+
+    public abstract void stop();
 
     public int getChannelsCount() {
         return channelsCount;

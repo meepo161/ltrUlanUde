@@ -5,7 +5,7 @@ import ru.avem.posum.hardware.ADC;
 import java.util.List;
 
 class SignalParametersModel {
-    private boolean accurateFrequencyCalculation;
+    private boolean accurateFrequencyCalculation = true;
     private ADC adc;
     private int averageIterator;
     private double amplitude;
@@ -14,6 +14,12 @@ class SignalParametersModel {
     private double bufferedLoadsCounter;
     private double bufferedRms;
     private double bufferedZeroShift;
+    private double bufferedCalibratedAmplitude;
+    private double bufferedCalibratedRms;
+    private double bufferedCalibratedZeroShift;
+    private double calibratedAmplitude;
+    private double calibratedRms;
+    private double calibratedZeroShift;
     private double calibratedValue;
     private double calibrationFirstPointLoadValue;
     private double calibrationFirstPointChannelValue;
@@ -45,7 +51,7 @@ class SignalParametersModel {
         setFields(signal, channel);
         calculateMinAndMaxValues();
         calculateParameters(averageCount);
-        checkCalibration(isCalibrationExists);
+        checkCalibration(isCalibrationExists, averageCount);
     }
 
     private void setFields(double[] rawData, int channel) {
@@ -70,9 +76,10 @@ class SignalParametersModel {
 
     private void calculateParameters(double averageCount) {
         if (averageCount == 1) {
+            amplitude = rms = zeroShift = 0;
             bufferedAmplitude = amplitude = calculateAmplitude();
-            bufferedRms = rms = calculateRms();
             bufferedZeroShift = zeroShift = calculateZeroShift();
+            bufferedRms = rms = calculateRms();
             bufferedFrequency = signalFrequency = accurateFrequencyCalculation ? calculateFrequency() : calculateFrequencyBeyond50Hz();
             loadsCounter += calculateLoadsCounter();
         } else if (averageIterator < averageCount) {
@@ -206,16 +213,34 @@ class SignalParametersModel {
         return (maxSignalValue + minSignalValue) / 2;
     }
 
-    private void checkCalibration(boolean isCalibrationExists) {
+    private void checkCalibration(boolean isCalibrationExists, double averageCount) {
         if (isCalibrationExists) {
-            if (lowerBound < 0 & calibrationFirstPointLoadValue >= 0) {
-                amplitude = applyCalibration(amplitude);
-            } else {
-                amplitude = applyCalibration(adc, amplitude);
+            if (averageIterator < averageCount || averageCount == 1) {
+                sumCalibratedParameters();
             }
-            rms = applyCalibration(adc, rms);
-            zeroShift = applyCalibration(adc, zeroShift);
+
+            if (!(averageIterator < averageCount)) {
+                calculateCalibratedParameters(averageCount);
+            }
         }
+    }
+
+    private void sumCalibratedParameters() {
+        if (lowerBound < 0 & calibrationFirstPointLoadValue >= 0) {
+            bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(amplitude);
+            bufferedCalibratedRms += calibratedRms = applyCalibration(rms);
+        } else {
+            bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(adc, amplitude);
+            bufferedCalibratedRms += calibratedRms = applyCalibration(adc, rms);
+        }
+        bufferedCalibratedZeroShift += calibratedZeroShift = applyCalibration(adc, zeroShift);
+    }
+
+    private void calculateCalibratedParameters(double averageCount) {
+        calibratedAmplitude = bufferedCalibratedAmplitude / averageCount;
+        calibratedRms = bufferedCalibratedRms / averageCount;
+        calibratedZeroShift = bufferedCalibratedZeroShift / averageCount;
+        bufferedCalibratedAmplitude = bufferedCalibratedRms = bufferedCalibratedZeroShift = 0;
     }
 
     private double applyCalibration(double value) {
@@ -300,6 +325,34 @@ class SignalParametersModel {
         return amplitude;
     }
 
+    int getAverageIterator() {
+        return averageIterator;
+    }
+
+    double getBufferedCalibratedAmplitude() {
+        return bufferedCalibratedAmplitude;
+    }
+
+    double getBufferedCalibratedRms() {
+        return bufferedCalibratedRms;
+    }
+
+    double getBufferedCalibratedZeroShift() {
+        return bufferedCalibratedZeroShift;
+    }
+
+    double getCalibratedAmplitude() {
+        return calibratedAmplitude;
+    }
+
+    double getCalibratedRms() {
+        return calibratedRms;
+    }
+
+    double getCalibratedZeroShift() {
+        return calibratedZeroShift;
+    }
+
     double getSignalFrequency() {
         return signalFrequency;
     }
@@ -332,11 +385,7 @@ class SignalParametersModel {
         return zeroShift;
     }
 
-    public boolean isAccurateFrequencyCalculation() {
-        return accurateFrequencyCalculation;
-    }
-
-    public void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {
+    void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {
         this.accurateFrequencyCalculation = accurateFrequencyCalculation;
     }
 
@@ -360,7 +409,7 @@ class SignalParametersModel {
         this.zeroShift = zeroShift;
     }
 
-    public void setMinSamples(int minSamples) {
+    void setMinSamples(int minSamples) {
         this.minSamples = minSamples;
     }
 }

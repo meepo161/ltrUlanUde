@@ -506,7 +506,7 @@ public class LTR34SettingController implements BaseController {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
-        for (int i = 1; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
         }
 

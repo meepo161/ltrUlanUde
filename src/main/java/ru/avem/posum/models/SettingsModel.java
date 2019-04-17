@@ -109,7 +109,7 @@ public class SettingsModel implements BaseController {
         module.setStatus("");
     }
 
-    private int parseSlotNumber(int moduleIndex) {
+    public int parseSlotNumber(int moduleIndex) {
         String moduleName = modulesNames.get(moduleIndex);
         return Utils.parseSlotNumber(moduleName);
     }
@@ -532,6 +532,14 @@ public class SettingsModel implements BaseController {
                 phases[i] = Integer.parseInt(parsedPhases[i]);
             }
         }
+    }
+
+    public ObservableList<String> getModulesNames() {
+        return modulesNames;
+    }
+
+    public HashMap<Integer, Module> getModules() {
+        return modules;
     }
 
     @Override

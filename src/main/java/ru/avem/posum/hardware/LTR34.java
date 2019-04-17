@@ -14,12 +14,21 @@ public class LTR34 extends DAC {
         checkStatus();
     }
 
-    protected native String open(String crate, int slot);
-
     public void initModule() {
         status = initialize(getCheckedChannelsCounter());
         checkStatus();
     }
+
+    public void closeConnection() {
+        stop();
+        close();
+    }
+
+    public void stop() {
+        stop(getSlot());
+    }
+
+    public native String open(String crate, int slot);
 
     public native String initialize(int channelsCounter);
 
@@ -27,12 +36,7 @@ public class LTR34 extends DAC {
 
     public native String start();
 
-    public void closeConnection() {
-        stop();
-        close();
-    }
-
-    public native String stop();
+    public native String stop(int slot);
 
     public native String close();
 

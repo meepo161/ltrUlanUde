@@ -68,6 +68,11 @@ public class SignalGraphController implements BaseController {
     private SignalModel signalModel = new SignalModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private WindowsManager wm;
+    private double amplitude;
+    private double frequency;
+    private double loadsCounter;
+    private double rms;
+    private double zeroShift;
 
     public void initializeView() {
         setTitleLabel();
@@ -205,7 +210,7 @@ public class SignalGraphController implements BaseController {
     private void initializeTextFields() {
         resetCounters();
         setSignalParametersLabels();
-        listenMinSamplesTextField();
+        setDigitFilterToMinSamplesTextField();
     }
 
     private void resetCounters() {
@@ -223,15 +228,11 @@ public class SignalGraphController implements BaseController {
         zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
     }
 
-    private void listenMinSamplesTextField() {
+    private void setDigitFilterToMinSamplesTextField() {
         minSamplesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            minSamplesTextField.setText(newValue.replaceAll("[^1-9][\\d]{2}|[^1-9][\\d][\\d][\\d]|[^1-9][\\d][\\d][\\d][\\d][\\d]|", ""));
-//            if (!newValue.matches("^[1-9]|\\d{2}|^[1-9]|\\d\\d\\d|^[1-9]|\\d\\d\\d\\d|$")) {
-//                minSamplesTextField.setText(oldValue);
-//            }
-
-            if (!minSamplesTextField.getText().isEmpty()) {
-                signalModel.setMinSamples(Integer.parseInt(minSamplesTextField.getText()));
+            minSamplesTextField.setText(newValue.replaceAll("[^1-9][\\d]{2,3}", ""));
+            if (!newValue.matches("^[1-9]|\\d{2,3}|$")) {
+                minSamplesTextField.setText(oldValue);
             }
         });
     }
@@ -256,11 +257,11 @@ public class SignalGraphController implements BaseController {
     }
 
     private void initAverage() {
-        setDigitFilter();
+        setDigitFilterToAverageTextField();
         changeAverageUiElementsState();
     }
 
-    private void setDigitFilter() {
+    private void setDigitFilterToAverageTextField() {
         averageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             averageTextField.setText(newValue.replaceAll("[^1-9][\\d]{2,3}", ""));
             if (!newValue.matches("^[1-9]|\\d{2,3}|$")) {
@@ -302,6 +303,19 @@ public class SignalGraphController implements BaseController {
     }
 
     private void resetGraphBounds() {
+        if (signalModel.isCalibrationExists()) {
+            setCalibratedGraphBounds();
+        } else {
+            setNonCalibratedGraphBounds();
+        }
+    }
+
+    private void setCalibratedGraphBounds() {
+        setGraphBounds();
+        clearSeries();
+    }
+
+    private void setNonCalibratedGraphBounds() {
         int selectedRange = verticalScalesComboBox.getSelectionModel().getSelectedIndex();
         if (selectedRange != 0) {
             verticalScalesComboBox.getSelectionModel().select(0);
@@ -331,13 +345,12 @@ public class SignalGraphController implements BaseController {
         signalModel.checkCalibration();
 
         if (signalModel.isCalibrationExists()) {
+            clearSeries();
             calibrationCheckBox.setSelected(true);
             verticalScalesComboBox.setDisable(true);
             setValueNameToGraph();
             setGraphBounds();
             setSignalParametersLabels();
-            clearSeries();
-            showGraph();
         } else {
             statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", statusBar);
         }
@@ -382,12 +395,28 @@ public class SignalGraphController implements BaseController {
     }
 
     private void showCalculatedValues() {
-        double amplitude = Utils.roundValue(signalModel.getAmplitude(), getDecimalFormatScale());
-        double frequency = Utils.roundValue(signalModel.getFrequency(), getDecimalFormatScale());
-        double loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), getDecimalFormatScale());
-        double rms = Utils.roundValue(signalModel.getRms(), getDecimalFormatScale());
-        double zeroShift = Utils.roundValue(signalModel.getZeroShift(), getDecimalFormatScale());
+        setParametersFields();
+        showParameters();
+    }
 
+    private void setParametersFields() {
+        int decimalFormatScale = getDecimalFormatScale();
+        if (signalModel.isCalibrationExists()) {
+            amplitude = Utils.roundValue(signalModel.getCalibratedAmplitude(), decimalFormatScale);
+            frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
+            loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
+            rms = Utils.roundValue(signalModel.getCalibratedRms(), decimalFormatScale);
+            zeroShift = Utils.roundValue(signalModel.getCalibratedZeroShift(), decimalFormatScale);
+        } else {
+            amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
+            frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
+            loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
+            rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
+            zeroShift = Utils.roundValue(signalModel.getZeroShift(), decimalFormatScale);
+        }
+    }
+
+    private void showParameters() {
         Platform.runLater(() -> {
             amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, getDecimalFormatScale()));
             frequencyTextField.setText(Utils.convertFromExponentialFormat(frequency, getDecimalFormatScale()));
@@ -440,27 +469,31 @@ public class SignalGraphController implements BaseController {
 
     @FXML
     private void handleBackButton() {
+        stopReceivingOfData();
+        resetShowingSettings();
+        changeScene();
+    }
+
+    private void stopReceivingOfData() {
         toggleProgressIndicatorState(false);
         cm.setStopped(true);
         Utils.sleep(1000);
         signalModel.getAdc().stop();
-        signalModel.setLoadsCounter(0);
-        disableAutoRange();
-        disableAverage();
-        disableCalibration();
-        String moduleType = signalModel.getModuleType();
-        int slot = signalModel.getSlot();
-        toggleProgressIndicatorState(true);
-        wm.setModuleScene(moduleType, slot - 1);
-        cm.loadItemsForModulesTableView();
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
         if (hide) {
-            progressIndicator.setStyle("-fx-opacity: 0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
         } else {
-            progressIndicator.setStyle("-fx-opacity: 1.0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
+    }
+
+    private void resetShowingSettings() {
+        disableAutoRange();
+        disableAverage();
+        disableCalibration();
+        signalModel.setLoadsCounter(0);
     }
 
     private void disableAutoRange() {
@@ -478,9 +511,19 @@ public class SignalGraphController implements BaseController {
         signalModel.setCalibrationExists(false);
     }
 
+    private void changeScene() {
+        String moduleType = signalModel.getModuleType();
+        int slot = signalModel.getSlot();
+        toggleProgressIndicatorState(true);
+        wm.setModuleScene(moduleType, slot - 1);
+        cm.loadItemsForModulesTableView();
+    }
+
     public int getDecimalFormatScale() {
         return (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
     }
+
+
 
     public SignalModel getSignalModel() {
         return signalModel;

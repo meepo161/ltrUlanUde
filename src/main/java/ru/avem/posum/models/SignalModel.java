@@ -213,8 +213,41 @@ public class SignalModel {
         return amplitude;
     }
 
+    public double getAverageCount() {
+        return averageCount;
+    }
+
+    public int getAverageIterator() {
+        return signalParametersModel.getAverageIterator();
+    }
+
     public double[] getBuffer() {
         return buffer;
+    }
+
+    public double getBufferedCalibratedAmplitude() {
+        return signalParametersModel.getBufferedCalibratedAmplitude();
+    }
+
+    public double getBufferedCalibratedRms() {
+        return signalParametersModel.getBufferedCalibratedRms();
+    }
+
+    public double getBufferedCalibratedZeroShift() {
+        return signalParametersModel.getBufferedCalibratedZeroShift();
+    }
+
+
+    public double getCalibratedAmplitude() {
+        return signalParametersModel.getCalibratedAmplitude();
+    }
+
+    public double getCalibratedRms() {
+        return signalParametersModel.getCalibratedRms();
+    }
+
+    public double getCalibratedZeroShift() {
+        return signalParametersModel.getCalibratedZeroShift();
     }
 
     public int getChannel() {

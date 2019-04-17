@@ -462,6 +462,10 @@ public class SettingsController implements BaseController {
         return selectedCrate;
     }
 
+    public SettingsModel getSettingsModel() {
+        return settingsModel;
+    }
+
     public int getSelectedModuleIndex() {
         return selectedModuleIndex;
     }

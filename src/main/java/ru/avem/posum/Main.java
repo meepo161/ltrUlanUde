@@ -2,6 +2,7 @@ package ru.avem.posum;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -15,13 +16,16 @@ import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.ExperimentModel;
 import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
     private volatile boolean closed;
@@ -53,16 +57,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void init() throws IOException {
-//        List<List<Double>> doubles = new ArrayList<>();
-//
-//        for (int i = 0; i < 10000; i++) {
-//            doubles.add(i, new ArrayList<>());
-//            for (int j = 0; j < 10000; j++) {
-//                doubles.get(i).add((double) i);
-//            }
-//        }
-//        System.exit(0);
-
         DataBaseRepository.init(false);
 
         crateLoginScene();
@@ -249,6 +243,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void stop() {
         closed = true;
+        stopAllModules();
+    }
+
+    private void stopAllModules() {
+        ObservableList<String> modulesNames = settingsController.getSettingsModel().getModulesNames();
+        HashMap<Integer, Module> modules = settingsController.getSettingsModel().getModules();
+
+        for (int index = 0; index < modulesNames.size(); index++) {
+            int slot = settingsController.getSettingsModel().parseSlotNumber(index);
+            modules.get(slot).stop();
+        }
     }
 
     @Override
