@@ -56,6 +56,8 @@ public abstract class ADC extends Module {
 
     public abstract void parseModuleSettings(String settings);
 
+    public abstract void write(double[] data, double[] timeMarks);
+
     public HashMap<String, Integer> getBounds() {
         return bounds;
     }
@@ -98,14 +100,6 @@ public abstract class ADC extends Module {
 
     public double[] getTimeMarks() {
         return timeMarks;
-    }
-
-    public RingBuffer getTimeMarksRingBuffer() {
-        return timeMarksRingBuffer;
-    }
-
-    public void setBounds(HashMap<String, Integer> bounds) {
-        this.bounds = bounds;
     }
 
     public void setCalibrationCoefficients(ArrayList<List<Double>> calibrationCoefficients) {

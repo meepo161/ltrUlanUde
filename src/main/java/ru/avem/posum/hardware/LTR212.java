@@ -5,14 +5,20 @@ import java.util.List;
 
 public class LTR212 extends ADC {
     private double frequency;
-    private boolean busy;
 
     public LTR212() {
         initializeModuleSettings();
     }
 
+    @Override
     public void openConnection() {
         status = openConnection(crate, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
+        checkStatus();
+    }
+
+    @Override
+    public void checkConnection() {
+        status = checkConnection(getSlot());
         checkStatus();
     }
 
@@ -21,21 +27,25 @@ public class LTR212 extends ADC {
         checkStatus();
     }
 
+    @Override
     public void initializeModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings());
         checkStatus();
     }
 
+    @Override
     public void defineFrequency() {
         status = getFrequency(getSlot());
         checkStatus();
     }
 
+    @Override
     public void start() {
         status = start(getSlot());
         checkStatus();
     }
 
+    @Override
     public void write(double[] data, double[] timeMarks) {
         status = write(getSlot(), data, timeMarks, data.length);
     }
@@ -46,12 +56,15 @@ public class LTR212 extends ADC {
         checkStatus();
     }
 
+    @Override
     public void closeConnection() {
         closeConnection(getSlot());
         checkStatus();
     }
 
     public native String openConnection(String crate, int slot, String path);
+
+    public native String checkConnection(int slot);
 
     public native String testEEPROM(int slot);
 
@@ -143,9 +156,5 @@ public class LTR212 extends ADC {
     @Override
     public double getFrequency() {
         return frequency;
-    }
-
-    public boolean isBusy() {
-        return busy;
     }
 }

@@ -18,42 +18,54 @@ public abstract class Module {
         }
     }
 
+    public abstract void openConnection();
+
+    public abstract void checkConnection();
+
+    public abstract void initializeModule();
+
+    public abstract void defineFrequency();
+
+    public abstract void start();
+
     public abstract void stop();
+
+    public abstract void closeConnection();
 
     public int getChannelsCount() {
         return channelsCount;
-    }
-
-    public String[] getChannelsDescription() {
-        return channelsDescription;
-    }
-
-    public void setCrate(String crate) {
-        this.crate = crate;
-    }
-
-    public int getSlot() {
-        return slot;
-    }
-
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
-
-    public long getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(long moduleId) {
-        this.moduleId = moduleId;
     }
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
     }
 
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    public long getModuleId() {
+        return moduleId;
+    }
+
+    public int getSlot() {
+        return slot;
+    }
+
     public String getStatus() {
         return status;
+    }
+
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public void setModuleId(long moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
     public void setStatus(String status) {

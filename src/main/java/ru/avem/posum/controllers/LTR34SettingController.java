@@ -465,7 +465,7 @@ public class LTR34SettingController implements BaseController {
         }
 
         ltr34.countChannels();
-        ltr34.initModule();
+        ltr34.initializeModule();
     }
 
     private void checkResult() {

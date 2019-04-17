@@ -1,6 +1,6 @@
 package ru.avem.posum.hardware;
 
-public class DAC extends Module {
+public abstract class DAC extends Module {
     private int[] amplitudes;
     private int[] frequencies;
     private int[] phases;
@@ -15,8 +15,16 @@ public class DAC extends Module {
         phases = new int[channelsCount];
     }
 
+    public abstract void generate(double[] signal);
+
+    public abstract double getFrequency();
+
     public int[] getAmplitudes() {
         return amplitudes;
+    }
+
+    public int getCheckedChannelsCounter() {
+        return checkedChannelsCounter;
     }
 
     public int[] getFrequencies() {
@@ -25,10 +33,6 @@ public class DAC extends Module {
 
     public int[] getPhases() {
         return phases;
-    }
-
-    public int getCheckedChannelsCounter() {
-        return checkedChannelsCounter;
     }
 
     void setCheckedChannelsCounter(int checkedChannelsCounter) {

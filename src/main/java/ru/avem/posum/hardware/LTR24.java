@@ -5,36 +5,41 @@ import java.util.List;
 
 public class LTR24 extends ADC {
     private double frequency;
-    private boolean busy;
 
     public LTR24() {
         initializeModuleSettings();
     }
 
+    @Override
     public void openConnection() {
         status = openConnection(crate, getSlot());
         checkStatus();
     }
 
+    @Override
     public void checkConnection() {
         status = checkConnection(getSlot());
         checkStatus();
     }
 
+    @Override
     public void initializeModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR24ModuleSettings());
         checkStatus();
     }
 
+    @Override
     public void defineFrequency() {
         getFrequency(getSlot());
     }
 
+    @Override
     public void start() {
         status = start(getSlot());
         checkStatus();
     }
 
+    @Override
     public void write(double[] data, double[] timeMarks) {
         write(getSlot(), data, timeMarks, data.length, 1000);
     }
@@ -45,6 +50,7 @@ public class LTR24 extends ADC {
         checkStatus();
     }
 
+    @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
         checkStatus();
@@ -103,9 +109,5 @@ public class LTR24 extends ADC {
     @Override
     public double getFrequency() {
         return frequency;
-    }
-
-    public boolean isBusy() {
-        return busy;
     }
 }
