@@ -126,13 +126,16 @@ public class SignalModel {
         RingBuffer ringBufferForShow = ltr24.getRingBufferForShow();
 
         ltr24.checkConnection();
-        System.out.printf("Status: %s\n", ltr24.getStatus());
-        ltr24.write(data, timeMarks);
-        System.out.printf("Received. Counter: %d\n", foo++);
-        ringBufferForCalculation.reset();
-        ringBufferForCalculation.put(data);
-        ringBufferForShow.reset();
-        ringBufferForShow.put(data);
+        if (ltr24.checkStatus()) {
+            ltr24.write(data, timeMarks);
+            ringBufferForCalculation.reset();
+            ringBufferForCalculation.put(data);
+            ringBufferForShow.reset();
+            ringBufferForShow.put(data);
+        } else {
+            ringBufferForCalculation.reset();
+            ringBufferForShow.reset();
+        }
     }
 
     private void getLTR212Data() {
@@ -141,11 +144,17 @@ public class SignalModel {
         RingBuffer ringBufferForCalculation = ltr212.getRingBufferForCalculation();
         RingBuffer ringBufferForShow = ltr212.getRingBufferForShow();
 
-        ltr212.write(data, timeMarks);
-        ringBufferForCalculation.reset();
-        ringBufferForCalculation.put(data);
-        ringBufferForShow.reset();
-        ringBufferForShow.put(data);
+        ltr212.checkConnection();
+        if (ltr212.checkStatus()) {
+            ltr212.write(data, timeMarks);
+            ringBufferForCalculation.reset();
+            ringBufferForCalculation.put(data);
+            ringBufferForShow.reset();
+            ringBufferForShow.put(data);
+        } else {
+            ringBufferForCalculation.reset();
+            ringBufferForShow.reset();
+        }
     }
 
     public void calculateData() {

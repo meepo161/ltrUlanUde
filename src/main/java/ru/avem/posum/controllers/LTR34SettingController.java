@@ -118,7 +118,7 @@ public class LTR34SettingController implements BaseController {
     private List<CheckBox> channelsCheckBoxes = new ArrayList<>();
     private boolean[] checkedChannels;
     private ControllerManager cm;
-    private boolean connectionOpen;
+    private boolean connectionOpen = true;
     private CrateModel crateModel;
     private String[] descriptions;
     private List<TextField> descriptionsTextFields = new ArrayList<>();
@@ -540,9 +540,11 @@ public class LTR34SettingController implements BaseController {
 
     private void startGenerating() {
         new Thread(() -> {
-            while (!stopped) {
+            while (!stopped && ltr34.checkStatus()) {
                 ltr34.generate(signal);
+                ltr34.checkConnection();
                 Utils.sleep(1000);
+                System.out.println("Generated: " + ltr34.getStatus());
             }
         }).start();
     }

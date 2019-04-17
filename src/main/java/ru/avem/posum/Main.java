@@ -248,11 +248,19 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     private void stopAllModules() {
         ObservableList<String> modulesNames = settingsController.getSettingsModel().getModulesNames();
-        HashMap<Integer, Module> modules = settingsController.getSettingsModel().getModules();
+        HashMap<Integer, Module> modules = getCrateModelInstance().getModulesList();
 
         for (int index = 0; index < modulesNames.size(); index++) {
             int slot = settingsController.getSettingsModel().parseSlotNumber(index);
-            modules.get(slot).stop();
+            if (slot != 16) { // TODO: delete this, because LTR27Module is absentee
+                Module module = modules.get(slot);
+                module.checkConnection();
+                module.checkStatus();
+                if (module.getStatus().equals("Операция успешно выполнена")) {
+                    module.stop();
+                    module.closeConnection();
+                }
+            }
         }
     }
 

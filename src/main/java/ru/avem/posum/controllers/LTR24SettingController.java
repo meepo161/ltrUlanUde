@@ -84,7 +84,7 @@ public class LTR24SettingController implements BaseController {
     private CrateModel crateModel;
     private int disabledChannels;
     private boolean icpMode;
-    private boolean isConnectionOpen;
+    private boolean isConnectionOpen = true;
     private LTR24 ltr24;
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private int[] measuringRanges;

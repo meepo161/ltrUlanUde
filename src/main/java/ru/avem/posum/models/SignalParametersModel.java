@@ -150,7 +150,7 @@ class SignalParametersModel {
 
         if (this.signalFrequency == 0) {
             return signalFrequency;
-        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5) {
+        } else if (signalFrequency > this.signalFrequency * 1.5) {
             return this.signalFrequency;
         } else {
             return signalFrequency;

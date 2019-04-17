@@ -14,19 +14,16 @@ public class LTR34 extends DAC {
     @Override
     public void openConnection() {
         status = openConnection(crate, getSlot());
-        checkStatus();
     }
 
     @Override
     public void checkConnection() {
         status = checkConnection(getSlot());
-        checkStatus();
     }
 
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getCheckedChannelsCounter());
-        checkStatus();
     }
 
     @Override
@@ -37,25 +34,21 @@ public class LTR34 extends DAC {
     @Override
     public void start() {
         status = start(getSlot());
-        checkStatus();
     }
 
     @Override
     public void generate(double[] signal) {
         status = generate(getSlot(), signal, signal.length);
-        checkStatus();
     }
 
     @Override
     public void stop() {
         status = stop(getSlot());
-        checkStatus();
     }
 
     @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
-        checkStatus();
     }
 
     public native String openConnection(String crate, int slot);

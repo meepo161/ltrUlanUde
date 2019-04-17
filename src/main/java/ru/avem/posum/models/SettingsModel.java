@@ -70,6 +70,7 @@ public class SettingsModel implements BaseController {
         setModuleSettings(adc);
         setDefaultADCSettings(0, 1);
         saveModuleInstance(adc);
+        adc.openConnection();
     }
 
     private void initLTR27Instance() {
@@ -81,6 +82,7 @@ public class SettingsModel implements BaseController {
         setModuleSettings(dac);
         setDefaultDACSettings();
         saveModuleInstance(dac);
+        dac.openConnection();
     }
 
     private void initLTR212Instance() {
@@ -88,6 +90,7 @@ public class SettingsModel implements BaseController {
         setModuleSettings(adc);
         setDefaultADCSettings(0, 3);
         saveModuleInstance(adc);
+        adc.openConnection();
     }
 
     private void initModulesInstances() {

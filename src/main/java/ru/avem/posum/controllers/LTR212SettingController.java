@@ -88,7 +88,7 @@ public class LTR212SettingController implements BaseController {
     private ControllerManager cm;
     private CrateModel crateModel;
     private int disabledChannels;
-    private boolean isConnectionOpen;
+    private boolean isConnectionOpen = true;
     private LTR212 ltr212 = new LTR212();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private int[] measuringRanges;

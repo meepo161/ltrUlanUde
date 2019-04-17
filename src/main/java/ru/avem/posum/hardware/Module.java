@@ -12,9 +12,12 @@ public abstract class Module {
     protected volatile String status;
     private TextEncoder textEncoder = new TextEncoder();
 
-    void checkStatus() {
+    public boolean checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
+            return false;
+        } else {
+            return true;
         }
     }
 
