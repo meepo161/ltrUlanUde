@@ -133,8 +133,8 @@ public class SignalModel {
             ringBufferForShow.reset();
             ringBufferForShow.put(data);
         } else {
-            ringBufferForCalculation.reset();
-            ringBufferForShow.reset();
+            ltr24.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
+            ltr24.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
         }
     }
 
@@ -152,8 +152,8 @@ public class SignalModel {
             ringBufferForShow.reset();
             ringBufferForShow.put(data);
         } else {
-            ringBufferForCalculation.reset();
-            ringBufferForShow.reset();
+            ltr212.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
+            ltr212.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
         }
     }
 

@@ -14,11 +14,19 @@ public class LTR34 extends DAC {
     @Override
     public void openConnection() {
         status = openConnection(crate, getSlot());
+        checkStatus();
     }
 
     @Override
     public void checkConnection() {
-        status = checkConnection(getSlot());
+        CrateModel crateModel = new CrateModel();
+        if (!crateModel.getCratesNames().isEmpty()) {
+            status = checkConnection(getSlot());
+            checkStatus();
+        } else {
+            openConnection();
+            status = "Потеряно соединение с крейтом";
+        }
     }
 
     @Override
@@ -44,11 +52,13 @@ public class LTR34 extends DAC {
     @Override
     public void stop() {
         status = stop(getSlot());
+        checkStatus();
     }
 
     @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
+        checkStatus();
     }
 
     public native String openConnection(String crate, int slot);
