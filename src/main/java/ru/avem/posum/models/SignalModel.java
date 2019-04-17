@@ -30,7 +30,6 @@ public class SignalModel {
     private double upperBound;
     private String valueName = "В";
     private double zeroShift;
-    private int foo;
 
     public void setFields(String moduleType, int slot, int channel) {
         this.moduleType = moduleType;
