@@ -105,9 +105,8 @@ class SignalParametersModel {
     }
 
     private double calculateFrequency() {
-        double signalFrequency = estimateFrequency();
-        signalFrequency = defineFrequency();
-        return signalFrequency;
+        double estimatedFrequency = estimateFrequency();
+        return defineFrequency(estimatedFrequency);
     }
 
     private double estimateFrequency() {
@@ -144,7 +143,7 @@ class SignalParametersModel {
         return frequency;
     }
 
-    private double defineFrequency() {
+    private double defineFrequency(double estimatedFrequency) {
         int shift = 1_000;
         double firstValue = data[channel] + shift;
         double zeroTransitionCounter = 0;
@@ -188,9 +187,7 @@ class SignalParametersModel {
         double signalFrequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
         signalFrequency = signalFrequency > 1000 ? 0 : signalFrequency;
 
-        if (this.signalFrequency == 0) {
-            return signalFrequency;
-        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5) {
+        if (signalFrequency < estimatedFrequency / 1.5 || signalFrequency > estimatedFrequency * 1.5) {
             return this.signalFrequency;
         } else {
             return signalFrequency;
