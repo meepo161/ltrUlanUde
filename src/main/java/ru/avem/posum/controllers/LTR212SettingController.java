@@ -39,11 +39,15 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private Button initializeButton;
     @FXML
+    private CheckBox firCheckBox;
+    @FXML
     private Button firPathButton;
     @FXML
     private TextField firPathTextField;
     @FXML
-    private TextField iirPathButton;
+    private CheckBox iirCheckBox;
+    @FXML
+    private Button iirPathButton;
     @FXML
     private TextField iirPathTextField;
     @FXML
@@ -58,10 +62,6 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> moduleModesComboBox;
     @FXML
     private ProgressIndicator progressIndicator;
-    @FXML
-    private CheckBox useFIRCheckBox;
-    @FXML
-    private CheckBox useIIRCheckBox;
     @FXML
     private Label sceneTitleLabel;
     @FXML
@@ -122,6 +122,8 @@ public class LTR212SettingController implements BaseController {
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
+        addListenerForFilterCheckBox(iirCheckBox, iirPathTextField, iirPathButton);
+        addListenerForFilterCheckBox(firCheckBox, firPathTextField, firPathButton);
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -283,6 +285,18 @@ public class LTR212SettingController implements BaseController {
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
     }
 
+    private void addListenerForFilterCheckBox(CheckBox filterCheckBox, TextField filterTextField, Button filterButton) {
+        filterCheckBox.selectedProperty().addListener(observable -> {
+            if (filterCheckBox.isSelected()) {
+                filterTextField.setDisable(false);
+                filterButton.setDisable(false);
+            } else {
+                filterTextField.setDisable(true);
+                filterButton.setDisable(true);
+            }
+        });
+    }
+
     private void addListenerForComboBoxes(List<ComboBox<String>> comboBoxes) {
         for (ComboBox comboBox : comboBoxes) {
             comboBox.valueProperty().addListener(observable -> {
@@ -356,8 +370,8 @@ public class LTR212SettingController implements BaseController {
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
             moduleModesComboBox.getSelectionModel().select(moduleMode);
             referenceVoltageComboBox.getSelectionModel().select(referenceVoltage);
-            useIIRCheckBox.setSelected(useIIR == 1);
-            useFIRCheckBox.setSelected(useFIR == 1);
+            iirCheckBox.setSelected(useIIR == 1);
+            firCheckBox.setSelected(useFIR == 1);
             useFabricCalibrationCheckBox.setSelected(useFabricCalibration == 1);
             referenceVoltageTypeCheckBox.setSelected(referenceVoltageType == 1);
         }
@@ -399,12 +413,12 @@ public class LTR212SettingController implements BaseController {
         applyForAllCheckBox.setDisable(true);
         moduleModesComboBox.setDisable(true);
         referenceVoltageComboBox.setDisable(true);
-        useIIRCheckBox.setDisable(true);
+        iirCheckBox.setDisable(true);
         iirPathTextField.setDisable(true);
         iirPathButton.setDisable(true);
         firPathTextField.setDisable(true);
         firPathButton.setDisable(true);
-        useFIRCheckBox.setDisable(true);
+        firCheckBox.setDisable(true);
         useFabricCalibrationCheckBox.setDisable(true);
         referenceVoltageTypeCheckBox.setDisable(true);
         initializeButton.setDisable(true);
@@ -430,8 +444,8 @@ public class LTR212SettingController implements BaseController {
         HashMap<String, Integer> settings = ltr212.getModuleSettings();
         int selectedADCMode = moduleModesComboBox.getSelectionModel().getSelectedIndex();
         int selectedReferenceVoltage = referenceVoltageComboBox.getSelectionModel().getSelectedIndex();
-        int useIIR = useIIRCheckBox.isSelected() ? 1 : 0;
-        int useFIR = useFIRCheckBox.isSelected() ? 1 : 0;
+        int useIIR = iirCheckBox.isSelected() ? 1 : 0;
+        int useFIR = firCheckBox.isSelected() ? 1 : 0;
         int useFabricCalibration = useFabricCalibrationCheckBox.isSelected() ? 1 : 0;
         int referenceVoltageType = referenceVoltageTypeCheckBox.isSelected() ? 1 : 0;
 
@@ -492,12 +506,12 @@ public class LTR212SettingController implements BaseController {
         applyForAllCheckBox.setDisable(false);
         moduleModesComboBox.setDisable(false);
         referenceVoltageComboBox.setDisable(false);
-        useIIRCheckBox.setDisable(false);
+        iirCheckBox.setDisable(false);
         iirPathTextField.setDisable(false);
         iirPathButton.setDisable(false);
         firPathTextField.setDisable(false);
         firPathButton.setDisable(false);
-        useFIRCheckBox.setDisable(false);
+        firCheckBox.setDisable(false);
         useFabricCalibrationCheckBox.setDisable(false);
         referenceVoltageTypeCheckBox.setDisable(false);
         initializeButton.setDisable(false);
