@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -598,8 +599,9 @@ public class LTR212SettingController implements BaseController {
 
     @FXML
     public void handleChoosingIIRFile() {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(new Stage());
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор файла фильтра");
+        File selectedDirectory = fileChooser.showOpenDialog(new Stage());
         if (selectedDirectory == null) {
             iirPathTextField.setText("Не выбран файл фильтра");
         } else {
@@ -609,12 +611,13 @@ public class LTR212SettingController implements BaseController {
 
     @FXML
     public void handleChoosingFIRFile() {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(new Stage());
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор файла фильтра");
+        File selectedDirectory = fileChooser.showOpenDialog(new Stage());
         if (selectedDirectory == null) {
-            firPathButton.setText("Не выбран файл фильтра");
+            firPathTextField.setText("Не выбран файл фильтра");
         } else {
-            firPathButton.setText(selectedDirectory.getAbsolutePath());
+            firPathTextField.setText(selectedDirectory.getAbsolutePath());
         }
     }
 
