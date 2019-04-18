@@ -503,14 +503,20 @@ public class LTR212SettingController implements BaseController {
             }
         }
 
+        if (iirCheckBox.isSelected()) {
+            iirPathTextField.setDisable(false);
+            iirPathButton.setDisable(false);
+        }
+
+        if (firCheckBox.isSelected()) {
+            firPathTextField.setDisable(false);
+            firPathButton.setDisable(false);
+        }
+
         applyForAllCheckBox.setDisable(false);
         moduleModesComboBox.setDisable(false);
         referenceVoltageComboBox.setDisable(false);
         iirCheckBox.setDisable(false);
-        iirPathTextField.setDisable(false);
-        iirPathButton.setDisable(false);
-        firPathTextField.setDisable(false);
-        firPathButton.setDisable(false);
         firCheckBox.setDisable(false);
         useFabricCalibrationCheckBox.setDisable(false);
         referenceVoltageTypeCheckBox.setDisable(false);
