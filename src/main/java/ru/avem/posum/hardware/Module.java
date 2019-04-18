@@ -2,79 +2,77 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-public class Module {
+public abstract class Module {
     int channelsCount;
     String crate;
-    protected int slot;
+    private int slot;
     private long moduleId;
+    String[] channelsDescription;
     boolean[] checkedChannels;
-    protected String status;
+    protected volatile String status;
     private TextEncoder textEncoder = new TextEncoder();
-    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
 
-    void checkStatus() {
+    public boolean checkStatus() {
         if (!status.equals("Операция успешно выполнена")) {
             status = textEncoder.cp2utf(status);
+            return false;
+        } else {
+            return true;
         }
     }
 
-    public String getCrate() {
-        return crate;
-    }
+    public abstract void openConnection();
+
+    public abstract void checkConnection();
+
+    public abstract void initializeModule();
+
+    public abstract void defineFrequency();
+
+    public abstract void start();
+
+    public abstract void stop();
+
+    public abstract void closeConnection();
 
     public int getChannelsCount() {
         return channelsCount;
-    }
-
-    public void setCrate(String crate) {
-        this.crate = crate;
-    }
-
-    public int getSlot() {
-        return slot;
-    }
-
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
-
-    public long getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(long moduleId) {
-        this.moduleId = moduleId;
     }
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
     }
 
-    public void setCheckedChannels(boolean[] checkedChannels) {
-        this.checkedChannels = checkedChannels;
+    public String[] getChannelsDescription() {
+        return channelsDescription;
+    }
+
+    public long getModuleId() {
+        return moduleId;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 
     public String getStatus() {
         return status;
     }
 
+    public void setCrate(String crate) {
+        this.crate = crate;
+    }
+
+    public void setModuleId(long moduleId) {
+        this.moduleId = moduleId;
+    }
+
+    public void setSlot(int slot) {
+        this.slot = slot;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public TextEncoder getTextEncoder() {
-        return textEncoder;
-    }
-
-    public void setTextEncoder(TextEncoder textEncoder) {
-        this.textEncoder = textEncoder;
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
-
-    public void setBusy(boolean busy) {
-        this.busy = busy;
-    }
 }

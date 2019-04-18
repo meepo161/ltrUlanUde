@@ -1,8 +1,6 @@
 package ru.avem.posum.models;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.CalibrationsRepository;
@@ -62,6 +60,7 @@ public class SettingsModel implements BaseController {
     private void addInitModuleInstructions() {
         instructions.clear();
         instructions.put(CrateModel.LTR24, this::initLTR24Instance);
+        instructions.put(CrateModel.LTR27, this::initLTR27Instance);
         instructions.put(CrateModel.LTR34, this::initLTR34Instance);
         instructions.put(CrateModel.LTR212, this::initLTR212Instance);
     }
@@ -71,6 +70,11 @@ public class SettingsModel implements BaseController {
         setModuleSettings(adc);
         setDefaultADCSettings(0, 1);
         saveModuleInstance(adc);
+        adc.openConnection();
+    }
+
+    private void initLTR27Instance() {
+
     }
 
     private void initLTR34Instance() {
@@ -78,13 +82,15 @@ public class SettingsModel implements BaseController {
         setModuleSettings(dac);
         setDefaultDACSettings();
         saveModuleInstance(dac);
+        dac.openConnection();
     }
 
     private void initLTR212Instance() {
         adc = new LTR212();
         setModuleSettings(adc);
-        setDefaultADCSettings(2, 3);
+        setDefaultADCSettings(0, 3);
         saveModuleInstance(adc);
+        adc.openConnection();
     }
 
     private void initModulesInstances() {
@@ -106,7 +112,7 @@ public class SettingsModel implements BaseController {
         module.setStatus("");
     }
 
-    private int parseSlotNumber(int moduleIndex) {
+    public int parseSlotNumber(int moduleIndex) {
         String moduleName = modulesNames.get(moduleIndex);
         return Utils.parseSlotNumber(moduleName);
     }
@@ -146,6 +152,7 @@ public class SettingsModel implements BaseController {
         for (int i = 0; i < dac.getChannelsCount(); i++) {
             checkedChannels[i] = false;
             amplitudes[i] = 0;
+            channelsDescription[i] = "";
             frequencies[i] = 0;
             phases[i] = 0;
         }
@@ -155,7 +162,7 @@ public class SettingsModel implements BaseController {
         checkedChannels = dac.getCheckedChannels();
         channelsTypes = null;
         measuringRanges = null;
-        channelsDescription = null;
+        channelsDescription = dac.getChannelsDescription();
         amplitudes = dac.getAmplitudes();
         frequencies = dac.getFrequencies();
         phases = dac.getPhases();
@@ -163,7 +170,6 @@ public class SettingsModel implements BaseController {
 
     public void saveGeneralSettings(HashMap<String, String> generalSettings, boolean isEditMode) {
         setMode(isEditMode);
-
         if (isEditMode) {
             updateTestProgram(generalSettings);
         } else {
@@ -234,6 +240,7 @@ public class SettingsModel implements BaseController {
     private void addSaveModuleInstructions() {
         instructions.clear();
         instructions.put(CrateModel.LTR24, this::saveLTR24Settings);
+        instructions.put(CrateModel.LTR27, this::saveLTR27Settings);
         instructions.put(CrateModel.LTR34, this::saveLTR34Settings);
         instructions.put(CrateModel.LTR212, this::saveLTR212Settings);
     }
@@ -241,6 +248,10 @@ public class SettingsModel implements BaseController {
     private void saveLTR24Settings() {
         getADCInstance();
         saveADCSettings(CrateModel.LTR24);
+    }
+
+    private void saveLTR27Settings() {
+        System.out.println("LTR27 settings saved");
     }
 
     private void saveLTR34Settings() {
@@ -276,6 +287,7 @@ public class SettingsModel implements BaseController {
                 module.setChannelsTypes(adc.getChannelsTypes());
                 module.setMeasuringRanges(adc.getMeasuringRanges());
                 module.setChannelsDescription(adc.getChannelsDescription());
+                module.setSettings(String.valueOf(adc.moduleSettingsToString()));
 
                 updateModuleSettings(module);
             }
@@ -331,6 +343,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Channels types", String.valueOf(channelsTypesLine));
         moduleSettings.put("Measuring ranges", String.valueOf(measuringRangesLine));
         moduleSettings.put("Channels description", String.valueOf(channelsDescriptionsLine));
+        moduleSettings.put("Module Settings", String.valueOf(adc.moduleSettingsToString()));
     }
 
     private void getDACInstance() {
@@ -350,6 +363,7 @@ public class SettingsModel implements BaseController {
     private void setDACSettings(String moduleName) {
         moduleSettings = new HashMap<>();
         StringBuilder checkedChannelsLine = new StringBuilder();
+        StringBuilder channelsDescriptionsLine = new StringBuilder();
         StringBuilder amplitudesLine = new StringBuilder();
         StringBuilder frequenciesLine = new StringBuilder();
         StringBuilder phasesLine = new StringBuilder();
@@ -357,6 +371,7 @@ public class SettingsModel implements BaseController {
         for (int i = 0; i < dac.getChannelsCount(); i++) {
             checkedChannelsLine.append(checkedChannels[i]).append(", ");
             amplitudesLine.append(amplitudes[i]).append(", ");
+            channelsDescriptionsLine.append(channelsDescription[i]).append(", ");
             frequenciesLine.append(frequencies[i]).append(", ");
             phasesLine.append(phases[i]).append(", ");
         }
@@ -365,6 +380,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Module type", moduleName);
         moduleSettings.put("Slot", String.valueOf(slot));
         moduleSettings.put("Checked channels", checkedChannelsLine.toString());
+        moduleSettings.put("Channels description", channelsDescriptionsLine.toString());
         moduleSettings.put("Amplitudes", amplitudesLine.toString());
         moduleSettings.put("Frequencies", frequenciesLine.toString());
         moduleSettings.put("Phases", phasesLine.toString());
@@ -375,6 +391,7 @@ public class SettingsModel implements BaseController {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
                 module.setCheckedChannels(dac.getCheckedChannels());
                 module.setAmplitudes(dac.getAmplitudes());
+                module.setChannelsDescription(dac.getChannelsDescription());
                 module.setFrequencies(dac.getFrequencies());
                 module.setPhases(dac.getPhases());
 
@@ -399,9 +416,8 @@ public class SettingsModel implements BaseController {
     private void fillModulesList() {
         modules = crateModel.getModulesList();
         testProgramId = testProgram.getId();
-        ObservableList<String> modulesNames = FXCollections.observableArrayList();
 
-        findModules(modulesNames);
+        findModules();
         addInitModuleInstructions();
         for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
             moduleType = modulesNames.get(moduleIndex).split(" ")[0];
@@ -409,7 +425,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
-    private void findModules(ObservableList<String> modulesNames) {
+    private void findModules() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId) {
                 modulesNames.add(module.getModuleType() + " (Слот " + module.getSlot() + ")");
@@ -429,8 +445,13 @@ public class SettingsModel implements BaseController {
     private void addLoadModulesInstructions() {
         instructions.clear();
         instructions.put(CrateModel.LTR24, this::loadADCSettings);
+        instructions.put(CrateModel.LTR27, this::loadLTR27Settings);
         instructions.put(CrateModel.LTR34, this::loadDACSettings);
         instructions.put(CrateModel.LTR212, this::loadADCSettings);
+    }
+
+    private void loadLTR27Settings() {
+        System.out.println("LTR27 settings loaded");
     }
 
     private void loadADCSettings() {
@@ -446,6 +467,7 @@ public class SettingsModel implements BaseController {
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             parseChannelsSettings(module);
+            parseModuleSettings(module);
             loadCalibrationSettings(module);
         }
     }
@@ -465,6 +487,11 @@ public class SettingsModel implements BaseController {
             measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);
             channelsDescription[i] = parsedChannelsDescriptions[i];
         }
+    }
+
+    private void parseModuleSettings(Modules module) {
+        String settings = module.getSettings();
+        adc.parseModuleSettings(settings);
     }
 
     private void loadCalibrationSettings(Modules module) {
@@ -492,6 +519,7 @@ public class SettingsModel implements BaseController {
     private void parseDACSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
+            String[] parsedChannelsDescription = module.getChannelsDescription().split(", ", 9);
             String[] parsedAmplitudes = module.getAmplitudes().split(", ", 9);
             String[] parsedFrequencies = module.getFrequencies().split(", ", 9);
             String[] parsedPhases = module.getPhases().split(", ", 9);
@@ -501,11 +529,20 @@ public class SettingsModel implements BaseController {
 
             for (int i = 0; i < channels; i++) {
                 checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
+                channelsDescription[i] = parsedChannelsDescription[i];
                 amplitudes[i] = Integer.parseInt(parsedAmplitudes[i]);
                 frequencies[i] = Integer.parseInt(parsedFrequencies[i]);
                 phases[i] = Integer.parseInt(parsedPhases[i]);
             }
         }
+    }
+
+    public ObservableList<String> getModulesNames() {
+        return modulesNames;
+    }
+
+    public HashMap<Integer, Module> getModules() {
+        return modules;
     }
 
     @Override

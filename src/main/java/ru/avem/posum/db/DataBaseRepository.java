@@ -16,7 +16,7 @@ public class DataBaseRepository {
             ModulesRepository.createTable(Modules.class);
             TestProgramRepository.createTable(TestProgram.class);
 
-            Account admin = new Account("admin", "102030");
+            Account admin = new Account("admin", "AS45TR8");
             AccountRepository.insertAccount(admin);
 
             Account user = new Account("user", "user");

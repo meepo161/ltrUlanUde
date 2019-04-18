@@ -5,20 +5,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class LTR212SettingController implements BaseController {
     @FXML
@@ -50,11 +47,17 @@ public class LTR212SettingController implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
     @FXML
+    private ComboBox<String> moduleModesComboBox;
+    @FXML
     private ProgressIndicator progressIndicator;
     @FXML
     private Label sceneTitleLabel;
     @FXML
     private StatusBar statusBar;
+    @FXML
+    private ComboBox<String> referenceVoltageComboBox;
+    @FXML
+    private CheckBox referenceVoltageTypeCheckBox;
     @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
@@ -63,6 +66,10 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> typeOfChannelN3;
     @FXML
     private ComboBox<String> typeOfChannelN4;
+    @FXML
+    private CheckBox useCalibrationCheckBox;
+    @FXML
+    private CheckBox useFabricCalibrationCheckBox;
     @FXML
     private Button valueOfChannelN1;
     @FXML
@@ -79,9 +86,8 @@ public class LTR212SettingController implements BaseController {
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private boolean[] checkedChannels;
     private ControllerManager cm;
-    private CrateModel crateModel;
     private int disabledChannels;
-    private boolean isConnectionOpen;
+    private boolean isConnectionOpen = true;
     private LTR212 ltr212 = new LTR212();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private int[] measuringRanges;
@@ -101,6 +107,8 @@ public class LTR212SettingController implements BaseController {
 
         addChannelsTypes(channelsTypesComboBoxes);
         addMeasuringRanges(measuringRangesComboBoxes);
+        addModuleModes(moduleModesComboBox);
+        addReferenceVoltageModes(referenceVoltageComboBox);
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
@@ -164,6 +172,12 @@ public class LTR212SettingController implements BaseController {
         setComboBox(channelsTypesComboBoxes, strings);
     }
 
+    private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
+        for (ComboBox<String> comboBox : comboBoxes) {
+            comboBox.getItems().addAll(strings);
+        }
+    }
+
     private void addMeasuringRanges(List<ComboBox<String>> measuringRangesComboBoxes) {
         ObservableList<String> strings = FXCollections.observableArrayList();
         strings.add("-10 мВ/+10 мВ");
@@ -178,10 +192,20 @@ public class LTR212SettingController implements BaseController {
         setComboBox(measuringRangesComboBoxes, strings);
     }
 
-    private void setComboBox(List<ComboBox<String>> comboBoxes, ObservableList<String> strings) {
-        for (ComboBox<String> comboBox : comboBoxes) {
-            comboBox.getItems().addAll(strings);
-        }
+    private void addModuleModes(ComboBox<String> moduleModesComboBox) {
+        ObservableList<String> modes = FXCollections.observableArrayList();
+        modes.add("Средней точности");
+        modes.add("Высокой точности");
+
+        moduleModesComboBox.getItems().addAll(modes);
+    }
+
+    private void addReferenceVoltageModes(ComboBox<String> referenceVoltageComboBox) {
+        ObservableList<String> modes = FXCollections.observableArrayList();
+        modes.add("2.5 В");
+        modes.add("5.0 В");
+
+        referenceVoltageComboBox.getItems().addAll(modes);
     }
 
     private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {
@@ -198,7 +222,7 @@ public class LTR212SettingController implements BaseController {
             } else {
                 applyForAllChannels(false);
                 changeChannelUiElementsState(channel, true);
-                setDefaultSettings(channel);
+                setDefaultChannelsSettings(channel);
             }
         });
     }
@@ -243,9 +267,9 @@ public class LTR212SettingController implements BaseController {
         }
     }
 
-    private void setDefaultSettings(int channel) {
+    private void setDefaultChannelsSettings(int channel) {
         channelsDescription.get(channel).setText("");
-        channelsTypesComboBoxes.get(channel).getSelectionModel().select(2);
+        channelsTypesComboBoxes.get(channel).getSelectionModel().select(0);
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
     }
 
@@ -308,11 +332,22 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void setSettings() {
+        int moduleMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName());
+        int referenceVoltage = ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE.getSettingName());
+        int useCalibration = ltr212.getModuleSettings().get(ADC.Settings.CALIBRATION_COEFFICIENTS.getSettingName());
+        int useFabricCalibration = ltr212.getModuleSettings().get(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName());
+        int referenceVoltageType = ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName());
+
         for (int i = 0; i < ltr212.getChannelsCount(); i++) {
             channelsCheckBoxes.get(i).setSelected(checkedChannels[i]);
             channelsTypesComboBoxes.get(i).getSelectionModel().select(channelsTypes[i]);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
+            moduleModesComboBox.getSelectionModel().select(moduleMode);
+            referenceVoltageComboBox.getSelectionModel().select(referenceVoltage);
+            useCalibrationCheckBox.setSelected(useCalibration == 1);
+            useFabricCalibrationCheckBox.setSelected(useFabricCalibration == 1);
+            referenceVoltageTypeCheckBox.setSelected(referenceVoltageType == 1);
         }
     }
 
@@ -321,8 +356,8 @@ public class LTR212SettingController implements BaseController {
 
         new Thread(() -> {
             saveChannelsSettings();
+            saveModuleSettings();
             initializeModule();
-            avoidError();
             checkResult();
             indicateResult();
         }).start();
@@ -350,6 +385,11 @@ public class LTR212SettingController implements BaseController {
         }
 
         applyForAllCheckBox.setDisable(true);
+        moduleModesComboBox.setDisable(true);
+        referenceVoltageComboBox.setDisable(true);
+        useCalibrationCheckBox.setDisable(true);
+        useFabricCalibrationCheckBox.setDisable(true);
+        referenceVoltageTypeCheckBox.setDisable(true);
         initializeButton.setDisable(true);
     }
 
@@ -364,9 +404,24 @@ public class LTR212SettingController implements BaseController {
                 checkedChannels[i] = false; // false - канал не выбран
                 channelsDescriptions[i] = ", ";
                 channelsTypes[i] = 0;
-                measuringRanges[i] = 0;
+                measuringRanges[i] = 3;
             }
         }
+    }
+
+    private void saveModuleSettings() {
+        HashMap<String, Integer> settings = ltr212.getModuleSettings();
+        int selectedADCMode = moduleModesComboBox.getSelectionModel().getSelectedIndex();
+        int selectedReferenceVoltage = referenceVoltageComboBox.getSelectionModel().getSelectedIndex();
+        int useCalibration = useCalibrationCheckBox.isSelected() ? 1 : 0;
+        int useFabricCalibration = useFabricCalibrationCheckBox.isSelected() ? 1 : 0;
+        int referenceVoltageType = referenceVoltageTypeCheckBox.isSelected() ? 1 : 0;
+
+        settings.put(ADC.Settings.ADC_MODE.getSettingName(), selectedADCMode);
+        settings.put(ADC.Settings.REFERENCE_VOLTAGE.getSettingName(), selectedReferenceVoltage);
+        settings.put(ADC.Settings.CALIBRATION_COEFFICIENTS.getSettingName(), useCalibration);
+        settings.put(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), useFabricCalibration);
+        settings.put(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), referenceVoltageType);
     }
 
     private void initializeModule() {
@@ -374,19 +429,7 @@ public class LTR212SettingController implements BaseController {
             ltr212.openConnection();
         }
 
-        ltr212.initModule();
-    }
-
-    /* Неприемлимое решение проблемы с возникающей ошибкой */
-    private void avoidError() {
-        String error = ltr212.getStatus();
-
-        while (error.equals("Использование калибровки невозможно для установленных параметров")) {
-            ltr212.closeConnection();
-            ltr212.openConnection();
-            ltr212.initModule();
-            error = ltr212.getStatus();
-        }
+        ltr212.initializeModule();
     }
 
     private void checkResult() {
@@ -428,6 +471,11 @@ public class LTR212SettingController implements BaseController {
         }
 
         applyForAllCheckBox.setDisable(false);
+        moduleModesComboBox.setDisable(false);
+        referenceVoltageComboBox.setDisable(false);
+        useCalibrationCheckBox.setDisable(false);
+        useFabricCalibrationCheckBox.setDisable(false);
+        referenceVoltageTypeCheckBox.setDisable(false);
         initializeButton.setDisable(false);
     }
 
@@ -439,6 +487,7 @@ public class LTR212SettingController implements BaseController {
         new Thread(() -> {
             findLTR212Module();
             saveChannelsSettings();
+            saveModuleSettings();
             closeConnection();
             enableChannelsUiElements();
             prepareSettingScene();
@@ -468,9 +517,21 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        cm.showChannelData(CrateModel.LTR212, ltr212.getSlot(), channel);
-        cm.checkCalibration();
+        saveBounds(channel);
+        ltr212.defineFrequency();
+        ltr212.start(slot);
+        cm.giveChannelInfo(channel, CrateModel.LTR212, ltr212.getSlot());
+        cm.initializeSignalGraphView();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    private void saveBounds(int channel) {
+        HashMap<String, Integer> bounds = ltr212.getBounds();
+        String boundsInText = measuringRangesComboBoxes.get(channel).getSelectionModel().getSelectedItem();
+        int lowerBound = Integer.parseInt(boundsInText.split(" мВ/")[0]);
+        int upperBound = Integer.parseInt(boundsInText.split(" мВ/")[1].substring(1, 3));
+        bounds.put("Lower bound", lowerBound);
+        bounds.put("Upper bound", upperBound);
     }
 
     public void handleValueOfChannelN2() {
@@ -493,6 +554,5 @@ public class LTR212SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        crateModel = cm.getCrateModelInstance();
     }
 }
