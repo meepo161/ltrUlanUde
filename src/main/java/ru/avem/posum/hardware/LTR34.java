@@ -1,7 +1,7 @@
 package ru.avem.posum.hardware;
 
 public class LTR34 extends DAC {
-    private double frequency;
+    private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public void countChannels() {
         for (int i = 0; i < checkedChannels.length; i++) {

@@ -59,12 +59,12 @@ public class CalibrationModel {
         return calibrationPoints;
     }
 
-    public double getChannelValue() {
-        return channelValue;
-    }
-
     public double getChannelValueCoefficient() {
         return channelValueCoefficient;
+    }
+
+    double getChannelValue() {
+        return channelValue;
     }
 
     public int getDecimalFormatScale() {
@@ -76,7 +76,7 @@ public class CalibrationModel {
         return Utils.convertFromExponentialFormat(value, decimalFormatScale);
     }
 
-    public double getLoadValue() {
+    double getLoadValue() {
         return loadValue;
     }
 

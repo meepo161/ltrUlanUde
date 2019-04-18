@@ -32,7 +32,6 @@ class SignalParametersModel {
     private int loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
-    private int minSamples = 5; // минимальное количество сэмплов для расчета частоты
     private double minSignalValue;
     private double rms;
     private int samplesPerSemiPeriod;
@@ -157,6 +156,8 @@ class SignalParametersModel {
 
             countSamples(zeroTransitionCounter);
 
+            // минимальное количество сэмплов для расчета частоты
+            int minSamples = 5;
             if (firstValue > centerOfSignal) {
                 if (value > centerOfSignal && firstPeriod && (index > channels * minSamples)) {
                     positivePartOfSignal = true;

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR24 extends ADC {
-    private double frequency;
+    private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public LTR24() {
         initializeModuleSettings();

@@ -24,8 +24,6 @@ import java.util.List;
 
 public class SettingsController implements BaseController {
     @FXML
-    private Button backButton;
-    @FXML
     private Button chooseCrateButton;
     @FXML
     private TextArea commentsTextArea;
@@ -466,16 +464,8 @@ public class SettingsController implements BaseController {
         return crateModel;
     }
 
-    public int getSelectedCrate() {
-        return selectedCrate;
-    }
-
     public SettingsModel getSettingsModel() {
         return settingsModel;
-    }
-
-    public int getSelectedModuleIndex() {
-        return selectedModuleIndex;
     }
 
     public void setEditMode(boolean editMode) {

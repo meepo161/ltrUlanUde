@@ -43,10 +43,6 @@ public abstract class Module {
         return checkedChannels;
     }
 
-    public String getCrate() {
-        return crate;
-    }
-
     public String[] getChannelsDescription() {
         return channelsDescription;
     }
