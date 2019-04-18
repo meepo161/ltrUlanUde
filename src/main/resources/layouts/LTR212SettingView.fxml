@@ -177,6 +177,19 @@
                   <Insets right="270.0" />
                </GridPane.margin>
             </Button>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="9" GridPane.rowSpan="4" />
+            <Label text="Режим сбора данных:" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <ComboBox fx:id="moduleModesComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+            <Label text="Опорное напряжение:" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <ComboBox fx:id="referenceVoltageComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+            <CheckBox fx:id="useIIRCheckBox" mnemonicParsing="false" text="Включить БИХ фильтр" GridPane.columnIndex="4" GridPane.rowIndex="10" />
+            <CheckBox fx:id="useFIRCheckBox" mnemonicParsing="false" text="Включить КИХ фильтр" GridPane.columnIndex="4" GridPane.rowIndex="11" />
+            <TextField fx:id="iirPathTextField" maxWidth="150.0" GridPane.columnIndex="6" GridPane.rowIndex="10" />
+            <Button fx:id="iirPathButton" maxWidth="50.0" mnemonicParsing="false" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
+            <TextField fx:id="firPathTextField" maxWidth="150.0" GridPane.columnIndex="6" GridPane.rowIndex="11" />
+            <Button fx:id="firPathButton" maxWidth="50.0" mnemonicParsing="false" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
+            <CheckBox fx:id="useFabricCalibrationCheckBox" mnemonicParsing="false" text="Завод. калибр. коэф." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+            <CheckBox fx:id="referenceVoltageTypeCheckBox" mnemonicParsing="false" text="Пост. опорное напр." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="11" />
             <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="270.0" />
@@ -184,14 +197,6 @@
             </Button>
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="22" />
             <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="22" />
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="9" GridPane.rowSpan="4" />
-            <Label text="Режим сбора данных:" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-            <ComboBox fx:id="moduleModesComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-            <Label text="Опорное напряжение:" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-            <ComboBox fx:id="referenceVoltageComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
-            <CheckBox fx:id="useCalibrationCheckBox" mnemonicParsing="false" text="Исп. калиб. коэф." GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="10" />
-            <CheckBox fx:id="useFabricCalibrationCheckBox" mnemonicParsing="false" text="Завод. калиб. коэф." GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="11" />
-            <CheckBox fx:id="referenceVoltageTypeCheckBox" mnemonicParsing="false" text="Пост. опорн. напр." GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.rowIndex="10" />
          </children>
       </GridPane>
    </children>
