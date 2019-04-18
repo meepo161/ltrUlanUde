@@ -1,6 +1,8 @@
 package ru.avem.posum.hardware;
 
 public class LTR34 extends DAC {
+    private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
+
     public void countChannels() {
         for (int i = 0; i < checkedChannels.length; i++) {
             if (checkedChannels[i]) {
@@ -9,34 +11,78 @@ public class LTR34 extends DAC {
         }
     }
 
+    @Override
     public void openConnection() {
-        status = open(crate, getSlot());
+        status = openConnection(crate, getSlot());
         checkStatus();
     }
 
-    protected native String open(String crate, int slot);
+    @Override
+    public void checkConnection() {
+        CrateModel crateModel = new CrateModel();
+        if (!crateModel.getCratesNames().isEmpty()) {
+            status = checkConnection(getSlot());
+            checkStatus();
+        } else {
+            openConnection();
+            status = "Потеряно соединение с крейтом";
+        }
+    }
 
-    public void initModule() {
-        status = initialize(getCheckedChannelsCounter());
+    @Override
+    public void initializeModule() {
+        status = initialize(getSlot(), getCheckedChannelsCounter());
+    }
+
+    @Override
+    public void defineFrequency() {
+        getFrequency(getSlot());
+    }
+
+    @Override
+    public void start() {
+        status = start(getSlot());
+    }
+
+    @Override
+    public void generate(double[] signal) {
+        status = generate(getSlot(), signal, signal.length);
+    }
+
+    @Override
+    public void stop() {
+        status = stop(getSlot());
         checkStatus();
     }
 
-    public native String initialize(int channelsCounter);
-
-    public native void generate(double[] signal);
-
-    public native String start();
-
+    @Override
     public void closeConnection() {
-        stop();
-        close();
+        status = closeConnection(getSlot());
+        checkStatus();
     }
 
-    public native String stop();
+    public native String openConnection(String crate, int slot);
 
-    public native String close();
+    public native String checkConnection(int slot);
+
+    public native String initialize(int slot, int channelsCounter);
+
+    public native String getFrequency(int slot);
+
+    public native String start(int slot);
+
+    public native String generate(int slot, double[] signal, int length);
+
+    public native String stop(int slot);
+
+    public native String closeConnection(int slot);
 
     static {
         System.loadLibrary("LTR34Library");
+    }
+
+    @Override
+    public double getFrequency() {
+        return frequency;
     }
 }

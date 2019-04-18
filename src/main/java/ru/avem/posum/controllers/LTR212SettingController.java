@@ -86,9 +86,8 @@ public class LTR212SettingController implements BaseController {
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private boolean[] checkedChannels;
     private ControllerManager cm;
-    private CrateModel crateModel;
     private int disabledChannels;
-    private boolean isConnectionOpen;
+    private boolean isConnectionOpen = true;
     private LTR212 ltr212 = new LTR212();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private int[] measuringRanges;
@@ -430,7 +429,7 @@ public class LTR212SettingController implements BaseController {
             ltr212.openConnection();
         }
 
-        ltr212.initModule();
+        ltr212.initializeModule();
     }
 
     private void checkResult() {
@@ -518,10 +517,21 @@ public class LTR212SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
+        saveBounds(channel);
+        ltr212.defineFrequency();
+        ltr212.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR212, ltr212.getSlot());
         cm.initializeSignalGraphView();
-        cm.checkCalibration();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+    }
+
+    private void saveBounds(int channel) {
+        HashMap<String, Integer> bounds = ltr212.getBounds();
+        String boundsInText = measuringRangesComboBoxes.get(channel).getSelectionModel().getSelectedItem();
+        int lowerBound = Integer.parseInt(boundsInText.split(" мВ/")[0]);
+        int upperBound = Integer.parseInt(boundsInText.split(" мВ/")[1].substring(1, 3));
+        bounds.put("Lower bound", lowerBound);
+        bounds.put("Upper bound", upperBound);
     }
 
     public void handleValueOfChannelN2() {
@@ -544,6 +554,5 @@ public class LTR212SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        crateModel = cm.getCrateModelInstance();
     }
 }

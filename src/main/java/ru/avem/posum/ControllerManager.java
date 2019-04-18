@@ -1,10 +1,10 @@
 package ru.avem.posum;
 
+import javafx.util.Pair;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;
-import ru.avem.posum.models.SignalGraphModel;
+import ru.avem.posum.models.SignalModel;
 
 import java.util.List;
 
@@ -36,7 +36,9 @@ public interface ControllerManager {
 
     boolean isClosed();
 
-    void loadDefaultCalibrationSettings(SignalGraphModel signalGraphModel);
+    boolean isStopped();
+
+    void loadDefaultCalibrationSettings(SignalModel signalModel);
 
     void loadDefaultSettings();
 
@@ -46,13 +48,13 @@ public interface ControllerManager {
 
     void loadModuleSettings(int selectedModuleIndex, String moduleName);
 
-    void setStopped(boolean closed);
+    void setClosed(boolean closed);
+
+    void setStopped(boolean stopped);
 
     void setEditMode(boolean editMode);
 
     void showChannelValue();
 
     void showTestProgram(TestProgram testProgram);
-
-    void toggleSettingsSceneButtons(boolean isDisable);
 }

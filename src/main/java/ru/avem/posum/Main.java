@@ -2,6 +2,7 @@ package ru.avem.posum;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -13,19 +14,21 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.ExperimentModel;
-import ru.avem.posum.models.SignalGraphModel;
+import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
+    private volatile boolean closed;
     private LoginController loginController;
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
     private LTR24SettingController ltr24SettingController;
@@ -50,7 +53,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private SignalGraphController signalGraphController;
     private Stage loginStage;
     private Stage primaryStage;
-    private volatile boolean closed;
+    private boolean stopped;
 
     @Override
     public void init() throws IOException {
@@ -240,6 +243,28 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void stop() {
         closed = true;
+        stopAllModules();
+        System.out.println("Version_1.0 closed");
+    }
+
+    private void stopAllModules() {
+        ObservableList<String> modulesNames = settingsController.getSettingsModel().getModulesNames();
+        HashMap<Integer, Module> modules = getCrateModelInstance().getModulesList();
+
+        if (!modules.isEmpty()) {
+            for (int index = 0; index < modulesNames.size(); index++) {
+                int slot = settingsController.getSettingsModel().parseSlotNumber(index);
+                if (slot != 16) { // TODO: delete this, because LTR27Module is absentee
+                    Module module = modules.get(slot);
+                    module.checkConnection();
+                    module.checkStatus();
+                    if (module.getStatus().equals("Операция успешно выполнена")) {
+                        module.stop();
+                        module.closeConnection();
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -269,17 +294,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public String getValueName() {
-        return signalGraphController.getSignalGraphModel().getValueName();
+        return signalGraphController.getSignalModel().getValueName();
     }
 
     @Override
     public double getZeroShift() {
-        return signalGraphController.getSignalGraphModel().getZeroShift();
+        return signalGraphController.getSignalModel().getZeroShift();
     }
 
     @Override
     public void giveChannelInfo(int channel, String moduleType, int slot) {
-        signalGraphController.getSignalGraphModel().setFields(moduleType, slot, channel);
+        signalGraphController.getSignalModel().setFields(moduleType, slot, channel);
     }
 
     @Override
@@ -298,8 +323,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void loadDefaultCalibrationSettings(SignalGraphModel signalGraphModel) {
-        calibrationController.loadDefaults(signalGraphModel);
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    @Override
+    public void loadDefaultCalibrationSettings(SignalModel signalModel) {
+        calibrationController.loadDefaults(signalModel);
     }
 
     @Override
@@ -339,13 +369,18 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void setStopped(boolean closed) {
+    public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
     @Override
     public void setEditMode(boolean editMode) {
         settingsController.setEditMode(editMode);
+    }
+
+    @Override
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 
     @Override
@@ -356,11 +391,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void showTestProgram(TestProgram testProgram) {
         settingsController.showTestProgram(testProgram);
-    }
-
-    @Override
-    public void toggleSettingsSceneButtons(boolean isDisable) {
-        settingsController.toggleButtons(isDisable);
     }
 
     @Override

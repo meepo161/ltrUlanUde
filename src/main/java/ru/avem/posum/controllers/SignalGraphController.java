@@ -7,21 +7,14 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.hardware.*;
-import ru.avem.posum.models.ReceivedSignal;
-import ru.avem.posum.models.SignalGraphModel;
+import ru.avem.posum.models.GraphModel;
+import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static ru.avem.posum.utils.Utils.sleep;
 
 public class SignalGraphController implements BaseController {
     @FXML
@@ -39,52 +32,216 @@ public class SignalGraphController implements BaseController {
     @FXML
     private ComboBox<String> decimalFormatComboBox;
     @FXML
-    private Label frequencyLabel;
+    private ComboBox<String> frequencyCalculationComboBox;
     @FXML
     private TextField frequencyTextField;
     @FXML
     private LineChart<Number, Number> graph;
     @FXML
-    private Label phaseLabel;
+    private ComboBox<String> horizontalScalesComboBox;
     @FXML
-    private TextField phaseTextField;
+    private Label loadsCounterLabel;
+    @FXML
+    private TextField loadsCounterTextField;
+    @FXML
+    private TextField minSamplesTextField;
+    @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
+    private Label rmsLabel;
+    @FXML
+    private TextField rmsTextField;
+    @FXML
+    private StatusBar statusBar;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private ComboBox<String> verticalScalesComboBox;
     @FXML
     private Label zeroShiftLabel;
     @FXML
     private TextField zeroShiftTextField;
-    @FXML
-    private Label titleLabel;
 
-    private int averageCount = 1;
     private ControllerManager cm;
-    private int decimalFormatScale = 100;
-    private volatile XYChart.Series<Number, Number> graphSeries;
-    private List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-    private volatile boolean isDone;
-    private SignalGraphModel signalGraphModel = new SignalGraphModel();
+    private GraphModel graphModel = new GraphModel();
+    private volatile XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
+    private SignalModel signalModel = new SignalModel();
+    private StatusBarLine statusBarLine = new StatusBarLine();
     private WindowsManager wm;
+    private double amplitude;
+    private double frequency;
+    private double loadsCounter;
+    private double rms;
+    private double zeroShift;
 
     public void initializeView() {
-        isStopped(false);
         setTitleLabel();
-        listenAverageCheckBox();
-        listenAutoScaleCheckBox();
-        listenCalibrationCheckBox();
-        addDecimalFormats();
-        setDefaultDecimalFormat();
         initializeGraph();
-        initAverage();
-        setSignalParametersLabels();
+        initializeComboBoxes();
+        initializeTextFields();
+        initializeCheckBoxes();
+        checkCalibration();
         startShow();
     }
 
-    private void isStopped(boolean isStopped) {
-        cm.setStopped(isStopped);
+    private void setTitleLabel() {
+        titleLabel.setText("Текущая нагрузка на " + (signalModel.getChannel() + 1) + " канале"
+                + " (" + signalModel.getModuleType() + " слот " + signalModel.getSlot() + ")");
     }
 
-    private void setTitleLabel() {
-        titleLabel.setText("Текущая нагрузка на " + (signalGraphModel.getChannel() + 1) + " канале"
-                + " (" + signalGraphModel.getModuleType() + " слот " + signalGraphModel.getSlot() + ")");
+    private void initializeGraph() {
+        graph.getData().removeAll(graph.getData());
+        graph.getData().add(graphSeries);
+        clearSeries();
+        toggleAutoScale(false);
+    }
+
+    private void clearSeries() {
+        Platform.runLater(() -> graphSeries.getData().clear());
+        Utils.sleep(50);
+    }
+
+    private void toggleAutoScale(boolean isAutoRangeEnabled) {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setAutoRanging(isAutoRangeEnabled);
+        Utils.sleep(100);
+    }
+
+    private void initializeComboBoxes() {
+        addVerticalScaleValues();
+        addHorizontalScaleValues();
+        setDefaultScales();
+        listenScalesComboBox(verticalScalesComboBox);
+        listenScalesComboBox(horizontalScalesComboBox);
+        addFrequencyCalculations();
+        listenFrequencyCalculationComboBox();
+        addDecimalFormats();
+    }
+
+    private void addVerticalScaleValues() {
+        ObservableList<String> scaleValues = FXCollections.observableArrayList();
+        scaleValues.add("1 мВ/дел");
+        scaleValues.add("10 мВ/дел");
+        scaleValues.add("100 мВ/дел");
+        scaleValues.add("1 В/дел");
+        scaleValues.add("10 В/дел");
+        scaleValues.add("100 В/дел");
+        verticalScalesComboBox.setItems(scaleValues);
+    }
+
+    private void addHorizontalScaleValues() {
+        ObservableList<String> scaleValues = FXCollections.observableArrayList();
+        scaleValues.add("1 мс/дел");
+        scaleValues.add("10 мс/дел");
+        scaleValues.add("100 мс/дел");
+        horizontalScalesComboBox.setItems(scaleValues);
+    }
+
+    private void setDefaultScales() {
+        verticalScalesComboBox.getSelectionModel().select(3);
+        graphModel.parseGraphScale(verticalScalesComboBox.getSelectionModel().getSelectedItem());
+        graphModel.calculateGraphBounds();
+        setScale((NumberAxis) graph.getYAxis());
+
+        horizontalScalesComboBox.getSelectionModel().select(2);
+        graphModel.parseGraphScale(horizontalScalesComboBox.getSelectionModel().getSelectedItem());
+        graphModel.calculateGraphBounds();
+        setScale((NumberAxis) graph.getXAxis());
+    }
+
+    private void setScale(NumberAxis axis) {
+        axis.setLowerBound(graphModel.getLowerBound());
+        axis.setTickUnit(graphModel.getTickUnit());
+        axis.setUpperBound(graphModel.getUpperBound());
+    }
+
+    private void listenScalesComboBox(ComboBox<String> comboBox) {
+        comboBox.valueProperty().addListener(observable -> {
+            if (!comboBox.getSelectionModel().isEmpty()) {
+                graphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
+                graphModel.calculateGraphBounds();
+
+                if (comboBox == verticalScalesComboBox) {
+                    setScale((NumberAxis) graph.getYAxis());
+                } else {
+                    setScale((NumberAxis) graph.getXAxis());
+                }
+            }
+        });
+    }
+
+    private void addFrequencyCalculations() {
+        frequencyCalculationComboBox.getItems().clear();
+        ObservableList<String> chooses = FXCollections.observableArrayList();
+        chooses.add("По переходам через статику");
+        chooses.add("По пиковым значениям");
+        frequencyCalculationComboBox.getItems().addAll(chooses);
+        frequencyCalculationComboBox.getSelectionModel().select(0);
+    }
+
+    private void listenFrequencyCalculationComboBox() {
+        frequencyCalculationComboBox.valueProperty().addListener(observable -> {
+            switch (frequencyCalculationComboBox.getSelectionModel().getSelectedIndex()) {
+                case 0:
+                    signalModel.setAccurateFrequencyCalculation(true);
+                    minSamplesTextField.setDisable(false);
+                    break;
+                case 1:
+                    signalModel.setAccurateFrequencyCalculation(false);
+                    minSamplesTextField.setDisable(true);
+                    break;
+                default:
+                    signalModel.setAccurateFrequencyCalculation(true);
+            }
+        });
+    }
+
+    private void addDecimalFormats() {
+        if (decimalFormatComboBox.getItems().isEmpty()) {
+            ObservableList<String> strings = FXCollections.observableArrayList();
+            for (int i = 1; i <= Utils.getDecimalScaleLimit(); i++) {
+                strings.add(String.format("%d", i));
+            }
+            decimalFormatComboBox.getItems().addAll(strings);
+            decimalFormatComboBox.getSelectionModel().select(1);
+        }
+    }
+
+    private void initializeTextFields() {
+        resetCounters();
+        setSignalParametersLabels();
+        setDigitFilterToMinSamplesTextField();
+    }
+
+    private void resetCounters() {
+        signalModel.setAmplitude(0);
+        signalModel.setFrequency(0);
+        signalModel.setLoadsCounter(0);
+        signalModel.setRMS(0);
+        signalModel.setZeroShift(0);
+    }
+
+    private void setSignalParametersLabels() {
+        amplitudeLabel.setText(String.format("Амлитуда, %s:", signalModel.getValueName()));
+        loadsCounterLabel.setText("Нагружений:");
+        rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
+        zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
+    }
+
+    private void setDigitFilterToMinSamplesTextField() {
+        minSamplesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            minSamplesTextField.setText(newValue.replaceAll("[^1-9][\\d]{2,3}", ""));
+            if (!newValue.matches("^[1-9]|\\d{2,3}|$")) {
+                minSamplesTextField.setText(oldValue);
+            }
+        });
+    }
+
+    private void initializeCheckBoxes() {
+        listenAverageCheckBox();
+        initAverage();
+        listenAutoScaleCheckBox();
+        listenCalibrationCheckBox();
     }
 
     private void listenAverageCheckBox() {
@@ -94,125 +251,17 @@ public class SignalGraphController implements BaseController {
             } else {
                 averageTextField.setDisable(true);
                 averageTextField.setText("");
-                averageCount = 1;
+                signalModel.setAverageCount(1);
             }
         });
-    }
-
-    private void listenAutoScaleCheckBox() {
-        autoScaleCheckBox.selectedProperty().addListener(observable -> {
-            if (autoScaleCheckBox.isSelected()) {
-                toggleAutoScale(true);
-            } else {
-                toggleAutoScale(false);
-                setGraphBounds();
-            }
-        });
-    }
-
-    private void toggleAutoScale(boolean isAutoRangeEnabled) {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        yAxis.setAutoRanging(isAutoRangeEnabled);
-    }
-
-    private void setGraphBounds() {
-        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-
-        yAxis.setLowerBound(signalGraphModel.getLowerBound());
-        yAxis.setUpperBound(signalGraphModel.getUpperBound());
-        yAxis.setTickUnit(signalGraphModel.getTickUnit());
-    }
-
-    private void listenCalibrationCheckBox() {
-        calibrationCheckBox.selectedProperty().addListener(observable -> {
-            if (calibrationCheckBox.isSelected()) {
-                checkCalibration();
-                setValueNameToGraph();
-                setGraphBounds();
-                clearGraph();
-                setSignalParametersLabels();
-                setCalibrationExists(true);
-            } else {
-                setDefaultValueName();
-                setSignalParametersLabels();
-                setDefaultBounds();
-                setCalibrationExists(false);
-            }
-        });
-    }
-
-    public void checkCalibration() {
-        signalGraphModel.defineModuleInstance(cm.getCrateModelInstance().getModulesList());
-        signalGraphModel.checkCalibration();
-        signalGraphModel.parseCalibration();
-
-        if (signalGraphModel.isCalibrationExists()) {
-            calibrationCheckBox.setSelected(true);
-        }
-    }
-
-    private void setValueNameToGraph() {
-        Platform.runLater(() -> graph.getYAxis().setLabel(signalGraphModel.getValueName()));
-    }
-
-    private void clearGraph() {
-        intermediateList = new ArrayList<>();
-        graphSeries = new XYChart.Series<>();
-        graphSeries.getData().addAll(intermediateList);
-        graph.getData().clear();
-        graph.getData().add(graphSeries);
-    }
-
-    private void setSignalParametersLabels() {
-        amplitudeLabel.setText(String.format("Амлитуда, %s:", signalGraphModel.getValueName()));
-        frequencyLabel.setText("Частота, Гц:");
-        phaseLabel.setText("Фаза, °:");
-        zeroShiftLabel.setText(String.format("Статика, %s:", signalGraphModel.getValueName()));
-    }
-
-    private void setCalibrationExists(boolean isExists) {
-        signalGraphModel.setCalibrationExists(isExists);
-    }
-
-    private void setDefaultValueName() {
-        signalGraphModel.setDefaultValueName();
-        setValueNameToGraph();
-    }
-
-    private void setDefaultBounds() {
-        signalGraphModel.defineModuleInstance(cm.getCrateModelInstance().getModulesList());
-        signalGraphModel.setICPMode(cm.getICPMode());
-        signalGraphModel.getDefaultBounds();
-        setGraphBounds();
-    }
-
-    private void addDecimalFormats() {
-        if (decimalFormatComboBox.getItems().isEmpty()) {
-            ObservableList<String> strings = FXCollections.observableArrayList();
-            for (int i = 1; i <= Utils.getDecimalScaleLimit(); i++) {
-                strings.add(String.format("%d", i));
-            }
-
-            decimalFormatComboBox.getItems().addAll(strings);
-        }
-    }
-
-    private void setDefaultDecimalFormat() {
-        decimalFormatComboBox.getSelectionModel().select(1);
-    }
-
-    private void initializeGraph() {
-        setDefaultBounds();
-        toggleAutoScale(false);
-        clearGraph();
     }
 
     private void initAverage() {
-        setDigitFilter();
+        setDigitFilterToAverageTextField();
         changeAverageUiElementsState();
     }
 
-    private void setDigitFilter() {
+    private void setDigitFilterToAverageTextField() {
         averageTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             averageTextField.setText(newValue.replaceAll("[^1-9][\\d]{2,3}", ""));
             if (!newValue.matches("^[1-9]|\\d{2,3}|$")) {
@@ -220,7 +269,7 @@ public class SignalGraphController implements BaseController {
             }
 
             if (!averageTextField.getText().isEmpty()) {
-                averageCount = Integer.parseInt(averageTextField.getText());
+                signalModel.setAverageCount(Integer.parseInt(averageTextField.getText()));
             }
         });
     }
@@ -235,106 +284,231 @@ public class SignalGraphController implements BaseController {
         });
     }
 
-    private void startShow() {
-        new Thread(() -> {
-            while (!cm.isClosed()) {
-                getData();
-                Utils.sleep(100);
+    private void listenAutoScaleCheckBox() {
+        autoScaleCheckBox.selectedProperty().addListener(observable -> {
+            if (autoScaleCheckBox.isSelected()) {
+                toggleAutoScale(true);
+            } else {
+                toggleAutoScale(false);
+                resetGraphBounds();
             }
-            isDone = true;
-        }).start();
-
-        new Thread(() -> {
-            while (!cm.isClosed()) {
-                signalGraphModel.definePeriod();
-                if (signalGraphModel.isPeriodDefined) {
-                    signalGraphModel.processData();
-                    clearSeries();
-                    fillSeries();
-                    showData();
-                }
-                sleep(1000);
-            }
-        }).start();
-    }
-
-    private void getData() {
-        if (!signalGraphModel.getAdc().isBusy()) {
-            signalGraphModel.getData(averageCount);
-        }
-    }
-
-    private void clearSeries() {
-        intermediateList.clear();
-    }
-
-    private void fillSeries() {
-        int scale = 1;
-        if (signalGraphModel.getModuleType().equals(CrateModel.LTR24)) {
-            scale = 32;
-        }
-
-        double[] buffer = signalGraphModel.getBufferedData();
-        int channels = signalGraphModel.getAdc().getChannelsCount();
-        for (int index = signalGraphModel.getChannel(); index < buffer.length; index += channels * scale) {
-            addPointToGraph(index);
-        }
-    }
-
-    private void addPointToGraph(int index) {
-        double[] buffer = signalGraphModel.getBufferedData();
-        if (signalGraphModel.isCalibrationExists()) {
-            ReceivedSignal receivedSignal = signalGraphModel.getReceivedSignal();
-            double calibratedValue = receivedSignal.applyCalibration(signalGraphModel.getAdc(), buffer[index]);
-            intermediateList.add(new XYChart.Data<>((double) index / buffer.length, calibratedValue));
-        } else {
-            intermediateList.add(new XYChart.Data<>((double) index / buffer.length, buffer[index]));
-        }
-    }
-
-    private void showData() {
-        System.out.println("Shown");
-        double amplitude = Utils.roundValue(signalGraphModel.getAmplitude(), decimalFormatScale);
-        double frequency = Utils.roundValue(signalGraphModel.getFrequency(), decimalFormatScale);
-        double phase = Utils.roundValue(signalGraphModel.getPhase(), decimalFormatScale);
-        double zeroShift = Utils.roundValue(signalGraphModel.getZeroShift(), decimalFormatScale);
-
-        isDone = false;
-        Platform.runLater(() -> {
-            graphSeries.getData().clear();
-            graphSeries.getData().addAll(intermediateList);
-            amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, decimalFormatScale));
-            frequencyTextField.setText(Utils.convertFromExponentialFormat(frequency, decimalFormatScale));
-            phaseTextField.setText(Utils.convertFromExponentialFormat(phase, decimalFormatScale));
-            zeroShiftTextField.setText(Utils.convertFromExponentialFormat(zeroShift, decimalFormatScale));
-            isDone = true;
         });
     }
 
-    private void pause() {
-        while (!isDone && !cm.isClosed()) {
-            sleep(10);
+    private void setGraphBounds() {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setLowerBound(signalModel.getLowerBound());
+        yAxis.setUpperBound(signalModel.getUpperBound());
+        yAxis.setTickUnit(signalModel.getTickUnit());
+    }
+
+    private void resetGraphBounds() {
+        if (signalModel.isCalibrationExists()) {
+            setCalibratedGraphBounds();
+        } else {
+            setNonCalibratedGraphBounds();
+        }
+    }
+
+    private void setCalibratedGraphBounds() {
+        setGraphBounds();
+        clearSeries();
+    }
+
+    private void setNonCalibratedGraphBounds() {
+        int selectedRange = verticalScalesComboBox.getSelectionModel().getSelectedIndex();
+        if (selectedRange != 0) {
+            verticalScalesComboBox.getSelectionModel().select(0);
+        } else {
+            verticalScalesComboBox.getSelectionModel().select(1);
+        }
+        verticalScalesComboBox.getSelectionModel().select(selectedRange);
+    }
+
+    private void listenCalibrationCheckBox() {
+        calibrationCheckBox.selectedProperty().addListener(observable -> {
+            if (calibrationCheckBox.isSelected()) {
+                checkCalibration();
+            } else {
+                signalModel.setCalibrationExists(false);
+                signalModel.setDefaultValueName();
+                verticalScalesComboBox.setDisable(false);
+                setValueNameToGraph();
+                setSignalParametersLabels();
+                resetGraphBounds();
+            }
+        });
+    }
+
+    public void checkCalibration() {
+        signalModel.defineModuleInstance(cm.getCrateModelInstance().getModulesList());
+        signalModel.checkCalibration();
+
+        if (signalModel.isCalibrationExists()) {
+            clearSeries();
+            calibrationCheckBox.setSelected(true);
+            verticalScalesComboBox.setDisable(true);
+            setValueNameToGraph();
+            setGraphBounds();
+            setSignalParametersLabels();
+        } else {
+            statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", statusBar);
+        }
+    }
+
+    private void setValueNameToGraph() {
+        Platform.runLater(() -> graph.getYAxis().setLabel(signalModel.getValueName()));
+    }
+
+    private void startShow() {
+        cm.setStopped(false);
+        receiveData();
+        showData();
+    }
+
+    private void receiveData() {
+        new Thread(() -> {
+            while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.getData();
+            }
+        }).start();
+    }
+
+    private void showData() {
+        checkConnection();
+        printData();
+        printGraph();
+    }
+
+    private void checkConnection() {
+        if (signalModel.isConnectionLost()) {
+            signalModel.setFrequency(0);
+            statusBarLine.setStatus(signalModel.getAdc().getStatus(), statusBar);
+        }
+    }
+
+    private void printData() {
+        new Thread(() -> {
+            while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.calculateData();
+                showCalculatedValues();
+                Utils.sleep(1000);
+            }
+        }).start();
+    }
+
+    private void showCalculatedValues() {
+        setParametersFields();
+        showParameters();
+    }
+
+    private void setParametersFields() {
+        int decimalFormatScale = getDecimalFormatScale();
+        if (signalModel.isCalibrationExists()) {
+            amplitude = Utils.roundValue(signalModel.getCalibratedAmplitude(), decimalFormatScale);
+            frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
+            loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
+            rms = Utils.roundValue(signalModel.getCalibratedRms(), decimalFormatScale);
+            zeroShift = Utils.roundValue(signalModel.getCalibratedZeroShift(), decimalFormatScale);
+        } else {
+            amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
+            frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
+            loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
+            rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
+            zeroShift = Utils.roundValue(signalModel.getZeroShift(), decimalFormatScale);
+        }
+    }
+
+    private void showParameters() {
+        Platform.runLater(() -> {
+            amplitudeTextField.setText(Utils.convertFromExponentialFormat(amplitude, getDecimalFormatScale()));
+            frequencyTextField.setText(Utils.convertFromExponentialFormat(frequency, getDecimalFormatScale()));
+            loadsCounterTextField.setText(Utils.convertFromExponentialFormat(loadsCounter, getDecimalFormatScale()));
+            rmsTextField.setText(Utils.convertFromExponentialFormat(rms, getDecimalFormatScale()));
+            zeroShiftTextField.setText(Utils.convertFromExponentialFormat(zeroShift, getDecimalFormatScale()));
+        });
+    }
+
+    private void printGraph() {
+        new Thread(() -> {
+            while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.defineDataRarefactionCoefficient();
+                signalModel.fillBuffer();
+                clearSeries();
+                showGraph();
+                Utils.sleep(1000);
+            }
+        }).start();
+    }
+
+    private void showGraph() {
+        String selectedGraphScale = horizontalScalesComboBox.getSelectionModel().getSelectedItem();
+        graphModel.parseGraphScale(selectedGraphScale);
+        graphModel.calculateGraphBounds();
+        int index;
+        int channel = signalModel.getChannel();
+        int channels = signalModel.getAdc().getChannelsCount();
+        double[] data = signalModel.getBuffer();
+        int scale = signalModel.getDataRarefactionCoefficient();
+
+        for (index = channel; index < data.length && !cm.isStopped(); index += channels * scale) {
+            XYChart.Data point = signalModel.getPoint(index);
+            Runnable addPoint = () -> {
+                if (!graphSeries.getData().contains(point))
+                    graphSeries.getData().add(point);
+            };
+
+            if ((double) point.getXValue() < graphModel.getUpperBound()) {
+                Platform.runLater(addPoint);
+                Utils.sleep(1);
+            }
+
+            if ((index == data.length - channels * scale) || index == data.length - 1) {
+                XYChart.Data lastPoint = new XYChart.Data(1.01, data[data.length - channels * scale]);
+                Platform.runLater(() -> graphSeries.getData().add(lastPoint));
+                Utils.sleep(1);
+            } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
+                Platform.runLater(addPoint);
+                Utils.sleep(1);
+                break;
+            }
         }
     }
 
     @FXML
     private void handleCalibrate() {
-        cm.loadDefaultCalibrationSettings(signalGraphModel);
+        cm.loadDefaultCalibrationSettings(signalModel);
         cm.showChannelValue();
         wm.setScene(WindowsManager.Scenes.CALIBRATION_SCENE);
     }
 
     @FXML
     private void handleBackButton() {
-        String moduleType = signalGraphModel.getModuleType();
-        int slot = signalGraphModel.getSlot();
+        stopReceivingOfData();
+        resetShowingSettings();
+        changeScene();
+    }
 
-        wm.setModuleScene(moduleType, slot - 1);
-        cm.loadItemsForModulesTableView();
-        isStopped(true);
+    private void stopReceivingOfData() {
+        toggleProgressIndicatorState(false);
+        cm.setStopped(true);
+        Utils.sleep(1000);
+        signalModel.getAdc().stop();
+    }
+
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        } else {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
+        }
+    }
+
+    private void resetShowingSettings() {
         disableAutoRange();
         disableAverage();
         disableCalibration();
+        signalModel.setLoadsCounter(0);
     }
 
     private void disableAutoRange() {
@@ -349,19 +523,25 @@ public class SignalGraphController implements BaseController {
 
     private void disableCalibration() {
         calibrationCheckBox.setSelected(false);
-        signalGraphModel.setCalibrationExists(false);
+        signalModel.setCalibrationExists(false);
+    }
+
+    private void changeScene() {
+        String moduleType = signalModel.getModuleType();
+        int slot = signalModel.getSlot();
+        toggleProgressIndicatorState(true);
+        wm.setModuleScene(moduleType, slot - 1);
+        cm.loadItemsForModulesTableView();
     }
 
     public int getDecimalFormatScale() {
-        return decimalFormatScale;
+        return (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
     }
 
-    public SignalGraphModel getSignalGraphModel() {
-        return signalGraphModel;
-    }
 
-    public void setDecimalFormatScale() {
-        decimalFormatScale = (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
+
+    public SignalModel getSignalModel() {
+        return signalModel;
     }
 
     @Override
