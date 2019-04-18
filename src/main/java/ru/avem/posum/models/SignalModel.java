@@ -14,6 +14,7 @@ public class SignalModel {
     private double[] buffer;
     private boolean calibrationExists;
     private int channel;
+    private boolean connectionLost;
     private int dataRarefactionCoefficient;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
@@ -55,15 +56,21 @@ public class SignalModel {
 
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
-        ltr24.setData(new double[39064]);
-        ltr24.setDataRingBuffer(new RingBuffer(ltr24.getData().length * 100));
+        int SAMPLES = (int) ltr24.getFrequency() * ltr24.getChannelsCount();
+        ltr24.setData(new double[SAMPLES]);
+        ltr24.setRingBufferForCalculation(new RingBuffer(SAMPLES));
+        ltr24.setRingBufferForShow(new RingBuffer(SAMPLES));
+        ltr24.setTimeMarks(new double[SAMPLES * 2]);
+        ltr24.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
     private void initLTR212Module() {
-        final int SAMPLES = 30720;
         ltr212 = (LTR212) adc;
+        int adcMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName());
+        int SAMPLES = adcMode == 0 ? 30720 : 150;
         ltr212.setData(new double[SAMPLES]);
-        ltr212.setDataRingBuffer(new RingBuffer(SAMPLES));
+        ltr212.setRingBufferForCalculation(new RingBuffer(SAMPLES));
+        ltr212.setRingBufferForShow(new RingBuffer(SAMPLES));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
@@ -108,26 +115,28 @@ public class SignalModel {
 
     private void addReceivingDataInstructions() {
         instructions.clear();
-        instructions.put(CrateModel.LTR24, this::getLTR24Data);
-        instructions.put(CrateModel.LTR212, this::getLTR212Data);
+        instructions.put(CrateModel.LTR24, this::receive);
+        instructions.put(CrateModel.LTR212, this::receive);
     }
 
-    private void getLTR24Data() {
-        double[] data = ltr24.getData();
-        double[] timeMarks = ltr24.getTimeMarks();
-        RingBuffer dataRingBuffer = ltr24.getDataRingBuffer();
+    private void receive() {
+        double[] data = adc.getData();
+        double[] timeMarks = adc.getTimeMarks();
+        RingBuffer ringBufferForCalculation = adc.getRingBufferForCalculation();
+        RingBuffer ringBufferForShow = adc.getRingBufferForShow();
 
-        ltr24.write(data, timeMarks);
-        dataRingBuffer.put(data);
-    }
-
-    private void getLTR212Data() {
-        double[] data = ltr212.getData();
-        double[] timeMarks = ltr212.getTimeMarks();
-        RingBuffer dataRingBuffer = ltr212.getDataRingBuffer();
-
-        ltr212.write(data, timeMarks);
-        dataRingBuffer.put(data);
+        adc.checkConnection();
+        if (adc.checkStatus()) {
+            adc.write(data, timeMarks);
+            ringBufferForCalculation.reset();
+            ringBufferForCalculation.put(data);
+            ringBufferForShow.reset();
+            ringBufferForShow.put(data);
+        } else {
+            connectionLost = true;
+            adc.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
+            adc.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
+        }
     }
 
     public void calculateData() {
@@ -136,8 +145,10 @@ public class SignalModel {
     }
 
     private void calculate() {
+        double[] buffer = new double[adc.getData().length];
+        adc.getRingBufferForCalculation().take(buffer, buffer.length);
         signalParametersModel.setFields(adc, channel);
-        signalParametersModel.calculateParameters(adc.getData(), averageCount, calibrationExists);
+        signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
     }
 
     private void getSignalParameters() {
@@ -150,30 +161,38 @@ public class SignalModel {
 
     public void fillBuffer() {
         buffer = new double[adc.getData().length];
-        adc.getDataRingBuffer().take(buffer, buffer.length);
+        adc.getRingBufferForShow().take(buffer, buffer.length);
     }
 
     public XYChart.Data getPoint(int valueIndex) {
         if (calibrationExists) {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = signalParametersModel.applyCalibration(adc, buffer[valueIndex]);
-            XYChart.Data<Number, Number> calibratedPoint = new XYChart.Data<>(xValue, yValue);
-            return calibratedPoint;
+            return new XYChart.Data<Number, Number>(xValue, yValue);
         } else {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = buffer[valueIndex];
-            XYChart.Data<Number, Number> point = new XYChart.Data<>(xValue, yValue);
-            return point;
+            return new XYChart.Data<Number, Number>(xValue, yValue);
         }
     }
 
+    /* Определяет коэффициент для прореживания отображаемых точек на графике сигнала */
     public void defineDataRarefactionCoefficient() {
-        if (frequency < 10) {
+        if (frequency < 25) {
             dataRarefactionCoefficient = 10;
         } else if (frequency < 50) {
             dataRarefactionCoefficient = 2;
         } else {
             dataRarefactionCoefficient = 1;
+        }
+
+        double adcFrequency = adc.getFrequency();
+        if (adcFrequency > 10_000 && adcFrequency < 50_000) {
+            dataRarefactionCoefficient *= 5;
+        } else if (adcFrequency > 50_000 && adcFrequency < 100_000) {
+            dataRarefactionCoefficient *= 10;
+        } else if (adcFrequency > 100_000) {
+            dataRarefactionCoefficient *= 25;
         }
     }
 
@@ -187,6 +206,18 @@ public class SignalModel {
 
     public double[] getBuffer() {
         return buffer;
+    }
+
+    public double getCalibratedAmplitude() {
+        return signalParametersModel.getCalibratedAmplitude();
+    }
+
+    public double getCalibratedRms() {
+        return signalParametersModel.getCalibratedRms();
+    }
+
+    public double getCalibratedZeroShift() {
+        return signalParametersModel.getCalibratedZeroShift();
     }
 
     public int getChannel() {
@@ -241,11 +272,40 @@ public class SignalModel {
         return calibrationExists;
     }
 
+    public boolean isConnectionLost() {
+        return connectionLost;
+    }
+
+    public void setAccurateFrequencyCalculation(boolean isAccurateCalculation) {
+        signalParametersModel.setAccurateFrequencyCalculation(isAccurateCalculation);
+    }
+
     public void setAverageCount(double averageCount) {
         this.averageCount = averageCount;
     }
 
     public void setCalibrationExists(boolean calibrationExists) {
         this.calibrationExists = calibrationExists;
+    }
+
+    public void setAmplitude(int amplitude) {
+        signalParametersModel.setAmplitude(amplitude);
+    }
+
+    public void setFrequency(int frequency) {
+        signalParametersModel.setFrequency(frequency);
+    }
+
+    public void setLoadsCounter(int loadsCounter) {
+        this.loadsCounter = loadsCounter;
+        signalParametersModel.setLoadsCounter(loadsCounter);
+    }
+
+    public void setRMS(int rms) {
+        signalParametersModel.setRMS(rms);
+    }
+
+    public void setZeroShift(int zeroShift) {
+        signalParametersModel.setZeroShift(zeroShift);
     }
 }

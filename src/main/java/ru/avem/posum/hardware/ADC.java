@@ -12,7 +12,8 @@ public abstract class ADC extends Module {
         FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
         LOGIC_CHANNELS_COUNT("Logic channels count"), IIR_FILTER("IIR filter"),
         FIR_FILTER("FIR filter"), DECIMATION("Decimation"), TAP("Filter order"),
-        REFERENCE_VOLTAGE("Reference voltage"), REFERENCE_VOLTAGE_TYPE("Reference voltage type");
+        REFERENCE_VOLTAGE("Reference voltage"), REFERENCE_VOLTAGE_TYPE("Reference voltage type"),
+        FREQUENCY("Frequency");
 
         private String settingName;
 
@@ -26,11 +27,11 @@ public abstract class ADC extends Module {
     }
 
     private HashMap<String, Integer> bounds = new HashMap<>();
-    private RingBuffer dataRingBuffer;
+    private RingBuffer ringBufferForCalculation;
+    private RingBuffer ringBufferForShow;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
-    private String[] channelsDescription;
     private int[] channelsTypes;
     private double[] data;
     private int[] measuringRanges;
@@ -49,11 +50,13 @@ public abstract class ADC extends Module {
         moduleSettings = new HashMap<>();
     }
 
+    public abstract double getFrequency();
+
     public abstract StringBuilder moduleSettingsToString();
 
     public abstract void parseModuleSettings(String settings);
 
-    public abstract double getFrequency();
+    public abstract void write(double[] data, double[] timeMarks);
 
     public HashMap<String, Integer> getBounds() {
         return bounds;
@@ -79,8 +82,12 @@ public abstract class ADC extends Module {
         return data;
     }
 
-    public RingBuffer getDataRingBuffer() {
-        return dataRingBuffer;
+    public RingBuffer getRingBufferForCalculation() {
+        return ringBufferForCalculation;
+    }
+
+    public RingBuffer getRingBufferForShow() {
+        return ringBufferForShow;
     }
 
     public int[] getMeasuringRanges() {
@@ -95,14 +102,6 @@ public abstract class ADC extends Module {
         return timeMarks;
     }
 
-    public RingBuffer getTimeMarksRingBuffer() {
-        return timeMarksRingBuffer;
-    }
-
-    public void setBounds(HashMap<String, Integer> bounds) {
-        this.bounds = bounds;
-    }
-
     public void setCalibrationCoefficients(ArrayList<List<Double>> calibrationCoefficients) {
         this.calibrationCoefficients = calibrationCoefficients;
     }
@@ -115,8 +114,12 @@ public abstract class ADC extends Module {
         this.data = data;
     }
 
-    public void setDataRingBuffer(RingBuffer dataRingBuffer) {
-        this.dataRingBuffer = dataRingBuffer;
+    public void setRingBufferForCalculation(RingBuffer ringBufferForCalculation) {
+        this.ringBufferForCalculation = ringBufferForCalculation;
+    }
+
+    public void setRingBufferForShow(RingBuffer ringBufferForShow) {
+        this.ringBufferForShow = ringBufferForShow;
     }
 
     public void setTimeMarks(double[] timeMarks) {

@@ -4,15 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR212 extends ADC {
-    private double frequency;
+    private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public LTR212() {
         initializeModuleSettings();
     }
 
+    @Override
     public void openConnection() {
         status = openConnection(crate, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
         checkStatus();
+    }
+
+    @Override
+    public void checkConnection() {
+        CrateModel crateModel = new CrateModel();
+        if (!crateModel.getCratesNames().isEmpty()) {
+            status = checkConnection(getSlot());
+            checkStatus();
+        } else {
+            openConnection();
+            status = "Потеряно соединение с крейтом";
+        }
     }
 
     public void testEEPROM() {
@@ -20,39 +33,44 @@ public class LTR212 extends ADC {
         checkStatus();
     }
 
+    @Override
     public void initializeModule() {
         status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings());
         checkStatus();
     }
 
     @Override
-    public double getFrequency() {
+    public void defineFrequency() {
         status = getFrequency(getSlot());
         checkStatus();
-        return frequency;
     }
 
+    @Override
     public void start() {
         status = start(getSlot());
         checkStatus();
     }
 
+    @Override
     public void write(double[] data, double[] timeMarks) {
-        status = write(getSlot(), data, timeMarks);
-        checkStatus();
+        status = write(getSlot(), data, timeMarks, data.length);
     }
 
+    @Override
     public void stop() {
         status = stop(getSlot());
         checkStatus();
     }
 
+    @Override
     public void closeConnection() {
         closeConnection(getSlot());
         checkStatus();
     }
 
     public native String openConnection(String crate, int slot, String path);
+
+    public native String checkConnection(int slot);
 
     public native String testEEPROM(int slot);
 
@@ -62,14 +80,14 @@ public class LTR212 extends ADC {
 
     public native String start(int slot);
 
-    public native String write(int slot, double[] data, double[] timeMarks);
+    public native String write(int slot, double[] data, double[] timeMarks, int size);
 
     public native String stop(int slot);
 
     public native String closeConnection(int slot);
 
     static {
-        System.loadLibrary( "LTR212Library");
+        System.loadLibrary("LTR212Library");
     }
 
     private void initializeModuleSettings() {
@@ -139,5 +157,10 @@ public class LTR212 extends ADC {
         moduleSettings.put(Settings.TAP.getSettingName(), Integer.valueOf(separatedSettings[7]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE.getSettingName(), Integer.valueOf(separatedSettings[8]));
         moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), Integer.valueOf(separatedSettings[9]));
+    }
+
+    @Override
+    public double getFrequency() {
+        return frequency;
     }
 }

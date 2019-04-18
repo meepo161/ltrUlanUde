@@ -24,8 +24,6 @@ import java.util.List;
 
 public class SettingsController implements BaseController {
     @FXML
-    private Button backButton;
-    @FXML
     private Button chooseCrateButton;
     @FXML
     private TextArea commentsTextArea;
@@ -195,9 +193,11 @@ public class SettingsController implements BaseController {
     }
 
     public void handleChooseCrate() {
-        checkSelection();
-        initSettingsModel();
-        crateModel.initialize(crate);
+        toggleProgressIndicatorState(false);
+        new Thread(() -> {
+            checkSelection();
+            toggleProgressIndicatorState(true);
+        }).start();
     }
 
     private void initSettingsModel() {
@@ -208,7 +208,16 @@ public class SettingsController implements BaseController {
     private void checkSelection() {
         for (int i = 0; i < crates.size(); i++) {
             if (cratesListView.getSelectionModel().isSelected(i)) {
+                cratesListView.setDisable(true);
+                chooseCrateButton.setDisable(true);
+                saveSettingsButton.setDisable(true);
+                Platform.runLater(() -> statusBarLine.setStatus("     Устанавливается соединение с модулями", statusBar));
+                initSettingsModel();
+                crateModel.initialize(crate);
                 toggleUiElements(true, false);
+                saveSettingsButton.setDisable(false);
+            } else {
+                Platform.runLater(() -> statusBarLine.setStatus("Крейт не выбран", statusBar));
             }
         }
     }
@@ -217,7 +226,6 @@ public class SettingsController implements BaseController {
         cratesListView.setDisable(crate);
         chooseCrateButton.setDisable(crate);
         modulesListView.setDisable(module);
-        saveSettingsButton.setDisable(module);
         setupModuleButton.setDisable(module);
     }
 
@@ -325,18 +333,9 @@ public class SettingsController implements BaseController {
     }
 
     private void toggleUiElements() {
-        toggleButtons(true);
-        hideRequiredFieldsSymbols();
-
-        Platform.runLater(() -> {
-            toggleProgressIndicatorState(false);
-        });
-    }
-
-    public void toggleButtons(boolean isDisable) {
-        saveSettingsButton.setDisable(isDisable);
         setupModuleButton.setDisable(true);
-        backButton.setDisable(isDisable);
+        hideRequiredFieldsSymbols();
+        toggleProgressIndicatorState(false);
     }
 
     public void hideRequiredFieldsSymbols() {
@@ -347,9 +346,9 @@ public class SettingsController implements BaseController {
 
     private void toggleProgressIndicatorState(boolean hide) {
         if (hide) {
-            progressIndicator.setStyle("-fx-opacity: 0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
         } else {
-            progressIndicator.setStyle("-fx-opacity: 1.0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
     }
 
@@ -445,7 +444,6 @@ public class SettingsController implements BaseController {
         modulesListView.getItems().clear();
 
         toggleUiElements(false, true);
-        toggleButtons(false);
     }
 
     @FXML
@@ -466,12 +464,8 @@ public class SettingsController implements BaseController {
         return crateModel;
     }
 
-    public int getSelectedCrate() {
-        return selectedCrate;
-    }
-
-    public int getSelectedModuleIndex() {
-        return selectedModuleIndex;
+    public SettingsModel getSettingsModel() {
+        return settingsModel;
     }
 
     public void setEditMode(boolean editMode) {

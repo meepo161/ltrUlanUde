@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.hardware.Module;
@@ -38,6 +39,8 @@ public class LTR24SettingController implements BaseController {
     private TextField descriptionOfChannelN3;
     @FXML
     private TextField descriptionOfChannelN4;
+    @FXML
+    private ComboBox<String> discretizationFrequencyComboBox;
     @FXML
     private Button initializeButton;
     @FXML
@@ -78,10 +81,9 @@ public class LTR24SettingController implements BaseController {
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private boolean[] checkedChannels;
     private ControllerManager cm;
-    private CrateModel crateModel;
     private int disabledChannels;
     private boolean icpMode;
-    private boolean isConnectionOpen;
+    private boolean isConnectionOpen = true;
     private LTR24 ltr24;
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private int[] measuringRanges;
@@ -101,6 +103,7 @@ public class LTR24SettingController implements BaseController {
         fillListOfChannelsValuesButtons();
 
         addChannelsTypes(channelsTypesComboBoxes);
+        addFrequencies(discretizationFrequencyComboBox);
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
@@ -165,6 +168,28 @@ public class LTR24SettingController implements BaseController {
         for (ComboBox<String> comboBox : measuringRangeComboBoxes) {
             comboBox.getItems().addAll(strings);
         }
+    }
+
+    private void addFrequencies(ComboBox<String> comboBox) {
+        ObservableList<String> frequencies = FXCollections.observableArrayList();
+        frequencies.add("117.19 кГц");
+        frequencies.add("78.13 кГц");
+        frequencies.add("58.59 кГц");
+        frequencies.add("39.06 кГц");
+        frequencies.add("29.30 кГц");
+        frequencies.add("19.53 кГц");
+        frequencies.add("14.64 кГц");
+        frequencies.add("9.77 кГц");
+        frequencies.add("7.32 кГц");
+        frequencies.add("4.88 кГц");
+        frequencies.add("3.66 кГц");
+        frequencies.add("2.44 кГц");
+        frequencies.add("1.83 кГц");
+        frequencies.add("1.22 кГц");
+        frequencies.add("915.53 Гц");
+        frequencies.add("610.35 Гц");
+
+        comboBox.getItems().addAll(frequencies);
     }
 
     private void addListenerForCheckBoxes(List<CheckBox> checkBoxes) {
@@ -335,6 +360,8 @@ public class LTR24SettingController implements BaseController {
             measuringRangesComboBoxes.get(i).getSelectionModel().select(measuringRanges[i]);
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
         }
+        int frequency = ltr24.getModuleSettings().get(ADC.Settings.FREQUENCY.getSettingName());
+        discretizationFrequencyComboBox.getSelectionModel().select(frequency);
     }
 
     public void handleInitialize() {
@@ -342,6 +369,7 @@ public class LTR24SettingController implements BaseController {
 
         new Thread(() -> {
             saveChannelsSettings();
+            saveModuleSettings();
             initializeModule();
             checkResult();
             indicateResult();
@@ -369,6 +397,7 @@ public class LTR24SettingController implements BaseController {
             measuringRangesComboBoxes.get(i).setDisable(true);
         }
 
+        discretizationFrequencyComboBox.setDisable(true);
         applyForAllCheckBox.setDisable(true);
         initializeButton.setDisable(true);
     }
@@ -384,9 +413,14 @@ public class LTR24SettingController implements BaseController {
                 checkedChannels[i] = false; // false - канал не выбран
                 channelsDescriptions[i] = ", ";
                 channelsTypes[i] = 0;
-                measuringRanges[i] = 0;
+                measuringRanges[i] = 1;
             }
         }
+    }
+
+    private void saveModuleSettings() {
+        int frequency = discretizationFrequencyComboBox.getSelectionModel().getSelectedIndex();
+        ltr24.getModuleSettings().put(ADC.Settings.FREQUENCY.getSettingName(), frequency);
     }
 
     private void initializeModule() {
@@ -435,6 +469,7 @@ public class LTR24SettingController implements BaseController {
             }
         }
 
+        discretizationFrequencyComboBox.setDisable(false);
         applyForAllCheckBox.setDisable(false);
         initializeButton.setDisable(false);
     }
@@ -447,6 +482,7 @@ public class LTR24SettingController implements BaseController {
         new Thread(() -> {
             findLTR24Module();
             saveChannelsSettings();
+            saveModuleSettings();
             closeConnection();
             enableChannelsUiElements();
             prepareSettingScene();
@@ -476,6 +512,8 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
+        ltr24.defineFrequency();
+        ltr24.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR24, ltr24.getSlot());
         cm.initializeSignalGraphView();
         cm.checkCalibration();
@@ -502,7 +540,6 @@ public class LTR24SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        crateModel = cm.getCrateModelInstance();
     }
 
     public boolean isIcpMode() {

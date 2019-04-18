@@ -33,44 +33,42 @@ public class CalibrationPoint {
             String loadValue = String.valueOf(point.getLoadValue());
             String channelValue = String.valueOf(point.getChannelValue());
             String valueName = String.valueOf(point.getValueName());
-            StringBuffer settings = new StringBuffer();
 
-            settings.append("Channel: ").append(channel)
-                    .append(", load value: ").append(loadValue)
-                    .append(", channel value: ").append(channelValue)
-                    .append(", value name: ").append(valueName);
-
-            convertedList.add(String.valueOf(settings));
+            String settings = "Channel: " + channel +
+                    ", load value: " + loadValue +
+                    ", channel value: " + channelValue +
+                    ", value name: " + valueName;
+            convertedList.add(settings);
         }
 
         return convertedList;
-    }
-
-    public static double parseLoadValue(String settings) {
-        return Double.parseDouble(settings.split(", ")[1].split("load value: ")[1]);
-    }
-
-    public static double parseChannelValue(String settings) {
-        return Double.parseDouble(settings.split(", ")[2].split("channel value: ")[1]);
-    }
-
-    public static String parseValueName(String settings) {
-        return settings.split(", ")[3].split("value name: ")[1];
     }
 
     public int getChannel() {
         return channel;
     }
 
-    public String getLoadValue() {
-        return loadValue.replaceAll(",", ".");
-    }
-
     public String getChannelValue() {
         return channelValue.replaceAll(",", ".");
     }
 
-    public String getValueName() {
+    public String getLoadValue() {
+        return loadValue.replaceAll(",", ".");
+    }
+
+    private String getValueName() {
         return valueName;
+    }
+
+    static double parseChannelValue(String settings) {
+        return Double.parseDouble(settings.split(", ")[2].split("channel value: ")[1]);
+    }
+
+    static double parseLoadValue(String settings) {
+        return Double.parseDouble(settings.split(", ")[1].split("load value: ")[1]);
+    }
+
+    static String parseValueName(String settings) {
+        return settings.split(", ")[3].split("value name: ")[1];
     }
 }

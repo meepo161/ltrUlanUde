@@ -86,9 +86,8 @@ public class LTR212SettingController implements BaseController {
     private List<ComboBox<String>> channelsTypesComboBoxes = new ArrayList<>();
     private boolean[] checkedChannels;
     private ControllerManager cm;
-    private CrateModel crateModel;
     private int disabledChannels;
-    private boolean isConnectionOpen;
+    private boolean isConnectionOpen = true;
     private LTR212 ltr212 = new LTR212();
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private int[] measuringRanges;
@@ -519,6 +518,7 @@ public class LTR212SettingController implements BaseController {
 
     private void showChannelValue(int channel) {
         saveBounds(channel);
+        ltr212.defineFrequency();
         ltr212.start(slot);
         cm.giveChannelInfo(channel, CrateModel.LTR212, ltr212.getSlot());
         cm.initializeSignalGraphView();
@@ -554,6 +554,5 @@ public class LTR212SettingController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        crateModel = cm.getCrateModelInstance();
     }
 }

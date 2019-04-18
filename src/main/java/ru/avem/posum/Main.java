@@ -2,6 +2,7 @@ package ru.avem.posum;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -15,13 +16,16 @@ import ru.avem.posum.controllers.*;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.ExperimentModel;
 import ru.avem.posum.models.SignalModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
     private volatile boolean closed;
@@ -239,6 +243,27 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void stop() {
         closed = true;
+        stopAllModules();
+    }
+
+    private void stopAllModules() {
+        ObservableList<String> modulesNames = settingsController.getSettingsModel().getModulesNames();
+        HashMap<Integer, Module> modules = getCrateModelInstance().getModulesList();
+
+        if (!modules.isEmpty()) {
+            for (int index = 0; index < modulesNames.size(); index++) {
+                int slot = settingsController.getSettingsModel().parseSlotNumber(index);
+                if (slot != 16) { // TODO: delete this, because LTR27Module is absentee
+                    Module module = modules.get(slot);
+                    module.checkConnection();
+                    module.checkStatus();
+                    if (module.getStatus().equals("Операция успешно выполнена")) {
+                        module.stop();
+                        module.closeConnection();
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -351,6 +376,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void setEditMode(boolean editMode) {
         settingsController.setEditMode(editMode);
     }
+
     @Override
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
@@ -364,11 +390,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void showTestProgram(TestProgram testProgram) {
         settingsController.showTestProgram(testProgram);
-    }
-
-    @Override
-    public void toggleSettingsSceneButtons(boolean isDisable) {
-        settingsController.toggleButtons(isDisable);
     }
 
     @Override
