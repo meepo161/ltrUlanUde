@@ -244,6 +244,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void stop() {
         closed = true;
         stopAllModules();
+        System.out.println("Version_1.0 closed");
     }
 
     private void stopAllModules() {
