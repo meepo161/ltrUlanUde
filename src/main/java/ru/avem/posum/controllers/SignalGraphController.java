@@ -375,20 +375,23 @@ public class SignalGraphController implements BaseController {
     }
 
     private void showData() {
+        checkConnection();
+        printData();
+        printGraph();
+    }
+
+    private void checkConnection() {
+        if (signalModel.isConnectionLost()) {
+            signalModel.setFrequency(0);
+            statusBarLine.setStatus(signalModel.getAdc().getStatus(), statusBar);
+        }
+    }
+
+    private void printData() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.calculateData();
                 showCalculatedValues();
-                Utils.sleep(1000);
-            }
-        }).start();
-
-        new Thread(() -> {
-            while (!cm.isClosed() && !cm.isStopped()) {
-                signalModel.defineDataRarefactionCoefficient();
-                signalModel.fillBuffer();
-                clearSeries();
-                showGraph();
                 Utils.sleep(1000);
             }
         }).start();
@@ -424,6 +427,18 @@ public class SignalGraphController implements BaseController {
             rmsTextField.setText(Utils.convertFromExponentialFormat(rms, getDecimalFormatScale()));
             zeroShiftTextField.setText(Utils.convertFromExponentialFormat(zeroShift, getDecimalFormatScale()));
         });
+    }
+
+    private void printGraph() {
+        new Thread(() -> {
+            while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.defineDataRarefactionCoefficient();
+                signalModel.fillBuffer();
+                clearSeries();
+                showGraph();
+                Utils.sleep(1000);
+            }
+        }).start();
     }
 
     private void showGraph() {

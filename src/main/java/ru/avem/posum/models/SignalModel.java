@@ -14,6 +14,7 @@ public class SignalModel {
     private double[] buffer;
     private boolean calibrationExists;
     private int channel;
+    private boolean connectionLost;
     private int dataRarefactionCoefficient;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
@@ -114,45 +115,27 @@ public class SignalModel {
 
     private void addReceivingDataInstructions() {
         instructions.clear();
-        instructions.put(CrateModel.LTR24, this::getLTR24Data);
-        instructions.put(CrateModel.LTR212, this::getLTR212Data);
+        instructions.put(CrateModel.LTR24, this::receive);
+        instructions.put(CrateModel.LTR212, this::receive);
     }
 
-    private void getLTR24Data() {
-        double[] data = ltr24.getData();
-        double[] timeMarks = ltr24.getTimeMarks();
-        RingBuffer ringBufferForCalculation = ltr24.getRingBufferForCalculation();
-        RingBuffer ringBufferForShow = ltr24.getRingBufferForShow();
+    private void receive() {
+        double[] data = adc.getData();
+        double[] timeMarks = adc.getTimeMarks();
+        RingBuffer ringBufferForCalculation = adc.getRingBufferForCalculation();
+        RingBuffer ringBufferForShow = adc.getRingBufferForShow();
 
-        ltr24.checkConnection();
-        if (ltr24.checkStatus()) {
-            ltr24.write(data, timeMarks);
+        adc.checkConnection();
+        if (adc.checkStatus()) {
+            adc.write(data, timeMarks);
             ringBufferForCalculation.reset();
             ringBufferForCalculation.put(data);
             ringBufferForShow.reset();
             ringBufferForShow.put(data);
         } else {
-            ltr24.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
-            ltr24.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
-        }
-    }
-
-    private void getLTR212Data() {
-        double[] data = ltr212.getData();
-        double[] timeMarks = ltr212.getTimeMarks();
-        RingBuffer ringBufferForCalculation = ltr212.getRingBufferForCalculation();
-        RingBuffer ringBufferForShow = ltr212.getRingBufferForShow();
-
-        ltr212.checkConnection();
-        if (ltr212.checkStatus()) {
-            ltr212.write(data, timeMarks);
-            ringBufferForCalculation.reset();
-            ringBufferForCalculation.put(data);
-            ringBufferForShow.reset();
-            ringBufferForShow.put(data);
-        } else {
-            ltr212.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
-            ltr212.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
+            connectionLost = true;
+            adc.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
+            adc.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
         }
     }
 
@@ -221,30 +204,9 @@ public class SignalModel {
         return amplitude;
     }
 
-    public double getAverageCount() {
-        return averageCount;
-    }
-
-    public int getAverageIterator() {
-        return signalParametersModel.getAverageIterator();
-    }
-
     public double[] getBuffer() {
         return buffer;
     }
-
-    public double getBufferedCalibratedAmplitude() {
-        return signalParametersModel.getBufferedCalibratedAmplitude();
-    }
-
-    public double getBufferedCalibratedRms() {
-        return signalParametersModel.getBufferedCalibratedRms();
-    }
-
-    public double getBufferedCalibratedZeroShift() {
-        return signalParametersModel.getBufferedCalibratedZeroShift();
-    }
-
 
     public double getCalibratedAmplitude() {
         return signalParametersModel.getCalibratedAmplitude();
@@ -310,6 +272,10 @@ public class SignalModel {
         return calibrationExists;
     }
 
+    public boolean isConnectionLost() {
+        return connectionLost;
+    }
+
     public void setAccurateFrequencyCalculation(boolean isAccurateCalculation) {
         signalParametersModel.setAccurateFrequencyCalculation(isAccurateCalculation);
     }
@@ -341,9 +307,5 @@ public class SignalModel {
 
     public void setZeroShift(int zeroShift) {
         signalParametersModel.setZeroShift(zeroShift);
-    }
-
-    public void setMinSamples(int minSamples) {
-        signalParametersModel.setMinSamples(minSamples);
     }
 }

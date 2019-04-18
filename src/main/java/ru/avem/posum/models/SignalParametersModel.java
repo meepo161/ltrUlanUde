@@ -150,7 +150,7 @@ class SignalParametersModel {
 
         if (this.signalFrequency == 0) {
             return signalFrequency;
-        } else if (signalFrequency > this.signalFrequency * 1.5) {
+        } else if (signalFrequency < this.signalFrequency / 1.5 || signalFrequency > this.signalFrequency * 1.5) {
             return this.signalFrequency;
         } else {
             return signalFrequency;
@@ -325,22 +325,6 @@ class SignalParametersModel {
         return amplitude;
     }
 
-    int getAverageIterator() {
-        return averageIterator;
-    }
-
-    double getBufferedCalibratedAmplitude() {
-        return bufferedCalibratedAmplitude;
-    }
-
-    double getBufferedCalibratedRms() {
-        return bufferedCalibratedRms;
-    }
-
-    double getBufferedCalibratedZeroShift() {
-        return bufferedCalibratedZeroShift;
-    }
-
     double getCalibratedAmplitude() {
         return calibratedAmplitude;
     }
@@ -353,8 +337,8 @@ class SignalParametersModel {
         return calibratedZeroShift;
     }
 
-    double getSignalFrequency() {
-        return signalFrequency;
+    String getCalibrationValueName() {
+        return calibrationValueName;
     }
 
     double getLowerBound() {
@@ -365,20 +349,20 @@ class SignalParametersModel {
         return loadsCounter;
     }
 
-    double getRms() {
-        return rms;
-    }
-
-    double getTickUnit() {
-        return tickUnit;
-    }
-
     double getUpperBound() {
         return upperBound;
     }
 
-    String getCalibrationValueName() {
-        return calibrationValueName;
+    double getRms() {
+        return rms;
+    }
+
+    double getSignalFrequency() {
+        return signalFrequency;
+    }
+
+    double getTickUnit() {
+        return tickUnit;
     }
 
     double getZeroShift() {
@@ -393,7 +377,7 @@ class SignalParametersModel {
         this.amplitude = amplitude;
     }
 
-    void setFrequency(int frequency) {
+    public void setFrequency(int frequency) {
         this.signalFrequency = frequency;
     }
 
@@ -407,9 +391,5 @@ class SignalParametersModel {
 
     void setZeroShift(int zeroShift) {
         this.zeroShift = zeroShift;
-    }
-
-    void setMinSamples(int minSamples) {
-        this.minSamples = minSamples;
     }
 }
