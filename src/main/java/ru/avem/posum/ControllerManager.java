@@ -3,58 +3,58 @@ package ru.avem.posum;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
-import ru.avem.posum.hardware.LTR212;
-import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.SignalModel;
 
 import java.util.List;
 
 public interface ControllerManager {
+
+    void checkCalibration();
+
+    void createListModulesControllers(List<String> modulesNames);
+
+    String getCrate();
+
+    CrateModel getCrateModelInstance();
+
+    int getDecimalFormatScale();
+
+    ExperimentModel getExperimentModel();
+
+    boolean getICPMode();
+
+    String getValueName();
+
+    double getZeroShift();
+
+    void giveChannelInfo(int channel, String moduleType, int slot);
+
+    void hideRequiredFieldsSymbols();
+
+    void initializeSignalGraphView();
+
+    boolean isClosed();
+
+    boolean isStopped();
+
+    void loadDefaultCalibrationSettings(SignalModel signalModel);
+
+    void loadDefaultSettings();
+
     void loadItemsForMainTableView();
 
     void loadItemsForModulesTableView();
 
-    void loadDefaultSettings();
+    void loadModuleSettings(int selectedModuleIndex, String moduleName);
 
-    void toggleSettingsSceneButtons(boolean isDisable);
+    void setClosed(boolean closed);
 
-    void loadLTR24Settings(int id);
+    void setStopped(boolean stopped);
 
-    void loadLTR34Settings(int id);
-
-    void loadLTR212Settings(int id);
-
-    void createListModulesControllers(List<String> modulesNames);
-
-    void showChannelData(CrateModel.Moudules moduleType, int slot, int channel);
-
-    int getSelectedCrate();
-
-    int getSelectedModule();
-
-    int getSlot();
-
-    CrateModel getCrateModelInstance();
-
-    ExperimentModel getExperimentModel();
-
-    double getMaxValue();
+    void setEditMode(boolean editMode);
 
     void showChannelValue();
 
     void showTestProgram(TestProgram testProgram);
-
-    void setEditMode(boolean editMode);
-
-    void hideRequiredFieldsSymbols();
-
-    LTR24 getLTR24Instance();
-
-    LTR212 getLTR212Instance();
-
-    void loadDefaultCalibrationSettings(CrateModel.Moudules moduleType, int channel);
-
-    boolean isClosed();
-
-    void setClosed(boolean closed);
 }

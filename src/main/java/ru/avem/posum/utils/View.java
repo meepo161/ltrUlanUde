@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import ru.avem.posum.Main;
+import ru.avem.posum.models.Actionable;
 
 import java.util.Optional;
 
@@ -15,11 +16,6 @@ public class View {
 
     private View() {
         throw new AssertionError();
-    }
-
-    @FunctionalInterface
-    public interface Actionable {
-        void onAction();
     }
 
     public static void showConfirmDialog(String text, Actionable actionYes, Actionable actionNo) {

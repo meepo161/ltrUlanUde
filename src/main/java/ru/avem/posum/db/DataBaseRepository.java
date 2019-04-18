@@ -11,13 +11,12 @@ public class DataBaseRepository {
     public static void init(boolean forceInit) {
         if (!new File(DATABASE_NAME).exists() || forceInit) {
             AccountRepository.createTable(Account.class);
+            CalibrationsRepository.createTable(Calibration.class);
             EventRepository.createTable(Event.class);
-            LTR24TablesRepository.createTable(LTR24Table.class);
-            LTR212TablesRepository.createTable(LTR212Table.class);
-            LTR34TablesRepository.createTable(LTR34Table.class);
+            ModulesRepository.createTable(Modules.class);
             TestProgramRepository.createTable(TestProgram.class);
 
-            Account admin = new Account("admin", "102030");
+            Account admin = new Account("admin", "AS45TR8");
             AccountRepository.insertAccount(admin);
 
             Account user = new Account("user", "user");

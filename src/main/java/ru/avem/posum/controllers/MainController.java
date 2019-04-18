@@ -13,13 +13,11 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.db.LTR212TablesRepository;
-import ru.avem.posum.db.LTR24TablesRepository;
-import ru.avem.posum.db.LTR34TablesRepository;
+import ru.avem.posum.db.CalibrationsRepository;
+import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.LTR212Table;
-import ru.avem.posum.db.models.LTR24Table;
-import ru.avem.posum.db.models.LTR34Table;
+import ru.avem.posum.db.models.Calibration;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -28,6 +26,20 @@ import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
+    private TableColumn<TestProgram, Integer> columnTableViewIndex;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramName;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramChangingDate;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramCreatingDate;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestingSample;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramTime;
+    @FXML
+    private TableColumn<TestProgram, String> columnTestProgramType;
+    @FXML
     private Button openExperimentButton;
     @FXML
     private ProgressIndicator progressIndicator;
@@ -35,33 +47,19 @@ public class MainController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private TableView<TestProgram> testProgramTableView;
-    @FXML
-    private TableColumn<TestProgram, Integer> columnTableViewIndex;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramName;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramCreatingDate;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramChangingDate;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramTime;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestProgramType;
-    @FXML
-    private TableColumn<TestProgram, String> columnTestingSample;
 
-    private WindowsManager wm;
-    private ControllerManager cm;
-    private StatusBarLine statusBarLine = new StatusBarLine();
-    private ObservableList<TestProgram> testPrograms;
     private List<TestProgram> allTestPrograms;
-    private TestProgram testProgram;
+    private ControllerManager cm;
     private ContextMenu contextMenu = new ContextMenu();
-    private long testProgramId;
-    private int selectedIndex;
-    private long oldTestProgramId;
-    private long newTestProgramId;
     private boolean isTestProgramSelected;
+    private long newTestProgramId;
+    private long oldTestProgramId;
+    private int selectedIndex;
+    private StatusBarLine statusBarLine = new StatusBarLine();
+    private TestProgram testProgram;
+    private long testProgramId;
+    private ObservableList<TestProgram> testPrograms;
+    private WindowsManager wm;
 
     @FXML
     private void initialize() {
@@ -123,7 +121,7 @@ public class MainController implements BaseController {
         });
     }
 
-    private void createContextMenu () {
+    private void createContextMenu() {
         MenuItem menuItemEdit = new MenuItem("Настроить");
         MenuItem menuItemCopy = new MenuItem("Копировать");
         MenuItem menuItemDelete = new MenuItem("Удалить");
@@ -143,7 +141,7 @@ public class MainController implements BaseController {
                     handleMenuItemEdit();
                 }
 
-                if(event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     contextMenu.show(testProgramTableView, event.getScreenX(), event.getScreenY());
                 } else if (event.getClickCount() == 1) {
                     contextMenu.hide();
@@ -161,9 +159,7 @@ public class MainController implements BaseController {
 
     private void initModulesList() {
         CrateModel crateModel = cm.getCrateModelInstance();
-        crateModel.getLtr24ModulesList().clear();
-        crateModel.getLtr34ModulesList().clear();
-        crateModel.getLtr212ModulesList().clear();
+        crateModel.getModulesList().clear();
     }
 
     private void prepareSettingsScene() {
@@ -189,15 +185,30 @@ public class MainController implements BaseController {
         }
     }
 
+    private void checkSelection() {
+        selectedIndex = getSelectedItemIndex();
+
+        if (testPrograms.isEmpty()) {
+            showNotification("Ошибка: отсутсвуют программы испытаний");
+            isTestProgramSelected = false;
+        } else if (selectedIndex == -1) {
+            showNotification("Ошибка: программа испытаний не выбрана");
+            isTestProgramSelected = false;
+        } else {
+            isTestProgramSelected = true;
+        }
+    }
+
     private void prepareEditSettingsScene() {
-        cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
-        cm.toggleSettingsSceneButtons(false);
         cm.setEditMode(true);
+        cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
     }
 
     private int getSelectedItemIndex() {
         selectedIndex = testProgramTableView.getSelectionModel().getSelectedIndex();
-        selectedIndex = testProgramTableView.getItems().get(selectedIndex).getIndex();
+        if (selectedIndex != -1) {
+            selectedIndex = testProgramTableView.getItems().get(selectedIndex).getIndex();
+        }
         return selectedIndex;
     }
 
@@ -209,7 +220,7 @@ public class MainController implements BaseController {
             toggleProgressIndicatorState(false);
             new Thread(() -> {
                 copyTestProgram();
-                copyTestProgramSettings();
+                copyModulesSettings();
                 reloadTestProgramsList();
                 showNotification("Программа испытаний скопирована");
             }).start();
@@ -235,35 +246,24 @@ public class MainController implements BaseController {
         newTestProgramId = testProgram.getId();
     }
 
-    private void copyTestProgramSettings() {
-        copyLTR24Tables();
-        copyLTR34Tables();
-        copyLTR212Tables();
-    }
-
-    private void copyLTR24Tables() {
-        for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
-            if (oldTestProgramId == ltr24Table.getTestProgramId()) {
-                ltr24Table.setTestProgramId(newTestProgramId);
-                LTR24TablesRepository.insertLTR24Table(ltr24Table);
+    private void copyModulesSettings() {
+        for (Modules module : ModulesRepository.getAllModules()) {
+            if (oldTestProgramId == module.getTestProgramId()) {
+                long oldModuleId = module.getId();
+                module.setTestProgramId(newTestProgramId);
+                ModulesRepository.insertModule(module);
+                long newModuleId = module.getId();
+                copyCalibrations(oldModuleId, newModuleId);
             }
         }
     }
 
-    private void copyLTR34Tables() {
-        for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
-            if (oldTestProgramId == ltr34Table.getTestProgramId()) {
-                ltr34Table.setTestProgramId(newTestProgramId);
-                LTR34TablesRepository.insertLTR34Module(ltr34Table);
-            }
-        }
-    }
-
-    private void copyLTR212Tables() {
-        for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
-            if (oldTestProgramId == ltr212Table.getTestProgramId()) {
-                ltr212Table.setTestProgramId(newTestProgramId);
-                LTR212TablesRepository.insertLTR212Table(ltr212Table);
+    private void copyCalibrations(long oldModuleId, long newModuleId) {
+        for (Calibration calibration : CalibrationsRepository.getAllCalibrations()) {
+            if (calibration.getModuleId() == oldModuleId & calibration.getTestProgramId() == oldTestProgramId) {
+                calibration.setTestProgramId(newTestProgramId);
+                calibration.setModuleId(newModuleId);
+                CalibrationsRepository.insertCalibration(calibration);
             }
         }
     }
@@ -295,9 +295,7 @@ public class MainController implements BaseController {
 
     private void delete() {
         deleteTestProgram();
-        deleteLTR24Tables();
-        deleteLTR212Tables();
-        deleteLTR34Tables();
+        deleteModules();
     }
 
     private void deleteTestProgram() {
@@ -306,28 +304,22 @@ public class MainController implements BaseController {
         TestProgramRepository.deleteTestProgram(testProgram);
     }
 
-    private void deleteLTR34Tables() {
-        for (LTR34Table ltr34Table : LTR34TablesRepository.getAllLTR34Tables()) {
-            if (testProgramId == ltr34Table.getTestProgramId()) {
-                LTR34TablesRepository.deleteLTR34Table(ltr34Table);
+    private void deleteModules() {
+        for (Modules module : ModulesRepository.getAllModules()) {
+            if (testProgramId == module.getTestProgramId()) {
+                deleteCalibrations(module.getId());
+                ModulesRepository.deleteModule(module);
             }
         }
     }
 
-    private void deleteLTR212Tables() {
-        for (LTR212Table ltr212Table : LTR212TablesRepository.getAllLTR212Tables()) {
-            if (testProgramId == ltr212Table.getTestProgramId()) {
-                LTR212TablesRepository.deleteLTR212Table(ltr212Table);
+    private void deleteCalibrations(long moduleId) {
+        for (Calibration calibration : CalibrationsRepository.getAllCalibrations()) {
+            if (calibration.getModuleId() == moduleId & calibration.getTestProgramId() == testProgramId) {
+                CalibrationsRepository.deleteCalibration(calibration);
             }
         }
-    }
 
-    private void deleteLTR24Tables() {
-        for (LTR24Table ltr24Table : LTR24TablesRepository.getAllLTR24Tables()) {
-            if (testProgramId == ltr24Table.getTestProgramId()) {
-                LTR24TablesRepository.deleteLTR24Table(ltr24Table);
-            }
-        }
     }
 
     public void handleMenuItemAboutUs() {
@@ -342,20 +334,6 @@ public class MainController implements BaseController {
             getTestProgram(selectedIndex);
             setExperimentId();
             showExperimentScene();
-        }
-    }
-
-    private void checkSelection() {
-        selectedIndex = getSelectedItemIndex();
-
-        if (testPrograms.isEmpty()) {
-            showNotification("Ошибка: отсутсвуют программы испытаний");
-            isTestProgramSelected = false;
-        } else if (selectedIndex == -1) {
-            showNotification("Ошибка: программа испытаний не выбрана");
-            isTestProgramSelected = false;
-        } else {
-            isTestProgramSelected = true;
         }
     }
 

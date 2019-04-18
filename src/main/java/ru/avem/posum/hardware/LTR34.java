@@ -1,119 +1,88 @@
 package ru.avem.posum.hardware;
 
-import ru.avem.posum.utils.TextEncoder;
-
-public class LTR34 {
-    private boolean[] checkedChannels = new boolean[8];
-    private int[][] channelsParameters = new int[8][8];
-    private int channelsCounter;
-    private String crate;
-    private int slot;
-    private String status;
-    private TextEncoder textEncoder = new TextEncoder();
-    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
-
-    public void openConnection() {
-        status = open(crate, slot);
-        checkStatus();
-    }
-
-    public native String open(String crate, int slot);
-
-    private void checkStatus() {
-        if (!status.equals("Операция успешно выполнена")) {
-            status = textEncoder.cp2utf(status);
-        }
-    }
-
-    public void initModule() {
-        status = initialize(channelsCounter);
-        checkStatus();
-    }
-
-    public native String initialize(int channelsCounter);
-
-    public void closeConnection() {
-        stop();
-        close();
-    }
-
-    public native void generate(double[] data);
-
-    public native String start();
-
-    public native String stop();
-
-    public native String close();
+public class LTR34 extends DAC {
+    private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public void countChannels() {
         for (int i = 0; i < checkedChannels.length; i++) {
             if (checkedChannels[i]) {
-                channelsCounter = i + 1;
+                setCheckedChannelsCounter(i + 1);
             }
         }
     }
 
-    public boolean[] getCheckedChannels() {
-        return checkedChannels;
+    @Override
+    public void openConnection() {
+        status = openConnection(crate, getSlot());
+        checkStatus();
     }
 
-    public void setCheckedChannels(boolean[] checkedChannels) {
-        this.checkedChannels = checkedChannels;
+    @Override
+    public void checkConnection() {
+        CrateModel crateModel = new CrateModel();
+        if (!crateModel.getCratesNames().isEmpty()) {
+            status = checkConnection(getSlot());
+            checkStatus();
+        } else {
+            openConnection();
+            status = "Потеряно соединение с крейтом";
+        }
     }
 
-    public int[][] getChannelsParameters() {
-        return channelsParameters;
+    @Override
+    public void initializeModule() {
+        status = initialize(getSlot(), getCheckedChannelsCounter());
     }
 
-    public void setChannelsParameters(int[][] channelsParameters) {
-        this.channelsParameters = channelsParameters;
+    @Override
+    public void defineFrequency() {
+        getFrequency(getSlot());
     }
 
-    public int getChannelsCounter() {
-        return channelsCounter;
+    @Override
+    public void start() {
+        status = start(getSlot());
     }
 
-    public void setChannelsCounter(int channelsCounter) {
-        this.channelsCounter = channelsCounter;
+    @Override
+    public void generate(double[] signal) {
+        status = generate(getSlot(), signal, signal.length);
     }
 
-    public String getCrate() {
-        return crate;
+    @Override
+    public void stop() {
+        status = stop(getSlot());
+        checkStatus();
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    @Override
+    public void closeConnection() {
+        status = closeConnection(getSlot());
+        checkStatus();
     }
 
-    public int getSlot() {
-        return slot;
-    }
+    public native String openConnection(String crate, int slot);
 
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
+    public native String checkConnection(int slot);
 
-    public String getStatus() {
-        return status;
-    }
+    public native String initialize(int slot, int channelsCounter);
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public native String getFrequency(int slot);
 
-    public TextEncoder getTextEncoder() {
-        return textEncoder;
-    }
+    public native String start(int slot);
 
-    public void setTextEncoder(TextEncoder textEncoder) {
-        this.textEncoder = textEncoder;
-    }
+    public native String generate(int slot, double[] signal, int length);
 
-    public boolean isBusy() {
-        return busy;
-    }
+    public native String stop(int slot);
+
+    public native String closeConnection(int slot);
 
     static {
         System.loadLibrary("LTR34Library");
+    }
+
+    @Override
+    public double getFrequency() {
+        return frequency;
     }
 }

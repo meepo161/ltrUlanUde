@@ -1,119 +1,119 @@
 package ru.avem.posum.hardware;
 
-import ru.avem.posum.utils.TextEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
-public class LTR24 implements ADC {
-    private String crate;
-    private int slot;
-    private final int CHANNELS = 4;
-    private boolean[] checkedChannels = new boolean[CHANNELS];
-    private int[] channelsTypes = new int[CHANNELS];
-    private int[] measuringRanges = new int[CHANNELS];
-    private String[] channelsDescription = new String[CHANNELS];
-    private String[] calibrationSettings = new String[CHANNELS];
-    private String status;
-    private TextEncoder textEncoder = new TextEncoder();
-    private boolean busy; // значение переменной устанавливается из библиотеки dll, не удалять!
+public class LTR24 extends ADC {
+    private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public LTR24() {
-        String defaultCalibrationSettings = "notSetted, 0.0, 0.0, 0.0, 0.0, В";
-        status = "";
-
-        for (int i = 0; i < CHANNELS; i++) {
-            channelsDescription[i] = "";
-            calibrationSettings[i] = defaultCalibrationSettings;
-        }
+        initializeModuleSettings();
     }
 
+    @Override
     public void openConnection() {
-        status = open(crate, slot);
+        status = openConnection(crate, getSlot());
         checkStatus();
     }
 
-    public native String open(String crate, int slot);
-
-    public void initModule() {
-        status = initialize(slot, channelsTypes, measuringRanges);
-        checkStatus();
-    }
-
-    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges);
-
-    private void checkStatus() {
-        if (!status.equals("Операция успешно выполнена")) {
-            status = textEncoder.cp2utf(status);
+    @Override
+    public void checkConnection() {
+        CrateModel crateModel = new CrateModel();
+        if (!crateModel.getCratesNames().isEmpty()) {
+            status = checkConnection(getSlot());
+            checkStatus();
+        } else {
+            openConnection();
+            status = "Потеряно соединение с крейтом";
         }
     }
 
-    public void receiveData(double[] data) {
-        status = fillArray(slot, data);
+    @Override
+    public void initializeModule() {
+        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR24ModuleSettings());
         checkStatus();
     }
 
-    public native String fillArray(int slot, double[] data);
+    @Override
+    public void defineFrequency() {
+        getFrequency(getSlot());
+    }
 
+    @Override
+    public void start() {
+        status = start(getSlot());
+        checkStatus();
+    }
+
+    @Override
+    public void write(double[] data, double[] timeMarks) {
+        write(getSlot(), data, timeMarks, data.length, 1000);
+    }
+
+    @Override
+    public void stop() {
+        status = stop(getSlot());
+        checkStatus();
+    }
+
+    @Override
     public void closeConnection() {
-        close(slot);
+        status = closeConnection(getSlot());
+        checkStatus();
     }
 
-    public native String close(int slot);
+    public native String openConnection(String crate, int slot);
 
-    @Override
-    public String getCrate() {
-        return crate;
-    }
+    private native String checkConnection(int slot);
 
-    public void setCrate(String crate) {
-        this.crate = crate;
-    }
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
 
-    @Override
-    public int getSlot() {
-        return slot;
-    }
+    public native String getFrequency(int slot);
 
-    public void setSlot(int slot) {
-        this.slot = slot;
-    }
+    public native String start(int slot);
 
-    @Override
-    public boolean[] getCheckedChannels() {
-        return checkedChannels;
-    }
+    public native String write(int slot, double[] data, double[] timeMarks, int length, int timeout);
 
-    @Override
-    public int[] getChannelsTypes() {
-        return channelsTypes;
-    }
+    public native String stop(int slot);
 
-    @Override
-    public int[] getMeasuringRanges() {
-        return measuringRanges;
-    }
-
-    @Override
-    public String[] getChannelsDescription() {
-        return channelsDescription;
-    }
-
-    @Override
-    public String[] getCalibrationSettings() {
-        return calibrationSettings;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public boolean isBusy() {
-        return busy;
-    }
+    public native String closeConnection(int slot);
 
     static {
         System.loadLibrary( "LTR24Library");
+    }
+
+    private void initializeModuleSettings() {
+        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 7); // частота дискретизации 9.7 кГц
+    }
+
+    private int[] getLTR24ModuleSettings() {
+        List<Integer> settingsList = new ArrayList<>();
+        settingsList.add(getModuleSettings().get(Settings.FREQUENCY.getSettingName()));
+
+        int[] settings = new int[settingsList.size()];
+
+        for (int i = 0; i < settingsList.size(); i++) {
+            settings[i] = settingsList.get(i);
+        }
+
+        return settings;
+    }
+
+    @Override
+    public StringBuilder moduleSettingsToString() {
+        StringBuilder settings = new StringBuilder();
+        settings.append(moduleSettings.get(Settings.FREQUENCY.getSettingName())).append(", ");
+        return settings;
+    }
+
+    @Override
+    public void parseModuleSettings(String settings) {
+        String[] separatedSettings = settings.split(", ");
+        moduleSettings.put(Settings.FREQUENCY.getSettingName(), Integer.valueOf(separatedSettings[0]));
+    }
+
+    @Override
+    public double getFrequency() {
+        return frequency;
     }
 }

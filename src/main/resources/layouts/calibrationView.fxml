@@ -4,6 +4,8 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TableColumn?>
@@ -19,14 +21,14 @@
    <children>
       <GridPane layoutX="114.0" layoutY="123.0" prefHeight="843.0" prefWidth="1394.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" prefWidth="170.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="120.0" prefWidth="120.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="110.0" prefWidth="110.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="120.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" />
             <ColumnConstraints hgrow="SOMETIMES" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="170.0" minWidth="170.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="50.0" minWidth="50.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
             <ColumnConstraints />
             <ColumnConstraints />
             <ColumnConstraints />
@@ -48,58 +50,77 @@
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
+            <Label fx:id="titleLabel" styleClass="title" text="Градуировка канала" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="7" />
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="8" GridPane.rowIndex="11" />
-            <Label styleClass="title" text="Тарировка канала" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="13" />
-            <Label fx:id="loadValueLabel" text="Величина нагрузки:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+            <Label fx:id="channelValueLabel" text="Значение, В:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
             </Label>
-            <Label fx:id="channelValueLabel" text="Значение на канале:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+            <TextField fx:id="channelValueTextField" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Label fx:id="channelValueMultiplier1" text="Множитель:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
             </Label>
-            <TextField fx:id="loadValueTextField" maxWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <TextField fx:id="channelValueTextField" editable="false" focusTraversable="false" maxWidth="100.0" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <TextField fx:id="loadValueNameTextField" maxWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Button fx:id="addToTableButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleAddToTable" text="Добавить в таблицу" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
-            <TableView fx:id="calibrationTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.columnSpan="5" GridPane.rowIndex="3" GridPane.rowSpan="5">
+            <ComboBox fx:id="channelValueMultiplierComboBox" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+            <Label fx:id="loadValueLabel" text="Нагрузка:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin>
+            </Label>
+            <TextField fx:id="loadValueTextField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label fx:id="channelValueMultiplier11" text="Множитель:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="loadValueMultiplierComboBox" prefWidth="150.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+            <Label fx:id="loadValueNameLabel" text="Ед. изм.:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin></Label>
+            <TextField fx:id="loadValueNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <CheckBox fx:id="setChannelValueCheckBox" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Button fx:id="addToTableButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="252.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <TableView fx:id="calibrationTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="5">
                 <placeholder>
                     <Label text="Нет данных для отображения" />
                 </placeholder>
               <columns>
-                <TableColumn fx:id="loadChannelColumn" minWidth="-1.0" prefWidth="213.0" text="Величина нагрузки" />
-                <TableColumn fx:id="channelValueColumn" minWidth="-1.0" prefWidth="208.0" text="Значение на канале" />
-                  <TableColumn fx:id="valueNameColumn" prefWidth="214.0" text="Единицы измерения" />
+                <TableColumn fx:id="loadChannelColumn" minWidth="250.0" prefWidth="380.0" text="Величина нагрузки" />
+                <TableColumn fx:id="channelValueColumn" minWidth="250.0" prefWidth="380.0" text="Значение на канале, В" />
               </columns>
                <GridPane.margin>
-                  <Insets left="20.0" right="10.0" top="4.0" />
+                  <Insets left="10.0" top="4.0" />
                </GridPane.margin>
             </TableView>
-            <Label styleClass="title" text="Тарировочный график" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
-            <LineChart fx:id="calibrationGraph" legendVisible="false" GridPane.columnSpan="8" GridPane.rowIndex="11">
+            <Label styleClass="title" text="Градуировочный график" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="8" GridPane.rowIndex="11" />
+            <LineChart fx:id="calibrationGraph" legendVisible="false" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.rowIndex="11">
               <xAxis>
-                <NumberAxis label="Величина нагрузки" side="BOTTOM" tickUnit="1.0" upperBound="10.0" />
+                <NumberAxis side="BOTTOM" tickUnit="1.0" upperBound="10.0" />
               </xAxis>
               <yAxis>
-                <NumberAxis label="Значение на канале" side="LEFT" tickUnit="1.0" upperBound="10.0" />
+                <NumberAxis label="Значение" side="LEFT" tickUnit="1.0" upperBound="10.0" />
               </yAxis>
             </LineChart>
-            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
+            <Button fx:id="saveButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveButton" text="Сохранить" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
                <GridPane.margin>
-                  <Insets left="10.0" />
+                  <Insets right="270.0" />
                </GridPane.margin>
             </Button>
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="1" GridPane.columnSpan="6" GridPane.halignment="CENTER" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets left="270.0" />
+               </GridPane.margin>
+            </Button>
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="13" />
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="8" GridPane.rowIndex="13" />
-            <Button fx:id="saveButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleSaveButton" text="Сохранить" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="12" GridPane.valignment="BOTTOM">
-               <GridPane.margin>
-                  <Insets right="10.0" />
-               </GridPane.margin>
-            </Button>
-            <Label fx:id="loadValueNameLabel" text="Единицы измерения:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
          </children>
       </GridPane>
    </children>
