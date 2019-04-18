@@ -80,13 +80,13 @@ class SignalParametersModel {
             bufferedAmplitude = amplitude = calculateAmplitude();
             bufferedZeroShift = zeroShift = calculateZeroShift();
             bufferedRms = rms = calculateRms();
-            bufferedFrequency = signalFrequency = accurateFrequencyCalculation ? calculateFrequency() : calculateFrequencyBeyond50Hz();
+            bufferedFrequency = signalFrequency = accurateFrequencyCalculation ? calculateFrequency() : estimateFrequency();
             loadsCounter += calculateLoadsCounter();
         } else if (averageIterator < averageCount) {
             bufferedAmplitude += calculateAmplitude();
             bufferedRms += calculateRms();
             bufferedZeroShift += calculateZeroShift();
-            bufferedFrequency += accurateFrequencyCalculation ? calculateFrequency() : calculateFrequencyBeyond50Hz();
+            bufferedFrequency += accurateFrequencyCalculation ? calculateFrequency() : estimateFrequency();
             bufferedLoadsCounter += calculateLoadsCounter();
             averageIterator++;
         } else {
@@ -105,6 +105,46 @@ class SignalParametersModel {
     }
 
     private double calculateFrequency() {
+        double signalFrequency = estimateFrequency();
+        signalFrequency = defineFrequency();
+        return signalFrequency;
+    }
+
+    private double estimateFrequency() {
+        boolean positivePartOfSignal = false;
+        double frequency = 0;
+
+        for (int i = channel; i < data.length; i += channels) {
+            if (amplitude + zeroShift > 0) {
+                if (zeroShift > 0) {
+                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
+                        frequency++;
+                        positivePartOfSignal = true;
+                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
+                        positivePartOfSignal = false;
+                    }
+                } else {
+                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
+                        frequency++;
+                        positivePartOfSignal = true;
+                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
+                        positivePartOfSignal = false;
+                    }
+                }
+            } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
+                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
+                    frequency++;
+                    positivePartOfSignal = true;
+                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
+                    positivePartOfSignal = false;
+                }
+            }
+        }
+
+        return frequency;
+    }
+
+    private double defineFrequency() {
         int shift = 1_000;
         double firstValue = data[channel] + shift;
         double zeroTransitionCounter = 0;
@@ -161,40 +201,6 @@ class SignalParametersModel {
         if (frequency == 1) {
             samplesPerSemiPeriod++;
         }
-    }
-
-    private double calculateFrequencyBeyond50Hz() {
-        boolean positivePartOfSignal = false;
-        double frequency = 0;
-
-        for (int i = channel; i < data.length; i += channels) {
-            if (amplitude + zeroShift > 0) {
-                if (zeroShift > 0) {
-                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                } else {
-                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                }
-            } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
-                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
-                    frequency++;
-                    positivePartOfSignal = true;
-                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
-                    positivePartOfSignal = false;
-                }
-            }
-        }
-
-        return frequency;
     }
 
     private double calculateLoadsCounter() {

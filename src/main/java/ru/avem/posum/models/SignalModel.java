@@ -188,11 +188,11 @@ public class SignalModel {
 
         double adcFrequency = adc.getFrequency();
         if (adcFrequency > 10_000 && adcFrequency < 50_000) {
-            dataRarefactionCoefficient *= 10;
+            dataRarefactionCoefficient *= 5;
         } else if (adcFrequency > 50_000 && adcFrequency < 100_000) {
-            dataRarefactionCoefficient *= 25;
+            dataRarefactionCoefficient *= 10;
         } else if (adcFrequency > 100_000) {
-            dataRarefactionCoefficient *= 50;
+            dataRarefactionCoefficient *= 25;
         }
     }
 
