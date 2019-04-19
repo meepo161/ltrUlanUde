@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
@@ -459,6 +458,9 @@ public class LTR212SettingController implements BaseController {
         settings.put(ADC.Settings.FIR.getSettingName(), useFIR);
         settings.put(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), useFabricCalibration);
         settings.put(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), referenceVoltageType);
+
+        ltr212.setFirFilePath(firPathTextField.getText());
+        ltr212.setIirFilePath(iirPathTextField.getText());
     }
 
     private void initializeModule() {

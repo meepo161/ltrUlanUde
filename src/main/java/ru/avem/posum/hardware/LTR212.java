@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR212 extends ADC {
+    private String firFilePath;
     private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
+    private String iirFilePath;
 
     public LTR212() {
         initializeModuleSettings();
@@ -35,7 +37,7 @@ public class LTR212 extends ADC {
 
     @Override
     public void initializeModule() {
-        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings());
+        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings(), firFilePath, iirFilePath);
         checkStatus();
     }
 
@@ -74,7 +76,7 @@ public class LTR212 extends ADC {
 
     public native String testEEPROM(int slot);
 
-    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings);
+    public native String initialize(int slot, int[] channelsTypes, int[] measuringRanges, int[] moduleSettings, String firFilePath, String iirFilePath);
 
     public native String getFrequency(int slot);
 
@@ -162,5 +164,13 @@ public class LTR212 extends ADC {
     @Override
     public double getFrequency() {
         return frequency;
+    }
+
+    public void setFirFilePath(String firFilePath) {
+        this.firFilePath = firFilePath;
+    }
+
+    public void setIirFilePath(String iirFilePath) {
+        this.iirFilePath = iirFilePath;
     }
 }
