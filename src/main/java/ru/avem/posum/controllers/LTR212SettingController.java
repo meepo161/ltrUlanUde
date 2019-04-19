@@ -5,6 +5,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -15,6 +17,7 @@ import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
+import java.io.File;
 import java.util.*;
 
 public class LTR212SettingController implements BaseController {
@@ -38,6 +41,18 @@ public class LTR212SettingController implements BaseController {
     private TextField descriptionOfChannelN4;
     @FXML
     private Button initializeButton;
+    @FXML
+    private CheckBox firCheckBox;
+    @FXML
+    private Button firPathButton;
+    @FXML
+    private TextField firPathTextField;
+    @FXML
+    private CheckBox iirCheckBox;
+    @FXML
+    private Button iirPathButton;
+    @FXML
+    private TextField iirPathTextField;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN1;
     @FXML
@@ -66,8 +81,6 @@ public class LTR212SettingController implements BaseController {
     private ComboBox<String> typeOfChannelN3;
     @FXML
     private ComboBox<String> typeOfChannelN4;
-    @FXML
-    private CheckBox useCalibrationCheckBox;
     @FXML
     private CheckBox useFabricCalibrationCheckBox;
     @FXML
@@ -112,6 +125,8 @@ public class LTR212SettingController implements BaseController {
         addListenerForCheckBoxes(channelsCheckBoxes);
         addListenerForComboBoxes(channelsTypesComboBoxes);
         addListenerForComboBoxes(measuringRangesComboBoxes);
+        addListenerForFilterCheckBox(iirCheckBox, iirPathTextField, iirPathButton);
+        addListenerForFilterCheckBox(firCheckBox, firPathTextField, firPathButton);
     }
 
     private void fillListOfChannelsCheckBoxes() {
@@ -273,6 +288,18 @@ public class LTR212SettingController implements BaseController {
         measuringRangesComboBoxes.get(channel).getSelectionModel().select(3);
     }
 
+    private void addListenerForFilterCheckBox(CheckBox filterCheckBox, TextField filterTextField, Button filterButton) {
+        filterCheckBox.selectedProperty().addListener(observable -> {
+            if (filterCheckBox.isSelected()) {
+                filterTextField.setDisable(false);
+                filterButton.setDisable(false);
+            } else {
+                filterTextField.setDisable(true);
+                filterButton.setDisable(true);
+            }
+        });
+    }
+
     private void addListenerForComboBoxes(List<ComboBox<String>> comboBoxes) {
         for (ComboBox comboBox : comboBoxes) {
             comboBox.valueProperty().addListener(observable -> {
@@ -334,7 +361,8 @@ public class LTR212SettingController implements BaseController {
     private void setSettings() {
         int moduleMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName());
         int referenceVoltage = ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE.getSettingName());
-        int useCalibration = ltr212.getModuleSettings().get(ADC.Settings.CALIBRATION_COEFFICIENTS.getSettingName());
+        int useIIR = ltr212.getModuleSettings().get(ADC.Settings.IIR.getSettingName());
+        int useFIR = ltr212.getModuleSettings().get(ADC.Settings.FIR.getSettingName());
         int useFabricCalibration = ltr212.getModuleSettings().get(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName());
         int referenceVoltageType = ltr212.getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName());
 
@@ -345,7 +373,8 @@ public class LTR212SettingController implements BaseController {
             channelsDescription.get(i).setText(channelsDescriptions[i].replace(", ", ""));
             moduleModesComboBox.getSelectionModel().select(moduleMode);
             referenceVoltageComboBox.getSelectionModel().select(referenceVoltage);
-            useCalibrationCheckBox.setSelected(useCalibration == 1);
+            iirCheckBox.setSelected(useIIR == 1);
+            firCheckBox.setSelected(useFIR == 1);
             useFabricCalibrationCheckBox.setSelected(useFabricCalibration == 1);
             referenceVoltageTypeCheckBox.setSelected(referenceVoltageType == 1);
         }
@@ -387,7 +416,12 @@ public class LTR212SettingController implements BaseController {
         applyForAllCheckBox.setDisable(true);
         moduleModesComboBox.setDisable(true);
         referenceVoltageComboBox.setDisable(true);
-        useCalibrationCheckBox.setDisable(true);
+        iirCheckBox.setDisable(true);
+        iirPathTextField.setDisable(true);
+        iirPathButton.setDisable(true);
+        firPathTextField.setDisable(true);
+        firPathButton.setDisable(true);
+        firCheckBox.setDisable(true);
         useFabricCalibrationCheckBox.setDisable(true);
         referenceVoltageTypeCheckBox.setDisable(true);
         initializeButton.setDisable(true);
@@ -413,15 +447,22 @@ public class LTR212SettingController implements BaseController {
         HashMap<String, Integer> settings = ltr212.getModuleSettings();
         int selectedADCMode = moduleModesComboBox.getSelectionModel().getSelectedIndex();
         int selectedReferenceVoltage = referenceVoltageComboBox.getSelectionModel().getSelectedIndex();
-        int useCalibration = useCalibrationCheckBox.isSelected() ? 1 : 0;
+        int useIIR = iirCheckBox.isSelected() ? 1 : 0;
+        int useFIR = firCheckBox.isSelected() ? 1 : 0;
         int useFabricCalibration = useFabricCalibrationCheckBox.isSelected() ? 1 : 0;
         int referenceVoltageType = referenceVoltageTypeCheckBox.isSelected() ? 1 : 0;
 
         settings.put(ADC.Settings.ADC_MODE.getSettingName(), selectedADCMode);
         settings.put(ADC.Settings.REFERENCE_VOLTAGE.getSettingName(), selectedReferenceVoltage);
-        settings.put(ADC.Settings.CALIBRATION_COEFFICIENTS.getSettingName(), useCalibration);
+        settings.put(ADC.Settings.IIR.getSettingName(), useIIR);
+        settings.put(ADC.Settings.FIR.getSettingName(), useFIR);
         settings.put(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), useFabricCalibration);
         settings.put(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), referenceVoltageType);
+
+        ltr212.setFirFilePath(firPathTextField.getText().replace("\\", "/"));
+        ltr212.setIirFilePath(iirPathTextField.getText().replace("\\", "/"));
+        System.out.println("FIR file path: " + firPathTextField);
+        System.out.println("IIR file path: " + iirPathTextField);
     }
 
     private void initializeModule() {
@@ -470,10 +511,21 @@ public class LTR212SettingController implements BaseController {
             }
         }
 
+        if (iirCheckBox.isSelected()) {
+            iirPathTextField.setDisable(false);
+            iirPathButton.setDisable(false);
+        }
+
+        if (firCheckBox.isSelected()) {
+            firPathTextField.setDisable(false);
+            firPathButton.setDisable(false);
+        }
+
         applyForAllCheckBox.setDisable(false);
         moduleModesComboBox.setDisable(false);
         referenceVoltageComboBox.setDisable(false);
-        useCalibrationCheckBox.setDisable(false);
+        iirCheckBox.setDisable(false);
+        firCheckBox.setDisable(false);
         useFabricCalibrationCheckBox.setDisable(false);
         referenceVoltageTypeCheckBox.setDisable(false);
         initializeButton.setDisable(false);
@@ -534,16 +586,43 @@ public class LTR212SettingController implements BaseController {
         bounds.put("Upper bound", upperBound);
     }
 
+    @FXML
     public void handleValueOfChannelN2() {
         showChannelValue(1);
     }
 
+    @FXML
     public void handleValueOfChannelN3() {
         showChannelValue(2);
     }
 
+    @FXML
     public void handleValueOfChannelN4() {
         showChannelValue(3);
+    }
+
+    @FXML
+    public void handleChoosingIIRFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор файла фильтра");
+        File selectedDirectory = fileChooser.showOpenDialog(new Stage());
+        if (selectedDirectory == null) {
+            iirPathTextField.setText("Не выбран файл фильтра");
+        } else {
+            iirPathTextField.setText(selectedDirectory.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    public void handleChoosingFIRFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Выбор файла фильтра");
+        File selectedDirectory = fileChooser.showOpenDialog(new Stage());
+        if (selectedDirectory == null) {
+            firPathTextField.setText("Не выбран файл фильтра");
+        } else {
+            firPathTextField.setText(selectedDirectory.getAbsolutePath());
+        }
     }
 
     @Override

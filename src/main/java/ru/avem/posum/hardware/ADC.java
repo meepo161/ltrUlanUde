@@ -10,8 +10,8 @@ public abstract class ADC extends Module {
     public enum Settings {
         ADC_MODE("ADC mode"), CALIBRATION_COEFFICIENTS("Calibration coefficients"),
         FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
-        LOGIC_CHANNELS_COUNT("Logic channels count"), IIR_FILTER("IIR filter"),
-        FIR_FILTER("FIR filter"), DECIMATION("Decimation"), TAP("Filter order"),
+        LOGIC_CHANNELS_COUNT("Logic channels count"), IIR("IIR"),
+        FIR("FIR"), DECIMATION("Decimation"), TAP("Filter order"),
         REFERENCE_VOLTAGE("Reference voltage"), REFERENCE_VOLTAGE_TYPE("Reference voltage type"),
         FREQUENCY("Frequency");
 
