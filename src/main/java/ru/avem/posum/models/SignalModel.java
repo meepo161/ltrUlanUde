@@ -178,21 +178,13 @@ public class SignalModel {
 
     /* Определяет коэффициент для прореживания отображаемых точек на графике сигнала */
     public void defineDataRarefactionCoefficient() {
-        if (frequency < 25) {
-            dataRarefactionCoefficient = 10;
-        } else if (frequency < 50) {
-            dataRarefactionCoefficient = 2;
-        } else {
-            dataRarefactionCoefficient = 1;
-        }
-
         double adcFrequency = adc.getFrequency();
         if (adcFrequency > 10_000 && adcFrequency < 50_000) {
-            dataRarefactionCoefficient *= 5;
+            dataRarefactionCoefficient *= 2;
         } else if (adcFrequency > 50_000 && adcFrequency < 100_000) {
-            dataRarefactionCoefficient *= 10;
+            dataRarefactionCoefficient *= 5;
         } else if (adcFrequency > 100_000) {
-            dataRarefactionCoefficient *= 25;
+            dataRarefactionCoefficient *= 10;
         }
     }
 
