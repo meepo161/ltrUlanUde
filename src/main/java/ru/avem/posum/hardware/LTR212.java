@@ -166,6 +166,14 @@ public class LTR212 extends ADC {
         return frequency;
     }
 
+    public String getFirFilePath() {
+        return firFilePath;
+    }
+
+    public String getIirFilePath() {
+        return iirFilePath;
+    }
+
     public void setFirFilePath(String firFilePath) {
         this.firFilePath = firFilePath;
     }

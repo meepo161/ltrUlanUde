@@ -114,6 +114,7 @@ public class SignalGraphController implements BaseController {
         setDefaultScales();
         listenScalesComboBox(verticalScalesComboBox);
         listenScalesComboBox(horizontalScalesComboBox);
+        listenRarefactionComboBox();
         addFrequencyCalculations();
         listenFrequencyCalculationComboBox();
         addDecimalFormats();
@@ -148,7 +149,7 @@ public class SignalGraphController implements BaseController {
         scaleValues.add("В 20 меньше");
         scaleValues.add("В 25 меньше");
         rarefactionCoefficientComboBox.setItems(scaleValues);
-        rarefactionCoefficientComboBox.getSelectionModel().select(0);
+        rarefactionCoefficientComboBox.getSelectionModel().select(3);
     }
 
     private void setDefaultScales() {
@@ -462,7 +463,6 @@ public class SignalGraphController implements BaseController {
     private void printGraph() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
-                signalModel.defineDataRarefactionCoefficient();
                 signalModel.fillBuffer();
                 clearSeries();
                 showGraph();
@@ -493,8 +493,8 @@ public class SignalGraphController implements BaseController {
                 Utils.sleep(1);
             }
 
-            if ((index == data.length - channels * scale) || index == data.length - 1) {
-                XYChart.Data lastPoint = new XYChart.Data(1.01, data[data.length - channels * scale]);
+            if (index + (channels * scale) >= data.length) {
+                XYChart.Data lastPoint = new XYChart.Data(1, data[index]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(1);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {

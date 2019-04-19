@@ -15,7 +15,6 @@ public class SignalModel {
     private boolean calibrationExists;
     private int channel;
     private boolean connectionLost;
-    private int rarefactionCoefficient;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private boolean isICPMode;
@@ -25,6 +24,7 @@ public class SignalModel {
     private LTR212 ltr212;
     private String moduleType;
     private SignalParametersModel signalParametersModel = new SignalParametersModel();
+    private int rarefactionCoefficient = 10;
     private double rms;
     private int slot;
     private double tickUnit;
@@ -173,21 +173,6 @@ public class SignalModel {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = buffer[valueIndex];
             return new XYChart.Data<Number, Number>(xValue, yValue);
-        }
-    }
-
-    /* Определяет коэффициент для прореживания отображаемых точек на графике сигнала */
-    public void defineDataRarefactionCoefficient() {
-        double adcFrequency = adc.getFrequency();
-        if (adcFrequency > 10_000 && adcFrequency < 50_000) {
-            rarefactionCoefficient *= 2;
-            signalParametersModel.setMinSamples(10);
-        } else if (adcFrequency > 50_000 && adcFrequency < 100_000) {
-            rarefactionCoefficient *= 5;
-            signalParametersModel.setMinSamples(50);
-        } else if (adcFrequency > 100_000) {
-            rarefactionCoefficient *= 10;
-            signalParametersModel.setMinSamples(100);
         }
     }
 
