@@ -2,6 +2,8 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
+import java.util.Arrays;
+
 public abstract class Module {
     int channelsCount;
     String crate;

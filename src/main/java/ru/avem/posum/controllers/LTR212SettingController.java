@@ -461,8 +461,6 @@ public class LTR212SettingController implements BaseController {
 
         ltr212.setFirFilePath(firPathTextField.getText().replace("\\", "/"));
         ltr212.setIirFilePath(iirPathTextField.getText().replace("\\", "/"));
-        System.out.println("FIR file path: " + firPathTextField);
-        System.out.println("IIR file path: " + iirPathTextField);
     }
 
     private void initializeModule() {
