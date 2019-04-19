@@ -44,9 +44,9 @@ public class SignalGraphController implements BaseController {
     @FXML
     private TextField loadsCounterTextField;
     @FXML
-    private TextField minSamplesTextField;
-    @FXML
     private ProgressIndicator progressIndicator;
+    @FXML
+    private ComboBox<String> rarefactionCoefficientComboBox;
     @FXML
     private Label rmsLabel;
     @FXML
@@ -110,6 +110,7 @@ public class SignalGraphController implements BaseController {
     private void initializeComboBoxes() {
         addVerticalScaleValues();
         addHorizontalScaleValues();
+        addRarefactionCoefficients();
         setDefaultScales();
         listenScalesComboBox(verticalScalesComboBox);
         listenScalesComboBox(horizontalScalesComboBox);
@@ -135,6 +136,19 @@ public class SignalGraphController implements BaseController {
         scaleValues.add("10 мс/дел");
         scaleValues.add("100 мс/дел");
         horizontalScalesComboBox.setItems(scaleValues);
+    }
+
+    private void addRarefactionCoefficients() {
+        ObservableList<String> scaleValues = FXCollections.observableArrayList();
+        scaleValues.add("Все");
+        scaleValues.add("В 2 меньше");
+        scaleValues.add("В 5 меньше");
+        scaleValues.add("В 10 меньше");
+        scaleValues.add("В 15 меньше");
+        scaleValues.add("В 20 меньше");
+        scaleValues.add("В 25 меньше");
+        rarefactionCoefficientComboBox.setItems(scaleValues);
+        rarefactionCoefficientComboBox.getSelectionModel().select(0);
     }
 
     private void setDefaultScales() {
@@ -170,11 +184,39 @@ public class SignalGraphController implements BaseController {
         });
     }
 
+    private void listenRarefactionComboBox() {
+        rarefactionCoefficientComboBox.valueProperty().addListener(observable -> {
+            switch (rarefactionCoefficientComboBox.getSelectionModel().getSelectedIndex()) {
+                case 0:
+                    signalModel.setRarefactionCoefficient(1);
+                    break;
+                case 1:
+                    signalModel.setRarefactionCoefficient(2);
+                    break;
+                case 2:
+                    signalModel.setRarefactionCoefficient(5);
+                    break;
+                case 3:
+                    signalModel.setRarefactionCoefficient(10);
+                    break;
+                case 4:
+                    signalModel.setRarefactionCoefficient(15);
+                    break;
+                case 5:
+                    signalModel.setRarefactionCoefficient(20);
+                    break;
+                case 6:
+                    signalModel.setRarefactionCoefficient(25);
+                    break;
+            }
+        });
+    }
+
     private void addFrequencyCalculations() {
         frequencyCalculationComboBox.getItems().clear();
         ObservableList<String> chooses = FXCollections.observableArrayList();
-        chooses.add("По переходам через статику");
-        chooses.add("По пиковым значениям");
+        chooses.add("Точный расчет");
+        chooses.add("Оценочный расчет");
         frequencyCalculationComboBox.getItems().addAll(chooses);
         frequencyCalculationComboBox.getSelectionModel().select(0);
     }
@@ -184,11 +226,9 @@ public class SignalGraphController implements BaseController {
             switch (frequencyCalculationComboBox.getSelectionModel().getSelectedIndex()) {
                 case 0:
                     signalModel.setAccurateFrequencyCalculation(true);
-                    minSamplesTextField.setDisable(false);
                     break;
                 case 1:
                     signalModel.setAccurateFrequencyCalculation(false);
-                    minSamplesTextField.setDisable(true);
                     break;
                 default:
                     signalModel.setAccurateFrequencyCalculation(true);
@@ -210,7 +250,6 @@ public class SignalGraphController implements BaseController {
     private void initializeTextFields() {
         resetCounters();
         setSignalParametersLabels();
-        setDigitFilterToMinSamplesTextField();
     }
 
     private void resetCounters() {
@@ -226,15 +265,6 @@ public class SignalGraphController implements BaseController {
         loadsCounterLabel.setText("Нагружений:");
         rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
         zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
-    }
-
-    private void setDigitFilterToMinSamplesTextField() {
-        minSamplesTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            minSamplesTextField.setText(newValue.replaceAll("[^1-9][\\d]{2,3}", ""));
-            if (!newValue.matches("^[1-9]|\\d{2,3}|$")) {
-                minSamplesTextField.setText(oldValue);
-            }
-        });
     }
 
     private void initializeCheckBoxes() {
@@ -449,7 +479,7 @@ public class SignalGraphController implements BaseController {
         int channel = signalModel.getChannel();
         int channels = signalModel.getAdc().getChannelsCount();
         double[] data = signalModel.getBuffer();
-        int scale = signalModel.getDataRarefactionCoefficient();
+        int scale = signalModel.getRarefactionCoefficient();
 
         for (index = channel; index < data.length && !cm.isStopped(); index += channels * scale) {
             XYChart.Data point = signalModel.getPoint(index);
@@ -537,8 +567,6 @@ public class SignalGraphController implements BaseController {
     public int getDecimalFormatScale() {
         return (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
     }
-
-
 
     public SignalModel getSignalModel() {
         return signalModel;

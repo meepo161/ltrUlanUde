@@ -15,7 +15,7 @@ public class SignalModel {
     private boolean calibrationExists;
     private int channel;
     private boolean connectionLost;
-    private int dataRarefactionCoefficient;
+    private int rarefactionCoefficient;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private boolean isICPMode;
@@ -180,11 +180,14 @@ public class SignalModel {
     public void defineDataRarefactionCoefficient() {
         double adcFrequency = adc.getFrequency();
         if (adcFrequency > 10_000 && adcFrequency < 50_000) {
-            dataRarefactionCoefficient *= 2;
+            rarefactionCoefficient *= 2;
+            signalParametersModel.setMinSamples(10);
         } else if (adcFrequency > 50_000 && adcFrequency < 100_000) {
-            dataRarefactionCoefficient *= 5;
+            rarefactionCoefficient *= 5;
+            signalParametersModel.setMinSamples(50);
         } else if (adcFrequency > 100_000) {
-            dataRarefactionCoefficient *= 10;
+            rarefactionCoefficient *= 10;
+            signalParametersModel.setMinSamples(100);
         }
     }
 
@@ -216,10 +219,6 @@ public class SignalModel {
         return channel;
     }
 
-    public int getDataRarefactionCoefficient() {
-        return dataRarefactionCoefficient;
-    }
-
     public double getFrequency() {
         return frequency;
     }
@@ -234,6 +233,10 @@ public class SignalModel {
 
     public String getModuleType() {
         return moduleType;
+    }
+
+    public int getRarefactionCoefficient() {
+        return rarefactionCoefficient;
     }
 
     public double getRms() {
@@ -291,6 +294,10 @@ public class SignalModel {
     public void setLoadsCounter(int loadsCounter) {
         this.loadsCounter = loadsCounter;
         signalParametersModel.setLoadsCounter(loadsCounter);
+    }
+
+    public void setRarefactionCoefficient(int rarefactionCoefficient) {
+        this.rarefactionCoefficient = rarefactionCoefficient;
     }
 
     public void setRMS(int rms) {

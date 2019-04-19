@@ -32,6 +32,7 @@ class SignalParametersModel {
     private int loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
+    private int minSamples;
     private double minSignalValue;
     private double rms;
     private int samplesPerSemiPeriod;
@@ -115,25 +116,25 @@ class SignalParametersModel {
         for (int i = channel; i < data.length; i += channels) {
             if (amplitude + zeroShift > 0) {
                 if (zeroShift > 0) {
-                    if (data[i] > zeroShift * 1.01 && !positivePartOfSignal) {
+                    if (data[i] > zeroShift * 1.05 && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift / 1.01 && positivePartOfSignal) {
+                    } else if (data[i] < zeroShift / 1.05 && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 } else {
-                    if (data[i] > zeroShift / 1.01 && !positivePartOfSignal) {
+                    if (data[i] > zeroShift / 1.05 && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift * 1.01 && positivePartOfSignal) {
+                    } else if (data[i] < zeroShift * 1.05 && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 }
             } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
-                if (data[i] < zeroShift * 1.01 && !positivePartOfSignal) {
+                if (data[i] < zeroShift * 1.05 && !positivePartOfSignal) {
                     frequency++;
                     positivePartOfSignal = true;
-                } else if (data[i] > zeroShift / 1.01 && positivePartOfSignal) {
+                } else if (data[i] > zeroShift / 1.05 && positivePartOfSignal) {
                     positivePartOfSignal = false;
                 }
             }
@@ -156,8 +157,6 @@ class SignalParametersModel {
 
             countSamples(zeroTransitionCounter);
 
-            // минимальное количество сэмплов для расчета частоты
-            int minSamples = 5;
             if (firstValue > centerOfSignal) {
                 if (value > centerOfSignal && firstPeriod && (index > channels * minSamples)) {
                     positivePartOfSignal = true;
@@ -387,6 +386,10 @@ class SignalParametersModel {
 
     void setLoadsCounter(int loadsCounter) {
         this.loadsCounter = loadsCounter;
+    }
+
+    public void setMinSamples(int minSamples) {
+        this.minSamples = minSamples;
     }
 
     void setRMS(int rms) {
