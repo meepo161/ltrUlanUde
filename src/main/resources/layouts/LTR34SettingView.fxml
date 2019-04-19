@@ -5,6 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
@@ -38,13 +39,16 @@
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="7" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="10" />
             <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR34" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <LineChart fx:id="graph" animated="false" createSymbols="false" disable="true" legendSide="RIGHT" title="Управляющий сигнал" GridPane.columnSpan="10" GridPane.rowIndex="2">
                <xAxis>
@@ -254,19 +258,52 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="generateSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleGenerateSignal" text="Генерировать сигнал" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="10" GridPane.valignment="BOTTOM">
+            <Button fx:id="generateSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleGenerateSignal" text="Генерировать сигнал" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets right="140.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="stopSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleStopSignal" text="Остановить" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="BOTTOM" />
-            <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="10" GridPane.valignment="BOTTOM">
+            <Button fx:id="stopSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleStopSignal" text="Остановить" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="BOTTOM" />
+            <Button fx:id="backButton" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets left="140.0" />
                </GridPane.margin>
             </Button>
-            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="11" />
-            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="11" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="14" />
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="14" />
+            <Label fx:id="signalTypeTextField" text="Форма сигнала:" GridPane.columnIndex="1" GridPane.rowIndex="9">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="signalTypeComboBox" prefWidth="120.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label fx:id="CalibrationTextField" text="Калибр. коэф." GridPane.columnIndex="2" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="calibrationComboBox" prefWidth="120.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label fx:id="dacModeTextField" text="Режим работы" GridPane.columnIndex="3" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="dacModeComboBox" prefWidth="120.0" GridPane.columnIndex="3" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
          </children>
       </GridPane>
    </children>

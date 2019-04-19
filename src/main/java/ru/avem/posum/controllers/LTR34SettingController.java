@@ -1,6 +1,8 @@
 package ru.avem.posum.controllers;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
@@ -14,10 +16,7 @@ import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class LTR34SettingController implements BaseController {
     @FXML
@@ -52,6 +51,10 @@ public class LTR34SettingController implements BaseController {
     private CheckBox checkChannelN7;
     @FXML
     private CheckBox checkChannelN8;
+    @FXML
+    private ComboBox<String> calibrationComboBox;
+    @FXML
+    private ComboBox<String> dacModeComboBox;
     @FXML
     private TextField descriptionOfChannelN1;
     @FXML
@@ -109,6 +112,8 @@ public class LTR34SettingController implements BaseController {
     @FXML
     private Label sceneTitleLabel;
     @FXML
+    private ComboBox<String> signalTypeComboBox;
+    @FXML
     private Button stopSignalButton;
     @FXML
     private StatusBar statusBar;
@@ -142,6 +147,9 @@ public class LTR34SettingController implements BaseController {
         fillListOfChannelsFrequencyTextFields();
         fillListOfChannelsPhases();
 
+        addSignalTypes();
+        addCalibrations();
+        addDACModes();
         addListenerForAllChannels();
         setDigitFilter();
     }
@@ -209,6 +217,30 @@ public class LTR34SettingController implements BaseController {
                 phaseOfChannelN7,
                 phaseOfChannelN8
         ));
+    }
+
+    private void addSignalTypes() {
+        ObservableList<String> types = FXCollections.observableArrayList();
+        types.add("Синусоидальный");
+        types.add("Прямоугольный");
+        signalTypeComboBox.getItems().addAll(types);
+        signalTypeComboBox.getSelectionModel().select(0);
+    }
+
+    private void addCalibrations() {
+        ObservableList<String> calibrations = FXCollections.observableArrayList();
+        calibrations.add("Не используются");
+        calibrations.add("Заводские");
+        signalTypeComboBox.getItems().addAll(calibrations);
+        signalTypeComboBox.getSelectionModel().select(0);
+    }
+
+    private void addDACModes() {
+        ObservableList<String> modes = FXCollections.observableArrayList();
+        modes.add("Потоковый режим генерации");
+        modes.add("Автоматический режим генерации");
+        signalTypeComboBox.getItems().addAll(modes);
+        signalTypeComboBox.getSelectionModel().select(0);
     }
 
     private void addListenerForAllChannels() {
