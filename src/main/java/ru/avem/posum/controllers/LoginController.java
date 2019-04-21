@@ -13,9 +13,9 @@ import java.util.List;
 
 public class LoginController implements BaseController {
     @FXML
-    private PasswordField userPassword;
+    private PasswordField passwordTextField;
     @FXML
-    private TextField userLogin;
+    private TextField loginTextField;
 
     private Main main;
     private WindowsManager wm;
@@ -26,30 +26,36 @@ public class LoginController implements BaseController {
     }
 
     private void authenticateUser() {
-        List<Account> allAccounts = AccountRepository.getAllAccounts();
-        String login = userLogin.getText();
-        String password = userPassword.getText();
+        String login = loginTextField.getText();
+        String password = passwordTextField.getText();
 
         if (login.isEmpty()) {
             Toast.makeText("Введите имя пользователя").show(Toast.ToastType.WARNING);
         } else if (password.isEmpty()) {
             Toast.makeText("Введите пароль").show(Toast.ToastType.WARNING);
         } else {
-            checkLoginAndPassword(allAccounts, login, password);
+            check(login, password);
         }
     }
 
-    private void checkLoginAndPassword(List<Account> allAccounts, String login, String password) {
-        for (int i = 0; i < allAccounts.size(); i++) {
-            if (login.equals(allAccounts.get(i).getUserName()) && password.equals((allAccounts.get(i).getUserPassword()))) {
+    private void check(String login, String password) {
+        List<Account> accounts = AccountRepository.getAllAccounts();
+        for (int accountIndex = 0; accountIndex < accounts.size(); accountIndex++) {
+            boolean isLoginsEquals = login.equals(accounts.get(accountIndex).getUserName());
+            boolean isPasswordsEquals = password.equals(accounts.get(accountIndex).getUserPassword());
+            boolean isLastAccount = (accountIndex == accounts.size() - 1);
+
+            if (isLoginsEquals && isPasswordsEquals) {
                 main.setMainView();
                 break;
-            } else {
-                if (i == allAccounts.size() - 1) {
-                    Toast.makeText("Неверное имя пользователя или пароль").show(Toast.ToastType.ERROR);
-                }
+            } else if (isLastAccount) {
+                Toast.makeText("Неверное имя пользователя или пароль").show(Toast.ToastType.ERROR);
             }
         }
+    }
+
+    public void setMainApp(Main main) {
+        this.main = main;
     }
 
     public void showScene() {
@@ -59,10 +65,6 @@ public class LoginController implements BaseController {
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
-    }
-
-    public void setMainApp(Main main) {
-        this.main = main;
     }
 }
 
