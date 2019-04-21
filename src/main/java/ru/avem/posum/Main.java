@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
     private volatile boolean closed;
@@ -329,7 +328,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadDefaultCalibrationSettings(SignalModel signalModel) {
-        calibrationController.loadDefaults(signalModel);
+        calibrationController.loadDefaultCalibrationSettings(signalModel);
     }
 
     @Override

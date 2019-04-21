@@ -45,7 +45,7 @@ public class CalibrationModel {
         }
     }
 
-    public void parseCalibration(String calibration) {
+    public void parse(String calibration) {
         loadValue = CalibrationPoint.parseLoadValue(calibration);
         channelValue = CalibrationPoint.parseChannelValue(calibration);
         valueName = CalibrationPoint.parseValueName(calibration);
