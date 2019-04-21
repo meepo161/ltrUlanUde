@@ -296,16 +296,14 @@ public class CalibrationController implements BaseController {
     }
 
     private void parseData() {
-        double loadCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
-        double channelCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+        double loadValueMultiplierCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+        double channelValueMultiplierCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
         int decimalFormatScale = cm.getDecimalFormatScale();
-        double channelValue = setChannelValueCheckBox.isSelected() ? parse(channelValueTextField, channelCoefficient) :
-                Utils.roundValue(cm.getZeroShift(), decimalFormatScale) * channelCoefficient;
-        calibrationModel.setLoadValueCoefficient(loadCoefficient);
-        calibrationModel.setChannelValueCoefficient(channelCoefficient);
+        double channelValue = setChannelValueCheckBox.isSelected() ? parse(channelValueTextField, channelValueMultiplierCoefficient) :
+                Utils.roundValue(cm.getZeroShift(), decimalFormatScale) * channelValueMultiplierCoefficient;
         calibrationModel.setDecimalFormatScale(decimalFormatScale);
         calibrationModel.setChannelValue(channelValue);
-        calibrationModel.setLoadValue(parse(loadValueTextField, loadCoefficient));
+        calibrationModel.setLoadValue(parse(loadValueTextField, loadValueMultiplierCoefficient));
         calibrationModel.setValueName(loadValueNameTextField.getText());
     }
 
