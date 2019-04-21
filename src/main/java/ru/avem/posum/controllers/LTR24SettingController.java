@@ -228,7 +228,7 @@ public class LTR24SettingController implements BaseController {
             }
         }
 
-        initializeButton.setDisable(ltr24SettingsModel.getDisabledChannels() == ltr24SettingsModel.getLtr24().getChannelsCount());
+        initializeButton.setDisable(ltr24SettingsModel.getDisabledChannels() == ltr24SettingsModel.getLTR24Instance().getChannelsCount());
     }
 
     private void resetChannelSettings(int channel) {
@@ -279,7 +279,7 @@ public class LTR24SettingController implements BaseController {
     }
 
     public void loadSettings(String moduleName) {
-        sceneTitleLabel.setText("Настройки модуля " + moduleName);
+        sceneTitleLabel.setText(String.format("Настройки модуля %s", moduleName));
         ltr24SettingsModel.setModuleName(moduleName);
         ltr24SettingsModel.setSlot(Utils.parseSlotNumber(moduleName));
         setLTR24Instance();
@@ -287,18 +287,18 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void setLTR24Instance() {
-        HashMap<Integer, Module> modules = cm.getCrateModelInstance().getModulesList();
-        ltr24SettingsModel.setLtr24((LTR24) modules.get(ltr24SettingsModel.getSlot()));
+        HashMap<Integer, Module> modulesInstances = cm.getCrateModelInstance().getModulesList();
+        ltr24SettingsModel.setLTR24Instance((LTR24) modulesInstances.get(ltr24SettingsModel.getSlot()));
     }
 
     private void setSettings() {
-        for (int i = 0; i < ltr24SettingsModel.getLtr24().getChannelsCount(); i++) {
+        for (int i = 0; i < ltr24SettingsModel.getLTR24Instance().getChannelsCount(); i++) {
             channelsCheckBoxes.get(i).setSelected(ltr24SettingsModel.getCheckedChannels()[i]);
             channelsTypesComboBoxes.get(i).getSelectionModel().select(ltr24SettingsModel.getChannelsTypes()[i]);
             measuringRangesComboBoxes.get(i).getSelectionModel().select(ltr24SettingsModel.getMeasuringRanges()[i]);
             channelsDescription.get(i).setText(ltr24SettingsModel.getChannelsDescriptions()[i].replace(", ", ""));
         }
-        int frequency = ltr24SettingsModel.getLtr24().getModuleSettings().get(ADC.Settings.FREQUENCY.getSettingName());
+        int frequency = ltr24SettingsModel.getLTR24Instance().getModuleSettings().get(ADC.Settings.FREQUENCY.getSettingName());
         discretizationFrequencyComboBox.getSelectionModel().select(frequency);
     }
 
@@ -341,7 +341,7 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void saveChannelsSettings() {
-        for (int i = 0; i < ltr24SettingsModel.getLtr24().getChannelsCount(); i++) {
+        for (int i = 0; i < ltr24SettingsModel.getLTR24Instance().getChannelsCount(); i++) {
             if (channelsCheckBoxes.get(i).isSelected()) {
                 ltr24SettingsModel.getCheckedChannels()[i] = true; // true - канал выбран
                 ltr24SettingsModel.getChannelsDescriptions()[i] = channelsDescription.get(i).getText() + ", ";
@@ -358,11 +358,11 @@ public class LTR24SettingController implements BaseController {
 
     private void saveModuleSettings() {
         int frequency = discretizationFrequencyComboBox.getSelectionModel().getSelectedIndex();
-        ltr24SettingsModel.getLtr24().getModuleSettings().put(ADC.Settings.FREQUENCY.getSettingName(), frequency);
+        ltr24SettingsModel.getLTR24Instance().getModuleSettings().put(ADC.Settings.FREQUENCY.getSettingName(), frequency);
     }
 
     private void checkModuleStatus() {
-        if (ltr24SettingsModel.getLtr24().getStatus().equals("Операция успешно выполнена")) {
+        if (ltr24SettingsModel.getLTR24Instance().getStatus().equals("Операция успешно выполнена")) {
             Platform.runLater(() -> {
                 ltr24SettingsModel.setConnectionOpen(true);
                 toggleProgressIndicatorState(true);
@@ -376,7 +376,7 @@ public class LTR24SettingController implements BaseController {
             });
         }
 
-        Platform.runLater(() -> statusBarLine.setStatus(ltr24SettingsModel.getLtr24().getStatus(), statusBar));
+        Platform.runLater(() -> statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(), statusBar));
     }
 
     private void enableChannelValueButtons() {
@@ -417,7 +417,7 @@ public class LTR24SettingController implements BaseController {
 
     private void closeConnection() {
         if (ltr24SettingsModel.isConnectionOpen()) {
-            ltr24SettingsModel.getLtr24().closeConnection();
+            ltr24SettingsModel.getLTR24Instance().closeConnection();
             ltr24SettingsModel.setConnectionOpen(false);
         }
     }
@@ -436,9 +436,9 @@ public class LTR24SettingController implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        ltr24SettingsModel.getLtr24().defineFrequency();
-        ltr24SettingsModel.getLtr24().start(ltr24SettingsModel.getSlot());
-        cm.giveChannelInfo(channel, CrateModel.LTR24, ltr24SettingsModel.getLtr24().getSlot());
+        ltr24SettingsModel.getLTR24Instance().defineFrequency();
+        ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
+        cm.giveChannelInfo(channel, CrateModel.LTR24, ltr24SettingsModel.getLTR24Instance().getSlot());
         cm.initializeSignalGraphView();
         cm.checkCalibration();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
