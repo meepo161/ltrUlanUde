@@ -73,8 +73,8 @@ public class CalibrationController implements BaseController {
         initTableView();
         initGraph();
         initContextMenu();
-        listenOfSetChannelValueCheckBox();
-        listenOfMouse();
+        listenSetChannelValueCheckBox();
+        listenMouse();
     }
 
     private void initTextFields() {
@@ -183,7 +183,7 @@ public class CalibrationController implements BaseController {
         checkNumberOfCalibrationPoints();
     }
 
-    private void listenOfSetChannelValueCheckBox() {
+    private void listenSetChannelValueCheckBox() {
         setChannelValueCheckBox.selectedProperty().addListener(observable -> {
             if (setChannelValueCheckBox.isSelected()) {
                 stopped = true;
@@ -215,7 +215,7 @@ public class CalibrationController implements BaseController {
         }).start();
     }
 
-    private void listenOfMouse() {
+    private void listenMouse() {
         calibrationTableView.setRowFactory(tv -> {
             TableRow<CalibrationPoint> row = new TableRow<>();
             row.setOnMouseClicked(event -> {

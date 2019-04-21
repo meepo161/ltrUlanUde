@@ -287,11 +287,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public boolean getICPMode() {
-        return ltr24SettingController.isIcpMode();
-    }
-
-    @Override
     public String getValueName() {
         return signalGraphController.getSignalModel().getValueName();
     }

@@ -22,8 +22,6 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    boolean getICPMode();
-
     String getValueName();
 
     double getZeroShift();
