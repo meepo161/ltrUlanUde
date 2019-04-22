@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -221,6 +220,8 @@ public class LTR34SettingController implements BaseController {
 
         types.add("Синусоидальный");
         types.add("Прямоугольный");
+        types.add("Треугольный");
+        types.add("Пила");
 
         signalTypeComboBox.getItems().addAll(types);
         signalTypeComboBox.getSelectionModel().select(0);
@@ -465,7 +466,7 @@ public class LTR34SettingController implements BaseController {
 
     private void checkModuleStatus() {
         if (ltr34SettingsModel.getLTR34Instance().getStatus().equals("Операция успешно выполнена")) {
-            ltr34SettingsModel.calculateSignal();
+            ltr34SettingsModel.calculateSignal(signalTypeComboBox.getSelectionModel().getSelectedIndex());
             ltr34SettingsModel.generate();
             showGraph();
         } else {

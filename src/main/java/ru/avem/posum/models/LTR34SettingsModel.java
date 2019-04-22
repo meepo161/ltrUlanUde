@@ -30,23 +30,70 @@ public class LTR34SettingsModel {
         ltr34.initializeModule();
     }
 
-    public void calculateSignal() {
+    public void calculateSignal(int signalType) {
         List<double[]> channelsData = new ArrayList<>();
         int channels = (ltr34.getCheckedChannelsCounter() <= 4) ? 4 : 8;
 
         for (int channelIndex = 0; channelIndex < channels; channelIndex++) {
-            channelsData.add(createSin(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+            switch (signalType) {
+                case 0:
+                    channelsData.add(createSinSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    break;
+                case 1:
+                    channelsData.add(createSquareSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    break;
+                case 2:
+                    channelsData.add(createTriangleSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    break;
+                case 3:
+                    channelsData.add(createSawtoothSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    break;
+            }
         }
 
         signal = mergeArrays(channelsData);
     }
 
-    private double[] createSin(int length, int amplitude, int frequency, int phase) {
+    private double[] createSinSignal(int length, int amplitude, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
             data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
+        }
+
+        return data;
+    }
+
+    private double[] createSquareSignal(int length, int amplitude, int frequency, int phase) {
+        double[] data = new double[length];
+        double channelPhase = Math.toRadians(phase);
+
+        for (int i = 0; i < length; i++) {
+            data[i] = amplitude * Math.signum(Math.sin(2 * Math.PI * frequency * i / length + channelPhase));
+        }
+
+        return data;
+    }
+
+    private double[] createTriangleSignal(int length, int amplitude, int frequency, int phase) {
+        double[] data = new double[length];
+        double channelPhase = Math.toRadians(phase);
+        double period = (double) 1 / frequency;
+
+        for (int i = 0; i < length; i++) {
+            data[i] = 2 * Math.abs(((double) i / period) - Math.floor(((double) i / period) + 1.0 / 2.0));
+        }
+
+        return data;
+    }
+
+    private double[] createSawtoothSignal(int length, int amplitude, int frequency, int phase) {
+        double[] data = new double[length];
+        double channelPhase = Math.toRadians(phase);
+
+        for (int i = 0; i < length; i++) {
+            data[i] = amplitude * i - Math.floor(i);
         }
 
         return data;
