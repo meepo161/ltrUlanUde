@@ -53,8 +53,6 @@ public class LTR34SettingController implements BaseController {
     @FXML
     private ComboBox<String> calibrationComboBox;
     @FXML
-    private ComboBox<String> dacModeComboBox;
-    @FXML
     private TextField descriptionOfChannelN1;
     @FXML
     private TextField descriptionOfChannelN2;
@@ -212,7 +210,6 @@ public class LTR34SettingController implements BaseController {
     private void initComboBoxes() {
         addSignalTypes();
         addCalibrations();
-        addDACModes();
     }
 
     private void addSignalTypes() {
@@ -220,8 +217,6 @@ public class LTR34SettingController implements BaseController {
 
         types.add("Синусоидальный");
         types.add("Прямоугольный");
-        types.add("Треугольный");
-        types.add("Пила");
 
         signalTypeComboBox.getItems().addAll(types);
         signalTypeComboBox.getSelectionModel().select(0);
@@ -233,18 +228,8 @@ public class LTR34SettingController implements BaseController {
         calibrations.add("Не используются");
         calibrations.add("Заводские");
 
-        signalTypeComboBox.getItems().addAll(calibrations);
-        signalTypeComboBox.getSelectionModel().select(0);
-    }
-
-    private void addDACModes() {
-        ObservableList<String> modes = FXCollections.observableArrayList();
-
-        modes.add("Потоковый режим генерации");
-        modes.add("Автоматический режим генерации");
-
-        signalTypeComboBox.getItems().addAll(modes);
-        signalTypeComboBox.getSelectionModel().select(0);
+        calibrationComboBox.getItems().addAll(calibrations);
+        calibrationComboBox.getSelectionModel().select(0);
     }
 
     private void listenCheckBoxes() {
