@@ -9,6 +9,8 @@ import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.hardware.ADC;
+import ru.avem.posum.hardware.DAC;
 import ru.avem.posum.hardware.LTR34;
 import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.LTR34SettingsModel;
@@ -52,6 +54,8 @@ public class LTR34SettingController implements BaseController {
     private CheckBox checkChannelN8;
     @FXML
     private ComboBox<String> calibrationComboBox;
+    @FXML
+    private ComboBox<String> dacModeComboBox;
     @FXML
     private TextField descriptionOfChannelN1;
     @FXML
@@ -395,6 +399,13 @@ public class LTR34SettingController implements BaseController {
             } else {
                 phaseTextFields.get(channelIndex).setText("");
             }
+
+            int dacMode = ltr34SettingsModel.getLTR34Instance().getModuleSettings().get(DAC.Settings.DAC_MODE.getSettingName());
+            int factoryCalibration = ltr34SettingsModel.getLTR34Instance().getModuleSettings().get(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName());
+            int signalType = ltr34SettingsModel.getLTR34Instance().getModuleSettings().get(DAC.Settings.SIGNAL_TYPE.getSettingName());
+            calibrationComboBox.getSelectionModel().select(factoryCalibration);
+            dacModeComboBox.getSelectionModel().select(dacMode);
+            signalTypeComboBox.getSelectionModel().select(signalType);
         }
     }
 
@@ -454,7 +465,12 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void saveModuleSettings() {
-        ltr34SettingsModel.getLTR34Instance().isUseCalibration(calibrationComboBox.getSelectionModel().getSelectedIndex());
+        int dacMode = dacModeComboBox.getSelectionModel().getSelectedIndex();
+        int factoryCalibration = calibrationComboBox.getSelectionModel().getSelectedIndex();
+        int signalType = signalTypeComboBox.getSelectionModel().getSelectedIndex();
+        ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.DAC_MODE.getSettingName(), dacMode);
+        ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), factoryCalibration);
+        ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.SIGNAL_TYPE.getSettingName(), signalType);
     }
 
     private int parse(TextField textField) {

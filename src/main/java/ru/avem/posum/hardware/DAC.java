@@ -1,18 +1,36 @@
 package ru.avem.posum.hardware;
 
+import java.util.HashMap;
+
 public abstract class DAC extends Module {
+    public enum Settings {
+        DAC_MODE("DAC mode"), FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
+        SIGNAL_TYPE("Signal type");
+
+        private String settingName;
+
+        Settings(String settingName) {
+            this.settingName = settingName;
+        }
+
+        public String getSettingName() {
+            return settingName;
+        }
+    }
+
     private int[] amplitudes;
-    private int[] frequencies;
-    private int[] phases;
     private int checkedChannelsCounter;
-    private int useCalibration; // 1 - использовать заводскую калибровку, 0
+    private int[] frequencies;
+    HashMap<String, Integer> moduleSettings;
+    private int[] phases;
 
     DAC() {
+        amplitudes = new int[channelsCount];
         channelsCount = 8; // 8 каналов, поскольку в проекте используется LTR34-8
         checkedChannels = new boolean[channelsCount];
-        amplitudes = new int[channelsCount];
         channelsDescription = new String[channelsCount];
         frequencies = new int[channelsCount];
+        moduleSettings = new HashMap<>();
         phases = new int[channelsCount];
     }
 
@@ -32,16 +50,12 @@ public abstract class DAC extends Module {
         return frequencies;
     }
 
+    public HashMap<String, Integer> getModuleSettings() {
+        return moduleSettings;
+    }
+
     public int[] getPhases() {
         return phases;
-    }
-
-    public int getUseCalibration() {
-        return useCalibration;
-    }
-
-    public void isUseCalibration(int useCalibration) {
-        this.useCalibration = useCalibration;
     }
 
     void setCheckedChannelsCounter(int checkedChannelsCounter) {
