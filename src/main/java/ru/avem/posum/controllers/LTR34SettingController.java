@@ -222,6 +222,10 @@ public class LTR34SettingController implements BaseController {
 
         types.add("Синусоидальный");
         types.add("Прямоугольный");
+        types.add("Треугольный");
+        types.add("Пила");
+        types.add("Отраженная пила");
+        types.add("Периодический шум");
 
         signalTypeComboBox.getItems().addAll(types);
         signalTypeComboBox.getSelectionModel().select(0);

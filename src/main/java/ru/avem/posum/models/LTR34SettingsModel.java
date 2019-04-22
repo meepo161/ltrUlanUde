@@ -6,6 +6,7 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class LTR34SettingsModel {
     private int[] amplitudes;
@@ -16,6 +17,7 @@ public class LTR34SettingsModel {
     private LTR34 ltr34 = new LTR34();
     private String moduleName;
     private int[] phases;
+    private Random random = new Random();
     private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
     private int slot;
     private boolean stopped;
@@ -37,17 +39,28 @@ public class LTR34SettingsModel {
         for (int channelIndex = 0; channelIndex < channels; channelIndex++) {
             switch (signalType) {
                 case 0:
-                    channelsData.add(createSinSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    channelsData.add(createSinSignal(signal.length / channels, amplitudes[channelIndex],
+                            frequencies[channelIndex], phases[channelIndex]));
                     break;
                 case 1:
-                    channelsData.add(createSquareSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    channelsData.add(createSquareSignal(signal.length / channels, amplitudes[channelIndex],
+                            frequencies[channelIndex], phases[channelIndex]));
                     break;
                 case 2:
-                    channelsData.add(createTriangleSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    channelsData.add(createTriangleSignal(signal.length / channels, amplitudes[channelIndex],
+                            frequencies[channelIndex], phases[channelIndex]));
                     break;
                 case 3:
-                    channelsData.add(createSawtoothSignal(signal.length / channels, amplitudes[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    channelsData.add(createSawtoothSignal(signal.length / channels, amplitudes[channelIndex],
+                            frequencies[channelIndex], phases[channelIndex], -2));
                     break;
+                case 4:
+                    channelsData.add(createSawtoothSignal(signal.length / channels, amplitudes[channelIndex],
+                            frequencies[channelIndex], phases[channelIndex], 2));
+                    break;
+                case 5:
+                    channelsData.add(createNoiseSignal(signal.length / channels, amplitudes[channelIndex],
+                            frequencies[channelIndex], phases[channelIndex]));
             }
         }
 
@@ -79,21 +92,33 @@ public class LTR34SettingsModel {
     private double[] createTriangleSignal(int length, int amplitude, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
-        double period = (double) 1 / frequency;
 
         for (int i = 0; i < length; i++) {
-            data[i] = 2 * Math.abs(((double) i / period) - Math.floor(((double) i / period) + 1.0 / 2.0));
+            data[i] = (2 * amplitude) / Math.PI * Math.asin(Math.sin(2 * Math.PI * frequency * i / length + channelPhase));
         }
 
         return data;
     }
 
-    private double[] createSawtoothSignal(int length, int amplitude, int frequency, int phase) {
+    private double[] createSawtoothSignal(int length, int amplitude, int frequency, int phase, double coefficient) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * i - Math.floor(i);
+            data[i] = (coefficient * amplitude) / Math.PI * Math.atan(1.0 / Math.tan((double) i / length * Math.PI * frequency + channelPhase));
+        }
+
+        return data;
+    }
+
+
+    private double[] createNoiseSignal(int length, int amplitude, int frequency, int phase) {
+        double[] data = new double[length];
+        double channelPhase = Math.toRadians(phase);
+
+        for (int i = 0; i < length; i++) {
+            data[i] = amplitude * random.nextDouble() * Math.sin(2 * Math.PI * (frequency + random.nextDouble()) *
+                    i / length + channelPhase);
         }
 
         return data;
