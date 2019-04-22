@@ -158,7 +158,7 @@ public class SignalGraphController implements BaseController {
         graphModel.calculateGraphBounds();
         setScale((NumberAxis) graph.getYAxis());
 
-        horizontalScalesComboBox.getSelectionModel().select(2);
+        horizontalScalesComboBox.getSelectionModel().select(0);
         graphModel.parseGraphScale(horizontalScalesComboBox.getSelectionModel().getSelectedItem());
         graphModel.calculateGraphBounds();
         setScale((NumberAxis) graph.getXAxis());
@@ -210,6 +210,16 @@ public class SignalGraphController implements BaseController {
                     signalModel.setRarefactionCoefficient(25);
                     break;
             }
+
+            int selectedScale = horizontalScalesComboBox.getSelectionModel().getSelectedIndex();
+            int lastScale = horizontalScalesComboBox.getItems().size();
+            if (selectedScale == lastScale) {
+                horizontalScalesComboBox.getSelectionModel().select(lastScale - 1);
+                horizontalScalesComboBox.getSelectionModel().select(lastScale);
+            } else {
+                horizontalScalesComboBox.getSelectionModel().select(lastScale);
+                horizontalScalesComboBox.getSelectionModel().select(selectedScale);
+            }
         });
     }
 
@@ -219,7 +229,7 @@ public class SignalGraphController implements BaseController {
         chooses.add("Точный расчет");
         chooses.add("Оценочный расчет");
         frequencyCalculationComboBox.getItems().addAll(chooses);
-        frequencyCalculationComboBox.getSelectionModel().select(0);
+        frequencyCalculationComboBox.getSelectionModel().select(1);
     }
 
     private void listenFrequencyCalculationComboBox() {
@@ -402,6 +412,12 @@ public class SignalGraphController implements BaseController {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
             }
+        }).start();
+
+        new Thread(() -> {
+            Utils.sleep(100);
+            horizontalScalesComboBox.getSelectionModel().select(2);
+            frequencyCalculationComboBox.getSelectionModel().select(0);
         }).start();
     }
 
