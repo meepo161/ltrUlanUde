@@ -31,7 +31,7 @@ public class LTR34 extends DAC {
 
     @Override
     public void initializeModule() {
-        status = initialize(getSlot(), getCheckedChannelsCounter());
+        status = initialize(getSlot(), getCheckedChannelsCounter(), getUseCalibration());
     }
 
     @Override
@@ -65,7 +65,7 @@ public class LTR34 extends DAC {
 
     public native String checkConnection(int slot);
 
-    public native String initialize(int slot, int channelsCounter);
+    public native String initialize(int slot, int channelsCounter, int useCalibration);
 
     public native String getFrequency(int slot);
 

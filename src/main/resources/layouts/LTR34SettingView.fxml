@@ -20,20 +20,20 @@
       <GridPane layoutX="84.0" layoutY="93.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="150.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="140.0" minWidth="140.0" />
             <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="300.0" prefHeight="300.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="200.0" prefHeight="300.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
@@ -258,6 +258,39 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
+            <Label fx:id="signalTypeTextField" text="Форма сигнала:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <GridPane.margin>
+                  <Insets right="70.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="signalTypeComboBox" prefWidth="190.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label fx:id="CalibrationTextField" text="Калибровочные коэф.:" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets left="70.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="calibrationComboBox" prefWidth="190.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets right="10.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label text="Режим генерации:" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+               <GridPane.margin>
+                  <Insets right="70.0" />
+               </GridPane.margin>
+            </Label>
+            <ComboBox fx:id="dacModeComboBox" prefWidth="190.0" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.rowIndex="10">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </ComboBox>
             <Button fx:id="generateSignalButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleGenerateSignal" text="Генерировать сигнал" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets right="140.0" />
@@ -271,32 +304,6 @@
             </Button>
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="14" />
             <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="14" />
-            <Label fx:id="signalTypeTextField" text="Форма сигнала:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <GridPane.margin>
-                  <Insets right="75.0" />
-               </GridPane.margin>
-            </Label>
-            <ComboBox fx:id="signalTypeComboBox" prefWidth="200.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="10">
-               <GridPane.margin>
-                  <Insets left="10.0" />
-               </GridPane.margin>
-            </ComboBox>
-            <Label fx:id="CalibrationTextField" text="Калибровочные коэф:" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
-               <GridPane.margin>
-                  <Insets left="75.0" />
-               </GridPane.margin>
-               <padding>
-                  <Insets right="10.0" />
-               </padding>
-            </Label>
-            <ComboBox fx:id="calibrationComboBox" prefWidth="200.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="10">
-               <GridPane.margin>
-                  <Insets left="80.0" />
-               </GridPane.margin>
-            </ComboBox>
          </children>
       </GridPane>
    </children>

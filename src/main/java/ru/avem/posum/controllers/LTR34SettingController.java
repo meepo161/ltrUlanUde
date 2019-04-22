@@ -229,6 +229,17 @@ public class LTR34SettingController implements BaseController {
         calibrations.add("Заводские");
 
         calibrationComboBox.getItems().addAll(calibrations);
+        calibrationComboBox.getSelectionModel().select(1);
+    }
+
+
+    private void addDACModes() {
+        ObservableList<String> modes = FXCollections.observableArrayList();
+
+        modes.add("Потоковый режим генерации");
+        modes.add("Режим автогенерации");
+
+        calibrationComboBox.getItems().addAll(modes);
         calibrationComboBox.getSelectionModel().select(0);
     }
 
@@ -393,6 +404,7 @@ public class LTR34SettingController implements BaseController {
 
         new Thread(() -> {
             saveChannelsSettings();
+            saveModuleSettings();
             ltr34SettingsModel.initModule();
             checkModuleStatus();
             Platform.runLater(() -> statusBarLine.setStatus(ltr34SettingsModel.getLTR34Instance().getStatus(), statusBar));
@@ -439,6 +451,10 @@ public class LTR34SettingController implements BaseController {
                 ltr34SettingsModel.getPhases()[channelIndex] = 0;
             }
         }
+    }
+
+    private void saveModuleSettings() {
+        ltr34SettingsModel.getLTR34Instance().isUseCalibration(calibrationComboBox.getSelectionModel().getSelectedIndex());
     }
 
     private int parse(TextField textField) {
@@ -511,6 +527,7 @@ public class LTR34SettingController implements BaseController {
         new Thread(() -> {
             setLTR34Instance();
             saveChannelsSettings();
+            saveModuleSettings();
             prepareSettingsScene();
         }).start();
 

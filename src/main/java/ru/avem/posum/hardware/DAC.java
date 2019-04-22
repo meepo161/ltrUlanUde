@@ -5,6 +5,7 @@ public abstract class DAC extends Module {
     private int[] frequencies;
     private int[] phases;
     private int checkedChannelsCounter;
+    private int useCalibration; // 1 - использовать заводскую калибровку, 0
 
     DAC() {
         channelsCount = 8; // 8 каналов, поскольку в проекте используется LTR34-8
@@ -33,6 +34,14 @@ public abstract class DAC extends Module {
 
     public int[] getPhases() {
         return phases;
+    }
+
+    public int getUseCalibration() {
+        return useCalibration;
+    }
+
+    public void isUseCalibration(int useCalibration) {
+        this.useCalibration = useCalibration;
     }
 
     void setCheckedChannelsCounter(int checkedChannelsCounter) {

@@ -129,7 +129,7 @@ public class LTR34SettingsModel {
             while (!stopped && ltr34.checkStatus()) {
                 ltr34.generate(signal);
                 ltr34.checkConnection();
-                Utils.sleep(1000);
+                Utils.sleep(990);
             }
         }).start();
     }
