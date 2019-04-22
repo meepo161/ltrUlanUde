@@ -25,8 +25,8 @@ public abstract class DAC extends Module {
     private int[] phases;
 
     DAC() {
-        amplitudes = new int[channelsCount];
         channelsCount = 8; // 8 каналов, поскольку в проекте используется LTR34-8
+        amplitudes = new int[channelsCount];
         checkedChannels = new boolean[channelsCount];
         channelsDescription = new String[channelsCount];
         frequencies = new int[channelsCount];

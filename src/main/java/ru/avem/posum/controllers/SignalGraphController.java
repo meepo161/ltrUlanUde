@@ -212,12 +212,14 @@ public class SignalGraphController implements BaseController {
             }
 
             int selectedScale = horizontalScalesComboBox.getSelectionModel().getSelectedIndex();
-            int lastScale = horizontalScalesComboBox.getItems().size();
+            int lastScale = horizontalScalesComboBox.getItems().size() - 1;
             if (selectedScale == lastScale) {
                 horizontalScalesComboBox.getSelectionModel().select(lastScale - 1);
+                Utils.sleep(1000);
                 horizontalScalesComboBox.getSelectionModel().select(lastScale);
             } else {
                 horizontalScalesComboBox.getSelectionModel().select(lastScale);
+                Utils.sleep(1000);
                 horizontalScalesComboBox.getSelectionModel().select(selectedScale);
             }
         });
@@ -229,7 +231,7 @@ public class SignalGraphController implements BaseController {
         chooses.add("Точный расчет");
         chooses.add("Оценочный расчет");
         frequencyCalculationComboBox.getItems().addAll(chooses);
-        frequencyCalculationComboBox.getSelectionModel().select(1);
+        frequencyCalculationComboBox.getSelectionModel().select(0);
     }
 
     private void listenFrequencyCalculationComboBox() {
@@ -415,9 +417,13 @@ public class SignalGraphController implements BaseController {
         }).start();
 
         new Thread(() -> {
-            Utils.sleep(100);
-            horizontalScalesComboBox.getSelectionModel().select(2);
-            frequencyCalculationComboBox.getSelectionModel().select(0);
+            clearSeries();
+            signalModel.setAccurateFrequencyCalculation(false);
+            Utils.sleep(2500);
+            Platform.runLater(() -> {
+                horizontalScalesComboBox.getSelectionModel().select(2);
+                signalModel.setAccurateFrequencyCalculation(true);
+            });
         }).start();
     }
 
