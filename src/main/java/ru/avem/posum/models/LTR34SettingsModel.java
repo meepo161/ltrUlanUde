@@ -120,18 +120,20 @@ public class LTR34SettingsModel {
         return resultArray;
     }
 
-    public void generate() {
+    public void generate(boolean isAutogenerationMode) {
         ltr34.generate(signal);
         ltr34.start();
         stopped = false;
 
-        new Thread(() -> {
-            while (!stopped && ltr34.checkStatus()) {
-                ltr34.generate(signal);
-                ltr34.checkConnection();
-                Utils.sleep(990);
-            }
-        }).start();
+        if (!isAutogenerationMode) {
+            new Thread(() -> {
+                while (!stopped && ltr34.checkStatus()) {
+                    ltr34.generate(signal);
+                    ltr34.checkConnection();
+                    Utils.sleep(990);
+                }
+            }).start();
+        }
     }
 
     public XYChart.Series<Number, Number> createSeries(int channelNumber) {

@@ -214,6 +214,7 @@ public class LTR34SettingController implements BaseController {
     private void initComboBoxes() {
         addSignalTypes();
         addCalibrations();
+        addDACModes();
     }
 
     private void addSignalTypes() {
@@ -243,8 +244,8 @@ public class LTR34SettingController implements BaseController {
         modes.add("Потоковый режим генерации");
         modes.add("Режим автогенерации");
 
-        calibrationComboBox.getItems().addAll(modes);
-        calibrationComboBox.getSelectionModel().select(0);
+        dacModeComboBox.getItems().addAll(modes);
+        dacModeComboBox.getSelectionModel().select(0);
     }
 
     private void listenCheckBoxes() {
@@ -484,7 +485,7 @@ public class LTR34SettingController implements BaseController {
     private void checkModuleStatus() {
         if (ltr34SettingsModel.getLTR34Instance().getStatus().equals("Операция успешно выполнена")) {
             ltr34SettingsModel.calculateSignal(signalTypeComboBox.getSelectionModel().getSelectedIndex());
-            ltr34SettingsModel.generate();
+            ltr34SettingsModel.generate(dacModeComboBox.getSelectionModel().getSelectedIndex() == 1);
             showGraph();
         } else {
             Platform.runLater(() -> {
