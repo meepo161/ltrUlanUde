@@ -13,6 +13,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
+import ru.avem.posum.controllers.LTR34.LTR34Settings;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
@@ -32,7 +33,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
     private LTR24SettingController ltr24SettingController;
     private LTR27SettingController ltr27SettingController;
-    private LTR34SettingController ltr34SettingController;
+    private LTR34Settings ltr34Settings;
     private LTR212SettingController ltr212SettingController;
     private CalibrationController calibrationController;
     private MainController mainController;
@@ -123,7 +124,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createLTR34Scene() throws IOException {
-        ltr34SettingController = (LTR34SettingController) getController("/layouts/LTR34SettingView.fxml");
+        ltr34Settings = (LTR34Settings) getController("/layouts/LTR34SettingView.fxml");
         ltr34Scene = createScene(1280, 720);
     }
 
@@ -352,8 +353,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 ltr24SettingController.loadSettings(moduleName);
                 break;
             case CrateModel.LTR34:
-                ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
-                ltr34SettingController.loadSettings(moduleName);
+                ltr34Settings = (LTR34Settings) modulesPairs.get(id).getKey();
+                ltr34Settings.loadSettings(moduleName);
                 break;
             case CrateModel.LTR212:
                 ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();

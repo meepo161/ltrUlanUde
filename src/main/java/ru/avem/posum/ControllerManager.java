@@ -1,6 +1,5 @@
 package ru.avem.posum;
 
-import javafx.util.Pair;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.ExperimentModel;

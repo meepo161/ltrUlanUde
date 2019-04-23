@@ -11,4 +11,8 @@ public interface BaseController {
     default void setControllerManager(ControllerManager cm) {
 //        throw new NullPointerException("Unimplemented interface method.");
     }
+
+    default void setLTR34ControllerManager(LTR34ControllerManager ltr34ControllerManager) {
+//        throw new NullPointerException("Unimplemented interface method.");
+    }
 }

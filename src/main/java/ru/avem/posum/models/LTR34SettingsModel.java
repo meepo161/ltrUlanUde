@@ -1,10 +1,13 @@
 package ru.avem.posum.models;
 
+import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.LTR34;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -16,11 +19,21 @@ public class LTR34SettingsModel {
     private int[] frequencies;
     private LTR34 ltr34 = new LTR34();
     private String moduleName;
+    private boolean moduleOk;
     private int[] phases;
     private Random random = new Random();
     private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
     private int slot;
     private boolean stopped;
+
+    public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
+        this.ltr34 = (LTR34) instancesOfModules.get(slot);
+        this.checkedChannels = ltr34.getCheckedChannels();
+        this.amplitudes = ltr34.getAmplitudes();
+        this.descriptions = ltr34.getChannelsDescription();
+        this.frequencies = ltr34.getFrequencies();
+        this.phases = ltr34.getPhases();
+    }
 
     public void initModule() {
         if (!connectionOpen) {
@@ -212,15 +225,6 @@ public class LTR34SettingsModel {
 
     public int getSlot() {
         return slot;
-    }
-
-    public void setLTR34Instance(LTR34 ltr34) {
-        this.ltr34 = ltr34;
-        this.checkedChannels = ltr34.getCheckedChannels();
-        this.amplitudes = ltr34.getAmplitudes();
-        this.descriptions = ltr34.getChannelsDescription();
-        this.frequencies = ltr34.getFrequencies();
-        this.phases = ltr34.getPhases();
     }
 
     public void setModuleName(String moduleName) {
