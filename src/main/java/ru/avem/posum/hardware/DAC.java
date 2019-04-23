@@ -5,7 +5,7 @@ import java.util.HashMap;
 public abstract class DAC extends Module {
     public enum Settings {
         DAC_MODE("DAC mode"), FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
-        SIGNAL_TYPE("Signal type");
+        FREQUENCY("Frequency"), SIGNAL_TYPE("Signal type");
 
         private String settingName;
 

@@ -91,6 +91,7 @@ public class LTR34 extends DAC {
     private void initializeModuleSettings() {
         getModuleSettings().put(DAC.Settings.DAC_MODE.getSettingName(), 0); // режим работы каналов
         getModuleSettings().put(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), 1); // использование заводских калибровочных коэфффициентов
+        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 31_250); // частота дискретизации
         getModuleSettings().put(Settings.SIGNAL_TYPE.getSettingName(), 0); // тип генерируемого сигнала
     }
 
@@ -98,6 +99,7 @@ public class LTR34 extends DAC {
         List<Integer> settingsList = new ArrayList<>();
         settingsList.add(getModuleSettings().get(DAC.Settings.DAC_MODE.getSettingName()));
         settingsList.add(getModuleSettings().get(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName()));
+        settingsList.add(getModuleSettings().get(Settings.FREQUENCY.getSettingName()));
         settingsList.add(getModuleSettings().get(Settings.SIGNAL_TYPE.getSettingName()));
 
         int[] settings = new int[settingsList.size()];
@@ -114,6 +116,7 @@ public class LTR34 extends DAC {
 
         settings.append(moduleSettings.get(DAC.Settings.DAC_MODE.getSettingName())).append(", ")
                 .append(moduleSettings.get(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
+                .append(moduleSettings.get(Settings.FREQUENCY.getSettingName())).append(", ")
                 .append(moduleSettings.get(DAC.Settings.SIGNAL_TYPE.getSettingName())).append(", ");
 
         return settings;
@@ -123,7 +126,8 @@ public class LTR34 extends DAC {
         String[] separatedSettings = settings.split(", ");
 
         moduleSettings.put(DAC.Settings.DAC_MODE.getSettingName(), Integer.valueOf(separatedSettings[0]));
-        moduleSettings.put(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), Integer.valueOf(separatedSettings[2]));
+        moduleSettings.put(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), Integer.valueOf(separatedSettings[1]));
+        moduleSettings.put(Settings.FREQUENCY.getSettingName(), Integer.valueOf(separatedSettings[2]));
         moduleSettings.put(Settings.SIGNAL_TYPE.getSettingName(), Integer.valueOf(separatedSettings[3]));
     }
 
