@@ -19,7 +19,6 @@ public class LTR34SettingsModel {
     private int[] frequencies;
     private LTR34 ltr34 = new LTR34();
     private String moduleName;
-    private boolean moduleOk;
     private int[] phases;
     private Random random = new Random();
     private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала

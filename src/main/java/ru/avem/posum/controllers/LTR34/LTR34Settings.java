@@ -202,7 +202,6 @@ public class LTR34Settings implements BaseController {
     @FXML
     public void handleBackButton() {
         new Thread(() -> {
-//            ltr34SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
             ltr34ChannelsSettings.saveSettings();
             ltr34ModuleSettings.saveSettings();
             cm.loadItemsForMainTableView();
