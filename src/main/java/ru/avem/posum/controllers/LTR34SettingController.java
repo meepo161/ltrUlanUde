@@ -441,7 +441,6 @@ public class LTR34SettingController implements BaseController {
     }
 
     private void disableChannelsUiElements() {
-        generateSignalButton.setDisable(true);
         for (int channelIndex = 0; channelIndex < channelsCheckBoxes.size(); channelIndex++) {
             channelsCheckBoxes.get(channelIndex).setDisable(true);
             amplitudeTextFields.get(channelIndex).setDisable(true);
@@ -449,6 +448,11 @@ public class LTR34SettingController implements BaseController {
             frequencyTextFields.get(channelIndex).setDisable(true);
             phaseTextFields.get(channelIndex).setDisable(true);
         }
+
+        calibrationComboBox.setDisable(true);
+        dacModeComboBox.setDisable(true);
+        signalTypeComboBox.setDisable(true);
+        generateSignalButton.setDisable(true);
     }
 
     private void saveChannelsSettings() {
@@ -538,8 +542,11 @@ public class LTR34SettingController implements BaseController {
             phaseTextFields.get(channelIndex).setDisable(!channelsCheckBoxes.get(channelIndex).isSelected());
         }
 
+        calibrationComboBox.setDisable(false);
+        dacModeComboBox.setDisable(false);
         graph.setDisable(true);
         generateSignalButton.setDisable(false);
+        signalTypeComboBox.setDisable(false);
         stopSignalButton.setDisable(true);
     }
 
