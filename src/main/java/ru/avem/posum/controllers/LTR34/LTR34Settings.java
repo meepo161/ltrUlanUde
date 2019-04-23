@@ -30,6 +30,10 @@ public class LTR34Settings implements BaseController {
     @FXML
     private TextField amplitudeOfChannelN8;
     @FXML
+    private ComboBox<String> calibrationComboBox;
+    @FXML
+    private Label calibrationLabel;
+    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -46,9 +50,9 @@ public class LTR34Settings implements BaseController {
     @FXML
     private CheckBox checkChannelN8;
     @FXML
-    private ComboBox<String> calibrationComboBox;
-    @FXML
     private ComboBox<String> dacModeComboBox;
+    @FXML
+    private Label dacModeLabel;
     @FXML
     private TextField descriptionOfChannelN1;
     @FXML
@@ -107,6 +111,8 @@ public class LTR34Settings implements BaseController {
     private Label sceneTitleLabel;
     @FXML
     private ComboBox<String> signalTypeComboBox;
+    @FXML
+    private Label signalTypeLabel;
     @FXML
     private Button stopSignalButton;
     @FXML
@@ -238,6 +244,14 @@ public class LTR34Settings implements BaseController {
         return amplitudeOfChannelN8;
     }
 
+    ComboBox<String> getCalibrationComboBox() {
+        return calibrationComboBox;
+    }
+
+    Label getCalibrationLabel() {
+        return calibrationLabel;
+    }
+
     CheckBox getCheckChannelN1() {
         return checkChannelN1;
     }
@@ -270,12 +284,12 @@ public class LTR34Settings implements BaseController {
         return checkChannelN8;
     }
 
-    ComboBox<String> getCalibrationComboBox() {
-        return calibrationComboBox;
-    }
-
     ComboBox<String> getDacModeComboBox() {
         return dacModeComboBox;
+    }
+
+    Label getDacModeLabel() {
+        return dacModeLabel;
     }
 
     TextField getDescriptionOfChannelN1() {
@@ -388,6 +402,10 @@ public class LTR34Settings implements BaseController {
 
     ComboBox<String> getSignalTypeComboBox() {
         return signalTypeComboBox;
+    }
+
+    Label getSignalTypeLabel() {
+        return signalTypeLabel;
     }
 
     Button getStopSignalButton() {

@@ -5,25 +5,32 @@ import javafx.collections.ObservableList;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import ru.avem.posum.hardware.DAC;
 import ru.avem.posum.models.LTR34SettingsModel;
 
 class LTR34ModuleSettings extends LTR34Settings {
-    private ComboBox<String> signalTypeComboBox;
     private ComboBox<String> calibrationComboBox;
+    private Label calibrationLabel;
     private ComboBox<String> dacModeComboBox;
+    private Label dacModeLabel;
     private Button generateSignalButton;
     private LineChart<Number, Number> graph;
     private LTR34SettingsModel ltr34SettingsModel;
+    private ComboBox<String> signalTypeComboBox;
+    private Label signalTypeLabel;
     private Button stopSignalButton;
 
     LTR34ModuleSettings(LTR34Settings ltr34Settings) {
-        this.signalTypeComboBox = ltr34Settings.getSignalTypeComboBox();
         this.calibrationComboBox = ltr34Settings.getCalibrationComboBox();
+        this.calibrationLabel = ltr34Settings.getCalibrationLabel();
         this.dacModeComboBox = ltr34Settings.getDacModeComboBox();
+        this.dacModeLabel = ltr34Settings.getDacModeLabel();
         this.generateSignalButton = ltr34Settings.getGenerateSignalButton();
         this.graph = ltr34Settings.getGraph();
         this.ltr34SettingsModel = ltr34Settings.getLtr34SettingsModel();
+        this.signalTypeComboBox = ltr34Settings.getSignalTypeComboBox();
+        this.signalTypeLabel = ltr34Settings.getSignalTypeLabel();
         this.stopSignalButton = ltr34Settings.getStopSignalButton();
 
         addSignalTypes();
@@ -75,13 +82,6 @@ class LTR34ModuleSettings extends LTR34Settings {
         signalTypeComboBox.getSelectionModel().select(signalType);
     }
 
-    void disableUiElementsState() {
-        calibrationComboBox.setDisable(true);
-        dacModeComboBox.setDisable(true);
-        signalTypeComboBox.setDisable(true);
-        generateSignalButton.setDisable(true);
-    }
-
     void saveSettings() {
         int dacMode = dacModeComboBox.getSelectionModel().getSelectedIndex();
         int factoryCalibration = calibrationComboBox.getSelectionModel().getSelectedIndex();
@@ -91,12 +91,25 @@ class LTR34ModuleSettings extends LTR34Settings {
         ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.SIGNAL_TYPE.getSettingName(), signalType);
     }
 
+    void disableUiElementsState() {
+        calibrationComboBox.setDisable(true);
+        calibrationLabel.setDisable(true);
+        dacModeComboBox.setDisable(true);
+        dacModeLabel.setDisable(true);
+        signalTypeComboBox.setDisable(true);
+        signalTypeLabel.setDisable(true);
+        generateSignalButton.setDisable(true);
+    }
+
     void enableUiElements() {
         calibrationComboBox.setDisable(false);
+        calibrationLabel.setDisable(false);
         dacModeComboBox.setDisable(false);
+        dacModeLabel.setDisable(false);
         graph.setDisable(true);
         generateSignalButton.setDisable(false);
         signalTypeComboBox.setDisable(false);
+        signalTypeLabel.setDisable(false);
         stopSignalButton.setDisable(true);
     }
 }

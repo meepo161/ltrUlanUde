@@ -96,7 +96,6 @@ class LTR34ChannelsSettings extends LTR34Settings {
         ));
     }
 
-
     private void listenCheckBoxes() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             toggleUiElementsState(checkBoxes.get(channelIndex), channelIndex);

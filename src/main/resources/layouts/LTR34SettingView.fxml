@@ -258,7 +258,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </TextField>
-            <Label fx:id="signalTypeTextField" text="Форма сигнала:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+            <Label fx:id="signalTypeLabel" text="Форма сигнала:" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -271,7 +271,7 @@
                   <Insets left="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <Label fx:id="CalibrationTextField" text="Калибровочные коэф.:" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+            <Label fx:id="calibrationLabel" text="Калибровочные коэф.:" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets left="70.0" />
                </GridPane.margin>
@@ -281,7 +281,7 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </ComboBox>
-            <Label text="Режим генерации:" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
+            <Label fx:id="dacModeLabel" text="Режим генерации:" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="9">
                <GridPane.margin>
                   <Insets right="70.0" />
                </GridPane.margin>
