@@ -14,109 +14,109 @@ import ru.avem.posum.utils.Utils;
 
 public class LTR34Settings implements BaseController {
     @FXML
-    protected TextField amplitudeOfChannelN1;
+    private TextField amplitudeOfChannelN1;
     @FXML
-    protected TextField amplitudeOfChannelN2;
+    private TextField amplitudeOfChannelN2;
     @FXML
-    protected TextField amplitudeOfChannelN3;
+    private TextField amplitudeOfChannelN3;
     @FXML
-    protected TextField amplitudeOfChannelN4;
+    private TextField amplitudeOfChannelN4;
     @FXML
-    protected TextField amplitudeOfChannelN5;
+    private TextField amplitudeOfChannelN5;
     @FXML
-    protected TextField amplitudeOfChannelN6;
+    private TextField amplitudeOfChannelN6;
     @FXML
-    protected TextField amplitudeOfChannelN7;
+    private TextField amplitudeOfChannelN7;
     @FXML
-    protected TextField amplitudeOfChannelN8;
+    private TextField amplitudeOfChannelN8;
     @FXML
-    protected CheckBox checkChannelN1;
+    private CheckBox checkChannelN1;
     @FXML
-    protected CheckBox checkChannelN2;
+    private CheckBox checkChannelN2;
     @FXML
-    protected CheckBox checkChannelN3;
+    private CheckBox checkChannelN3;
     @FXML
-    protected CheckBox checkChannelN4;
+    private CheckBox checkChannelN4;
     @FXML
-    protected CheckBox checkChannelN5;
+    private CheckBox checkChannelN5;
     @FXML
-    protected CheckBox checkChannelN6;
+    private CheckBox checkChannelN6;
     @FXML
-    protected CheckBox checkChannelN7;
+    private CheckBox checkChannelN7;
     @FXML
-    protected CheckBox checkChannelN8;
+    private CheckBox checkChannelN8;
     @FXML
-    protected ComboBox<String> calibrationComboBox;
+    private ComboBox<String> calibrationComboBox;
     @FXML
-    protected ComboBox<String> dacModeComboBox;
+    private ComboBox<String> dacModeComboBox;
     @FXML
-    protected TextField descriptionOfChannelN1;
+    private TextField descriptionOfChannelN1;
     @FXML
-    protected TextField descriptionOfChannelN2;
+    private TextField descriptionOfChannelN2;
     @FXML
-    protected TextField descriptionOfChannelN3;
+    private TextField descriptionOfChannelN3;
     @FXML
-    protected TextField descriptionOfChannelN4;
+    private TextField descriptionOfChannelN4;
     @FXML
-    protected TextField descriptionOfChannelN5;
+    private TextField descriptionOfChannelN5;
     @FXML
-    protected TextField descriptionOfChannelN6;
+    private TextField descriptionOfChannelN6;
     @FXML
-    protected TextField descriptionOfChannelN7;
+    private TextField descriptionOfChannelN7;
     @FXML
-    protected TextField descriptionOfChannelN8;
+    private TextField descriptionOfChannelN8;
     @FXML
-    protected TextField frequencyOfChannelN1;
+    private TextField frequencyOfChannelN1;
     @FXML
-    protected TextField frequencyOfChannelN2;
+    private TextField frequencyOfChannelN2;
     @FXML
-    protected TextField frequencyOfChannelN3;
+    private TextField frequencyOfChannelN3;
     @FXML
-    protected TextField frequencyOfChannelN4;
+    private TextField frequencyOfChannelN4;
     @FXML
-    protected TextField frequencyOfChannelN5;
+    private TextField frequencyOfChannelN5;
     @FXML
-    protected TextField frequencyOfChannelN6;
+    private TextField frequencyOfChannelN6;
     @FXML
-    protected TextField frequencyOfChannelN7;
+    private TextField frequencyOfChannelN7;
     @FXML
-    protected TextField frequencyOfChannelN8;
+    private TextField frequencyOfChannelN8;
     @FXML
-    protected Button generateSignalButton;
+    private Button generateSignalButton;
     @FXML
-    protected LineChart<Number, Number> graph;
+    private LineChart<Number, Number> graph;
     @FXML
-    protected TextField phaseOfChannelN1;
+    private TextField phaseOfChannelN1;
     @FXML
-    protected TextField phaseOfChannelN2;
+    private TextField phaseOfChannelN2;
     @FXML
-    protected TextField phaseOfChannelN3;
+    private TextField phaseOfChannelN3;
     @FXML
-    protected TextField phaseOfChannelN4;
+    private TextField phaseOfChannelN4;
     @FXML
-    protected TextField phaseOfChannelN5;
+    private TextField phaseOfChannelN5;
     @FXML
-    protected TextField phaseOfChannelN6;
+    private TextField phaseOfChannelN6;
     @FXML
-    protected TextField phaseOfChannelN7;
+    private TextField phaseOfChannelN7;
     @FXML
-    protected TextField phaseOfChannelN8;
+    private TextField phaseOfChannelN8;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
     private Label sceneTitleLabel;
     @FXML
-    protected ComboBox<String> signalTypeComboBox;
+    private ComboBox<String> signalTypeComboBox;
     @FXML
-    protected Button stopSignalButton;
+    private Button stopSignalButton;
     @FXML
     private StatusBar statusBar;
 
     private ControllerManager cm;
-    private LTR34ChannelsSettings ltr34ChannelsSettings = new LTR34ChannelsSettings();
-    private LTR34ModuleSettings ltr34ModuleSettings = new LTR34ModuleSettings();
-    LTR34SettingsModel ltr34SettingsModel = new LTR34SettingsModel();
-    private StatusBarLine statusBarLine = new StatusBarLine();
+    private LTR34ChannelsSettings ltr34ChannelsSettings;
+    private LTR34ModuleSettings ltr34ModuleSettings;
+    private LTR34SettingsModel ltr34SettingsModel;
+    private StatusBarLine statusBarLine;
     private WindowsManager wm;
 
     public void loadSettings(String moduleName) {
@@ -126,6 +126,14 @@ public class LTR34Settings implements BaseController {
         ltr34SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
         ltr34ChannelsSettings.setSettings();
         ltr34ModuleSettings.setSettings();
+    }
+
+    @FXML
+    private void initialize() {
+        ltr34SettingsModel = new LTR34SettingsModel();
+        ltr34ChannelsSettings = new LTR34ChannelsSettings(this);
+        ltr34ModuleSettings = new LTR34ModuleSettings(this);
+        statusBarLine = new StatusBarLine();
     }
 
     @FXML
@@ -196,6 +204,202 @@ public class LTR34Settings implements BaseController {
         }).start();
 
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    TextField getAmplitudeOfChannelN1() {
+        return amplitudeOfChannelN1;
+    }
+
+    TextField getAmplitudeOfChannelN2() {
+        return amplitudeOfChannelN2;
+    }
+
+    TextField getAmplitudeOfChannelN3() {
+        return amplitudeOfChannelN3;
+    }
+
+    TextField getAmplitudeOfChannelN4() {
+        return amplitudeOfChannelN4;
+    }
+
+    TextField getAmplitudeOfChannelN5() {
+        return amplitudeOfChannelN5;
+    }
+
+    TextField getAmplitudeOfChannelN6() {
+        return amplitudeOfChannelN6;
+    }
+
+    TextField getAmplitudeOfChannelN7() {
+        return amplitudeOfChannelN7;
+    }
+
+    TextField getAmplitudeOfChannelN8() {
+        return amplitudeOfChannelN8;
+    }
+
+    CheckBox getCheckChannelN1() {
+        return checkChannelN1;
+    }
+
+    CheckBox getCheckChannelN2() {
+        return checkChannelN2;
+    }
+
+    CheckBox getCheckChannelN3() {
+        return checkChannelN3;
+    }
+
+    CheckBox getCheckChannelN4() {
+        return checkChannelN4;
+    }
+
+    CheckBox getCheckChannelN5() {
+        return checkChannelN5;
+    }
+
+    CheckBox getCheckChannelN6() {
+        return checkChannelN6;
+    }
+
+    CheckBox getCheckChannelN7() {
+        return checkChannelN7;
+    }
+
+    CheckBox getCheckChannelN8() {
+        return checkChannelN8;
+    }
+
+    ComboBox<String> getCalibrationComboBox() {
+        return calibrationComboBox;
+    }
+
+    ComboBox<String> getDacModeComboBox() {
+        return dacModeComboBox;
+    }
+
+    TextField getDescriptionOfChannelN1() {
+        return descriptionOfChannelN1;
+    }
+
+    TextField getDescriptionOfChannelN2() {
+        return descriptionOfChannelN2;
+    }
+
+    TextField getDescriptionOfChannelN3() {
+        return descriptionOfChannelN3;
+    }
+
+    TextField getDescriptionOfChannelN4() {
+        return descriptionOfChannelN4;
+    }
+
+    TextField getDescriptionOfChannelN5() {
+        return descriptionOfChannelN5;
+    }
+
+    TextField getDescriptionOfChannelN6() {
+        return descriptionOfChannelN6;
+    }
+
+    TextField getDescriptionOfChannelN7() {
+        return descriptionOfChannelN7;
+    }
+
+    TextField getDescriptionOfChannelN8() {
+        return descriptionOfChannelN8;
+    }
+
+    TextField getFrequencyOfChannelN1() {
+        return frequencyOfChannelN1;
+    }
+
+    TextField getFrequencyOfChannelN2() {
+        return frequencyOfChannelN2;
+    }
+
+    TextField getFrequencyOfChannelN3() {
+        return frequencyOfChannelN3;
+    }
+
+    TextField getFrequencyOfChannelN4() {
+        return frequencyOfChannelN4;
+    }
+
+    TextField getFrequencyOfChannelN5() {
+        return frequencyOfChannelN5;
+    }
+
+    TextField getFrequencyOfChannelN6() {
+        return frequencyOfChannelN6;
+    }
+
+    TextField getFrequencyOfChannelN7() {
+        return frequencyOfChannelN7;
+    }
+
+    TextField getFrequencyOfChannelN8() {
+        return frequencyOfChannelN8;
+    }
+
+    Button getGenerateSignalButton() {
+        return generateSignalButton;
+    }
+
+    LineChart<Number, Number> getGraph() {
+        return graph;
+    }
+
+    TextField getPhaseOfChannelN1() {
+        return phaseOfChannelN1;
+    }
+
+    TextField getPhaseOfChannelN2() {
+        return phaseOfChannelN2;
+    }
+
+    TextField getPhaseOfChannelN3() {
+        return phaseOfChannelN3;
+    }
+
+    TextField getPhaseOfChannelN4() {
+        return phaseOfChannelN4;
+    }
+
+    TextField getPhaseOfChannelN5() {
+        return phaseOfChannelN5;
+    }
+
+    TextField getPhaseOfChannelN6() {
+        return phaseOfChannelN6;
+    }
+
+    TextField getPhaseOfChannelN7() {
+        return phaseOfChannelN7;
+    }
+
+    TextField getPhaseOfChannelN8() {
+        return phaseOfChannelN8;
+    }
+
+    public ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
+    }
+
+    ComboBox<String> getSignalTypeComboBox() {
+        return signalTypeComboBox;
+    }
+
+    Button getStopSignalButton() {
+        return stopSignalButton;
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    LTR34SettingsModel getLtr34SettingsModel() {
+        return ltr34SettingsModel;
     }
 
     @Override

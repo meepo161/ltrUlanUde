@@ -2,10 +2,30 @@ package ru.avem.posum.controllers.LTR34;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.LineChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import ru.avem.posum.hardware.DAC;
+import ru.avem.posum.models.LTR34SettingsModel;
 
 class LTR34ModuleSettings extends LTR34Settings {
-    LTR34ModuleSettings() {
+    private ComboBox<String> signalTypeComboBox;
+    private ComboBox<String> calibrationComboBox;
+    private ComboBox<String> dacModeComboBox;
+    private Button generateSignalButton;
+    private LineChart<Number, Number> graph;
+    private LTR34SettingsModel ltr34SettingsModel;
+    private Button stopSignalButton;
+
+    LTR34ModuleSettings(LTR34Settings ltr34Settings) {
+        this.signalTypeComboBox = ltr34Settings.getSignalTypeComboBox();
+        this.calibrationComboBox = ltr34Settings.getCalibrationComboBox();
+        this.dacModeComboBox = ltr34Settings.getDacModeComboBox();
+        this.generateSignalButton = ltr34Settings.getGenerateSignalButton();
+        this.graph = ltr34Settings.getGraph();
+        this.ltr34SettingsModel = ltr34Settings.getLtr34SettingsModel();
+        this.stopSignalButton = ltr34Settings.getStopSignalButton();
+
         addSignalTypes();
         addCalibrations();
         addDACModes();

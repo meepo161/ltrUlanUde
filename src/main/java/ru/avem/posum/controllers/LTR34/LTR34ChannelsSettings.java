@@ -1,7 +1,10 @@
 package ru.avem.posum.controllers.LTR34;
 
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import ru.avem.posum.models.LTR34SettingsModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,80 +14,85 @@ class LTR34ChannelsSettings extends LTR34Settings {
     private List<CheckBox> checkBoxes = new ArrayList<>();
     private List<TextField> descriptionsTextFields = new ArrayList<>();
     private List<TextField> frequenciesTextFields = new ArrayList<>();
+    private Button generateSignalButton;
+    private LTR34SettingsModel ltr34SettingsModel;
     private List<TextField> phasesTextFields = new ArrayList<>();
 
-    LTR34ChannelsSettings() {
-        fillListOfChannelsCheckBoxes();
-        fillListOfChannelsAmplitudeTextFields();
-        fillListOfChannelsDescription();
-        fillListOfChannelsFrequencyTextFields();
-        fillListOfChannelsPhases();
+    LTR34ChannelsSettings(LTR34Settings ltr34Settings) {
+        this.generateSignalButton = ltr34Settings.getGenerateSignalButton();
+        this.ltr34SettingsModel = ltr34Settings.getLtr34SettingsModel();
+
+        fillListOfChannelsCheckBoxes(ltr34Settings);
+        fillListOfChannelsAmplitudeTextFields(ltr34Settings);
+        fillListOfChannelsDescription(ltr34Settings);
+        fillListOfChannelsFrequencyTextFields(ltr34Settings);
+        fillListOfChannelsPhases(ltr34Settings);
         listenCheckBoxes();
         setDigitFilter();
     }
 
-    private void fillListOfChannelsCheckBoxes() {
+    private void fillListOfChannelsCheckBoxes(LTR34Settings ltr34Settings) {
         checkBoxes.addAll(Arrays.asList(
-                checkChannelN1,
-                checkChannelN2,
-                checkChannelN3,
-                checkChannelN4,
-                checkChannelN5,
-                checkChannelN6,
-                checkChannelN7,
-                checkChannelN8
+                ltr34Settings.getCheckChannelN1(),
+                ltr34Settings.getCheckChannelN2(),
+                ltr34Settings.getCheckChannelN3(),
+                ltr34Settings.getCheckChannelN4(),
+                ltr34Settings.getCheckChannelN5(),
+                ltr34Settings.getCheckChannelN6(),
+                ltr34Settings.getCheckChannelN7(),
+                ltr34Settings.getCheckChannelN8()
         ));
     }
 
-    private void fillListOfChannelsDescription() {
+    private void fillListOfChannelsDescription(LTR34Settings ltr34Settings) {
         descriptionsTextFields.addAll(Arrays.asList(
-                descriptionOfChannelN1,
-                descriptionOfChannelN2,
-                descriptionOfChannelN3,
-                descriptionOfChannelN4,
-                descriptionOfChannelN5,
-                descriptionOfChannelN6,
-                descriptionOfChannelN7,
-                descriptionOfChannelN8
+                ltr34Settings.getDescriptionOfChannelN1(),
+                ltr34Settings.getDescriptionOfChannelN2(),
+                ltr34Settings.getDescriptionOfChannelN3(),
+                ltr34Settings.getDescriptionOfChannelN4(),
+                ltr34Settings.getDescriptionOfChannelN5(),
+                ltr34Settings.getDescriptionOfChannelN6(),
+                ltr34Settings.getDescriptionOfChannelN7(),
+                ltr34Settings.getDescriptionOfChannelN8()
         ));
     }
 
-    private void fillListOfChannelsAmplitudeTextFields() {
+    private void fillListOfChannelsAmplitudeTextFields(LTR34Settings ltr34Settings) {
         amplitudesTextFields.addAll(Arrays.asList(
-                amplitudeOfChannelN1,
-                amplitudeOfChannelN2,
-                amplitudeOfChannelN3,
-                amplitudeOfChannelN4,
-                amplitudeOfChannelN5,
-                amplitudeOfChannelN6,
-                amplitudeOfChannelN7,
-                amplitudeOfChannelN8
+                ltr34Settings.getAmplitudeOfChannelN1(),
+                ltr34Settings.getAmplitudeOfChannelN2(),
+                ltr34Settings.getAmplitudeOfChannelN3(),
+                ltr34Settings.getAmplitudeOfChannelN4(),
+                ltr34Settings.getAmplitudeOfChannelN5(),
+                ltr34Settings.getAmplitudeOfChannelN6(),
+                ltr34Settings.getAmplitudeOfChannelN7(),
+                ltr34Settings.getAmplitudeOfChannelN8()
         ));
     }
 
-    private void fillListOfChannelsFrequencyTextFields() {
+    private void fillListOfChannelsFrequencyTextFields(LTR34Settings ltr34Settings) {
         frequenciesTextFields.addAll(Arrays.asList(
-                frequencyOfChannelN1,
-                frequencyOfChannelN2,
-                frequencyOfChannelN3,
-                frequencyOfChannelN4,
-                frequencyOfChannelN5,
-                frequencyOfChannelN6,
-                frequencyOfChannelN7,
-                frequencyOfChannelN8
+                ltr34Settings.getFrequencyOfChannelN1(),
+                ltr34Settings.getFrequencyOfChannelN2(),
+                ltr34Settings.getFrequencyOfChannelN3(),
+                ltr34Settings.getFrequencyOfChannelN4(),
+                ltr34Settings.getFrequencyOfChannelN5(),
+                ltr34Settings.getFrequencyOfChannelN6(),
+                ltr34Settings.getFrequencyOfChannelN7(),
+                ltr34Settings.getFrequencyOfChannelN8()
         ));
     }
 
-    private void fillListOfChannelsPhases() {
+    private void fillListOfChannelsPhases(LTR34Settings ltr34Settings) {
         phasesTextFields.addAll(Arrays.asList(
-                phaseOfChannelN1,
-                phaseOfChannelN2,
-                phaseOfChannelN3,
-                phaseOfChannelN4,
-                phaseOfChannelN5,
-                phaseOfChannelN6,
-                phaseOfChannelN7,
-                phaseOfChannelN8
+                ltr34Settings.getPhaseOfChannelN1(),
+                ltr34Settings.getPhaseOfChannelN2(),
+                ltr34Settings.getPhaseOfChannelN3(),
+                ltr34Settings.getPhaseOfChannelN4(),
+                ltr34Settings.getPhaseOfChannelN5(),
+                ltr34Settings.getPhaseOfChannelN6(),
+                ltr34Settings.getPhaseOfChannelN7(),
+                ltr34Settings.getPhaseOfChannelN8()
         ));
     }
 
@@ -140,8 +148,8 @@ class LTR34ChannelsSettings extends LTR34Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             if (checkBoxes.get(channelIndex).isSelected() &
                     (amplitudesTextFields.get(channelIndex).getText().isEmpty() ||
-                    frequenciesTextFields.get(channelIndex).getText().isEmpty() ||
-                    phasesTextFields.get(channelIndex).getText().isEmpty())) {
+                            frequenciesTextFields.get(channelIndex).getText().isEmpty() ||
+                            phasesTextFields.get(channelIndex).getText().isEmpty())) {
                 generateSignalButton.setDisable(true);
             }
 
