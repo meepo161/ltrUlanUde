@@ -353,9 +353,9 @@ public class LTR212SettingController implements BaseController {
 
     private void loadSettingsFields() {
         checkedChannels = ltr212.getCheckedChannels();
-        channelsTypes = ltr212.getChannelsTypes();
+        channelsTypes = ltr212.getTypeOfChannels();
         measuringRanges = ltr212.getMeasuringRanges();
-        channelsDescriptions = ltr212.getChannelsDescription();
+        channelsDescriptions = ltr212.getDescriptions();
     }
 
     private void setSettings() {

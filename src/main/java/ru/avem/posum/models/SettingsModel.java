@@ -132,9 +132,9 @@ public class SettingsModel implements BaseController {
 
     private void setADCSettingsFields() {
         checkedChannels = adc.getCheckedChannels();
-        channelsTypes = adc.getChannelsTypes();
+        channelsTypes = adc.getTypeOfChannels();
         measuringRanges = adc.getMeasuringRanges();
-        channelsDescription = adc.getChannelsDescription();
+        channelsDescription = adc.getDescriptions();
         calibrationSettings = adc.getCalibrationSettings();
         calibrationCoefficients = adc.getCalibrationCoefficients();
         amplitudes = null;
@@ -162,7 +162,7 @@ public class SettingsModel implements BaseController {
         checkedChannels = dac.getCheckedChannels();
         channelsTypes = null;
         measuringRanges = null;
-        channelsDescription = dac.getChannelsDescription();
+        channelsDescription = dac.getDescriptions();
         amplitudes = dac.getAmplitudes();
         frequencies = dac.getFrequencies();
         phases = dac.getPhases();
@@ -284,9 +284,9 @@ public class SettingsModel implements BaseController {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == adc.getSlot()) {
                 module.setCheckedChannels(adc.getCheckedChannels());
-                module.setChannelsTypes(adc.getChannelsTypes());
+                module.setChannelsTypes(adc.getTypeOfChannels());
                 module.setMeasuringRanges(adc.getMeasuringRanges());
-                module.setChannelsDescription(adc.getChannelsDescription());
+                module.setChannelsDescription(adc.getDescriptions());
                 module.setSettings(String.valueOf(adc.moduleSettingsToString()));
 
                 updateModuleSettings(module);
@@ -391,7 +391,7 @@ public class SettingsModel implements BaseController {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
                 module.setCheckedChannels(dac.getCheckedChannels());
                 module.setAmplitudes(dac.getAmplitudes());
-                module.setChannelsDescription(dac.getChannelsDescription());
+                module.setChannelsDescription(dac.getDescriptions());
                 module.setFrequencies(dac.getFrequencies());
                 module.setPhases(dac.getPhases());
 

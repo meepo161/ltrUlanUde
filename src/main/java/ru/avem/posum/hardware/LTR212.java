@@ -37,7 +37,7 @@ public class LTR212 extends ADC {
 
     @Override
     public void initializeModule() {
-        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR212ModuleSettings(), firFilePath, iirFilePath);
+        status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR212ModuleSettings(), firFilePath, iirFilePath);
         checkStatus();
     }
 

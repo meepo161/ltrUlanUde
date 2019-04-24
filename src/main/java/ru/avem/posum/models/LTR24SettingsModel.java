@@ -1,17 +1,27 @@
 package ru.avem.posum.models;
 
 import ru.avem.posum.hardware.LTR24;
+import ru.avem.posum.hardware.Module;
+
+import java.util.HashMap;
 
 public class LTR24SettingsModel {
-    private String[] channelsDescriptions;
-    private int[] channelsTypes;
     private boolean[] checkedChannels;
-    private int disabledChannels;
+    private String[] descriptions;
     private boolean connectionOpen = true;
     private LTR24 ltr24;
     private int[] measuringRanges;
     private String moduleName;
     private int slot;
+    private int[] typesOfChannels;
+
+    public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
+        this.ltr24 = (LTR24) instancesOfModules.get(slot);
+        this.checkedChannels = ltr24.getCheckedChannels();
+        this.descriptions = ltr24.getDescriptions();
+        this.measuringRanges = ltr24.getMeasuringRanges();
+        this.typesOfChannels = ltr24.getTypeOfChannels();
+    }
 
     public void initModule() {
         if (!connectionOpen) {
@@ -22,20 +32,16 @@ public class LTR24SettingsModel {
         ltr24.initializeModule();
     }
 
-    public String[] getChannelsDescriptions() {
-        return channelsDescriptions;
+    public String[] getDescriptions() {
+        return descriptions;
     }
 
-    public int[] getChannelsTypes() {
-        return channelsTypes;
+    public int[] getTypesOfChannels() {
+        return typesOfChannels;
     }
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
-    }
-
-    public int getDisabledChannels() {
-        return disabledChannels;
     }
 
     public LTR24 getLTR24Instance() {
@@ -62,16 +68,12 @@ public class LTR24SettingsModel {
         this.connectionOpen = connectionOpen;
     }
 
-    public void setDisabledChannels(int disabledChannels) {
-        this.disabledChannels = disabledChannels;
-    }
-
     public void setLTR24Instance(LTR24 ltr24) {
         this.ltr24 = ltr24;
         this.checkedChannels = ltr24.getCheckedChannels();
-        this.channelsTypes = ltr24.getChannelsTypes();
+        this.typesOfChannels = ltr24.getTypeOfChannels();
         this.measuringRanges = ltr24.getMeasuringRanges();
-        this.channelsDescriptions = ltr24.getChannelsDescription();
+        this.descriptions = ltr24.getDescriptions();
     }
 
     public void setModuleName(String moduleName) {

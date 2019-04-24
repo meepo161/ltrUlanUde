@@ -1,6 +1,5 @@
 package ru.avem.posum.models;
 
-import javafx.application.Platform;
 import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.LTR34;
 import ru.avem.posum.hardware.Module;
@@ -29,7 +28,7 @@ public class LTR34SettingsModel {
         this.ltr34 = (LTR34) instancesOfModules.get(slot);
         this.checkedChannels = ltr34.getCheckedChannels();
         this.amplitudes = ltr34.getAmplitudes();
-        this.descriptions = ltr34.getChannelsDescription();
+        this.descriptions = ltr34.getDescriptions();
         this.frequencies = ltr34.getFrequencies();
         this.phases = ltr34.getPhases();
     }

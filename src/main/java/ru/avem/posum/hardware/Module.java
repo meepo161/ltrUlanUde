@@ -2,14 +2,12 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
-import java.util.Arrays;
-
 public abstract class Module {
     int channelsCount;
     String crate;
     private int slot;
     private long moduleId;
-    String[] channelsDescription;
+    String[] descriptions;
     boolean[] checkedChannels;
     protected volatile String status;
     private TextEncoder textEncoder = new TextEncoder();
@@ -45,8 +43,8 @@ public abstract class Module {
         return checkedChannels;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
+    public String[] getDescriptions() {
+        return descriptions;
     }
 
     public long getModuleId() {

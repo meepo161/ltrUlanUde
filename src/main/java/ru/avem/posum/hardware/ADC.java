@@ -32,7 +32,7 @@ public abstract class ADC extends Module {
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
-    private int[] channelsTypes;
+    private int[] typeOfChannels;
     private double[] data;
     private int[] measuringRanges;
     HashMap<String, Integer> moduleSettings;
@@ -42,9 +42,9 @@ public abstract class ADC extends Module {
     ADC() {
         channelsCount = CHANNELS;
         checkedChannels = new boolean[channelsCount];
-        channelsTypes = new int[channelsCount];
+        typeOfChannels = new int[channelsCount];
         measuringRanges = new int[channelsCount];
-        channelsDescription = new String[channelsCount];
+        descriptions = new String[channelsCount];
         calibrationCoefficients = new ArrayList<>();
         calibrationSettings = new ArrayList<>();
         moduleSettings = new HashMap<>();
@@ -70,12 +70,12 @@ public abstract class ADC extends Module {
         return calibrationSettings;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
+    public String[] getDescriptions() {
+        return descriptions;
     }
 
-    public int[] getChannelsTypes() {
-        return channelsTypes;
+    public int[] getTypeOfChannels() {
+        return typeOfChannels;
     }
 
     public double[] getData() {
