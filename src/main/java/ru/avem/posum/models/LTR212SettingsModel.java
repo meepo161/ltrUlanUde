@@ -1,35 +1,36 @@
 package ru.avem.posum.models;
 
+import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.hardware.Module;
 
 import java.util.HashMap;
 
-public class LTR24SettingsModel {
+public class LTR212SettingsModel {
     private String[] descriptions;
     private boolean[] checkedChannels;
     private boolean connectionOpen = true;
-    private LTR24 ltr24;
+    private LTR212 ltr212;
     private int[] measuringRanges;
     private String moduleName;
     private int slot;
     private int[] typesOfChannels;
 
     public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
-        this.ltr24 = (LTR24) instancesOfModules.get(slot);
-        this.checkedChannels = ltr24.getCheckedChannels();
-        this.descriptions = ltr24.getDescriptions();
-        this.measuringRanges = ltr24.getMeasuringRanges();
-        this.typesOfChannels = ltr24.getTypeOfChannels();
+        this.ltr212 = (LTR212) instancesOfModules.get(slot);
+        this.checkedChannels = ltr212.getCheckedChannels();
+        this.descriptions = ltr212.getDescriptions();
+        this.measuringRanges = ltr212.getMeasuringRanges();
+        this.typesOfChannels = ltr212.getTypeOfChannels();
     }
 
     public void initModule() {
         if (!connectionOpen) {
-            ltr24.openConnection();
+            ltr212.openConnection();
             connectionOpen = true;
         }
 
-        ltr24.initializeModule();
+        ltr212.initializeModule();
     }
 
     public String[] getDescriptions() {
@@ -44,8 +45,8 @@ public class LTR24SettingsModel {
         return checkedChannels;
     }
 
-    public LTR24 getLTR24Instance() {
-        return ltr24;
+    public LTR212 getLTR212Instance() {
+        return ltr212;
     }
 
     public int[] getMeasuringRanges() {

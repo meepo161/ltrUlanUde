@@ -182,11 +182,11 @@ class LTR24ChannelsSettings extends LTR24Settings {
 
 
     void setSettings() {
-        for (int i = 0; i < ltr24SettingsModel.getLTR24Instance().getChannelsCount(); i++) {
-            checkBoxes.get(i).setSelected(ltr24SettingsModel.getCheckedChannels()[i]);
-            typesOfChannelComboBoxes.get(i).getSelectionModel().select(ltr24SettingsModel.getTypesOfChannels()[i]);
-            measuringRangesComboBoxes.get(i).getSelectionModel().select(ltr24SettingsModel.getMeasuringRanges()[i]);
-            descriptions.get(i).setText(ltr24SettingsModel.getDescriptions()[i].replace(", ", ""));
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            checkBoxes.get(channelIndex).setSelected(ltr24SettingsModel.getCheckedChannels()[channelIndex]);
+            typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(ltr24SettingsModel.getTypesOfChannels()[channelIndex]);
+            measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(ltr24SettingsModel.getMeasuringRanges()[channelIndex]);
+            descriptions.get(channelIndex).setText(ltr24SettingsModel.getDescriptions()[channelIndex].replace(", ", ""));
         }
     }
 

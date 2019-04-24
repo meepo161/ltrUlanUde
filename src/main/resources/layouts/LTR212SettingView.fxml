@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import org.controlsfx.control.StatusBar?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.LTR212SettingController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.LTR212.LTR212Settings">
    <children>
       <GridPane layoutX="104.0" layoutY="113.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
          <columnConstraints>
@@ -56,7 +56,7 @@
          <children>
             <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR212" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
-            <CheckBox fx:id="applyForAllCheckBox" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="applyForAllChannels" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Назначение канала:" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />
@@ -107,7 +107,7 @@
                   <Insets />
                </GridPane.margin>
             </ComboBox>
-            <Button fx:id="valueOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN1" text="Нагрузка на канале" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOnChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN1" text="Нагрузка на канале" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -127,7 +127,7 @@
                   <Insets />
                </GridPane.margin>
             </ComboBox>
-            <Button fx:id="valueOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN2" text="Нагрузка на канале" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOnChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN2" text="Нагрузка на канале" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -147,7 +147,7 @@
                   <Insets />
                </GridPane.margin>
             </ComboBox>
-            <Button fx:id="valueOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN3" text="Нагрузка на канале" GridPane.columnIndex="6" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOnChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN3" text="Нагрузка на канале" GridPane.columnIndex="6" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -167,7 +167,7 @@
                   <Insets />
                </GridPane.margin>
             </ComboBox>
-            <Button fx:id="valueOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN4" text="Нагрузка на канале" GridPane.columnIndex="8" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+            <Button fx:id="valueOnChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN4" text="Нагрузка на канале" GridPane.columnIndex="8" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>
@@ -188,7 +188,7 @@
             <Button fx:id="iirPathButton" disable="true" maxWidth="50.0" mnemonicParsing="false" onAction="#handleChoosingIIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
             <TextField fx:id="firPathTextField" disable="true" maxWidth="150.0" GridPane.columnIndex="6" GridPane.rowIndex="11" />
             <Button fx:id="firPathButton" disable="true" maxWidth="50.0" mnemonicParsing="false" onAction="#handleChoosingFIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
-            <CheckBox fx:id="useFabricCalibrationCheckBox" mnemonicParsing="false" text="Завод. калибр. коэф." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+            <CheckBox fx:id="factoryCalibrationCheckBox" mnemonicParsing="false" text="Завод. калибр. коэф." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="10" />
             <CheckBox fx:id="referenceVoltageTypeCheckBox" mnemonicParsing="false" text="Пост. опорное напр." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="11" />
             <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="BOTTOM">
                <GridPane.margin>
