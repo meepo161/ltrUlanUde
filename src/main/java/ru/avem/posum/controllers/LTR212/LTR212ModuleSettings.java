@@ -11,7 +11,7 @@ import ru.avem.posum.models.LTR212SettingsModel;
 
 import java.util.HashMap;
 
-public class LTR212ModuleSettings extends LTR212Settings {
+class LTR212ModuleSettings extends LTR212Settings {
     private CheckBox factoryCalibration;
     private CheckBox firCheckBox;
     private Button firPathButton;
@@ -24,10 +24,16 @@ public class LTR212ModuleSettings extends LTR212Settings {
     private CheckBox referenceVoltageCheckBox;
     private ComboBox<String> referenceVoltageComboBox;
 
-    public LTR212ModuleSettings(LTR212Settings ltr212Settings) {
+    LTR212ModuleSettings(LTR212Settings ltr212Settings) {
         this.ltr212SettingsModel = ltr212Settings.getLtr212SettingsModel();
         this.adcModes = ltr212Settings.getModuleModesComboBox();
         this.factoryCalibration = ltr212Settings.getFactoryCalibrationCheckBox();
+        this.firCheckBox = ltr212Settings.getFirCheckBox();
+        this.firPathButton = ltr212Settings.getFirPathButton();
+        this.firPathTextField = ltr212Settings.getFirPathTextField();
+        this.iirCheckBox = ltr212Settings.getIirCheckBox();
+        this.iirPathButton = ltr212Settings.getIirPathButton();
+        this.iirPathTextField = ltr212Settings.getIirPathTextField();
         this.referenceVoltageCheckBox = ltr212Settings.getReferenceVoltageTypeCheckBox();
         this.referenceVoltageComboBox = ltr212Settings.getReferenceVoltageComboBox();
         addModuleModes();

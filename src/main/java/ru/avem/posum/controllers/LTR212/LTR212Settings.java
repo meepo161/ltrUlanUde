@@ -262,6 +262,30 @@ public class LTR212Settings implements BaseController {
         return descriptionOfChannelN4;
     }
 
+    CheckBox getFirCheckBox() {
+        return firCheckBox;
+    }
+
+    Button getFirPathButton() {
+        return firPathButton;
+    }
+
+    TextField getFirPathTextField() {
+        return firPathTextField;
+    }
+
+    CheckBox getIirCheckBox() {
+        return iirCheckBox;
+    }
+
+    Button getIirPathButton() {
+        return iirPathButton;
+    }
+
+    TextField getIirPathTextField() {
+        return iirPathTextField;
+    }
+
     Button getInitializeButton() {
         return initializeButton;
     }
