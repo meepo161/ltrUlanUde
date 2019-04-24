@@ -1,15 +1,12 @@
 package ru.avem.posum.controllers.LTR24;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.CrateModel;
 import ru.avem.posum.models.LTR24SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -97,7 +94,7 @@ public class LTR24Settings implements BaseController {
     @FXML
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
-        ltr24ChannelsSettings.toggleChannelsUiElementsState(true);
+        ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 
         new Thread(() -> {
@@ -178,63 +175,63 @@ public class LTR24Settings implements BaseController {
         showChannelValue(3);
     }
 
-    public CheckBox getApplyForAllChannels() {
+    CheckBox getApplyForAllChannels() {
         return applyForAllChannels;
     }
 
-    public CheckBox getCheckChannelN1() {
+    CheckBox getCheckChannelN1() {
         return checkChannelN1;
     }
 
-    public CheckBox getCheckChannelN2() {
+    CheckBox getCheckChannelN2() {
         return checkChannelN2;
     }
 
-    public CheckBox getCheckChannelN3() {
+    CheckBox getCheckChannelN3() {
         return checkChannelN3;
     }
 
-    public CheckBox getCheckChannelN4() {
+    CheckBox getCheckChannelN4() {
         return checkChannelN4;
     }
 
-    public TextField getDescriptionOfChannelN1() {
+    TextField getDescriptionOfChannelN1() {
         return descriptionOfChannelN1;
     }
 
-    public TextField getDescriptionOfChannelN2() {
+    TextField getDescriptionOfChannelN2() {
         return descriptionOfChannelN2;
     }
 
-    public TextField getDescriptionOfChannelN3() {
+    TextField getDescriptionOfChannelN3() {
         return descriptionOfChannelN3;
     }
 
-    public TextField getDescriptionOfChannelN4() {
+    TextField getDescriptionOfChannelN4() {
         return descriptionOfChannelN4;
     }
 
-    public ComboBox<String> getFrequencyComboBox() {
+    ComboBox<String> getFrequencyComboBox() {
         return frequencyComboBox;
     }
 
-    public Button getInitializeButton() {
+    Button getInitializeButton() {
         return initializeButton;
     }
 
-    public ComboBox<String> getMeasuringRangeOfChannelN1() {
+    ComboBox<String> getMeasuringRangeOfChannelN1() {
         return measuringRangeOfChannelN1;
     }
 
-    public ComboBox<String> getMeasuringRangeOfChannelN2() {
+    ComboBox<String> getMeasuringRangeOfChannelN2() {
         return measuringRangeOfChannelN2;
     }
 
-    public ComboBox<String> getMeasuringRangeOfChannelN3() {
+    ComboBox<String> getMeasuringRangeOfChannelN3() {
         return measuringRangeOfChannelN3;
     }
 
-    public ComboBox<String> getMeasuringRangeOfChannelN4() {
+    ComboBox<String> getMeasuringRangeOfChannelN4() {
         return measuringRangeOfChannelN4;
     }
 
@@ -242,60 +239,44 @@ public class LTR24Settings implements BaseController {
         return progressIndicator;
     }
 
-    public Label getSceneTitleLabel() {
-        return sceneTitleLabel;
-    }
-
     public StatusBar getStatusBar() {
         return statusBar;
     }
 
-    public ComboBox<String> getTypeOfChannelN1() {
+    ComboBox<String> getTypeOfChannelN1() {
         return typeOfChannelN1;
     }
 
-    public ComboBox<String> getTypeOfChannelN2() {
+    ComboBox<String> getTypeOfChannelN2() {
         return typeOfChannelN2;
     }
 
-    public ComboBox<String> getTypeOfChannelN3() {
+    ComboBox<String> getTypeOfChannelN3() {
         return typeOfChannelN3;
     }
 
-    public ComboBox<String> getTypeOfChannelN4() {
+    ComboBox<String> getTypeOfChannelN4() {
         return typeOfChannelN4;
     }
 
-    public Button getValueOnChannelN1() {
+    Button getValueOnChannelN1() {
         return valueOnChannelN1;
     }
 
-    public Button getValueOnChannelN2() {
+    Button getValueOnChannelN2() {
         return valueOnChannelN2;
     }
 
-    public Button getValueOnChannelN3() {
+    Button getValueOnChannelN3() {
         return valueOnChannelN3;
     }
 
-    public Button getValueOnChannelN4() {
+    Button getValueOnChannelN4() {
         return valueOnChannelN4;
     }
 
-    public ControllerManager getCm() {
-        return cm;
-    }
-
-    public LTR24SettingsModel getLtr24SettingsModel() {
+    LTR24SettingsModel getLtr24SettingsModel() {
         return ltr24SettingsModel;
-    }
-
-    public StatusBarLine getStatusBarLine() {
-        return statusBarLine;
-    }
-
-    public WindowsManager getWm() {
-        return wm;
     }
 
     @Override

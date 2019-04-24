@@ -6,11 +6,11 @@ import javafx.scene.control.ComboBox;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.LTR24SettingsModel;
 
-public class LTR24ModuleSettings extends LTR24Settings {
+class LTR24ModuleSettings extends LTR24Settings {
     private ComboBox<String> frequencyComboBox;
     private LTR24SettingsModel ltr24SettingsModel;
 
-    public LTR24ModuleSettings(LTR24Settings ltr24Settings) {
+    LTR24ModuleSettings(LTR24Settings ltr24Settings) {
         this.frequencyComboBox = ltr24Settings.getFrequencyComboBox();
         this.ltr24SettingsModel = ltr24Settings.getLtr24SettingsModel();
         addFrequencies();
@@ -40,17 +40,17 @@ public class LTR24ModuleSettings extends LTR24Settings {
         frequencyComboBox.getSelectionModel().select(7);
     }
 
-    public void setSettings() {
+    void setSettings() {
         int frequency = ltr24SettingsModel.getLTR24Instance().getModuleSettings().get(ADC.Settings.FREQUENCY.getSettingName());
         frequencyComboBox.getSelectionModel().select(frequency);
     }
 
-    public void saveSettings() {
+    void saveSettings() {
         int frequency = frequencyComboBox.getSelectionModel().getSelectedIndex();
         ltr24SettingsModel.getLTR24Instance().getModuleSettings().put(ADC.Settings.FREQUENCY.getSettingName(), frequency);
     }
 
-    public void toggleUiElementsState(boolean isDisable) {
+    void toggleUiElementsState(boolean isDisable) {
         frequencyComboBox.setDisable(isDisable);
     }
 }

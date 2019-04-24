@@ -2,19 +2,17 @@ package ru.avem.posum.controllers.LTR24;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.LTR24SettingsModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LTR24ChannelsSettings extends LTR24Settings {
+class LTR24ChannelsSettings extends LTR24Settings {
     private CheckBox applyForAllChannels;
     private List<ComboBox<String>> typesOfChannelComboBoxes = new ArrayList<>();
     private List<CheckBox> checkBoxes = new ArrayList<>();
@@ -24,7 +22,7 @@ public class LTR24ChannelsSettings extends LTR24Settings {
     private List<ComboBox<String>> measuringRangesComboBoxes = new ArrayList<>();
     private List<Button> valueOnChannelButtons = new ArrayList<>();
 
-    public LTR24ChannelsSettings(LTR24Settings ltr24Settings) {
+    LTR24ChannelsSettings(LTR24Settings ltr24Settings) {
         this.applyForAllChannels = ltr24Settings.getApplyForAllChannels();
         this.initializeButton = ltr24Settings.getInitializeButton();
         this.ltr24SettingsModel = ltr24Settings.getLtr24SettingsModel();
@@ -208,16 +206,16 @@ public class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
-    void toggleChannelsUiElementsState(boolean isDisabled) {
+    void disableUiElementsState() {
         for (int checkBoxIndex = 0; checkBoxIndex < checkBoxes.size(); checkBoxIndex++) {
-            checkBoxes.get(checkBoxIndex).setDisable(isDisabled);
-            descriptions.get(checkBoxIndex).setDisable(isDisabled);
-            typesOfChannelComboBoxes.get(checkBoxIndex).setDisable(isDisabled);
-            measuringRangesComboBoxes.get(checkBoxIndex).setDisable(isDisabled);
-            valueOnChannelButtons.get(checkBoxIndex).setDisable(!isDisabled);
+            checkBoxes.get(checkBoxIndex).setDisable(true);
+            descriptions.get(checkBoxIndex).setDisable(true);
+            typesOfChannelComboBoxes.get(checkBoxIndex).setDisable(true);
+            measuringRangesComboBoxes.get(checkBoxIndex).setDisable(true);
+            valueOnChannelButtons.get(checkBoxIndex).setDisable(false);
         }
-        applyForAllChannels.setDisable(isDisabled);
-        initializeButton.setDisable(isDisabled);
+        applyForAllChannels.setDisable(true);
+        initializeButton.setDisable(true);
     }
 
     void enableUiElements() {
