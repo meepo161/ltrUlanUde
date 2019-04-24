@@ -79,7 +79,7 @@ public class LTR24 extends ADC {
     public native String closeConnection(int slot);
 
     static {
-        System.loadLibrary( "LTR24Library");
+        System.loadLibrary( String.format("LTR24LibrarySlotN%d", getSlot()));
     }
 
     private void initializeModuleSettings() {
