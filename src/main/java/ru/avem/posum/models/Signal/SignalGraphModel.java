@@ -1,6 +1,6 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Signal;
 
-public class GraphModel {
+public class SignalGraphModel {
     private double lowerBound;
     private double scale;
     private double tickUnit;

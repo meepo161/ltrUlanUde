@@ -20,14 +20,14 @@ public class LTR34 extends DAC {
 
     @Override
     public void openConnection() {
-        status = openConnection(crate, getSlot());
+        status = openConnection(crateSerialNumber, getSlot());
         checkStatus();
     }
 
     @Override
     public void checkConnection() {
-        CrateModel crateModel = new CrateModel();
-        if (!crateModel.getCratesNames().isEmpty()) {
+        Crate crate = new Crate();
+        if (!crate.getCratesNames().isEmpty()) {
             status = checkConnection(getSlot());
             checkStatus();
         } else {

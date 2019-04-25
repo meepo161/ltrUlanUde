@@ -1,4 +1,4 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Calibration;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CalibrationModel {
     private ADC adc;
-    private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
+    private ObservableList<CalibrationPointModel> calibrationPointModels = FXCollections.observableArrayList();
     private int channelNumber;
     private double channelValue;
     private List<Double> calibrationCoefficients = new ArrayList<>();
@@ -30,27 +30,27 @@ public class CalibrationModel {
 
     private void calculateCalibrationCoefficients() {
         for (String settings : adc.getCalibrationSettings().get(channelNumber)) {
-            double loadValue = CalibrationPoint.parseLoadValue(settings);
-            double channelValue = CalibrationPoint.parseChannelValue(settings);
+            double loadValue = CalibrationPointModel.parseLoadValue(settings);
+            double channelValue = CalibrationPointModel.parseChannelValue(settings);
             calibrationCoefficients.add(loadValue / channelValue);
         }
     }
 
     public void parse(String calibration) {
-        loadValue = CalibrationPoint.parseLoadValue(calibration);
-        channelValue = CalibrationPoint.parseChannelValue(calibration);
-        valueName = CalibrationPoint.parseValueName(calibration);
+        loadValue = CalibrationPointModel.parseLoadValue(calibration);
+        channelValue = CalibrationPointModel.parseChannelValue(calibration);
+        valueName = CalibrationPointModel.parseValueName(calibration);
     }
 
     public List<Double> getCalibrationCoefficients() {
         return calibrationCoefficients;
     }
 
-    public ObservableList<CalibrationPoint> getCalibrationPoints() {
-        return calibrationPoints;
+    public ObservableList<CalibrationPointModel> getCalibrationPointModels() {
+        return calibrationPointModels;
     }
 
-    double getChannelValue() {
+    public double getChannelValue() {
         return channelValue;
     }
 
@@ -63,7 +63,7 @@ public class CalibrationModel {
         return Utils.convertFromExponentialFormat(value, decimalFormatScale);
     }
 
-    double getLoadValue() {
+    public double getLoadValue() {
         return loadValue;
     }
 

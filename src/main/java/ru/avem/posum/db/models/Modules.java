@@ -58,7 +58,7 @@ public class Modules {
         amplitudes = moduleSettings.getOrDefault("Amplitudes", "");
         frequencies = moduleSettings.getOrDefault("Frequencies", "");
         phases = moduleSettings.getOrDefault("Phases", "");
-        settings = moduleSettings.getOrDefault("Module Settings", "");
+        settings = moduleSettings.getOrDefault("Module HardwareSettings", "");
     }
 
     private String settingsToString(int[] settings) {

@@ -13,7 +13,7 @@ public class TestProgram {
     @DatabaseField
     private int index;
     @DatabaseField
-    private String crate;
+    private String crateSerialNumber;
     @DatabaseField
     private String testProgramName;
     @DatabaseField
@@ -41,7 +41,7 @@ public class TestProgram {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public TestProgram(String crate,
+    public TestProgram(String crateSerialNumber,
                        String testProgramName,
                        String sampleName,
                        String sampleSerialNumber,
@@ -54,7 +54,7 @@ public class TestProgram {
                        String created,
                        String changed) {
         index++;
-        this.crate = crate;
+        this.crateSerialNumber = crateSerialNumber;
         this.testProgramName = testProgramName;
         this.sampleName = sampleName;
         this.sampleSerialNumber = sampleSerialNumber;
@@ -80,12 +80,12 @@ public class TestProgram {
         this.index = index;
     }
 
-    public String getCrate() {
-        return crate;
+    public String getCrateSerialNumber() {
+        return crateSerialNumber;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public void setCrateSerialNumber(String crateSerialNumber) {
+        this.crateSerialNumber = crateSerialNumber;
     }
 
     public String getTestProgramName() {

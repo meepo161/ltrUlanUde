@@ -1,9 +1,9 @@
-package ru.avem.posum.controllers.LTR34;
+package ru.avem.posum.controllers.Settings.LTR34;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
-import ru.avem.posum.models.LTR34SettingsModel;
+import ru.avem.posum.models.Settings.LTR34SettingsModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;

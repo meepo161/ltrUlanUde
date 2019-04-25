@@ -6,7 +6,7 @@ import ru.avem.posum.utils.TextEncoder;
 
 import java.util.HashMap;
 
-public class CrateModel {
+public class Crate {
     public static final String LTR24 = "LTR24";
     public static final String LTR27 = "LTR27";
     public static final String LTR34 = "LTR34";
@@ -22,7 +22,7 @@ public class CrateModel {
     private TextEncoder textEncoder = new TextEncoder();
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
-    public CrateModel() {
+    public Crate() {
         initEmptyCratesList();
         setCratesList();
         setCratesInfo();

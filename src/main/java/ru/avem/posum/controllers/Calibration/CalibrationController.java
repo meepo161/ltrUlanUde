@@ -1,4 +1,4 @@
-package ru.avem.posum.controllers;
+package ru.avem.posum.controllers.Calibration;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -12,10 +12,11 @@ import javafx.scene.input.MouseButton;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.models.CalibrationPoint;
-import ru.avem.posum.models.CalibrationModel;
-import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.models.Calibration.CalibrationPointModel;
+import ru.avem.posum.models.Calibration.CalibrationModel;
+import ru.avem.posum.models.Signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -27,9 +28,9 @@ public class CalibrationController implements BaseController {
     @FXML
     private LineChart<Number, Number> calibrationGraph;
     @FXML
-    private TableView<CalibrationPoint> calibrationTableView;
+    private TableView<CalibrationPointModel> calibrationTableView;
     @FXML
-    private TableColumn<CalibrationPoint, String> channelValueColumn;
+    private TableColumn<CalibrationPointModel, String> channelValueColumn;
     @FXML
     private Label channelValueLabel;
     @FXML
@@ -37,7 +38,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField channelValueTextField;
     @FXML
-    private TableColumn<CalibrationPoint, String> loadChannelColumn;
+    private TableColumn<CalibrationPointModel, String> loadChannelColumn;
     @FXML
     private ComboBox<String> loadValueMultiplierComboBox;
     @FXML
@@ -89,7 +90,7 @@ public class CalibrationController implements BaseController {
             if (!loadValueTextField.getText().isEmpty() &
                     !channelValueTextField.getText().isEmpty() &
                     !loadValueNameTextField.getText().isEmpty() &
-                    calibrationModel.getCalibrationPoints().size() <= 20) {
+                    calibrationModel.getCalibrationPointModels().size() <= 20) {
                 addToTableButton.setDisable(false);
             } else {
                 addToTableButton.setDisable(true);
@@ -137,7 +138,7 @@ public class CalibrationController implements BaseController {
     }
 
     private void initGraph() {
-        calibrationTableView.setItems(calibrationModel.getCalibrationPoints());
+        calibrationTableView.setItems(calibrationModel.getCalibrationPointModels());
         calibrationGraph.getData().add(graphSeries);
     }
 
@@ -154,21 +155,21 @@ public class CalibrationController implements BaseController {
     private void deleteCalibrationPoint() {
         int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
         graphSeries.getData().remove(selectedPointIndex);
-        calibrationModel.getCalibrationPoints().remove(selectedPointIndex);
+        calibrationModel.getCalibrationPointModels().remove(selectedPointIndex);
         checkNumberOfCalibrationPoints();
     }
 
     private void checkNumberOfCalibrationPoints() {
-        ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
+        ObservableList<CalibrationPointModel> calibrationPointModels = calibrationModel.getCalibrationPointModels();
         int MAX_CALIBRATION_POINTS = 20;
         int MIN_CALIBRATION_POINTS = 2;
 
-        changeUiElementsState(calibrationPoints.size() == MAX_CALIBRATION_POINTS);
-        saveButton.setDisable(calibrationPoints.size() < MIN_CALIBRATION_POINTS);
+        changeUiElementsState(calibrationPointModels.size() == MAX_CALIBRATION_POINTS);
+        saveButton.setDisable(calibrationPointModels.size() < MIN_CALIBRATION_POINTS);
     }
 
     private void changeUiElementsState(boolean isDisable) {
-        loadValueNameTextField.setDisable(calibrationModel.getCalibrationPoints().size() != 0);
+        loadValueNameTextField.setDisable(calibrationModel.getCalibrationPointModels().size() != 0);
         loadValueLabel.setDisable(isDisable);
         loadValueTextField.setDisable(isDisable);
         channelValueLabel.setDisable(isDisable);
@@ -179,7 +180,7 @@ public class CalibrationController implements BaseController {
 
     private void clearCalibrationPoints() {
         graphSeries.getData().clear();
-        calibrationModel.getCalibrationPoints().clear();
+        calibrationModel.getCalibrationPointModels().clear();
         checkNumberOfCalibrationPoints();
     }
 
@@ -217,7 +218,7 @@ public class CalibrationController implements BaseController {
 
     private void listenMouse() {
         calibrationTableView.setRowFactory(tv -> {
-            TableRow<CalibrationPoint> row = new TableRow<>();
+            TableRow<CalibrationPointModel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     contextMenu.show(calibrationTableView, event.getScreenX(), event.getScreenY());
@@ -271,14 +272,14 @@ public class CalibrationController implements BaseController {
 
     private void addCalibrationPointToTableView() {
         int channel = signalModel.getChannel();
-        CalibrationPoint point = new CalibrationPoint(channel, calibrationModel);
-        calibrationModel.getCalibrationPoints().add(point);
+        CalibrationPointModel point = new CalibrationPointModel(channel, calibrationModel);
+        calibrationModel.getCalibrationPointModels().add(point);
         loadChannelColumn.textProperty().set(String.format("Величина нагрузки, %s", calibrationModel.getValueName()));
     }
 
     private void addPointToGraph() {
-        int lastPointIndex = calibrationModel.getCalibrationPoints().size() - 1;
-        CalibrationPoint lastPoint = calibrationModel.getCalibrationPoints().get(lastPointIndex);
+        int lastPointIndex = calibrationModel.getCalibrationPointModels().size() - 1;
+        CalibrationPointModel lastPoint = calibrationModel.getCalibrationPointModels().get(lastPointIndex);
         double xValue = Double.parseDouble(lastPoint.getLoadValue());
         double yValue = Double.parseDouble(lastPoint.getChannelValue());
         graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
@@ -328,7 +329,7 @@ public class CalibrationController implements BaseController {
         int channel = signalModel.getChannel();
 
         adc.getCalibrationSettings().get(channel).clear();
-        adc.getCalibrationSettings().get(channel).addAll(CalibrationPoint.toString(calibrationModel.getCalibrationPoints()));
+        adc.getCalibrationSettings().get(channel).addAll(CalibrationPointModel.toString(calibrationModel.getCalibrationPointModels()));
 
         CalibrationModel calibrationModel = new CalibrationModel();
         calibrationModel.calibrate(adc, channel);
@@ -354,7 +355,7 @@ public class CalibrationController implements BaseController {
         channelValueTextField.setText("");
         loadValueNameTextField.setText("");
         setChannelValueCheckBox.setSelected(false);
-        calibrationModel.getCalibrationPoints().clear();
+        calibrationModel.getCalibrationPointModels().clear();
         graphSeries.getData().clear();
     }
 

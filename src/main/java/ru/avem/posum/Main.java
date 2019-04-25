@@ -13,15 +13,19 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
-import ru.avem.posum.controllers.LTR212.LTR212Settings;
-import ru.avem.posum.controllers.LTR24.LTR24Settings;
-import ru.avem.posum.controllers.LTR34.LTR34Settings;
+import ru.avem.posum.controllers.Calibration.CalibrationController;
+import ru.avem.posum.controllers.Settings.LTR212.LTR212Settings;
+import ru.avem.posum.controllers.Settings.LTR24.LTR24Settings;
+import ru.avem.posum.controllers.Settings.LTR27.LTR27Settings;
+import ru.avem.posum.controllers.Settings.LTR34.LTR34Settings;
+import ru.avem.posum.controllers.Settings.Settings;
+import ru.avem.posum.controllers.Signal.SignalGraph;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.ExperimentModel;
-import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.models.Signal.SignalModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
@@ -34,14 +38,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private LoginController loginController;
     private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
     private LTR24Settings ltr24Settings;
-    private LTR27SettingController ltr27SettingController;
+    private LTR27Settings ltr27Settings;
     private LTR34Settings ltr34Settings;
     private LTR212Settings ltr212Settings;
     private CalibrationController calibrationController;
     private MainController mainController;
     private Parent parent;
     private ProcessController processController;
-    private SettingsController settingsController;
+    private Settings settings;
     private Scene mainScene;
     private Scene loginScene;
     private Scene settingsScene;
@@ -52,7 +56,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene ltr212Scene;
     private Scene signalGraphScene;
     private Scene calibrationScene;
-    private SignalGraphController signalGraphController;
+    private SignalGraph signalGraph;
     private Stage loginStage;
     private Stage primaryStage;
     private boolean stopped;
@@ -111,7 +115,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createSettingsScene() throws IOException {
-        settingsController = (SettingsController) getController("/layouts/settingsView.fxml");
+        settings = (Settings) getController("/layouts/settingsView.fxml");
         settingsScene = createScene(1280, 720);
     }
 
@@ -136,7 +140,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createSignalGraphScene() throws IOException {
-        signalGraphController = (SignalGraphController) getController("/layouts/signalGraphView.fxml");
+        signalGraph = (SignalGraph) getController("/layouts/signalGraphView.fxml");
         signalGraphScene = createScene(1280, 720);
     }
 
@@ -196,7 +200,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void checkCalibration() {
         Utils.sleep(500);
-        signalGraphController.checkCalibration();
+        signalGraph.checkCalibration();
     }
 
     @Override
@@ -205,16 +209,16 @@ public class Main extends Application implements WindowsManager, ControllerManag
         for (String module : modulesNames) {
             String layoutPath = null;
             switch (Utils.parseModuleType(module)) {
-                case CrateModel.LTR24:
+                case Crate.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
                     break;
-                case CrateModel.LTR27:
+                case Crate.LTR27:
                     layoutPath = "/layouts/LTR27SettingView.fxml";
                     break;
-                case CrateModel.LTR34:
+                case Crate.LTR34:
                     layoutPath = "/layouts/LTR34SettingView.fxml";
                     break;
-                case CrateModel.LTR212:
+                case Crate.LTR212:
                     layoutPath = "/layouts/LTR212SettingView.fxml";
                     break;
             }
@@ -250,12 +254,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void stopAllModules() {
-        ObservableList<String> modulesNames = settingsController.getSettingsModel().getModulesNames();
+        ObservableList<String> modulesNames = settings.getSettingsModel().getModulesNames();
         HashMap<Integer, Module> modules = getCrateModelInstance().getModulesList();
 
         if (!modules.isEmpty()) {
             for (int index = 0; index < modulesNames.size(); index++) {
-                int slot = settingsController.getSettingsModel().parseSlotNumber(index);
+                int slot = settings.getSettingsModel().parseSlotNumber(index);
                 if (slot != 16) { // TODO: delete this, because LTR27Module is absentee
                     Module module = modules.get(slot);
                     module.checkConnection();
@@ -270,18 +274,18 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public String getCrate() {
-        return settingsController.getCrate();
+    public String getCrateSerialNumber() {
+        return settings.getHardwareSettings().getCrateSerialNumber();
     }
 
     @Override
-    public CrateModel getCrateModelInstance() {
-        return settingsController.getCrateModel();
+    public Crate getCrateModelInstance() {
+        return settings.getHardwareSettings().getCrate();
     }
 
     @Override
     public int getDecimalFormatScale() {
-        return signalGraphController.getDecimalFormatScale();
+        return signalGraph.getDecimalFormatScale();
     }
 
     @Override
@@ -291,27 +295,27 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public String getValueName() {
-        return signalGraphController.getSignalModel().getValueName();
+        return signalGraph.getSignalModel().getValueName();
     }
 
     @Override
     public double getZeroShift() {
-        return signalGraphController.getSignalModel().getZeroShift();
+        return signalGraph.getSignalModel().getZeroShift();
     }
 
     @Override
     public void giveChannelInfo(int channel, String moduleType, int slot) {
-        signalGraphController.getSignalModel().setFields(moduleType, slot, channel);
+        signalGraph.getSignalModel().setFields(moduleType, slot, channel);
     }
 
     @Override
     public void hideRequiredFieldsSymbols() {
-        settingsController.hideRequiredFieldsSymbols();
+        settings.hideRequiredFieldsSymbols();
     }
 
     @Override
     public void initializeSignalGraphView() {
-        signalGraphController.initializeView();
+        signalGraph.initializeView();
     }
 
     @Override
@@ -331,7 +335,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadDefaultSettings() {
-        settingsController.loadDefaultSettings();
+        settings.loadDefaultSettings();
     }
 
     @Override
@@ -342,7 +346,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadItemsForModulesTableView() {
-        settingsController.refreshModulesList();
+        settings.refreshModulesList();
     }
 
     @Override
@@ -350,15 +354,15 @@ public class Main extends Application implements WindowsManager, ControllerManag
         String moduleType = (moduleName + " ").substring(0, 6).trim();
 
         switch (moduleType) {
-            case CrateModel.LTR24:
+            case Crate.LTR24:
                 ltr24Settings = (LTR24Settings) modulesPairs.get(id).getKey();
                 ltr24Settings.loadSettings(moduleName);
                 break;
-            case CrateModel.LTR34:
+            case Crate.LTR34:
                 ltr34Settings = (LTR34Settings) modulesPairs.get(id).getKey();
                 ltr34Settings.loadSettings(moduleName);
                 break;
-            case CrateModel.LTR212:
+            case Crate.LTR212:
                 ltr212Settings = (LTR212Settings) modulesPairs.get(id).getKey();
                 ltr212Settings.loadSettings(moduleName);
                 break;
@@ -372,7 +376,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void setEditMode(boolean editMode) {
-        settingsController.setEditMode(editMode);
+        settings.setEditMode(editMode);
     }
 
     @Override
@@ -387,7 +391,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void showTestProgram(TestProgram testProgram) {
-        settingsController.showTestProgram(testProgram);
+        settings.showTestProgram(testProgram);
     }
 
     @Override

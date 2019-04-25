@@ -4,7 +4,7 @@ import ru.avem.posum.utils.TextEncoder;
 
 public abstract class Module {
     int channelsCount;
-    String crate;
+    String crateSerialNumber;
     private int slot;
     private long moduleId;
     String[] descriptions;
@@ -59,8 +59,8 @@ public abstract class Module {
         return status;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public void setCrateSerialNumber(String crateSerialNumber) {
+        this.crateSerialNumber = crateSerialNumber;
     }
 
     public void setModuleId(long moduleId) {

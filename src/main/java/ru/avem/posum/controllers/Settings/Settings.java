@@ -1,7 +1,6 @@
-package ru.avem.posum.controllers;
+package ru.avem.posum.controllers.Settings;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -11,10 +10,10 @@ import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.CrateModel;
-import ru.avem.posum.models.SettingsModel;
+import ru.avem.posum.models.Settings.SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class SettingsController implements BaseController {
+public class Settings implements BaseController {
     @FXML
     private Button chooseCrateButton;
     @FXML
@@ -67,46 +66,23 @@ public class SettingsController implements BaseController {
     private TextField testProgramTypeTextField;
 
     private ControllerManager cm;
-    private String crate;
-    private CrateModel crateModel = new CrateModel();
-    private ObservableList<String> crates;
     private boolean didBackSpacePressed;
     private boolean editMode;
-    private String moduleName;
-    private ObservableList<String> modulesNames;
+    private HardwareSettings hardwareSettings;
     private List<Pair<Label, TextField>> requiredFields = new ArrayList<>();
-    private int selectedCrate;
-    private int selectedModuleIndex;
     private SettingsModel settingsModel = new SettingsModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
     private TestProgram testProgram;
-    private List<TextField> textFields = new ArrayList<>();
     private WindowsManager wm;
 
     @FXML
     private void initialize() {
-        fillListOfTextFields();
-        fillListOfRequiredSymbols();
         initRequiredFieldsSymbols();
         initTimeAndDateFields();
-        showCrates();
-        showModules();
+        initHardwareSettings();
     }
 
-    private void fillListOfTextFields() {
-        textFields.addAll(Arrays.asList(
-                testProgramNameTextField,
-                sampleNameTextField,
-                sampleSerialNumberTextField,
-                documentNumberTextField,
-                testProgramTimeTextField,
-                testProgramDateTextField,
-                testProgramTypeTextField,
-                leadEngineerTextField
-        ));
-    }
-
-    private void fillListOfRequiredSymbols() {
+    private void initRequiredFieldsSymbols() {
         requiredFields.addAll(Arrays.asList(
                 new Pair<>(requiredFieldN1, testProgramNameTextField),
                 new Pair<>(requiredFieldN2, sampleNameTextField),
@@ -114,9 +90,7 @@ public class SettingsController implements BaseController {
                 new Pair<>(requiredFieldN4, testProgramTimeTextField),
                 new Pair<>(requiredFieldN5, testProgramDateTextField)
         ));
-    }
 
-    private void initRequiredFieldsSymbols() {
         for (Pair<Label, TextField> pair : requiredFields) {
             pair.getKey().setTextFill(Color.web("#D30303"));
             pair.getKey().setVisible(false);
@@ -151,118 +125,47 @@ public class SettingsController implements BaseController {
         }
     }
 
-    private void showCrates() {
-        crates = crateModel.getCratesNames();
-        cratesListView.setItems(crates);
+    private void initHardwareSettings() {
+        hardwareSettings = new HardwareSettings(this);
+        hardwareSettings.showCrates();
+        hardwareSettings.showModules();
+        hardwareSettings.addDoubleClickListener(cratesListView, true);
+        hardwareSettings.addDoubleClickListener(modulesListView, false);
+        cm.createListModulesControllers(hardwareSettings.getModulesNames());
     }
 
-    private void showModules() {
-        cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
-            selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
-            crate = crateModel.getCrates()[0][selectedCrate];
-            modulesListView.setItems(crateModel.getModulesNames(selectedCrate));
-            modulesNames = crateModel.getModulesNames(selectedCrate);
-            addDoubleClickListener(cratesListView, true);
-            addDoubleClickListener(modulesListView, false);
-            cm.createListModulesControllers(modulesNames);
-        }));
-    }
-
-    private void addDoubleClickListener(ListView<String> listView, boolean forCrate) {
-        listView.setCellFactory(tv -> {
-            ListCell<String> cell = new ListCell<String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item != null) {
-                        setText(item);
-                    }
-                }
-            };
-            cell.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!cell.isEmpty())) {
-                    if (forCrate) {
-                        handleChooseCrate();
-                    } else {
-                        handleSetupModule();
-                    }
-                }
-            });
-            return cell;
-        });
-    }
-
+    @FXML
     public void handleChooseCrate() {
         toggleProgressIndicatorState(false);
         new Thread(() -> {
-            checkSelection();
+            hardwareSettings.initialize();
             toggleProgressIndicatorState(true);
         }).start();
     }
 
-    private void initSettingsModel() {
-        settingsModel.setControllerManager(cm);
-        settingsModel.createModulesInstances(modulesNames);
-    }
-
-    private void checkSelection() {
-        for (int i = 0; i < crates.size(); i++) {
-            if (cratesListView.getSelectionModel().isSelected(i)) {
-                cratesListView.setDisable(true);
-                chooseCrateButton.setDisable(true);
-                saveSettingsButton.setDisable(true);
-                Platform.runLater(() -> statusBarLine.setStatus("     Устанавливается соединение с модулями", statusBar));
-                initSettingsModel();
-                crateModel.initialize(crate);
-                toggleUiElements(true, false);
-                saveSettingsButton.setDisable(false);
-            } else {
-                Platform.runLater(() -> statusBarLine.setStatus("Крейт не выбран", statusBar));
-            }
+    private void toggleProgressIndicatorState(boolean hide) {
+        if (hide) {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        } else {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
     }
 
-    private void toggleUiElements(boolean crate, boolean module) {
-        cratesListView.setDisable(crate);
-        chooseCrateButton.setDisable(crate);
-        modulesListView.setDisable(module);
-        setupModuleButton.setDisable(module);
-    }
-
+    @FXML
     public void handleSetupModule() {
-        for (int i = 0; i < modulesNames.size(); i++) {
+        for (int i = 0; i < hardwareSettings.getModulesNames().size(); i++) {
             if (modulesListView.getSelectionModel().isSelected(i)) {
-                saveSelectedModuleIndex();
-                showModuleSettings();
+                hardwareSettings.loadModuleSettings();
+                wm.setModuleScene(hardwareSettings.getModuleName(), hardwareSettings.getSelectedModuleIndex());
                 break;
             }
         }
     }
 
-    private void saveSelectedModuleIndex() {
-        selectedModuleIndex = modulesListView.getSelectionModel().getSelectedIndex();
-    }
-
-    private void showModuleSettings() {
-        parseModuleName();
-        loadModuleSettings();
-        setScene();
-    }
-
-    private void parseModuleName() {
-        moduleName = modulesNames.get(selectedModuleIndex);
-    }
-
-    private void loadModuleSettings() {
-        cm.loadModuleSettings(selectedModuleIndex, moduleName);
-    }
-
-    private void setScene() {
-        wm.setModuleScene(moduleName, selectedModuleIndex);
-    }
-
+    @FXML
     public void handleSaveTestProgramSettings() {
-        boolean isRequiredSettingsSet = checkHardwareSettings() && checkRequiredTextFields() && checkTimeAndDateFormat();
+        boolean isRequiredSettingsSet = hardwareSettings.checkHardwareSettings() & checkRequiredTextFields()
+                & checkTimeAndDateFormat();
 
         if (isRequiredSettingsSet) {
             new Thread(this::save).start();
@@ -281,9 +184,9 @@ public class SettingsController implements BaseController {
                 label.setVisible(true);
                 isRequiredFieldsFilled = false;
 
-                Platform.runLater(() -> {
-                    statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля основной информации", statusBar);
-                });
+                Platform.runLater(() -> statusBarLine.setStatus
+                        ("Перед сохранением настроек заполните обязательные поля основной информации",
+                                statusBar));
             } else {
                 filledFields++;
             }
@@ -314,18 +217,6 @@ public class SettingsController implements BaseController {
         return isTextFormatCorrect;
     }
 
-    private boolean checkHardwareSettings() {
-        boolean isCrateChosen = false;
-
-        if (!chooseCrateButton.isDisabled()) {
-            statusBarLine.setStatus("Ошибка сохранения настроек: необходимо выбрать крейт", statusBar);
-        } else {
-            isCrateChosen = true;
-        }
-
-        return isCrateChosen;
-    }
-
     private void save() {
         toggleUiElements();
         saveSettings();
@@ -333,22 +224,14 @@ public class SettingsController implements BaseController {
     }
 
     private void toggleUiElements() {
+        toggleProgressIndicatorState(false);
         setupModuleButton.setDisable(true);
         hideRequiredFieldsSymbols();
-        toggleProgressIndicatorState(false);
     }
 
     public void hideRequiredFieldsSymbols() {
         for (Pair<Label, TextField> pair : requiredFields) {
             pair.getKey().setVisible(false);
-        }
-    }
-
-    private void toggleProgressIndicatorState(boolean hide) {
-        if (hide) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-        } else {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
     }
 
@@ -360,7 +243,7 @@ public class SettingsController implements BaseController {
     private HashMap<String, String> parseGeneralSettingsData() {
         HashMap<String, String> generalSettings = new HashMap<>();
 
-        generalSettings.put("Crate Serial Number", crate);
+        generalSettings.put("Crate Serial Number", hardwareSettings.getCrateSerialNumber());
         generalSettings.put("Test Program Name", testProgramNameTextField.getText());
         generalSettings.put("Sample Name", sampleNameTextField.getText());
         generalSettings.put("Sample Serial Number", sampleSerialNumberTextField.getText());
@@ -374,6 +257,7 @@ public class SettingsController implements BaseController {
         return generalSettings;
     }
 
+    @FXML
     public void handleBackButton() {
         new Thread(() -> {
             TestProgramRepository.updateTestProgramIndexes();
@@ -387,8 +271,9 @@ public class SettingsController implements BaseController {
         this.testProgram = testProgram;
 
         loadGeneralSettings(testProgram);
-        selectCrate();
-        settingsModel.loadChannelsSettings(testProgram, crateModel, selectedCrate);
+        hardwareSettings.selectCrate();
+        settingsModel.loadChannelsSettings(testProgram, hardwareSettings.getCrate(),
+                hardwareSettings.getSelectedCrate());
     }
 
     private void loadGeneralSettings(TestProgram testProgram) {
@@ -403,30 +288,6 @@ public class SettingsController implements BaseController {
         commentsTextArea.setText(testProgram.getComments());
     }
 
-    private void selectCrate() {
-        for (int i = 0; i < crateModel.getCratesNames().size(); i++) {
-            String crateName = crateModel.getCratesNames().get(i);
-            crate = testProgram.getCrate(); // серийный номер крейта
-            int notCrate = 0;
-
-            if (crateName.contains(crate)) {
-                selectedCrate = i;
-                cratesListView.setDisable(true);
-                modulesListView.setDisable(false);
-                chooseCrateButton.setDisable(true);
-                setupModuleButton.setDisable(false);
-            } else {
-                notCrate++;
-            }
-
-            if (notCrate == crateModel.getCratesNames().size()) {
-                statusBarLine.setStatus("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.", statusBar);
-            }
-
-            cratesListView.getSelectionModel().select(selectedCrate);
-            modulesListView.getSelectionModel().clearSelection();
-        }
-    }
 
     public void loadDefaultSettings() {
         testProgramNameTextField.setText("");
@@ -443,7 +304,7 @@ public class SettingsController implements BaseController {
         modulesListView.getSelectionModel().clearSelection();
         modulesListView.getItems().clear();
 
-        toggleUiElements(false, true);
+        hardwareSettings.toggleUiElements(false);
     }
 
     @FXML
@@ -453,19 +314,51 @@ public class SettingsController implements BaseController {
     }
 
     public void refreshModulesList() {
-        modulesListView.setItems(modulesNames);
+        modulesListView.setItems(hardwareSettings.getModulesNames());
     }
 
-    public String getCrate() {
-        return crate;
+    public Button getChooseCrateButton() {
+        return chooseCrateButton;
     }
 
-    public CrateModel getCrateModel() {
-        return crateModel;
+    public ControllerManager getCm() {
+        return cm;
+    }
+
+    public ListView<String> getCratesListView() {
+        return cratesListView;
+    }
+
+    public HardwareSettings getHardwareSettings() {
+        return hardwareSettings;
+    }
+
+    public ListView<String> getModulesListView() {
+        return modulesListView;
+    }
+
+    public Button getSaveSettingsButton() {
+        return saveSettingsButton;
     }
 
     public SettingsModel getSettingsModel() {
         return settingsModel;
+    }
+
+    public Button getSetupModuleButton() {
+        return setupModuleButton;
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    public StatusBarLine getStatusBarLine() {
+        return statusBarLine;
+    }
+
+    public TestProgram getTestProgram() {
+        return testProgram;
     }
 
     public void setEditMode(boolean editMode) {

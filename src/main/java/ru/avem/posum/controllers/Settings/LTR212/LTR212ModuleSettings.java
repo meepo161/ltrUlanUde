@@ -1,4 +1,4 @@
-package ru.avem.posum.controllers.LTR212;
+package ru.avem.posum.controllers.Settings.LTR212;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,7 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.models.LTR212SettingsModel;
+import ru.avem.posum.models.Settings.LTR212SettingsModel;
 
 import java.util.HashMap;
 

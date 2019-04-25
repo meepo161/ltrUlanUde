@@ -1,9 +1,9 @@
 package ru.avem.posum;
 
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.ExperimentModel;
-import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.models.Signal.SignalModel;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
-    String getCrate();
+    String getCrateSerialNumber();
 
-    CrateModel getCrateModelInstance();
+    Crate getCrateModelInstance();
 
     int getDecimalFormatScale();
 

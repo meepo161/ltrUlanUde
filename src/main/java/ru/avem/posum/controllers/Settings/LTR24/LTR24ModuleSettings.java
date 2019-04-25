@@ -1,10 +1,10 @@
-package ru.avem.posum.controllers.LTR24;
+package ru.avem.posum.controllers.Settings.LTR24;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.models.LTR24SettingsModel;
+import ru.avem.posum.models.Settings.LTR24SettingsModel;
 
 class LTR24ModuleSettings extends LTR24Settings {
     private ComboBox<String> frequencyComboBox;

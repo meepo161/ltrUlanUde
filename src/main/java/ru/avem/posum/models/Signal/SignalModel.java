@@ -1,7 +1,8 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Signal;
 
 import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.*;
+import ru.avem.posum.models.Actionable;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.HashMap;
@@ -17,7 +18,6 @@ public class SignalModel {
     private boolean connectionLost;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
-    private boolean isICPMode;
     private double loadsCounter;
     private double lowerBound;
     private LTR24 ltr24;
@@ -50,8 +50,8 @@ public class SignalModel {
 
     private void addInitModuleInstructions() {
         instructions.clear();
-        instructions.put(CrateModel.LTR24, this::initLTR24Module);
-        instructions.put(CrateModel.LTR212, this::initLTR212Module);
+        instructions.put(Crate.LTR24, this::initLTR24Module);
+        instructions.put(Crate.LTR212, this::initLTR212Module);
     }
 
     private void initLTR24Module() {
@@ -104,10 +104,6 @@ public class SignalModel {
         valueName = "В";
     }
 
-    public void setICPMode(boolean isICPMode) {
-        this.isICPMode = isICPMode;
-    }
-
     public void getData() {
         addReceivingDataInstructions();
         runInstructions();
@@ -115,8 +111,8 @@ public class SignalModel {
 
     private void addReceivingDataInstructions() {
         instructions.clear();
-        instructions.put(CrateModel.LTR24, this::receive);
-        instructions.put(CrateModel.LTR212, this::receive);
+        instructions.put(Crate.LTR24, this::receive);
+        instructions.put(Crate.LTR212, this::receive);
     }
 
     private void receive() {

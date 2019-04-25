@@ -1,4 +1,4 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Settings;
 
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.LTR24;

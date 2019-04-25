@@ -1,10 +1,11 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Signal;
 
 import ru.avem.posum.hardware.ADC;
+import ru.avem.posum.models.Calibration.CalibrationPointModel;
 
 import java.util.List;
 
-class SignalParametersModel {
+public class SignalParametersModel {
     private boolean accurateFrequencyCalculation = true;
     private ADC adc;
     private int averageIterator;
@@ -32,7 +33,7 @@ class SignalParametersModel {
     private int loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
-    private int minSamples;
+    private int minSamples = 20;
     private double minSignalValue;
     private double rms;
     private int samplesPerSemiPeriod;
@@ -41,13 +42,13 @@ class SignalParametersModel {
     private double upperBound;
     private double zeroShift;
 
-    void setFields(ADC adc, int channel) {
+    public void setFields(ADC adc, int channel) {
         this.adc = adc;
         this.channel = channel;
         this.channels = adc.getChannelsCount();
     }
 
-    void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
+    public void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
         setFields(signal, channel);
         calculateMinAndMaxValues();
         calculateParameters(averageCount);
@@ -268,7 +269,7 @@ class SignalParametersModel {
         upperBound = calibrationSecondPointChannelValue;
     }
 
-    double applyCalibration(ADC adc, double value) {
+    public double applyCalibration(ADC adc, double value) {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
@@ -285,10 +286,10 @@ class SignalParametersModel {
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
-        calibrationFirstPointChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
-        calibrationFirstPointLoadValue = CalibrationPoint.parseLoadValue(firstCalibrationPoint);
-        calibrationSecondPointChannelValue = CalibrationPoint.parseChannelValue(secondCalibrationPoint);
-        calibrationSecondPointLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
+        calibrationFirstPointChannelValue = CalibrationPointModel.parseChannelValue(firstCalibrationPoint);
+        calibrationFirstPointLoadValue = CalibrationPointModel.parseLoadValue(firstCalibrationPoint);
+        calibrationSecondPointChannelValue = CalibrationPointModel.parseChannelValue(secondCalibrationPoint);
+        calibrationSecondPointLoadValue = CalibrationPointModel.parseLoadValue(secondCalibrationPoint);
     }
 
     private void calibrate(double value) {
@@ -299,16 +300,16 @@ class SignalParametersModel {
         }
     }
 
-    void defineCalibratedBounds(ADC adc) {
+    public void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         if (!calibrationSettings.isEmpty()) {
-            calibrationValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
+            calibrationValueName = CalibrationPointModel.parseValueName(calibrationSettings.get(0));
             double minLoadValue = Double.MAX_VALUE;
             double maxLoadValue = Double.MIN_VALUE;
             int GRAPH_SCALE = 5;
 
             for (String calibrationSetting : calibrationSettings) {
-                double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
+                double loadValue = CalibrationPointModel.parseLoadValue(calibrationSetting);
 
                 if (minLoadValue > loadValue) {
                     minLoadValue = loadValue;
@@ -324,59 +325,59 @@ class SignalParametersModel {
         }
     }
 
-    double getAmplitude() {
+    public double getAmplitude() {
         return amplitude;
     }
 
-    double getCalibratedAmplitude() {
+    public double getCalibratedAmplitude() {
         return calibratedAmplitude;
     }
 
-    double getCalibratedRms() {
+    public double getCalibratedRms() {
         return calibratedRms;
     }
 
-    double getCalibratedZeroShift() {
+    public double getCalibratedZeroShift() {
         return calibratedZeroShift;
     }
 
-    String getCalibrationValueName() {
+    public String getCalibrationValueName() {
         return calibrationValueName;
     }
 
-    double getLowerBound() {
+    public double getLowerBound() {
         return lowerBound;
     }
 
-    double getLoadsCounter() {
+    public double getLoadsCounter() {
         return loadsCounter;
     }
 
-    double getUpperBound() {
+    public double getUpperBound() {
         return upperBound;
     }
 
-    double getRms() {
+    public double getRms() {
         return rms;
     }
 
-    double getSignalFrequency() {
+    public double getSignalFrequency() {
         return signalFrequency;
     }
 
-    double getTickUnit() {
+    public double getTickUnit() {
         return tickUnit;
     }
 
-    double getZeroShift() {
+    public double getZeroShift() {
         return zeroShift;
     }
 
-    void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {
+    public void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {
         this.accurateFrequencyCalculation = accurateFrequencyCalculation;
     }
 
-    void setAmplitude(int amplitude) {
+    public void setAmplitude(int amplitude) {
         this.amplitude = amplitude;
     }
 
@@ -384,19 +385,15 @@ class SignalParametersModel {
         this.signalFrequency = frequency;
     }
 
-    void setLoadsCounter(int loadsCounter) {
+    public void setLoadsCounter(int loadsCounter) {
         this.loadsCounter = loadsCounter;
     }
 
-    public void setMinSamples(int minSamples) {
-        this.minSamples = minSamples;
-    }
-
-    void setRMS(int rms) {
+    public void setRMS(int rms) {
         this.rms = rms;
     }
 
-    void setZeroShift(int zeroShift) {
+    public void setZeroShift(int zeroShift) {
         this.zeroShift = zeroShift;
     }
 }

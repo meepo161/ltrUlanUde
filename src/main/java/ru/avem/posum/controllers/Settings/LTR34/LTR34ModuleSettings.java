@@ -1,4 +1,4 @@
-package ru.avem.posum.controllers.LTR34;
+package ru.avem.posum.controllers.Settings.LTR34;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,7 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import ru.avem.posum.hardware.DAC;
-import ru.avem.posum.models.LTR34SettingsModel;
+import ru.avem.posum.models.Settings.LTR34SettingsModel;
 
 class LTR34ModuleSettings extends LTR34Settings {
     private ComboBox<String> calibrationComboBox;

@@ -1,26 +1,18 @@
-package ru.avem.posum.controllers.LTR212;
+package ru.avem.posum.controllers.Settings.LTR24;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.hardware.CrateModel;
-import ru.avem.posum.hardware.LTR212;
-import ru.avem.posum.hardware.Module;
-import ru.avem.posum.models.LTR212SettingsModel;
+import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.models.Settings.LTR24SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.io.File;
-import java.util.*;
-
-public class LTR212Settings implements BaseController {
+public class LTR24Settings implements BaseController {
     @FXML
     private CheckBox applyForAllChannels;
     @FXML
@@ -40,19 +32,9 @@ public class LTR212Settings implements BaseController {
     @FXML
     private TextField descriptionOfChannelN4;
     @FXML
+    private ComboBox<String> frequencyComboBox;
+    @FXML
     private Button initializeButton;
-    @FXML
-    private CheckBox firCheckBox;
-    @FXML
-    private Button firPathButton;
-    @FXML
-    private TextField firPathTextField;
-    @FXML
-    private CheckBox iirCheckBox;
-    @FXML
-    private Button iirPathButton;
-    @FXML
-    private TextField iirPathTextField;
     @FXML
     private ComboBox<String> measuringRangeOfChannelN1;
     @FXML
@@ -62,17 +44,11 @@ public class LTR212Settings implements BaseController {
     @FXML
     private ComboBox<String> measuringRangeOfChannelN4;
     @FXML
-    private ComboBox<String> moduleModesComboBox;
-    @FXML
     private ProgressIndicator progressIndicator;
     @FXML
     private Label sceneTitleLabel;
     @FXML
     private StatusBar statusBar;
-    @FXML
-    private ComboBox<String> referenceVoltageComboBox;
-    @FXML
-    private CheckBox referenceVoltageTypeCheckBox;
     @FXML
     private ComboBox<String> typeOfChannelN1;
     @FXML
@@ -81,8 +57,6 @@ public class LTR212Settings implements BaseController {
     private ComboBox<String> typeOfChannelN3;
     @FXML
     private ComboBox<String> typeOfChannelN4;
-    @FXML
-    private CheckBox factoryCalibrationCheckBox;
     @FXML
     private Button valueOnChannelN1;
     @FXML
@@ -93,68 +67,71 @@ public class LTR212Settings implements BaseController {
     private Button valueOnChannelN4;
 
     private ControllerManager cm;
-    private LTR212ChannelsSettings ltr212ChannelsSettings;
-    private LTR212ModuleSettings ltr212ModuleSettings;
-    private LTR212SettingsModel ltr212SettingsModel;
+    private LTR24ChannelsSettings ltr24ChannelsSettings;
+    private LTR24ModuleSettings ltr24ModuleSettings;
+    private LTR24SettingsModel ltr24SettingsModel;
     private StatusBarLine statusBarLine;
     private WindowsManager wm;
 
     @FXML
     private void initialize() {
-        ltr212SettingsModel = new LTR212SettingsModel();
-        ltr212ChannelsSettings = new LTR212ChannelsSettings(this);
-        ltr212ModuleSettings = new LTR212ModuleSettings(this);
+        ltr24SettingsModel = new LTR24SettingsModel();
+        ltr24ChannelsSettings = new LTR24ChannelsSettings(this);
+        ltr24ModuleSettings = new LTR24ModuleSettings(this);
         statusBarLine = new StatusBarLine();
+
     }
 
     public void loadSettings(String moduleName) {
         sceneTitleLabel.setText(String.format("Настройки модуля %s", moduleName));
-        ltr212SettingsModel.setModuleName(moduleName);
-        ltr212SettingsModel.setSlot(Utils.parseSlotNumber(moduleName));
-        ltr212SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
-        ltr212ChannelsSettings.setSettings();
-        ltr212ModuleSettings.setSettings();
+        ltr24SettingsModel.setModuleName(moduleName);
+        ltr24SettingsModel.setSlot(Utils.parseSlotNumber(moduleName));
+        ltr24SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
+        ltr24ChannelsSettings.setSettings();
+        ltr24ModuleSettings.setSettings();
     }
 
+    @FXML
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
-        ltr212ChannelsSettings.disableUiElementsState();
-        ltr212ModuleSettings.toggleUiElementsState(true);
+        ltr24ChannelsSettings.disableUiElementsState();
+        ltr24ModuleSettings.toggleUiElementsState(true);
 
         new Thread(() -> {
-            ltr212ChannelsSettings.saveSettings();
-            ltr212ModuleSettings.saveSettings();
-            ltr212SettingsModel.initModule();
+            ltr24ChannelsSettings.saveSettings();
+            ltr24ModuleSettings.saveSettings();
+            ltr24SettingsModel.initModule();
 
-            if (ltr212SettingsModel.getLTR212Instance().getStatus().equals("Операция успешно выполнена")) {
-                ltr212SettingsModel.setConnectionOpen(true);
+            if (ltr24SettingsModel.getLTR24Instance().getStatus().equals("Операция успешно выполнена")) {
+                ltr24SettingsModel.setConnectionOpen(true);
             } else {
                 Platform.runLater(() -> {
-                    ltr212SettingsModel.setConnectionOpen(false);
-                    ltr212ChannelsSettings.enableUiElements();
-                    ltr212ModuleSettings.toggleUiElementsState(false);
+                    ltr24SettingsModel.setConnectionOpen(false);
+                    ltr24ChannelsSettings.enableUiElements();
+                    ltr24ModuleSettings.toggleUiElementsState(false);
                 });
             }
 
             toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus(ltr212SettingsModel.getLTR212Instance().getStatus(), statusBar));
+            Platform.runLater(() -> statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(), statusBar));
         }).start();
     }
 
-    private void toggleProgressIndicatorState(boolean hide) {
-        if (hide) {
-            progressIndicator.setStyle("-fx-opacity: 0;");
+    private void toggleProgressIndicatorState(boolean isHidden) {
+        if (isHidden) {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
         } else {
-            progressIndicator.setStyle("-fx-opacity: 1.0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
     }
 
+    @FXML
     public void handleBackButton() {
         new Thread(() -> {
-            ltr212ChannelsSettings.enableUiElements();
-            ltr212ChannelsSettings.saveSettings();
-            ltr212ModuleSettings.enableUiElements();
-            ltr212ModuleSettings.saveSettings();
+            ltr24ChannelsSettings.enableUiElements();
+            ltr24ChannelsSettings.saveSettings();
+            ltr24ModuleSettings.toggleUiElementsState(false);
+            ltr24ModuleSettings.saveSettings();
             closeConnection();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
@@ -164,9 +141,9 @@ public class LTR212Settings implements BaseController {
     }
 
     private void closeConnection() {
-        if (ltr212SettingsModel.isConnectionOpen()) {
-            ltr212SettingsModel.getLTR212Instance().closeConnection();
-            ltr212SettingsModel.setConnectionOpen(false);
+        if (ltr24SettingsModel.isConnectionOpen()) {
+            ltr24SettingsModel.getLTR24Instance().closeConnection();
+            ltr24SettingsModel.setConnectionOpen(false);
         }
     }
 
@@ -179,51 +156,24 @@ public class LTR212Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        ltr212SettingsModel.getLTR212Instance().defineFrequency();
-        ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());
-        cm.giveChannelInfo(channel, CrateModel.LTR24, ltr212SettingsModel.getLTR212Instance().getSlot());
+        ltr24SettingsModel.getLTR24Instance().defineFrequency();
+        ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
+        cm.giveChannelInfo(channel, Crate.LTR24, ltr24SettingsModel.getLTR24Instance().getSlot());
         cm.initializeSignalGraphView();
         cm.checkCalibration();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
     }
 
-    @FXML
     public void handleValueOfChannelN2() {
         showChannelValue(1);
     }
 
-    @FXML
     public void handleValueOfChannelN3() {
         showChannelValue(2);
     }
 
-    @FXML
     public void handleValueOfChannelN4() {
         showChannelValue(3);
-    }
-
-    @FXML
-    public void handleChoosingIIRFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Выбор файла фильтра");
-        File selectedDirectory = fileChooser.showOpenDialog(new Stage());
-        if (selectedDirectory == null) {
-            iirPathTextField.setText("Не выбран файл фильтра");
-        } else {
-            iirPathTextField.setText(selectedDirectory.getAbsolutePath());
-        }
-    }
-
-    @FXML
-    public void handleChoosingFIRFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Выбор файла фильтра");
-        File selectedDirectory = fileChooser.showOpenDialog(new Stage());
-        if (selectedDirectory == null) {
-            firPathTextField.setText("Не выбран файл фильтра");
-        } else {
-            firPathTextField.setText(selectedDirectory.getAbsolutePath());
-        }
     }
 
     CheckBox getApplyForAllChannels() {
@@ -262,28 +212,8 @@ public class LTR212Settings implements BaseController {
         return descriptionOfChannelN4;
     }
 
-    CheckBox getFirCheckBox() {
-        return firCheckBox;
-    }
-
-    Button getFirPathButton() {
-        return firPathButton;
-    }
-
-    TextField getFirPathTextField() {
-        return firPathTextField;
-    }
-
-    CheckBox getIirCheckBox() {
-        return iirCheckBox;
-    }
-
-    Button getIirPathButton() {
-        return iirPathButton;
-    }
-
-    TextField getIirPathTextField() {
-        return iirPathTextField;
+    ComboBox<String> getFrequencyComboBox() {
+        return frequencyComboBox;
     }
 
     Button getInitializeButton() {
@@ -306,28 +236,12 @@ public class LTR212Settings implements BaseController {
         return measuringRangeOfChannelN4;
     }
 
-    ComboBox<String> getModuleModesComboBox() {
-        return moduleModesComboBox;
-    }
-
     public ProgressIndicator getProgressIndicator() {
         return progressIndicator;
     }
 
-    LTR212SettingsModel getLtr212SettingsModel() {
-        return ltr212SettingsModel;
-    }
-
     public StatusBar getStatusBar() {
         return statusBar;
-    }
-
-    ComboBox<String> getReferenceVoltageComboBox() {
-        return referenceVoltageComboBox;
-    }
-
-    CheckBox getReferenceVoltageTypeCheckBox() {
-        return referenceVoltageTypeCheckBox;
     }
 
     ComboBox<String> getTypeOfChannelN1() {
@@ -346,10 +260,6 @@ public class LTR212Settings implements BaseController {
         return typeOfChannelN4;
     }
 
-    CheckBox getFactoryCalibrationCheckBox() {
-        return factoryCalibrationCheckBox;
-    }
-
     Button getValueOnChannelN1() {
         return valueOnChannelN1;
     }
@@ -364,6 +274,10 @@ public class LTR212Settings implements BaseController {
 
     Button getValueOnChannelN4() {
         return valueOnChannelN4;
+    }
+
+    LTR24SettingsModel getLtr24SettingsModel() {
+        return ltr24SettingsModel;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Settings;
 
 import javafx.scene.chart.XYChart;
 import ru.avem.posum.hardware.LTR34;

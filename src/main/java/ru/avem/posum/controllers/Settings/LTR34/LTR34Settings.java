@@ -1,4 +1,4 @@
-package ru.avem.posum.controllers.LTR34;
+package ru.avem.posum.controllers.Settings.LTR34;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -8,7 +8,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.models.LTR34SettingsModel;
+import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 

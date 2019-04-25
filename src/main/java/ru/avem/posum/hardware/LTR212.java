@@ -14,14 +14,14 @@ public class LTR212 extends ADC {
 
     @Override
     public void openConnection() {
-        status = openConnection(crate, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
+        status = openConnection(crateSerialNumber, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
         checkStatus();
     }
 
     @Override
     public void checkConnection() {
-        CrateModel crateModel = new CrateModel();
-        if (!crateModel.getCratesNames().isEmpty()) {
+        Crate crate = new Crate();
+        if (!crate.getCratesNames().isEmpty()) {
             status = checkConnection(getSlot());
             checkStatus();
         } else {

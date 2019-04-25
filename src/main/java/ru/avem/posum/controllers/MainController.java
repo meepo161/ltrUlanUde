@@ -19,7 +19,7 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.List;
@@ -158,8 +158,8 @@ public class MainController implements BaseController {
     }
 
     private void initModulesList() {
-        CrateModel crateModel = cm.getCrateModelInstance();
-        crateModel.getModulesList().clear();
+        Crate crate = cm.getCrateModelInstance();
+        crate.getModulesList().clear();
     }
 
     private void prepareSettingsScene() {

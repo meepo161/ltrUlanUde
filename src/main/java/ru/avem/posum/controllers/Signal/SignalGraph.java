@@ -1,4 +1,4 @@
-package ru.avem.posum.controllers;
+package ru.avem.posum.controllers.Signal;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -11,12 +11,13 @@ import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
-import ru.avem.posum.models.GraphModel;
-import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.models.Signal.SignalGraphModel;
+import ru.avem.posum.models.Signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-public class SignalGraphController implements BaseController {
+public class SignalGraph implements BaseController {
     @FXML
     private Label amplitudeLabel;
     @FXML
@@ -63,7 +64,7 @@ public class SignalGraphController implements BaseController {
     private TextField zeroShiftTextField;
 
     private ControllerManager cm;
-    private GraphModel graphModel = new GraphModel();
+    private SignalGraphModel signalGraphModel = new SignalGraphModel();
     private volatile XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private SignalModel signalModel = new SignalModel();
     private StatusBarLine statusBarLine = new StatusBarLine();
@@ -154,27 +155,27 @@ public class SignalGraphController implements BaseController {
 
     private void setDefaultScales() {
         verticalScalesComboBox.getSelectionModel().select(3);
-        graphModel.parseGraphScale(verticalScalesComboBox.getSelectionModel().getSelectedItem());
-        graphModel.calculateGraphBounds();
+        signalGraphModel.parseGraphScale(verticalScalesComboBox.getSelectionModel().getSelectedItem());
+        signalGraphModel.calculateGraphBounds();
         setScale((NumberAxis) graph.getYAxis());
 
         horizontalScalesComboBox.getSelectionModel().select(0);
-        graphModel.parseGraphScale(horizontalScalesComboBox.getSelectionModel().getSelectedItem());
-        graphModel.calculateGraphBounds();
+        signalGraphModel.parseGraphScale(horizontalScalesComboBox.getSelectionModel().getSelectedItem());
+        signalGraphModel.calculateGraphBounds();
         setScale((NumberAxis) graph.getXAxis());
     }
 
     private void setScale(NumberAxis axis) {
-        axis.setLowerBound(graphModel.getLowerBound());
-        axis.setTickUnit(graphModel.getTickUnit());
-        axis.setUpperBound(graphModel.getUpperBound());
+        axis.setLowerBound(signalGraphModel.getLowerBound());
+        axis.setTickUnit(signalGraphModel.getTickUnit());
+        axis.setUpperBound(signalGraphModel.getUpperBound());
     }
 
     private void listenScalesComboBox(ComboBox<String> comboBox) {
         comboBox.valueProperty().addListener(observable -> {
             if (!comboBox.getSelectionModel().isEmpty()) {
-                graphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
-                graphModel.calculateGraphBounds();
+                signalGraphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
+                signalGraphModel.calculateGraphBounds();
 
                 if (comboBox == verticalScalesComboBox) {
                     setScale((NumberAxis) graph.getYAxis());
@@ -495,8 +496,8 @@ public class SignalGraphController implements BaseController {
 
     private void showGraph() {
         String selectedGraphScale = horizontalScalesComboBox.getSelectionModel().getSelectedItem();
-        graphModel.parseGraphScale(selectedGraphScale);
-        graphModel.calculateGraphBounds();
+        signalGraphModel.parseGraphScale(selectedGraphScale);
+        signalGraphModel.calculateGraphBounds();
         int index;
         int channel = signalModel.getChannel();
         int channels = signalModel.getAdc().getChannelsCount();
@@ -510,7 +511,7 @@ public class SignalGraphController implements BaseController {
                     graphSeries.getData().add(point);
             };
 
-            if ((double) point.getXValue() < graphModel.getUpperBound()) {
+            if ((double) point.getXValue() < signalGraphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
                 Utils.sleep(1);
             }
@@ -519,7 +520,7 @@ public class SignalGraphController implements BaseController {
                 XYChart.Data lastPoint = new XYChart.Data(1, data[index]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(1);
-            } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {
+            } else if ((double) point.getXValue() >= signalGraphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
                 Utils.sleep(1);
                 break;
