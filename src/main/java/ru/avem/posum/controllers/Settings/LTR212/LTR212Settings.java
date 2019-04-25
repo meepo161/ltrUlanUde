@@ -140,7 +140,7 @@ public class LTR212Settings implements BaseController {
 
             toggleProgressIndicatorState(true);
             Platform.runLater(() -> statusBarLine.setStatus
-                    (String.format("    %s", ltr212SettingsModel.getLTR212Instance().getStatus()), statusBar,
+                    (String.format("     %s", ltr212SettingsModel.getLTR212Instance().getStatus()), statusBar,
                     checkIcon, warningIcon));
         }).start();
     }

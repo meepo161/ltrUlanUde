@@ -45,7 +45,7 @@ public class StatusBarLine {
         checkIcon.setTextFill(Color.web("#009700"));
         warningIcon.setTextFill(Color.web("#FAB600"));
 
-        if (text.equals("Операция успешно выполнена")) {
+        if (text.equals("     Операция успешно выполнена")) {
             checkIcon.setStyle("-fx-opacity: 1;");
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
@@ -58,8 +58,10 @@ public class StatusBarLine {
             try {
                 sleep(5000);
                 Platform.runLater(() -> {
-                    checkIcon.setStyle("-fx-opacity: 0;");
-                    warningIcon.setStyle("-fx-opacity: 0;");
+                    if (checkIcon != null && warningIcon != null) {
+                        checkIcon.setStyle("-fx-opacity: 0;");
+                        warningIcon.setStyle("-fx-opacity: 0;");
+                    }
                     statusBar.setText("");
                 });
             } catch (InterruptedException ignored) {
