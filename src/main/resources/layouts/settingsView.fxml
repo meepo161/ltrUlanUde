@@ -223,5 +223,7 @@
         </TabPane>
         <StatusBar fx:id="statusBar" maxHeight="30.0" minWidth="30.0" styleClass="status-bar" stylesheets="@../css/main.css" text="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
       <ProgressIndicator fx:id="progressIndicator" layoutX="4.0" layoutY="683.0" maxHeight="30.0" maxWidth="20.0" style="-fx-opacity: 0;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" />
+      <Label fx:id="warningIcon" layoutX="10.0" layoutY="10.0" style="-fx-font-size: 22px; -fx-opacity: 0;" text="⚠" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" />
+      <Label fx:id="checkIcon" layoutX="10.0" layoutY="10.0" style="-fx-opacity: 0;" text=" ✔" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" />
     </children>
 </AnchorPane>

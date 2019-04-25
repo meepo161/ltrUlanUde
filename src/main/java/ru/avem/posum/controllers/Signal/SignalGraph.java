@@ -31,6 +31,8 @@ public class SignalGraph implements BaseController {
     @FXML
     private CheckBox calibrationCheckBox;
     @FXML
+    private Label checkIcon;
+    @FXML
     private ComboBox<String> decimalFormatComboBox;
     @FXML
     private ComboBox<String> frequencyCalculationComboBox;
@@ -58,6 +60,8 @@ public class SignalGraph implements BaseController {
     private Label titleLabel;
     @FXML
     private ComboBox<String> verticalScalesComboBox;
+    @FXML
+    private Label warningIcon;
     @FXML
     private Label zeroShiftLabel;
     @FXML
@@ -396,7 +400,8 @@ public class SignalGraph implements BaseController {
             setGraphBounds();
             setSignalParametersLabels();
         } else {
-            statusBarLine.setStatus("     Градуировочные коэффициенты отсутсвуют", statusBar);
+            statusBarLine.setStatus("     Градуировочные коэффициенты отсутсвуют", statusBar,
+                    checkIcon, warningIcon);
         }
     }
 

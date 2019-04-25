@@ -3,6 +3,7 @@ package ru.avem.posum.controllers.Settings.LTR212;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
@@ -19,6 +20,8 @@ import java.io.File;
 public class LTR212Settings implements BaseController {
     @FXML
     private CheckBox applyForAllChannels;
+    @FXML
+    private Label checkIcon;
     @FXML
     private CheckBox checkChannelN1;
     @FXML
@@ -87,6 +90,8 @@ public class LTR212Settings implements BaseController {
     private Button valueOnChannelN3;
     @FXML
     private Button valueOnChannelN4;
+    @FXML
+    private Label warningIcon;
 
     private ControllerManager cm;
     private LTR212ChannelsSettings ltr212ChannelsSettings;
@@ -135,7 +140,8 @@ public class LTR212Settings implements BaseController {
 
             toggleProgressIndicatorState(true);
             Platform.runLater(() -> statusBarLine.setStatus
-                    (String.format("    %s", ltr212SettingsModel.getLTR212Instance().getStatus()), statusBar));
+                    (String.format("    %s", ltr212SettingsModel.getLTR212Instance().getStatus()), statusBar,
+                    checkIcon, warningIcon));
         }).start();
     }
 

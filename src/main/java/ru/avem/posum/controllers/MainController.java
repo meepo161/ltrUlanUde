@@ -26,6 +26,8 @@ import java.util.List;
 
 public class MainController implements BaseController {
     @FXML
+    private Label checkIcon;
+    @FXML
     private TableColumn<TestProgram, Integer> columnTableViewIndex;
     @FXML
     private TableColumn<TestProgram, String> columnTestProgramName;
@@ -47,6 +49,8 @@ public class MainController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private TableView<TestProgram> testProgramTableView;
+    @FXML
+    private Label warningIcon;
 
     private List<TestProgram> allTestPrograms;
     private ControllerManager cm;
@@ -275,7 +279,7 @@ public class MainController implements BaseController {
     private void showNotification(String text) {
         Platform.runLater(() -> {
             toggleProgressIndicatorState(true);
-            statusBarLine.setStatus(text, statusBar);
+            statusBarLine.setStatus("     " + text, statusBar, checkIcon, warningIcon);
         });
     }
 

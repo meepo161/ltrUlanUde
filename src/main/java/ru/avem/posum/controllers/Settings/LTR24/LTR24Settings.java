@@ -24,6 +24,8 @@ public class LTR24Settings implements BaseController {
     @FXML
     private CheckBox checkChannelN4;
     @FXML
+    private Label checkIcon;
+    @FXML
     private TextField descriptionOfChannelN1;
     @FXML
     private TextField descriptionOfChannelN2;
@@ -65,6 +67,8 @@ public class LTR24Settings implements BaseController {
     private Button valueOnChannelN3;
     @FXML
     private Button valueOnChannelN4;
+    @FXML
+    private Label warningIcon;
 
     private ControllerManager cm;
     private LTR24ChannelsSettings ltr24ChannelsSettings;
@@ -94,6 +98,7 @@ public class LTR24Settings implements BaseController {
     @FXML
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
+        Platform.runLater(() -> statusBarLine.setStatus("     Инициализация модуля", statusBar));
         ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 
@@ -113,7 +118,9 @@ public class LTR24Settings implements BaseController {
             }
 
             toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(), statusBar));
+            Platform.runLater(() -> statusBarLine.setStatus
+                    (String.format("     %s", ltr24SettingsModel.getLTR24Instance().getStatus()), statusBar,
+                            checkIcon, warningIcon));
         }).start();
     }
 

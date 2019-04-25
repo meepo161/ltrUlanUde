@@ -15,7 +15,6 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.models.Settings.SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
-import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Settings implements BaseController {
+    @FXML
+    private Label checkIcon;
     @FXML
     private Button chooseCrateButton;
     @FXML
@@ -65,6 +66,8 @@ public class Settings implements BaseController {
     private TextField testProgramDateTextField;
     @FXML
     private TextField testProgramTypeTextField;
+    @FXML
+    private Label warningIcon;
 
     private ControllerManager cm;
     private boolean didBackSpacePressed;
@@ -221,8 +224,8 @@ public class Settings implements BaseController {
                 isRequiredFieldsFilled = false;
 
                 Platform.runLater(() -> statusBarLine.setStatus
-                        ("Перед сохранением настроек заполните обязательные поля основной информации",
-                                statusBar));
+                        ("     Перед сохранением настроек заполните обязательные поля основной информации",
+                                statusBar, checkIcon, warningIcon));
             } else {
                 filledFields++;
             }
@@ -241,12 +244,12 @@ public class Settings implements BaseController {
         boolean isTextFormatCorrect = true;
 
         if (!time.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
-            statusBarLine.setStatus("Неверно задано время испытаний", statusBar);
+            statusBarLine.setStatus("     Неверно задано время испытаний", statusBar, checkIcon, warningIcon);
             isTextFormatCorrect = false;
         }
 
         if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[2][\\d]{3}")) {
-            statusBarLine.setStatus("Неверно задана дата испытаний", statusBar);
+            statusBarLine.setStatus("     Неверно задана дата испытаний", statusBar, checkIcon, warningIcon);
             isTextFormatCorrect = false;
         }
 
