@@ -218,12 +218,11 @@ public class LTR212ChannelsSettings extends LTR212Settings {
 
     void enableUiElements() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            CheckBox channel = checkBoxes.get(channelIndex);
-            channel.setDisable(false);
-            checkBoxes.get(channelIndex).setDisable(!channel.isSelected());
-            descriptions.get(channelIndex).setDisable(!channel.isSelected());
-            typesOfChannelComboBoxes.get(channelIndex).setDisable(!channel.isSelected());
-            measuringRangesComboBoxes.get(channelIndex).setDisable(!channel.isSelected());
+            CheckBox checkBox = checkBoxes.get(channelIndex);
+            checkBox.setDisable(false);
+            descriptions.get(channelIndex).setDisable(!checkBox.isSelected());
+            typesOfChannelComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
+            measuringRangesComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
             valueOnChannelButtons.get(channelIndex).setDisable(true);
         }
         applyForAllChannels.setDisable(false);

@@ -175,12 +175,17 @@ public class LTR212Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        ltr212SettingsModel.getLTR212Instance().defineFrequency();
-        ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());
-        cm.giveChannelInfo(channel, Crate.LTR212, ltr212SettingsModel.getLTR212Instance().getSlot());
-        cm.initializeSignalGraphView();
-        cm.checkCalibration();
-        changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        toggleProgressIndicatorState(false);
+        new Thread(() -> {
+            ltr212SettingsModel.getLTR212Instance().defineFrequency();
+            ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());
+            cm.giveChannelInfo(channel, Crate.LTR212, ltr212SettingsModel.getLTR212Instance().getSlot());
+            cm.initializeSignalGraphView();
+            cm.checkCalibration();
+            toggleProgressIndicatorState(true);
+            changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        }).start();
+
     }
 
     @FXML

@@ -132,7 +132,7 @@ public class LTR24Settings implements BaseController {
             ltr24ChannelsSettings.saveSettings();
             ltr24ModuleSettings.toggleUiElementsState(false);
             ltr24ModuleSettings.saveSettings();
-//            closeConnection();
+            closeConnection();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();
@@ -156,12 +156,16 @@ public class LTR24Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        ltr24SettingsModel.getLTR24Instance().defineFrequency();
-        ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
-        cm.giveChannelInfo(channel, Crate.LTR24, ltr24SettingsModel.getLTR24Instance().getSlot());
-        cm.initializeSignalGraphView();
-        cm.checkCalibration();
-        changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        toggleProgressIndicatorState(false);
+        new Thread(() -> {
+            ltr24SettingsModel.getLTR24Instance().defineFrequency();
+            ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
+            cm.giveChannelInfo(channel, Crate.LTR24, ltr24SettingsModel.getLTR24Instance().getSlot());
+            cm.initializeSignalGraphView();
+            cm.checkCalibration();
+            toggleProgressIndicatorState(true);
+            changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        }).start();
     }
 
     public void handleValueOfChannelN2() {

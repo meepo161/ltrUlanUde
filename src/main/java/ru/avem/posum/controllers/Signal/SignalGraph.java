@@ -417,15 +417,11 @@ public class SignalGraph implements BaseController {
             }
         }).start();
 
-        new Thread(() -> {
-            clearSeries();
-            signalModel.setAccurateFrequencyCalculation(false);
-            Utils.sleep(2500);
-            Platform.runLater(() -> {
-                horizontalScalesComboBox.getSelectionModel().select(2);
-                signalModel.setAccurateFrequencyCalculation(true);
-            });
-        }).start();
+        clearSeries();
+        signalModel.setAccurateFrequencyCalculation(false);
+        Utils.sleep(2500); // ожидание первого пакета данных
+        Platform.runLater(() -> horizontalScalesComboBox.getSelectionModel().select(2));
+        signalModel.setAccurateFrequencyCalculation(true);
     }
 
     private void showData() {
@@ -537,20 +533,22 @@ public class SignalGraph implements BaseController {
 
     @FXML
     private void handleBackButton() {
-        stopReceivingOfData();
-        resetShowingSettings();
-        changeScene();
+        toggleProgressIndicatorState(false);
+        new Thread(() -> {
+            stopReceivingOfData();
+            resetShowingSettings();
+            changeScene();
+        }).start();
     }
 
     private void stopReceivingOfData() {
-        toggleProgressIndicatorState(false);
         cm.setStopped(true);
         Utils.sleep(1000);
         signalModel.getAdc().stop();
     }
 
-    private void toggleProgressIndicatorState(boolean hide) {
-        if (hide) {
+    private void toggleProgressIndicatorState(boolean isHidden) {
+        if (isHidden) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
         } else {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));

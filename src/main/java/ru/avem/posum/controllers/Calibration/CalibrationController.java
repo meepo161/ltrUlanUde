@@ -50,6 +50,8 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField loadValueNameTextField;
     @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
     private Button saveButton;
     @FXML
     private CheckBox setChannelValueCheckBox;
@@ -344,10 +346,22 @@ public class CalibrationController implements BaseController {
 
     @FXML
     public void handleBackButton() {
-        stopped = true;
-        clearCalibrationData();
-        cm.checkCalibration();
-        wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        toggleProgressIndicatorState(false);
+        new Thread(() -> {
+            stopped = true;
+            clearCalibrationData();
+            cm.checkCalibration();
+            toggleProgressIndicatorState(true);
+            wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
+        }).start();
+    }
+
+    private void toggleProgressIndicatorState(boolean isHidden) {
+        if (isHidden) {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        } else {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
+        }
     }
 
     private void clearCalibrationData() {

@@ -528,10 +528,6 @@ public class SettingsModel implements BaseController {
         return modulesNames;
     }
 
-    public HashMap<Integer, Module> getModules() {
-        return modules;
-    }
-
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;

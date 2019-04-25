@@ -222,7 +222,6 @@ class LTR24ChannelsSettings extends LTR24Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             CheckBox channel = checkBoxes.get(channelIndex);
             channel.setDisable(false);
-            checkBoxes.get(channelIndex).setDisable(!channel.isSelected());
             descriptions.get(channelIndex).setDisable(!channel.isSelected());
             typesOfChannelComboBoxes.get(channelIndex).setDisable(!channel.isSelected());
             measuringRangesComboBoxes.get(channelIndex).setDisable(!channel.isSelected());
