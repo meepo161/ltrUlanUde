@@ -34,6 +34,8 @@ public class LTR34Settings implements BaseController {
     @FXML
     private Label calibrationLabel;
     @FXML
+    private Label checkIcon;
+    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -117,6 +119,8 @@ public class LTR34Settings implements BaseController {
     private Button stopSignalButton;
     @FXML
     private StatusBar statusBar;
+    @FXML
+    private Label warningIcon;
 
     private ControllerManager cm;
     private LTR34ChannelsSettings ltr34ChannelsSettings;
@@ -145,6 +149,7 @@ public class LTR34Settings implements BaseController {
     @FXML
     public void handleGenerateSignal() {
         toggleProgressIndicatorState(false);
+        statusBarLine.setStatus("     Запуск генерации сигнала", statusBar);
         ltr34ChannelsSettings.disableUiElementsState();
         ltr34ModuleSettings.disableUiElementsState();
 
@@ -162,7 +167,8 @@ public class LTR34Settings implements BaseController {
             }
 
             toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus(ltr34SettingsModel.getLTR34Instance().getStatus(), statusBar));
+            Platform.runLater(() -> statusBarLine.setStatus("    " +
+                    ltr34SettingsModel.getLTR34Instance().getStatus(), statusBar, checkIcon, warningIcon));
         }).start();
     }
 

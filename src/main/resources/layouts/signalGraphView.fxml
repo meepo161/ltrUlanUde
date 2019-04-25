@@ -111,8 +111,8 @@
                </GridPane.margin></Button>
             <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="16" />
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="15" GridPane.rowIndex="16" />
-            <Label fx:id="warningIcon" style="-fx-font-size: 22px; -fx-opacity: 0;" text="⚠" GridPane.rowIndex="16" />
-            <Label fx:id="checkIcon" style="-fx-opacity: 0;" text=" ✔" GridPane.rowIndex="16" />
+            <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="⚠" GridPane.rowIndex="16" />
+            <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text=" ✔" GridPane.rowIndex="16" />
          </children>
       </GridPane>
    </children>

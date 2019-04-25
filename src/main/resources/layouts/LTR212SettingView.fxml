@@ -197,8 +197,8 @@
             </Button>
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="22" />
             <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="22" />
-            <Label fx:id="warningIcon" style="-fx-font-size: 32px; -fx-opacity: 0;" text="⚠" GridPane.rowIndex="22" />
-            <Label fx:id="checkIcon" style="-fx-opacity: 0; -fx-font-size: 26px;" text=" ✔" GridPane.rowIndex="22" />
+            <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="⚠" GridPane.rowIndex="22" />
+            <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0; -fx-font-size: 26px;" text=" ✔" GridPane.rowIndex="22" />
          </children>
       </GridPane>
    </children>

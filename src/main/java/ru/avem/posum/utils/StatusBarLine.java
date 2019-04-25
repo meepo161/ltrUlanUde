@@ -16,7 +16,18 @@ public class StatusBarLine {
 
     public void setStatus(String text, StatusBar statusBar) {
         statusBar.setText(text);
+        toggleIconsState("-fx-opacity: 1;");
+        handleStatusBar(statusBar);
+    }
 
+    private void toggleIconsState(String state) {
+        if (checkIcon != null && warningIcon != null) {
+            checkIcon.setStyle(state);
+            warningIcon.setStyle(state);
+        }
+    }
+
+    private void handleStatusBar(StatusBar statusBar) {
         if (isStatusBarHidden) {
             startNewStatusBarThread(statusBar);
         } else {
@@ -25,20 +36,30 @@ public class StatusBarLine {
         }
     }
 
+    private void startNewStatusBarThread(StatusBar statusBar) {
+        statusBarThread = new Thread(() -> {
+            isStatusBarHidden = false;
+            try {
+                sleep(5000);
+                Platform.runLater(() -> {
+                    toggleIconsState("-fx-opacity: 0;");
+                    statusBar.setText("");
+                });
+            } catch (InterruptedException ignored) {
+            } finally {
+                isStatusBarHidden = true;
+            }
+        });
+        statusBarThread.start();
+    }
+
     public void setStatus(String text, StatusBar statusBar, Label checkIcon, Label warningIcon) {
         this.checkIcon = checkIcon;
         this.text = text;
         this.warningIcon = warningIcon;
-
         initIcons();
         statusBar.setText(text);
-
-        if (isStatusBarHidden) {
-            startNewStatusBarThread(statusBar);
-        } else {
-            statusBarThread.interrupt();
-            startNewStatusBarThread(statusBar);
-        }
+        handleStatusBar(statusBar);
     }
 
     private void initIcons() {
@@ -50,25 +71,5 @@ public class StatusBarLine {
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
         }
-    }
-
-    private void startNewStatusBarThread(StatusBar statusBar) {
-        statusBarThread = new Thread(() -> {
-            isStatusBarHidden = false;
-            try {
-                sleep(5000);
-                Platform.runLater(() -> {
-                    if (checkIcon != null && warningIcon != null) {
-                        checkIcon.setStyle("-fx-opacity: 0;");
-                        warningIcon.setStyle("-fx-opacity: 0;");
-                    }
-                    statusBar.setText("");
-                });
-            } catch (InterruptedException ignored) {
-            } finally {
-                isStatusBarHidden = true;
-            }
-        });
-        statusBarThread.start();
     }
 }
