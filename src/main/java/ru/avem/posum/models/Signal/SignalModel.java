@@ -107,6 +107,7 @@ public class SignalModel {
     public void getData() {
         addReceivingDataInstructions();
         runInstructions();
+        System.out.printf("Thread: %d, data[0]: %f\n", Thread.currentThread().getId(), adc.getData()[0]);
     }
 
     private void addReceivingDataInstructions() {

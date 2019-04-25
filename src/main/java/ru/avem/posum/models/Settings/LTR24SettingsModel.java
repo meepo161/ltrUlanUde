@@ -17,6 +17,7 @@ public class LTR24SettingsModel {
 
     public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
         this.ltr24 = (LTR24) instancesOfModules.get(slot);
+        ltr24.setSlot(slot);
         this.checkedChannels = ltr24.getCheckedChannels();
         this.descriptions = ltr24.getDescriptions();
         this.measuringRanges = ltr24.getMeasuringRanges();

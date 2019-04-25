@@ -139,9 +139,9 @@ public class LTR212Settings implements BaseController {
 
     private void toggleProgressIndicatorState(boolean hide) {
         if (hide) {
-            progressIndicator.setStyle("-fx-opacity: 0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
         } else {
-            progressIndicator.setStyle("-fx-opacity: 1.0;");
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
     }
 
@@ -177,7 +177,7 @@ public class LTR212Settings implements BaseController {
     private void showChannelValue(int channel) {
         ltr212SettingsModel.getLTR212Instance().defineFrequency();
         ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());
-        cm.giveChannelInfo(channel, Crate.LTR24, ltr212SettingsModel.getLTR212Instance().getSlot());
+        cm.giveChannelInfo(channel, Crate.LTR212, ltr212SettingsModel.getLTR212Instance().getSlot());
         cm.initializeSignalGraphView();
         cm.checkCalibration();
         changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);

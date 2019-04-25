@@ -15,6 +15,7 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.models.Settings.SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -129,13 +130,37 @@ public class Settings implements BaseController {
         hardwareSettings = new HardwareSettings(this);
         hardwareSettings.showCrates();
         hardwareSettings.showModules();
-        hardwareSettings.addDoubleClickListener(cratesListView, true);
-        hardwareSettings.addDoubleClickListener(modulesListView, false);
-        cm.createListModulesControllers(hardwareSettings.getModulesNames());
+        addDoubleClickListener(cratesListView, true);
+        addDoubleClickListener(modulesListView, false);
+    }
+
+    private void addDoubleClickListener(ListView<String> listView, boolean forCrate) {
+        listView.setCellFactory(tv -> {
+            ListCell<String> cell = new ListCell<String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item != null) {
+                        setText(item);
+                    }
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!cell.isEmpty())) {
+                    if (forCrate) {
+                        handleChooseCrate();
+                    } else {
+                        handleSetupModule();
+                    }
+                }
+            });
+            return cell;
+        });
     }
 
     @FXML
     public void handleChooseCrate() {
+        cm.createListModulesControllers(hardwareSettings.getModulesNames());
         toggleProgressIndicatorState(false);
         new Thread(() -> {
             hardwareSettings.initialize();

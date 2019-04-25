@@ -115,7 +115,7 @@ public class LTR212ChannelsSettings extends LTR212Settings {
         ranges.add("0 мВ/+40 мВ");
         ranges.add("0 мВ/+80 мВ");
 
-        setComboBox(typesOfChannelComboBoxes, ranges);
+        setComboBox(measuringRangesComboBoxes, ranges);
     }
 
     private void listenCheckBoxes() {

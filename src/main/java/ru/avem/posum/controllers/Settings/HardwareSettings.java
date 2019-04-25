@@ -46,30 +46,6 @@ public class HardwareSettings extends Settings {
         }));
     }
 
-    public void addDoubleClickListener(ListView<String> listView, boolean forCrate) {
-        listView.setCellFactory(tv -> {
-            ListCell<String> cell = new ListCell<String>() {
-                @Override
-                protected void updateItem(String item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item != null) {
-                        setText(item);
-                    }
-                }
-            };
-            cell.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!cell.isEmpty())) {
-                    if (forCrate) {
-                        handleChooseCrate();
-                    } else {
-                        handleSetupModule();
-                    }
-                }
-            });
-            return cell;
-        });
-    }
-
     public void initialize() {
         for (int i = 0; i < getCrates().size(); i++) {
             if (cratesListView.getSelectionModel().isSelected(i)) {
