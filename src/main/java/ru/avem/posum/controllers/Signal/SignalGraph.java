@@ -170,22 +170,29 @@ public class SignalGraph implements BaseController {
     }
 
     private void setScale(NumberAxis axis) {
-        axis.setLowerBound(signalGraphModel.getLowerBound());
-        axis.setTickUnit(signalGraphModel.getTickUnit());
-        axis.setUpperBound(signalGraphModel.getUpperBound());
+        Platform.runLater(() -> {
+            axis.setLowerBound(signalGraphModel.getLowerBound());
+            axis.setTickUnit(signalGraphModel.getTickUnit());
+            axis.setUpperBound(signalGraphModel.getUpperBound());
+        });
     }
 
     private void listenScalesComboBox(ComboBox<String> comboBox) {
         comboBox.valueProperty().addListener(observable -> {
             if (!comboBox.getSelectionModel().isEmpty()) {
-                signalGraphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
-                signalGraphModel.calculateGraphBounds();
+                new Thread(() -> {
+                    toggleProgressIndicatorState(false);
+                    statusBarLine.setStatus("     Установка нового масштаба", statusBar);
+                    signalGraphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
+                    signalGraphModel.calculateGraphBounds();
+                });
 
                 if (comboBox == verticalScalesComboBox) {
                     setScale((NumberAxis) graph.getYAxis());
                 } else {
                     setScale((NumberAxis) graph.getXAxis());
                 }
+                toggleProgressIndicatorState(true);
             }
         });
     }
