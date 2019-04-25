@@ -170,29 +170,22 @@ public class SignalGraph implements BaseController {
     }
 
     private void setScale(NumberAxis axis) {
-        Platform.runLater(() -> {
-            axis.setLowerBound(signalGraphModel.getLowerBound());
-            axis.setTickUnit(signalGraphModel.getTickUnit());
-            axis.setUpperBound(signalGraphModel.getUpperBound());
-        });
+        axis.setLowerBound(signalGraphModel.getLowerBound());
+        axis.setTickUnit(signalGraphModel.getTickUnit());
+        axis.setUpperBound(signalGraphModel.getUpperBound());
     }
 
     private void listenScalesComboBox(ComboBox<String> comboBox) {
         comboBox.valueProperty().addListener(observable -> {
             if (!comboBox.getSelectionModel().isEmpty()) {
-                new Thread(() -> {
-                    toggleProgressIndicatorState(false);
-                    statusBarLine.setStatus("     Установка нового масштаба", statusBar);
-                    signalGraphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
-                    signalGraphModel.calculateGraphBounds();
-                });
+                signalGraphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
+                signalGraphModel.calculateGraphBounds();
 
                 if (comboBox == verticalScalesComboBox) {
                     setScale((NumberAxis) graph.getYAxis());
                 } else {
                     setScale((NumberAxis) graph.getXAxis());
                 }
-                toggleProgressIndicatorState(true);
             }
         });
     }
@@ -227,11 +220,9 @@ public class SignalGraph implements BaseController {
             int lastScale = horizontalScalesComboBox.getItems().size() - 1;
             if (selectedScale == lastScale) {
                 horizontalScalesComboBox.getSelectionModel().select(lastScale - 1);
-                Utils.sleep(1000);
                 horizontalScalesComboBox.getSelectionModel().select(lastScale);
             } else {
                 horizontalScalesComboBox.getSelectionModel().select(lastScale);
-                Utils.sleep(1000);
                 horizontalScalesComboBox.getSelectionModel().select(selectedScale);
             }
         });
@@ -569,10 +560,12 @@ public class SignalGraph implements BaseController {
     }
 
     private void resetShowingSettings() {
-        disableAutoRange();
-        disableAverage();
-        disableCalibration();
-        signalModel.setLoadsCounter(0);
+        Platform.runLater(() -> {
+            disableAutoRange();
+            disableAverage();
+            disableCalibration();
+            signalModel.setLoadsCounter(0);
+        });
     }
 
     private void disableAutoRange() {
