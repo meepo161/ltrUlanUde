@@ -87,7 +87,7 @@
                         <Insets left="10.0" />
                      </GridPane.margin>
                   </ProgressIndicator>
-                  <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="⚠" GridPane.rowIndex="2" />
+                  <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="❗" GridPane.rowIndex="2" />
                   <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text=" ✔" GridPane.rowIndex="2" />
                     </children>
                 </GridPane>

@@ -16,7 +16,7 @@ public class StatusBarLine {
 
     public void setStatus(String text, StatusBar statusBar) {
         statusBar.setText(text);
-        toggleIconsState("-fx-opacity: 1;");
+        toggleIconsState("-fx-opacity: 0;");
         handleStatusBar(statusBar);
     }
 
@@ -57,19 +57,20 @@ public class StatusBarLine {
         this.checkIcon = checkIcon;
         this.text = text;
         this.warningIcon = warningIcon;
-        initIcons();
-        statusBar.setText(text);
+        initIcons(statusBar);
         handleStatusBar(statusBar);
     }
 
-    private void initIcons() {
+    private void initIcons(StatusBar statusBar) {
         checkIcon.setTextFill(Color.web("#009700"));
-        warningIcon.setTextFill(Color.web("#FAB600"));
+        warningIcon.setTextFill(Color.web("#D30303"));
 
         if (text.equals("     Операция успешно выполнена")) {
             checkIcon.setStyle("-fx-opacity: 1;");
+            statusBar.setText(text.substring(1));
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
+            statusBar.setText(text.substring(2));
         }
     }
 }
