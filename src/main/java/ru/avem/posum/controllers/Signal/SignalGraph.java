@@ -396,7 +396,7 @@ public class SignalGraph implements BaseController {
             setGraphBounds();
             setSignalParametersLabels();
         } else {
-            statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", statusBar);
+            statusBarLine.setStatus("     Градуировочные коэффициенты отсутсвуют", statusBar);
         }
     }
 
@@ -534,6 +534,7 @@ public class SignalGraph implements BaseController {
     @FXML
     private void handleBackButton() {
         toggleProgressIndicatorState(false);
+        statusBarLine.setStatus("     Загрузка настроек модуля", statusBar);
         new Thread(() -> {
             stopReceivingOfData();
             resetShowingSettings();
@@ -581,7 +582,7 @@ public class SignalGraph implements BaseController {
         String moduleType = signalModel.getModuleType();
         int slot = signalModel.getSlot();
         toggleProgressIndicatorState(true);
-        wm.setModuleScene(moduleType, slot - 1);
+        Platform.runLater(() -> wm.setModuleScene(moduleType, slot - 1));
         cm.loadItemsForModulesTableView();
     }
 

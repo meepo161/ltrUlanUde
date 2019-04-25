@@ -114,6 +114,7 @@ public class LTR212Settings implements BaseController {
 
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
+        Platform.runLater(() -> statusBarLine.setStatus("     Инициализация модуля", statusBar));
         ltr212ChannelsSettings.disableUiElementsState();
         ltr212ModuleSettings.toggleUiElementsState(true);
 
@@ -133,7 +134,8 @@ public class LTR212Settings implements BaseController {
             }
 
             toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus(ltr212SettingsModel.getLTR212Instance().getStatus(), statusBar));
+            Platform.runLater(() -> statusBarLine.setStatus
+                    (String.format("    %s", ltr212SettingsModel.getLTR212Instance().getStatus()), statusBar));
         }).start();
     }
 
@@ -167,7 +169,7 @@ public class LTR212Settings implements BaseController {
     }
 
     private void changeScene(WindowsManager.Scenes settingsScene) {
-        wm.setScene(settingsScene);
+        Platform.runLater(() -> wm.setScene(settingsScene));
     }
 
     public void handleValueOfChannelN1() {
@@ -176,6 +178,7 @@ public class LTR212Settings implements BaseController {
 
     private void showChannelValue(int channel) {
         toggleProgressIndicatorState(false);
+        Platform.runLater(() -> statusBarLine.setStatus("     Подготовка данных для отображения", statusBar));
         new Thread(() -> {
             ltr212SettingsModel.getLTR212Instance().defineFrequency();
             ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());

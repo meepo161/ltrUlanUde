@@ -160,9 +160,17 @@ public class Settings implements BaseController {
 
     @FXML
     public void handleChooseCrate() {
-        cm.createListModulesControllers(hardwareSettings.getModulesNames());
-        toggleProgressIndicatorState(false);
         new Thread(() -> {
+            cratesListView.setDisable(true);
+            chooseCrateButton.setDisable(true);
+            saveSettingsButton.setDisable(true);
+            toggleProgressIndicatorState(false);
+            Platform.runLater(() -> statusBarLine.setStatus("     Устанавливается соединение с модулями",
+                    statusBar));
+        }).start();
+
+        new Thread(() -> {
+            cm.createListModulesControllers(hardwareSettings.getModulesNames());
             hardwareSettings.initialize();
             toggleProgressIndicatorState(true);
         }).start();
@@ -178,13 +186,16 @@ public class Settings implements BaseController {
 
     @FXML
     public void handleSetupModule() {
-        for (int i = 0; i < hardwareSettings.getModulesNames().size(); i++) {
-            if (modulesListView.getSelectionModel().isSelected(i)) {
-                hardwareSettings.loadModuleSettings();
-                wm.setModuleScene(hardwareSettings.getModuleName(), hardwareSettings.getSelectedModuleIndex());
-                break;
+        new Thread(() -> {
+            for (int i = 0; i < hardwareSettings.getModulesNames().size(); i++) {
+                if (modulesListView.getSelectionModel().isSelected(i)) {
+                    hardwareSettings.loadModuleSettings();
+                    Platform.runLater(() -> wm.setModuleScene(hardwareSettings.getModuleName(),
+                            hardwareSettings.getSelectedModuleIndex()));
+                    break;
+                }
             }
-        }
+        }).start();
     }
 
     @FXML

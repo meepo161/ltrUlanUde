@@ -49,12 +49,6 @@ public class HardwareSettings extends Settings {
     public void initialize() {
         for (int i = 0; i < getCrates().size(); i++) {
             if (cratesListView.getSelectionModel().isSelected(i)) {
-                Platform.runLater(() -> settings.getStatusBarLine().setStatus
-                        ("     Устанавливается соединение с модулями", settings.getStatusBar()));
-
-                cratesListView.setDisable(true);
-                chooseCrateButton.setDisable(true);
-                saveSettingsButton.setDisable(true);
                 initSettingsModel();
                 crate.initialize(crateSerialNumber);
                 toggleUiElements(true);
