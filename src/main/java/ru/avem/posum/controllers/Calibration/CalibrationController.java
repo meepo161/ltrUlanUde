@@ -358,7 +358,6 @@ public class CalibrationController implements BaseController {
             clearCalibrationData();
             cm.checkCalibration();
             toggleProgressIndicatorState(true);
-            statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
     }
@@ -366,6 +365,7 @@ public class CalibrationController implements BaseController {
     private void toggleProgressIndicatorState(boolean isHidden) {
         if (isHidden) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+            statusBarLine.clearStatusBar(statusBar);
         } else {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }

@@ -48,8 +48,8 @@ public class SettingsModel implements BaseController {
     private long testProgramId;
 
     public void createModulesInstances(ObservableList<String> modulesNames) {
-        this.crateSerialNumber = cm.getCrateSerialNumber();
         this.modulesNames = modulesNames;
+        this.crateSerialNumber = cm.getCrateSerialNumber();
         this.crate = cm.getCrateModelInstance();
 
         addInitModuleInstructions();
@@ -526,6 +526,10 @@ public class SettingsModel implements BaseController {
 
     public ObservableList<String> getModulesNames() {
         return modulesNames;
+    }
+
+    public void setCrateSerialNumber(String crateSerialNumber) {
+        this.crateSerialNumber = crateSerialNumber;
     }
 
     @Override

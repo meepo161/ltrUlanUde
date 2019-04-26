@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import org.apache.poi.ss.formula.functions.T;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -22,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Settings implements BaseController {
+    @FXML
+    private Button backButton;
     @FXML
     private Label checkIcon;
     @FXML
@@ -185,9 +188,10 @@ public class Settings implements BaseController {
         }
     }
 
-    private void toggleProgressIndicatorState(boolean hide) {
+    public void toggleProgressIndicatorState(boolean hide) {
         if (hide) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+            statusBarLine.clearStatusBar(statusBar);
         } else {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
@@ -367,6 +371,10 @@ public class Settings implements BaseController {
 
     public void refreshModulesList() {
         modulesListView.setItems(hardwareSettings.getModulesNames());
+    }
+
+    public Button getBackButton() {
+        return backButton;
     }
 
     public Label getCheckIcon() {

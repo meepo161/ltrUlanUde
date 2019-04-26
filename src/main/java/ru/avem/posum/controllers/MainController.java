@@ -222,10 +222,12 @@ public class MainController implements BaseController {
 
         if (isTestProgramSelected) {
             toggleProgressIndicatorState(false);
+            statusBarLine.setStatus("Копирование программы испытаний", statusBar);
             new Thread(() -> {
                 copyTestProgram();
                 copyModulesSettings();
                 reloadTestProgramsList();
+                statusBarLine.setStatusOk(true);
                 showNotification("Программа испытаний скопирована");
             }).start();
         }
@@ -279,7 +281,8 @@ public class MainController implements BaseController {
     private void showNotification(String text) {
         Platform.runLater(() -> {
             toggleProgressIndicatorState(true);
-            statusBarLine.setStatus("     " + text, statusBar, checkIcon, warningIcon);
+            statusBarLine.setMainView(true);
+            statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon);
         });
     }
 
@@ -289,9 +292,11 @@ public class MainController implements BaseController {
 
         if (isTestProgramSelected) {
             toggleProgressIndicatorState(false);
+            statusBarLine.setStatus("Удаление программы испытаний", statusBar);
             new Thread(() -> {
                 delete();
                 reloadTestProgramsList();
+                statusBarLine.setStatusOk(true);
                 showNotification("Программа испытаний удалена");
             }).start();
         }

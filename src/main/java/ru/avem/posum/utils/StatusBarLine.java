@@ -19,9 +19,11 @@ public class StatusBarLine {
 
     public void setStatus(String text, StatusBar statusBar) {
         this.statusBar = statusBar;
-        toggleIconsState("-fx-opacity: 0;");
-        statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
-        statusBar.setText(text);
+        Platform.runLater(() -> {
+            toggleIconsState("-fx-opacity: 0;");
+            statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
+            statusBar.setText(text);
+        });
         handleStatusBar();
     }
 
@@ -46,7 +48,7 @@ public class StatusBarLine {
             isStatusBarHidden = false;
             try {
                 sleep(5000);
-                clearStatusBar();
+                clearStatusBar(statusBar);
             } catch (InterruptedException ignored) {
             } finally {
                 isStatusBarHidden = true;
@@ -71,7 +73,8 @@ public class StatusBarLine {
 
         if (text.equals("Операция успешно выполнена") || isStatusOk) {
             checkIcon.setStyle("-fx-opacity: 1;");
-            statusBar.setStyle("-fx-padding: 0 0 0 1.1;");
+            String padding = isMainView ? "-fx-padding: 0 0 0 4;" : "-fx-padding: 0 0 0 1.1;";
+            statusBar.setStyle(padding);
             isStatusOk = false;
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
@@ -81,11 +84,9 @@ public class StatusBarLine {
         }
     }
 
-    public void clearStatusBar() {
-        Platform.runLater(() -> {
-            toggleIconsState("-fx-opacity: 0;");
-            statusBar.setText("");
-        });
+    public void clearStatusBar(StatusBar statusBar) {
+        toggleIconsState("-fx-opacity: 0;");
+        Platform.runLater(() -> statusBar.setText(""));
     }
 
     public void setStatusOk(boolean statusOk) {

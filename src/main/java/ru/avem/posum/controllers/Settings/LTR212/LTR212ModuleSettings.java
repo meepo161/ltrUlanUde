@@ -113,12 +113,19 @@ class LTR212ModuleSettings extends LTR212Settings {
     void toggleUiElementsState(boolean isDisable) {
         adcModes.setDisable(isDisable);
         factoryCalibration.setDisable(isDisable);
-        firPathTextField.setDisable(isDisable);
-        firPathButton.setDisable(isDisable);
-        firCheckBox.setDisable(isDisable);
-        iirCheckBox.setDisable(isDisable);
-        iirPathTextField.setDisable(isDisable);
-        iirPathButton.setDisable(isDisable);
+
+        if (firCheckBox.isSelected()) {
+            firPathTextField.setDisable(isDisable);
+            firPathButton.setDisable(isDisable);
+            firCheckBox.setDisable(isDisable);
+        }
+
+        if (iirCheckBox.isSelected()) {
+            iirCheckBox.setDisable(isDisable);
+            iirPathTextField.setDisable(isDisable);
+            iirPathButton.setDisable(isDisable);
+        }
+
         referenceVoltageCheckBox.setDisable(isDisable);
         referenceVoltageComboBox.setDisable(isDisable);
     }

@@ -215,7 +215,7 @@ public class LTR34Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        statusBarLine.clearStatusBar();
+        statusBarLine.clearStatusBar(statusBar);
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 

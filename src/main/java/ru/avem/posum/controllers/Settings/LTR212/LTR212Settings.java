@@ -149,6 +149,7 @@ public class LTR212Settings implements BaseController {
     private void toggleProgressIndicatorState(boolean hide) {
         if (hide) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+            statusBarLine.clearStatusBar(statusBar);
         } else {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
         }
@@ -165,7 +166,7 @@ public class LTR212Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        statusBarLine.clearStatusBar();
+        statusBarLine.clearStatusBar(statusBar);
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -200,7 +201,6 @@ public class LTR212Settings implements BaseController {
             toggleProgressIndicatorState(true);
             ltr212ChannelsSettings.toggleValueOnChannelButtons(false);
             backButton.setDisable(false);
-            statusBarLine.clearStatusBar();
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
         }).start();
     }

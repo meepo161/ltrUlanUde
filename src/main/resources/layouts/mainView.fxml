@@ -79,16 +79,22 @@
                         <Button fx:id="openExperimentButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleOpenExperiment" text="Открыть" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
                   <StatusBar fx:id="statusBar" styleClass="status-bar" stylesheets="@../css/main.css" text="" GridPane.rowIndex="2">
                      <GridPane.margin>
-                        <Insets left="10.0" />
+                        <Insets left="25.0" />
                      </GridPane.margin>
                   </StatusBar>
-                  <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.rowIndex="2">
+                  <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets left="10.0" />
                      </GridPane.margin>
                   </ProgressIndicator>
-                  <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="❗" GridPane.rowIndex="2" />
-                  <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text=" ✔" GridPane.rowIndex="2" />
+                  <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="❗" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin></Label>
+                  <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text=" ✔" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="8.0" />
+                     </GridPane.margin></Label>
                     </children>
                 </GridPane>
             </children>

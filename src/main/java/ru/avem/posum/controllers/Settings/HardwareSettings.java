@@ -8,6 +8,7 @@ import javafx.scene.control.ListView;
 import ru.avem.posum.hardware.Crate;
 
 public class HardwareSettings extends Settings {
+    private Button backButton;
     private Button chooseCrateButton;
     private Crate crate = new Crate();
     private ListView<String> cratesListView;
@@ -23,6 +24,7 @@ public class HardwareSettings extends Settings {
     private Settings settings;
 
     public HardwareSettings(Settings settings) {
+        this.backButton = settings.getBackButton();
         this.chooseCrateButton = settings.getChooseCrateButton();
         this.cratesListView = settings.getCratesListView();
         this.modulesListView = settings.getModulesListView();
@@ -55,8 +57,8 @@ public class HardwareSettings extends Settings {
                 saveSettingsButton.setDisable(false);
             } else {
                 settings.getStatusBarLine().setMainView(true);
-                 settings.getStatusBarLine().setStatus("Крейт не выбран", settings.getStatusBar(),
-                         settings.getCheckIcon(), settings.getWarningIcon());
+                settings.getStatusBarLine().setStatus("Крейт не выбран", settings.getStatusBar(),
+                        settings.getCheckIcon(), settings.getWarningIcon());
             }
         }
     }
@@ -110,6 +112,26 @@ public class HardwareSettings extends Settings {
                 settings.getStatusBarLine().setStatus
                         ("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.",
                                 settings.getStatusBar());
+            } else {
+                settings.toggleProgressIndicatorState(false);
+                settings.getStatusBarLine().setStatus("Устанавливается соединение с модулями", settings.getStatusBar());
+
+                modulesListView.setDisable(true);
+                saveSettingsButton.setDisable(true);
+                setupModuleButton.setDisable(true);
+                backButton.setDisable(true);
+
+                modulesNames = crate.getModulesNames(selectedCrate);
+                modulesListView.setItems(modulesNames);
+                settings.getCm().createListModulesControllers(modulesNames);
+                settings.getSettingsModel().setControllerManager(settings.getCm());
+                settings.getSettingsModel().createModulesInstances(modulesNames);
+
+                modulesListView.setDisable(false);
+                saveSettingsButton.setDisable(false);
+                setupModuleButton.setDisable(false);
+                backButton.setDisable(false);
+                settings.toggleProgressIndicatorState(true);
             }
 
             cratesListView.getSelectionModel().select(selectedCrate);
