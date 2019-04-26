@@ -16,6 +16,8 @@ public class LTR24Settings implements BaseController {
     @FXML
     private CheckBox applyForAllChannels;
     @FXML
+    private Button backButton;
+    @FXML
     private CheckBox checkChannelN1;
     @FXML
     private CheckBox checkChannelN2;
@@ -98,7 +100,7 @@ public class LTR24Settings implements BaseController {
     @FXML
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("     Инициализация модуля", statusBar));
+        Platform.runLater(() -> statusBarLine.setStatus("Инициализация модуля", statusBar));
         ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 
@@ -119,8 +121,7 @@ public class LTR24Settings implements BaseController {
 
             toggleProgressIndicatorState(true);
             Platform.runLater(() -> statusBarLine.setStatus
-                    ("     " + ltr24SettingsModel.getLTR24Instance().getStatus(), statusBar,
-                            checkIcon, warningIcon));
+                    (ltr24SettingsModel.getLTR24Instance().getStatus(), statusBar, checkIcon, warningIcon));
         }).start();
     }
 
@@ -144,6 +145,7 @@ public class LTR24Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
+        statusBarLine.clearStatusBar();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -155,7 +157,7 @@ public class LTR24Settings implements BaseController {
     }
 
     private void changeScene(WindowsManager.Scenes settingsScene) {
-        wm.setScene(settingsScene);
+        Platform.runLater(() -> wm.setScene(settingsScene));
     }
 
     public void handleValueOfChannelN1() {
@@ -164,13 +166,21 @@ public class LTR24Settings implements BaseController {
 
     private void showChannelValue(int channel) {
         toggleProgressIndicatorState(false);
+        Platform.runLater(() -> statusBarLine.setStatus("Подготовка данных для отображения", statusBar));
+        backButton.setDisable(true);
+        ltr24ChannelsSettings.toggleValueOnChannelButtons(true);
+
         new Thread(() -> {
             ltr24SettingsModel.getLTR24Instance().defineFrequency();
             ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
             cm.giveChannelInfo(channel, Crate.LTR24, ltr24SettingsModel.getLTR24Instance().getSlot());
             cm.initializeSignalGraphView();
             cm.checkCalibration();
+
             toggleProgressIndicatorState(true);
+            ltr24ChannelsSettings.toggleValueOnChannelButtons(false);
+            backButton.setDisable(false);
+            statusBarLine.clearStatusBar();
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
         }).start();
     }

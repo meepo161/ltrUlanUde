@@ -228,4 +228,10 @@ public class LTR212ChannelsSettings extends LTR212Settings {
         applyForAllChannels.setDisable(false);
         initializeButton.setDisable(false);
     }
+
+    void toggleValueOnChannelButtons(boolean isDisable) {
+        for (int channelIndex = 0; channelIndex < valueOnChannelButtons.size(); channelIndex++) {
+            valueOnChannelButtons.get(channelIndex).setDisable(isDisable);
+        }
+    }
 }

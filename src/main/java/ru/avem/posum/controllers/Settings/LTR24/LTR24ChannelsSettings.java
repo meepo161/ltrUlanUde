@@ -230,4 +230,10 @@ class LTR24ChannelsSettings extends LTR24Settings {
         applyForAllChannels.setDisable(false);
         initializeButton.setDisable(false);
     }
+
+    void toggleValueOnChannelButtons(boolean isDisable) {
+        for (int channelIndex = 0; channelIndex < valueOnChannelButtons.size(); channelIndex++) {
+            valueOnChannelButtons.get(channelIndex).setDisable(isDisable);
+        }
+    }
 }

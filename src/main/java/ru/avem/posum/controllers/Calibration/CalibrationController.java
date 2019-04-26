@@ -38,6 +38,8 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField channelValueTextField;
     @FXML
+    private Label checkIcon;
+    @FXML
     private TableColumn<CalibrationPointModel, String> loadChannelColumn;
     @FXML
     private ComboBox<String> loadValueMultiplierComboBox;
@@ -59,6 +61,8 @@ public class CalibrationController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private Label titleLabel;
+    @FXML
+    private Label warningIcon;
 
     private CalibrationModel calibrationModel = new CalibrationModel();
     private ContextMenu contextMenu = new ContextMenu();
@@ -341,18 +345,20 @@ public class CalibrationController implements BaseController {
 
     private void indicateResult() {
         saveButton.setDisable(true);
-        statusBarLine.setStatus("Настройки успешно сохранены", statusBar);
+        statusBarLine.setStatusOk(true);
+        statusBarLine.setStatus("Настройки успешно сохранены", statusBar, checkIcon, warningIcon);
     }
 
     @FXML
     public void handleBackButton() {
         toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("     Подготовка данных для отображения", statusBar));
+        Platform.runLater(() -> statusBarLine.setStatus("Подготовка данных для отображения", statusBar));
         new Thread(() -> {
             stopped = true;
             clearCalibrationData();
             cm.checkCalibration();
             toggleProgressIndicatorState(true);
+            statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
     }

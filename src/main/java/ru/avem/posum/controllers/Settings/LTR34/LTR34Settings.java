@@ -149,7 +149,7 @@ public class LTR34Settings implements BaseController {
     @FXML
     public void handleGenerateSignal() {
         toggleProgressIndicatorState(false);
-        statusBarLine.setStatus("     Запуск генерации сигнала", statusBar);
+        statusBarLine.setStatus("Запуск генерации сигнала", statusBar);
         ltr34ChannelsSettings.disableUiElementsState();
         ltr34ModuleSettings.disableUiElementsState();
 
@@ -167,8 +167,8 @@ public class LTR34Settings implements BaseController {
             }
 
             toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus("    " +
-                    ltr34SettingsModel.getLTR34Instance().getStatus(), statusBar, checkIcon, warningIcon));
+            Platform.runLater(() -> statusBarLine.setStatus(ltr34SettingsModel.getLTR34Instance().getStatus(),
+                    statusBar, checkIcon, warningIcon));
         }).start();
     }
 
@@ -190,7 +190,8 @@ public class LTR34Settings implements BaseController {
     }
 
     private void drawGraph() {
-        for (int channelIndex = 0; channelIndex < ltr34SettingsModel.getLTR34Instance().getChannelsCount(); channelIndex++) {
+        for (int channelIndex = 0; channelIndex < ltr34SettingsModel.getLTR34Instance().getChannelsCount();
+             channelIndex++) {
             if (ltr34ChannelsSettings.getCheckBoxes().get(channelIndex).isSelected()) {
                 graph.getData().add(ltr34SettingsModel.createSeries(channelIndex));
             }
@@ -214,6 +215,7 @@ public class LTR34Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
+        statusBarLine.clearStatusBar();
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 

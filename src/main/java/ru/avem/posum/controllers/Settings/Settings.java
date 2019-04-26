@@ -163,20 +163,26 @@ public class Settings implements BaseController {
 
     @FXML
     public void handleChooseCrate() {
-        new Thread(() -> {
-            cratesListView.setDisable(true);
-            chooseCrateButton.setDisable(true);
-            saveSettingsButton.setDisable(true);
-            toggleProgressIndicatorState(false);
-            Platform.runLater(() -> statusBarLine.setStatus("     Устанавливается соединение с модулями",
-                    statusBar));
-        }).start();
+        if (cratesListView.getSelectionModel().getSelectedIndex() == -1) {
+            statusBarLine.setMainView(true);
+            Platform.runLater(() -> statusBarLine.setStatus("Выделите крейт", statusBar, checkIcon,
+                    warningIcon));
+        } else {
+            new Thread(() -> {
+                cratesListView.setDisable(true);
+                chooseCrateButton.setDisable(true);
+                saveSettingsButton.setDisable(true);
+                toggleProgressIndicatorState(false);
+                Platform.runLater(() -> statusBarLine.setStatus("Устанавливается соединение с модулями",
+                        statusBar));
+            }).start();
 
-        new Thread(() -> {
-            cm.createListModulesControllers(hardwareSettings.getModulesNames());
-            hardwareSettings.initialize();
-            toggleProgressIndicatorState(true);
-        }).start();
+            new Thread(() -> {
+                cm.createListModulesControllers(hardwareSettings.getModulesNames());
+                hardwareSettings.initialize();
+                toggleProgressIndicatorState(true);
+            }).start();
+        }
     }
 
     private void toggleProgressIndicatorState(boolean hide) {
@@ -203,12 +209,34 @@ public class Settings implements BaseController {
 
     @FXML
     public void handleSaveTestProgramSettings() {
-        boolean isRequiredSettingsSet = hardwareSettings.checkHardwareSettings() & checkRequiredTextFields()
-                & checkTimeAndDateFormat();
+        boolean isRequiredSettingsSet = checkTimeAndDateFormat() & hardwareSettings.checkHardwareSettings()
+                & checkRequiredTextFields();
 
         if (isRequiredSettingsSet) {
             new Thread(this::save).start();
         }
+    }
+
+    private boolean checkTimeAndDateFormat() {
+        String time = testProgramTimeTextField.getText();
+        String date = testProgramDateTextField.getText();
+        boolean isTextFormatCorrect = true;
+
+        if (!time.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
+            statusBarLine.setMainView(true);
+            statusBarLine.setStatus("Неверно задано время испытаний", statusBar,
+                    checkIcon, warningIcon);
+            isTextFormatCorrect = false;
+        }
+
+        if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[2][\\d]{3}")) {
+            statusBarLine.setMainView(true);
+            statusBarLine.setStatus("Неверно задана дата испытаний", statusBar,
+                    checkIcon, warningIcon);
+            isTextFormatCorrect = false;
+        }
+
+        return isTextFormatCorrect;
     }
 
     private boolean checkRequiredTextFields() {
@@ -223,9 +251,11 @@ public class Settings implements BaseController {
                 label.setVisible(true);
                 isRequiredFieldsFilled = false;
 
-                Platform.runLater(() -> statusBarLine.setStatus
-                        ("     Перед сохранением настроек заполните обязательные поля основной информации",
-                                statusBar, checkIcon, warningIcon));
+                statusBarLine.setMainView(true);
+                statusBarLine.setStatus
+                        ("Перед сохранением настроек заполните обязательные поля основной информации",
+                                statusBar, checkIcon, warningIcon);
+
             } else {
                 filledFields++;
             }
@@ -238,24 +268,6 @@ public class Settings implements BaseController {
         return isRequiredFieldsFilled;
     }
 
-    private boolean checkTimeAndDateFormat() {
-        String time = testProgramTimeTextField.getText();
-        String date = testProgramDateTextField.getText();
-        boolean isTextFormatCorrect = true;
-
-        if (!time.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
-            statusBarLine.setStatus("     Неверно задано время испытаний", statusBar, checkIcon, warningIcon);
-            isTextFormatCorrect = false;
-        }
-
-        if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[2][\\d]{3}")) {
-            statusBarLine.setStatus("     Неверно задана дата испытаний", statusBar, checkIcon, warningIcon);
-            isTextFormatCorrect = false;
-        }
-
-        return isTextFormatCorrect;
-    }
-
     private void save() {
         toggleUiElements();
         saveSettings();
@@ -264,6 +276,7 @@ public class Settings implements BaseController {
 
     private void toggleUiElements() {
         toggleProgressIndicatorState(false);
+        Platform.runLater(() -> statusBarLine.setStatus("Сохранение программы испытаний", statusBar));
         setupModuleButton.setDisable(true);
         hideRequiredFieldsSymbols();
     }
@@ -356,6 +369,10 @@ public class Settings implements BaseController {
         modulesListView.setItems(hardwareSettings.getModulesNames());
     }
 
+    public Label getCheckIcon() {
+        return checkIcon;
+    }
+
     public Button getChooseCrateButton() {
         return chooseCrateButton;
     }
@@ -398,6 +415,10 @@ public class Settings implements BaseController {
 
     public TestProgram getTestProgram() {
         return testProgram;
+    }
+
+    public Label getWarningIcon() {
+        return warningIcon;
     }
 
     public void setEditMode(boolean editMode) {

@@ -9,15 +9,20 @@ import static java.lang.Thread.sleep;
 
 public class StatusBarLine {
     private Label checkIcon;
+    private boolean isMainView;
     private boolean isStatusBarHidden = true;
+    private boolean isStatusOk;
+    private StatusBar statusBar;
     private Thread statusBarThread;
     private String text;
     private Label warningIcon;
 
     public void setStatus(String text, StatusBar statusBar) {
-        statusBar.setText(text);
+        this.statusBar = statusBar;
         toggleIconsState("-fx-opacity: 0;");
-        handleStatusBar(statusBar);
+        statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
+        statusBar.setText(text);
+        handleStatusBar();
     }
 
     private void toggleIconsState(String state) {
@@ -27,24 +32,21 @@ public class StatusBarLine {
         }
     }
 
-    private void handleStatusBar(StatusBar statusBar) {
+    private void handleStatusBar() {
         if (isStatusBarHidden) {
-            startNewStatusBarThread(statusBar);
+            startNewStatusBarThread();
         } else {
             statusBarThread.interrupt();
-            startNewStatusBarThread(statusBar);
+            startNewStatusBarThread();
         }
     }
 
-    private void startNewStatusBarThread(StatusBar statusBar) {
+    private void startNewStatusBarThread() {
         statusBarThread = new Thread(() -> {
             isStatusBarHidden = false;
             try {
                 sleep(5000);
-                Platform.runLater(() -> {
-                    toggleIconsState("-fx-opacity: 0;");
-                    statusBar.setText("");
-                });
+                clearStatusBar();
             } catch (InterruptedException ignored) {
             } finally {
                 isStatusBarHidden = true;
@@ -55,22 +57,42 @@ public class StatusBarLine {
 
     public void setStatus(String text, StatusBar statusBar, Label checkIcon, Label warningIcon) {
         this.checkIcon = checkIcon;
+        this.statusBar = statusBar;
         this.text = text;
         this.warningIcon = warningIcon;
-        initIcons(statusBar);
-        handleStatusBar(statusBar);
+        initIcons();
+        statusBar.setText(text);
+        handleStatusBar();
     }
 
-    private void initIcons(StatusBar statusBar) {
+    private void initIcons() {
         checkIcon.setTextFill(Color.web("#009700"));
         warningIcon.setTextFill(Color.web("#D30303"));
 
-        if (text.equals("     Операция успешно выполнена")) {
+        if (text.equals("Операция успешно выполнена") || isStatusOk) {
             checkIcon.setStyle("-fx-opacity: 1;");
-            statusBar.setText(text.substring(1));
+            statusBar.setStyle("-fx-padding: 0 0 0 1.1;");
+            isStatusOk = false;
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
-            statusBar.setText(text.substring(2));
+            String padding = isMainView ? "-fx-padding: 0 0 0 -1.1;" : "-fx-padding: 0 0 0 -1.9;";
+            statusBar.setStyle(padding);
+            isMainView = false;
         }
+    }
+
+    public void clearStatusBar() {
+        Platform.runLater(() -> {
+            toggleIconsState("-fx-opacity: 0;");
+            statusBar.setText("");
+        });
+    }
+
+    public void setStatusOk(boolean statusOk) {
+        isStatusOk = statusOk;
+    }
+
+    public void setMainView(boolean mainView) {
+        isMainView = mainView;
     }
 }

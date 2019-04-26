@@ -54,8 +54,9 @@ public class HardwareSettings extends Settings {
                 toggleUiElements(true);
                 saveSettingsButton.setDisable(false);
             } else {
-                Platform.runLater(() -> settings.getStatusBarLine().setStatus("Крейт не выбран",
-                        settings.getStatusBar()));
+                settings.getStatusBarLine().setMainView(true);
+                 settings.getStatusBarLine().setStatus("Крейт не выбран", settings.getStatusBar(),
+                         settings.getCheckIcon(), settings.getWarningIcon());
             }
         }
     }
@@ -82,8 +83,9 @@ public class HardwareSettings extends Settings {
         boolean isCrateChosen = false;
 
         if (!chooseCrateButton.isDisabled()) {
-            settings.getStatusBarLine().setStatus("Ошибка сохранения настроек: необходимо выбрать крейт",
-                    settings.getStatusBar());
+            settings.getStatusBarLine().setMainView(true);
+            settings.getStatusBarLine().setStatus("Перед сохранением настроек необходимо выбрать крейт",
+                    settings.getStatusBar(), settings.getCheckIcon(), settings.getWarningIcon());
         } else {
             isCrateChosen = true;
         }
