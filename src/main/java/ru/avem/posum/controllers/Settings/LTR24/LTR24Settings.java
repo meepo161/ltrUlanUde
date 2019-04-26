@@ -100,7 +100,7 @@ public class LTR24Settings implements BaseController {
     @FXML
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("Инициализация модуля", statusBar));
+        statusBarLine.setStatus("Инициализация модуля", statusBar);
         ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 

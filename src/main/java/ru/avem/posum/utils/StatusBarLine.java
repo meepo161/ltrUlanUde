@@ -19,11 +19,9 @@ public class StatusBarLine {
 
     public void setStatus(String text, StatusBar statusBar) {
         this.statusBar = statusBar;
-        Platform.runLater(() -> {
-            toggleIconsState("-fx-opacity: 0;");
-            statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
-            statusBar.setText(text);
-        });
+        toggleIconsState("-fx-opacity: 0;");
+        statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
+        Platform.runLater(() -> statusBar.setText(text));
         handleStatusBar();
     }
 
@@ -63,7 +61,7 @@ public class StatusBarLine {
         this.text = text;
         this.warningIcon = warningIcon;
         initIcons();
-        statusBar.setText(text);
+        Platform.runLater(() -> statusBar.setText(text));
         handleStatusBar();
     }
 

@@ -282,6 +282,7 @@ public class Settings implements BaseController {
         toggleProgressIndicatorState(false);
         Platform.runLater(() -> statusBarLine.setStatus("Сохранение программы испытаний", statusBar));
         setupModuleButton.setDisable(true);
+        saveSettingsButton.setDisable(true);
         hideRequiredFieldsSymbols();
     }
 

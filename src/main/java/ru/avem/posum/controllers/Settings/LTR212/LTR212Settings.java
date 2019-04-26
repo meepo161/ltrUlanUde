@@ -121,7 +121,7 @@ public class LTR212Settings implements BaseController {
 
     public void handleInitialize() {
         toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("Инициализация модуля", statusBar));
+        statusBarLine.setStatus("Инициализация модуля", statusBar);
         ltr212ChannelsSettings.disableUiElementsState();
         ltr212ModuleSettings.toggleUiElementsState(true);
 
