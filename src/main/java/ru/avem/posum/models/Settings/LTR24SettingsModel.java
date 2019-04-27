@@ -8,7 +8,6 @@ import java.util.HashMap;
 public class LTR24SettingsModel {
     private String[] descriptions;
     private boolean[] checkedChannels;
-    private boolean connectionOpen = true;
     private LTR24 ltr24;
     private int[] measuringRanges;
     private String moduleName;
@@ -25,12 +24,13 @@ public class LTR24SettingsModel {
     }
 
     public void initModule() {
-        if (!connectionOpen) {
-            ltr24.openConnection();
-            connectionOpen = true;
-        }
+        ltr24.checkConnection();
 
-        ltr24.initializeModule();
+        if (ltr24.checkStatus()) {
+            ltr24.initializeModule();
+        } else {
+            ltr24.openConnection();
+        }
     }
 
     public String[] getDescriptions() {
@@ -59,14 +59,6 @@ public class LTR24SettingsModel {
 
     public int getSlot() {
         return slot;
-    }
-
-    public boolean isConnectionOpen() {
-        return connectionOpen;
-    }
-
-    public void setConnectionOpen(boolean connectionOpen) {
-        this.connectionOpen = connectionOpen;
     }
 
     public void setModuleName(String moduleName) {

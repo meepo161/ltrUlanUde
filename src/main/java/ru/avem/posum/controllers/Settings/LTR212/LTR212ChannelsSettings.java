@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LTR212ChannelsSettings extends LTR212Settings {
+class LTR212ChannelsSettings extends LTR212Settings {
     private CheckBox applyForAllChannels;
     private List<ComboBox<String>> typesOfChannelComboBoxes = new ArrayList<>();
     private List<CheckBox> checkBoxes = new ArrayList<>();
@@ -181,10 +181,15 @@ public class LTR212ChannelsSettings extends LTR212Settings {
 
     void setSettings() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            checkBoxes.get(channelIndex).setSelected(ltr212SettingsModel.getCheckedChannels()[channelIndex]);
-            typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(ltr212SettingsModel.getTypesOfChannels()[channelIndex]);
-            measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(ltr212SettingsModel.getMeasuringRanges()[channelIndex]);
-            descriptions.get(channelIndex).setText(ltr212SettingsModel.getDescriptions()[channelIndex].replace(", ", ""));
+            boolean isCheckBoxSelected = ltr212SettingsModel.getCheckedChannels()[channelIndex];
+            int typeOfChannel = ltr212SettingsModel.getTypesOfChannels()[channelIndex];
+            int measuringRange = ltr212SettingsModel.getMeasuringRanges()[channelIndex];
+            String description = ltr212SettingsModel.getDescriptions()[channelIndex].replace(", ", "");
+
+            checkBoxes.get(channelIndex).setSelected(isCheckBoxSelected);
+            typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel);
+            measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(measuringRange);
+            descriptions.get(channelIndex).setText(description);
         }
     }
 
@@ -204,7 +209,7 @@ public class LTR212ChannelsSettings extends LTR212Settings {
         }
     }
 
-    void disableUiElementsState() {
+    void disableUiElements() {
         for (int checkBoxIndex = 0; checkBoxIndex < checkBoxes.size(); checkBoxIndex++) {
             checkBoxes.get(checkBoxIndex).setDisable(true);
             descriptions.get(checkBoxIndex).setDisable(true);
@@ -230,8 +235,8 @@ public class LTR212ChannelsSettings extends LTR212Settings {
     }
 
     void toggleValueOnChannelButtons(boolean isDisable) {
-        for (int channelIndex = 0; channelIndex < valueOnChannelButtons.size(); channelIndex++) {
-            valueOnChannelButtons.get(channelIndex).setDisable(isDisable);
+        for (Button valueOnChannelButton : valueOnChannelButtons) {
+            valueOnChannelButton.setDisable(isDisable);
         }
     }
 }

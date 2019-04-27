@@ -35,7 +35,7 @@ public abstract class ADC extends Module {
     private int[] typeOfChannels;
     private double[] data;
     private int[] measuringRanges;
-    HashMap<String, Integer> moduleSettings;
+    HashMap<Settings, Integer> moduleSettings;
     private double[] timeMarks;
     private RingBuffer timeMarksRingBuffer;
 
@@ -94,7 +94,7 @@ public abstract class ADC extends Module {
         return measuringRanges;
     }
 
-    public HashMap<String, Integer> getModuleSettings() {
+    public HashMap<Settings, Integer> getModuleSettings() {
         return moduleSettings;
     }
 

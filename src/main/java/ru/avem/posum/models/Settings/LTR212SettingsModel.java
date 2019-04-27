@@ -9,7 +9,6 @@ import java.util.HashMap;
 public class LTR212SettingsModel {
     private String[] descriptions;
     private boolean[] checkedChannels;
-    private boolean connectionOpen = true;
     private LTR212 ltr212;
     private int[] measuringRanges;
     private String moduleName;
@@ -25,12 +24,13 @@ public class LTR212SettingsModel {
     }
 
     public void initModule() {
-        if (!connectionOpen) {
-            ltr212.openConnection();
-            connectionOpen = true;
-        }
+        ltr212.checkConnection();
 
-        ltr212.initializeModule();
+        if (ltr212.checkStatus()) {
+            ltr212.initializeModule();
+        } else {
+            ltr212.openConnection();
+        }
     }
 
     public String[] getDescriptions() {
@@ -59,14 +59,6 @@ public class LTR212SettingsModel {
 
     public int getSlot() {
         return slot;
-    }
-
-    public boolean isConnectionOpen() {
-        return connectionOpen;
-    }
-
-    public void setConnectionOpen(boolean connectionOpen) {
-        this.connectionOpen = connectionOpen;
     }
 
     public void setModuleName(String moduleName) {

@@ -23,9 +23,7 @@ public class LTR212 extends ADC {
         Crate crate = new Crate();
         if (!crate.getCratesNames().isEmpty()) {
             status = checkConnection(getSlot());
-            checkStatus();
         } else {
-            openConnection();
             status = "Потеряно соединение с крейтом";
         }
     }
@@ -93,30 +91,30 @@ public class LTR212 extends ADC {
     }
 
     private void initializeModuleSettings() {
-        getModuleSettings().put(Settings.ADC_MODE.getSettingName(), 0); // режим работы каналов
-        getModuleSettings().put(Settings.CALIBRATION_COEFFICIENTS.getSettingName(), 0); // использование калибровочных коэффициентов
-        getModuleSettings().put(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), 0); // использование заводских калибровочных коэфффициентов
-        getModuleSettings().put(Settings.LOGIC_CHANNELS_COUNT.getSettingName(), channelsCount); // количество логичческих каналов
-        getModuleSettings().put(Settings.IIR.getSettingName(), 0); // использование программного фильтра
-        getModuleSettings().put(Settings.FIR.getSettingName(), 0); // использование программного фильтра
-        getModuleSettings().put(Settings.DECIMATION.getSettingName(), 0); // использование децимации
-        getModuleSettings().put(Settings.TAP.getSettingName(), 0); // порядок фильтра
-        getModuleSettings().put(Settings.REFERENCE_VOLTAGE.getSettingName(), 1); // опорное напряжение
-        getModuleSettings().put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), 1); // тип опорного напряжения
+        getModuleSettings().put(Settings.ADC_MODE, 0); // режим работы каналов
+        getModuleSettings().put(Settings.CALIBRATION_COEFFICIENTS, 0); // использование калибровочных коэффициентов
+        getModuleSettings().put(Settings.FACTORY_CALIBRATION_COEFFICIENTS, 0); // использование заводских калибровочных коэфффициентов
+        getModuleSettings().put(Settings.LOGIC_CHANNELS_COUNT, channelsCount); // количество логичческих каналов
+        getModuleSettings().put(Settings.IIR, 0); // использование программного фильтра
+        getModuleSettings().put(Settings.FIR, 0); // использование программного фильтра
+        getModuleSettings().put(Settings.DECIMATION, 0); // использование децимации
+        getModuleSettings().put(Settings.TAP, 0); // порядок фильтра
+        getModuleSettings().put(Settings.REFERENCE_VOLTAGE, 1); // опорное напряжение
+        getModuleSettings().put(Settings.REFERENCE_VOLTAGE_TYPE, 1); // тип опорного напряжения
     }
 
     private int[] getLTR212ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
-        settingsList.add(getModuleSettings().get(Settings.ADC_MODE.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.CALIBRATION_COEFFICIENTS.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.LOGIC_CHANNELS_COUNT.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.IIR.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.FIR.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.DECIMATION.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.TAP.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.REFERENCE_VOLTAGE.getSettingName()));
-        settingsList.add(getModuleSettings().get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
+        settingsList.add(getModuleSettings().get(Settings.ADC_MODE));
+        settingsList.add(getModuleSettings().get(Settings.CALIBRATION_COEFFICIENTS));
+        settingsList.add(getModuleSettings().get(Settings.FACTORY_CALIBRATION_COEFFICIENTS));
+        settingsList.add(getModuleSettings().get(Settings.LOGIC_CHANNELS_COUNT));
+        settingsList.add(getModuleSettings().get(Settings.IIR));
+        settingsList.add(getModuleSettings().get(Settings.FIR));
+        settingsList.add(getModuleSettings().get(Settings.DECIMATION));
+        settingsList.add(getModuleSettings().get(Settings.TAP));
+        settingsList.add(getModuleSettings().get(Settings.REFERENCE_VOLTAGE));
+        settingsList.add(getModuleSettings().get(Settings.REFERENCE_VOLTAGE_TYPE));
 
         int[] settings = new int[settingsList.size()];
 
@@ -131,16 +129,16 @@ public class LTR212 extends ADC {
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
 
-        settings.append(moduleSettings.get(Settings.ADC_MODE.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.IIR.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.FIR.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.DECIMATION.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.TAP.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE.getSettingName())).append(", ")
-                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName()));
+        settings.append(moduleSettings.get(Settings.ADC_MODE)).append(", ")
+                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS)).append(", ")
+                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS)).append(", ")
+                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT)).append(", ")
+                .append(moduleSettings.get(Settings.IIR)).append(", ")
+                .append(moduleSettings.get(Settings.FIR)).append(", ")
+                .append(moduleSettings.get(Settings.DECIMATION)).append(", ")
+                .append(moduleSettings.get(Settings.TAP)).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE)).append(", ")
+                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE));
 
         return settings;
     }
@@ -149,29 +147,21 @@ public class LTR212 extends ADC {
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
 
-        moduleSettings.put(Settings.ADC_MODE.getSettingName(), Integer.valueOf(separatedSettings[0]));
-        moduleSettings.put(Settings.CALIBRATION_COEFFICIENTS.getSettingName(), Integer.valueOf(separatedSettings[1]));
-        moduleSettings.put(Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), Integer.valueOf(separatedSettings[2]));
-        moduleSettings.put(Settings.LOGIC_CHANNELS_COUNT.getSettingName(), Integer.valueOf(separatedSettings[3]));
-        moduleSettings.put(Settings.IIR.getSettingName(), Integer.valueOf(separatedSettings[4]));
-        moduleSettings.put(Settings.FIR.getSettingName(), Integer.valueOf(separatedSettings[5]));
-        moduleSettings.put(Settings.DECIMATION.getSettingName(), Integer.valueOf(separatedSettings[6]));
-        moduleSettings.put(Settings.TAP.getSettingName(), Integer.valueOf(separatedSettings[7]));
-        moduleSettings.put(Settings.REFERENCE_VOLTAGE.getSettingName(), Integer.valueOf(separatedSettings[8]));
-        moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), Integer.valueOf(separatedSettings[9]));
+        moduleSettings.put(Settings.ADC_MODE, Integer.valueOf(separatedSettings[0]));
+        moduleSettings.put(Settings.CALIBRATION_COEFFICIENTS, Integer.valueOf(separatedSettings[1]));
+        moduleSettings.put(Settings.FACTORY_CALIBRATION_COEFFICIENTS, Integer.valueOf(separatedSettings[2]));
+        moduleSettings.put(Settings.LOGIC_CHANNELS_COUNT, Integer.valueOf(separatedSettings[3]));
+        moduleSettings.put(Settings.IIR, Integer.valueOf(separatedSettings[4]));
+        moduleSettings.put(Settings.FIR, Integer.valueOf(separatedSettings[5]));
+        moduleSettings.put(Settings.DECIMATION, Integer.valueOf(separatedSettings[6]));
+        moduleSettings.put(Settings.TAP, Integer.valueOf(separatedSettings[7]));
+        moduleSettings.put(Settings.REFERENCE_VOLTAGE, Integer.valueOf(separatedSettings[8]));
+        moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE, Integer.valueOf(separatedSettings[9]));
     }
 
     @Override
     public double getFrequency() {
         return frequency;
-    }
-
-    public String getFirFilePath() {
-        return firFilePath;
-    }
-
-    public String getIirFilePath() {
-        return iirFilePath;
     }
 
     public void setFirFilePath(String firFilePath) {

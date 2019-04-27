@@ -21,9 +21,7 @@ public class LTR24 extends ADC {
         Crate crate = new Crate();
         if (!crate.getCratesNames().isEmpty()) {
             status = checkConnection(getSlot());
-            checkStatus();
         } else {
-            openConnection();
             status = "Потеряно соединение с крейтом";
         }
     }
@@ -83,7 +81,7 @@ public class LTR24 extends ADC {
     }
 
     private void initializeModuleSettings() {
-        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 7); // частота дискретизации 9.7 кГц
+        getModuleSettings().put(Settings.FREQUENCY, 7); // частота дискретизации 9.7 кГц
     }
 
     private int[] getLTR24ModuleSettings() {
@@ -102,14 +100,14 @@ public class LTR24 extends ADC {
     @Override
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
-        settings.append(moduleSettings.get(Settings.FREQUENCY.getSettingName())).append(", ");
+        settings.append(moduleSettings.get(Settings.FREQUENCY)).append(", ");
         return settings;
     }
 
     @Override
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
-        moduleSettings.put(Settings.FREQUENCY.getSettingName(), Integer.valueOf(separatedSettings[0]));
+        moduleSettings.put(Settings.FREQUENCY, Integer.valueOf(separatedSettings[0]));
     }
 
     @Override

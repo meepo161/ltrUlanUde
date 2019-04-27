@@ -3,7 +3,6 @@ package ru.avem.posum.controllers.Settings.LTR212;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
@@ -120,9 +119,8 @@ public class LTR212Settings implements BaseController {
     }
 
     public void handleInitialize() {
-        toggleProgressIndicatorState(false);
-        statusBarLine.setStatus("Инициализация модуля", statusBar);
-        ltr212ChannelsSettings.disableUiElementsState();
+        setStatusBar(true, "Инициализация модуля");
+        ltr212ChannelsSettings.disableUiElements();
         ltr212ModuleSettings.toggleUiElementsState(true);
 
         new Thread(() -> {
@@ -130,29 +128,31 @@ public class LTR212Settings implements BaseController {
             ltr212ModuleSettings.saveSettings();
             ltr212SettingsModel.initModule();
 
-            if (ltr212SettingsModel.getLTR212Instance().getStatus().equals("Операция успешно выполнена")) {
-                ltr212SettingsModel.setConnectionOpen(true);
-            } else {
+            if (!ltr212SettingsModel.getLTR212Instance().checkStatus()) {
                 Platform.runLater(() -> {
-                    ltr212SettingsModel.setConnectionOpen(false);
                     ltr212ChannelsSettings.enableUiElements();
                     ltr212ModuleSettings.toggleUiElementsState(false);
                 });
             }
 
-            toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus
-                    (ltr212SettingsModel.getLTR212Instance().getStatus(), statusBar, checkIcon, warningIcon));
+            clearStatusBar();
+            Platform.runLater(() -> setStatusBar(false,
+                    ltr212SettingsModel.getLTR212Instance().getStatus()));
         }).start();
     }
 
-    private void toggleProgressIndicatorState(boolean hide) {
-        if (hide) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-            statusBarLine.clearStatusBar(statusBar);
-        } else {
+    private void setStatusBar(boolean isProcess, String text) {
+        if (isProcess) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
+            statusBarLine.setStatus(text, statusBar);
+        } else {
+            Platform.runLater(() -> statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon));
         }
+    }
+
+    private void clearStatusBar() {
+        Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        statusBarLine.clearStatusBar(statusBar);
     }
 
     public void handleBackButton() {
@@ -166,14 +166,14 @@ public class LTR212Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        statusBarLine.clearStatusBar(statusBar);
+        clearStatusBar();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
     private void closeConnection() {
-        if (ltr212SettingsModel.isConnectionOpen()) {
+        ltr212SettingsModel.getLTR212Instance().checkConnection();
+        if (ltr212SettingsModel.getLTR212Instance().checkStatus()) {
             ltr212SettingsModel.getLTR212Instance().closeConnection();
-            ltr212SettingsModel.setConnectionOpen(false);
         }
     }
 
@@ -186,19 +186,20 @@ public class LTR212Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("Подготовка данных для отображения", statusBar));
+        clearStatusBar();
+        setStatusBar(true, "Подготовка данных для отображения");
         ltr212ChannelsSettings.toggleValueOnChannelButtons(true);
         backButton.setDisable(true);
 
         new Thread(() -> {
             ltr212SettingsModel.getLTR212Instance().defineFrequency();
             ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());
+
             cm.giveChannelInfo(channel, Crate.LTR212, ltr212SettingsModel.getLTR212Instance().getSlot());
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            toggleProgressIndicatorState(true);
+            clearStatusBar();
             ltr212ChannelsSettings.toggleValueOnChannelButtons(false);
             backButton.setDisable(false);
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);

@@ -41,13 +41,13 @@ class LTR24ModuleSettings extends LTR24Settings {
     }
 
     void setSettings() {
-        int frequency = ltr24SettingsModel.getLTR24Instance().getModuleSettings().get(ADC.Settings.FREQUENCY.getSettingName());
+        int frequency = ltr24SettingsModel.getLTR24Instance().getModuleSettings().get(ADC.Settings.FREQUENCY);
         frequencyComboBox.getSelectionModel().select(frequency);
     }
 
     void saveSettings() {
         int frequency = frequencyComboBox.getSelectionModel().getSelectedIndex();
-        ltr24SettingsModel.getLTR24Instance().getModuleSettings().put(ADC.Settings.FREQUENCY.getSettingName(), frequency);
+        ltr24SettingsModel.getLTR24Instance().getModuleSettings().put(ADC.Settings.FREQUENCY, frequency);
     }
 
     void toggleUiElementsState(boolean isDisable) {

@@ -99,8 +99,7 @@ public class LTR24Settings implements BaseController {
 
     @FXML
     public void handleInitialize() {
-        toggleProgressIndicatorState(false);
-        statusBarLine.setStatus("Инициализация модуля", statusBar);
+        setStatusBar(true, "Инициализация модуля");
         ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 
@@ -109,29 +108,30 @@ public class LTR24Settings implements BaseController {
             ltr24ModuleSettings.saveSettings();
             ltr24SettingsModel.initModule();
 
-            if (ltr24SettingsModel.getLTR24Instance().getStatus().equals("Операция успешно выполнена")) {
-                ltr24SettingsModel.setConnectionOpen(true);
-            } else {
+            if (!ltr24SettingsModel.getLTR24Instance().checkStatus()) {
                 Platform.runLater(() -> {
-                    ltr24SettingsModel.setConnectionOpen(false);
                     ltr24ChannelsSettings.enableUiElements();
                     ltr24ModuleSettings.toggleUiElementsState(false);
                 });
             }
 
-            toggleProgressIndicatorState(true);
-            Platform.runLater(() -> statusBarLine.setStatus
-                    (ltr24SettingsModel.getLTR24Instance().getStatus(), statusBar, checkIcon, warningIcon));
+            clearStatusBar();
+            setStatusBar(false, ltr24SettingsModel.getLTR24Instance().getStatus());
         }).start();
     }
 
-    private void toggleProgressIndicatorState(boolean isHidden) {
-        if (isHidden) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-            statusBarLine.clearStatusBar(statusBar);
-        } else {
+    private void setStatusBar(boolean isProcess, String text) {
+        if (isProcess) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
+            statusBarLine.setStatus(text, statusBar);
+        } else {
+            Platform.runLater(() -> statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon));
         }
+    }
+
+    private void clearStatusBar() {
+        Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        statusBarLine.clearStatusBar(statusBar);
     }
 
     @FXML
@@ -151,9 +151,9 @@ public class LTR24Settings implements BaseController {
     }
 
     private void closeConnection() {
-        if (ltr24SettingsModel.isConnectionOpen()) {
+        ltr24SettingsModel.getLTR24Instance().checkConnection();
+        if (ltr24SettingsModel.getLTR24Instance().checkStatus()) {
             ltr24SettingsModel.getLTR24Instance().closeConnection();
-            ltr24SettingsModel.setConnectionOpen(false);
         }
     }
 
@@ -166,19 +166,19 @@ public class LTR24Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("Подготовка данных для отображения", statusBar));
-        backButton.setDisable(true);
+        setStatusBar(true, "Подготовка данных для отображения");
         ltr24ChannelsSettings.toggleValueOnChannelButtons(true);
+        backButton.setDisable(true);
 
         new Thread(() -> {
             ltr24SettingsModel.getLTR24Instance().defineFrequency();
             ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
+
             cm.giveChannelInfo(channel, Crate.LTR24, ltr24SettingsModel.getLTR24Instance().getSlot());
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            toggleProgressIndicatorState(true);
+            clearStatusBar();
             ltr24ChannelsSettings.toggleValueOnChannelButtons(false);
             backButton.setDisable(false);
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);

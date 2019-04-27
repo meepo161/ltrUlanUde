@@ -183,10 +183,15 @@ class LTR24ChannelsSettings extends LTR24Settings {
 
     void setSettings() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            checkBoxes.get(channelIndex).setSelected(ltr24SettingsModel.getCheckedChannels()[channelIndex]);
-            typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(ltr24SettingsModel.getTypesOfChannels()[channelIndex]);
-            measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(ltr24SettingsModel.getMeasuringRanges()[channelIndex]);
-            descriptions.get(channelIndex).setText(ltr24SettingsModel.getDescriptions()[channelIndex].replace(", ", ""));
+            boolean isCheckBoxSelected = ltr24SettingsModel.getCheckedChannels()[channelIndex];
+            int typeOfChannel = ltr24SettingsModel.getTypesOfChannels()[channelIndex];
+            int measuringRange = ltr24SettingsModel.getMeasuringRanges()[channelIndex];
+            String description = ltr24SettingsModel.getDescriptions()[channelIndex].replace(", ", "");
+
+            checkBoxes.get(channelIndex).setSelected(isCheckBoxSelected);
+            typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel);
+            measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(measuringRange);
+            descriptions.get(channelIndex).setText(description);
         }
     }
 
@@ -232,8 +237,8 @@ class LTR24ChannelsSettings extends LTR24Settings {
     }
 
     void toggleValueOnChannelButtons(boolean isDisable) {
-        for (int channelIndex = 0; channelIndex < valueOnChannelButtons.size(); channelIndex++) {
-            valueOnChannelButtons.get(channelIndex).setDisable(isDisable);
+        for (Button valueOnChannelButton : valueOnChannelButtons) {
+            valueOnChannelButton.setDisable(isDisable);
         }
     }
 }

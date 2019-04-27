@@ -1,9 +1,7 @@
 package ru.avem.posum.controllers.Settings;
 
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import ru.avem.posum.hardware.Crate;
 
@@ -53,12 +51,10 @@ public class HardwareSettings extends Settings {
             if (cratesListView.getSelectionModel().isSelected(i)) {
                 initSettingsModel();
                 crate.initialize(crateSerialNumber);
-                toggleUiElements(true);
                 saveSettingsButton.setDisable(false);
+                toggleUiElements(true);
             } else {
-                settings.getStatusBarLine().setMainView(true);
-                settings.getStatusBarLine().setStatus("Крейт не выбран", settings.getStatusBar(),
-                        settings.getCheckIcon(), settings.getWarningIcon());
+                settings.setStatusBar(false, "Крейт не выбран");
             }
         }
     }
@@ -85,9 +81,7 @@ public class HardwareSettings extends Settings {
         boolean isCrateChosen = false;
 
         if (!chooseCrateButton.isDisabled()) {
-            settings.getStatusBarLine().setMainView(true);
-            settings.getStatusBarLine().setStatus("Перед сохранением настроек необходимо выбрать крейт",
-                    settings.getStatusBar(), settings.getCheckIcon(), settings.getWarningIcon());
+            settings.setStatusBar(false, "Перед сохранением настроек необходимо выбрать крейт");
         } else {
             isCrateChosen = true;
         }
@@ -99,43 +93,46 @@ public class HardwareSettings extends Settings {
         for (int i = 0; i < crate.getCratesNames().size(); i++) {
             String crateName = crate.getCratesNames().get(i);
             crateSerialNumber = settings.getTestProgram().getCrateSerialNumber();
-            int notCrate = 0;
+            int notCrateCounter = 0;
 
             if (crateName.contains(crateSerialNumber)) {
                 selectedCrate = i;
                 toggleUiElements(true);
             } else {
-                notCrate++;
+                notCrateCounter++;
             }
 
-            if (notCrate == crate.getCratesNames().size()) {
-                settings.getStatusBarLine().setStatus
-                        ("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.",
-                                settings.getStatusBar());
-            } else {
-                settings.toggleProgressIndicatorState(false);
-                settings.getStatusBarLine().setStatus("Устанавливается соединение с модулями", settings.getStatusBar());
-
-                modulesListView.setDisable(true);
-                saveSettingsButton.setDisable(true);
-                setupModuleButton.setDisable(true);
-                backButton.setDisable(true);
-
-                modulesNames = crate.getModulesNames(selectedCrate);
-                modulesListView.setItems(modulesNames);
-                settings.getCm().createListModulesControllers(modulesNames);
-                settings.getSettingsModel().setControllerManager(settings.getCm());
-                settings.getSettingsModel().createModulesInstances(modulesNames);
-
-                modulesListView.setDisable(false);
-                saveSettingsButton.setDisable(false);
-                setupModuleButton.setDisable(false);
-                backButton.setDisable(false);
-                settings.toggleProgressIndicatorState(true);
-            }
+            check(notCrateCounter);
 
             cratesListView.getSelectionModel().select(selectedCrate);
             modulesListView.getSelectionModel().clearSelection();
+        }
+    }
+
+    private void check(int notCrateCounter) {
+        if (notCrateCounter == crate.getCratesNames().size()) {
+            settings.setStatusBar(false, "Ошибка загрузки настроек: крейт с указанным серийным номером не найден.");
+        } else {
+            settings.clearStatusBar();
+            settings.setStatusBar(true, "Устанавливается соединение с модулями");
+
+            modulesListView.setDisable(true);
+            saveSettingsButton.setDisable(true);
+            setupModuleButton.setDisable(true);
+            backButton.setDisable(true);
+
+            modulesNames = crate.getModulesNames(selectedCrate);
+            modulesListView.setItems(modulesNames);
+            settings.getCm().createListModulesControllers(modulesNames);
+            settings.getSettingsModel().setControllerManager(settings.getCm());
+            settings.getSettingsModel().createModulesInstances(modulesNames);
+
+            modulesListView.setDisable(false);
+            saveSettingsButton.setDisable(false);
+            setupModuleButton.setDisable(false);
+            backButton.setDisable(false);
+
+            settings.clearStatusBar();
         }
     }
 

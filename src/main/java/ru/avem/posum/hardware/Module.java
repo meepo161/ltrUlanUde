@@ -9,15 +9,15 @@ public abstract class Module {
     private long moduleId;
     String[] descriptions;
     boolean[] checkedChannels;
-    protected volatile String status;
+    protected String status;
     private TextEncoder textEncoder = new TextEncoder();
 
     public boolean checkStatus() {
-        if (!status.equals("Операция успешно выполнена")) {
+        if (status.equals("Операция успешно выполнена")) {
+            return true;
+        } else {
             status = textEncoder.cp2utf(status);
             return false;
-        } else {
-            return true;
         }
     }
 

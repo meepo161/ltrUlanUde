@@ -75,12 +75,13 @@ class LTR212ModuleSettings extends LTR212Settings {
     }
 
     void setSettings() {
-        int adcMode = ltr212SettingsModel.getLTR212Instance().getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName());
-        int factoryCalibration = ltr212SettingsModel.getLTR212Instance().getModuleSettings().get(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName());
-        int fir = ltr212SettingsModel.getLTR212Instance().getModuleSettings().get(ADC.Settings.FIR.getSettingName());
-        int iir = ltr212SettingsModel.getLTR212Instance().getModuleSettings().get(ADC.Settings.IIR.getSettingName());
-        int referenceVoltage = ltr212SettingsModel.getLTR212Instance().getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE.getSettingName());
-        int referenceVoltageType = ltr212SettingsModel.getLTR212Instance().getModuleSettings().get(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName());
+        HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getModuleSettings();
+        int adcMode = moduleSettings.get(ADC.Settings.ADC_MODE);
+        int factoryCalibration = moduleSettings.get(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS);
+        int fir = moduleSettings.get(ADC.Settings.FIR);
+        int iir = moduleSettings.get(ADC.Settings.IIR);
+        int referenceVoltage = moduleSettings.get(ADC.Settings.REFERENCE_VOLTAGE);
+        int referenceVoltageType = moduleSettings.get(ADC.Settings.REFERENCE_VOLTAGE_TYPE);
 
         adcModes.getSelectionModel().select(adcMode);
         this.factoryCalibration.setSelected(factoryCalibration == 1);
@@ -91,7 +92,7 @@ class LTR212ModuleSettings extends LTR212Settings {
     }
 
     void saveSettings() {
-        HashMap<String, Integer> settings = ltr212SettingsModel.getLTR212Instance().getModuleSettings();
+        HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getModuleSettings();
         int adcMode = adcModes.getSelectionModel().getSelectedIndex();
         int fir = firCheckBox.isSelected() ? 1 : 0;
         int iir = iirCheckBox.isSelected() ? 1 : 0;
@@ -99,12 +100,12 @@ class LTR212ModuleSettings extends LTR212Settings {
         int referenceVoltage = referenceVoltageComboBox.getSelectionModel().getSelectedIndex();
         int referenceVoltageType = referenceVoltageCheckBox.isSelected() ? 1 : 0;
 
-        settings.put(ADC.Settings.ADC_MODE.getSettingName(), adcMode);
-        settings.put(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), factoryCalibration);
-        settings.put(ADC.Settings.FIR.getSettingName(), fir);
-        settings.put(ADC.Settings.IIR.getSettingName(), iir);
-        settings.put(ADC.Settings.REFERENCE_VOLTAGE_TYPE.getSettingName(), referenceVoltageType);
-        settings.put(ADC.Settings.REFERENCE_VOLTAGE.getSettingName(), referenceVoltage);
+        moduleSettings.put(ADC.Settings.ADC_MODE, adcMode);
+        moduleSettings.put(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS, factoryCalibration);
+        moduleSettings.put(ADC.Settings.FIR, fir);
+        moduleSettings.put(ADC.Settings.IIR, iir);
+        moduleSettings.put(ADC.Settings.REFERENCE_VOLTAGE_TYPE, referenceVoltageType);
+        moduleSettings.put(ADC.Settings.REFERENCE_VOLTAGE, referenceVoltage);
 
         ltr212SettingsModel.getLTR212Instance().setFirFilePath(firPathTextField.getText().replace("\\", "/"));
         ltr212SettingsModel.getLTR212Instance().setIirFilePath(iirPathTextField.getText().replace("\\", "/"));
@@ -113,19 +114,12 @@ class LTR212ModuleSettings extends LTR212Settings {
     void toggleUiElementsState(boolean isDisable) {
         adcModes.setDisable(isDisable);
         factoryCalibration.setDisable(isDisable);
-
-        if (firCheckBox.isSelected()) {
-            firPathTextField.setDisable(isDisable);
-            firPathButton.setDisable(isDisable);
-            firCheckBox.setDisable(isDisable);
-        }
-
-        if (iirCheckBox.isSelected()) {
-            iirCheckBox.setDisable(isDisable);
-            iirPathTextField.setDisable(isDisable);
-            iirPathButton.setDisable(isDisable);
-        }
-
+        firCheckBox.setDisable(isDisable);
+        firPathTextField.setDisable(isDisable);
+        firPathButton.setDisable(isDisable);
+        iirCheckBox.setDisable(isDisable);
+        iirPathTextField.setDisable(isDisable);
+        iirPathButton.setDisable(isDisable);
         referenceVoltageCheckBox.setDisable(isDisable);
         referenceVoltageComboBox.setDisable(isDisable);
     }

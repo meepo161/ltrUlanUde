@@ -7,7 +7,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import org.apache.poi.ss.formula.functions.T;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -167,34 +166,35 @@ public class Settings implements BaseController {
     @FXML
     public void handleChooseCrate() {
         if (cratesListView.getSelectionModel().getSelectedIndex() == -1) {
-            statusBarLine.setMainView(true);
-            Platform.runLater(() -> statusBarLine.setStatus("Выделите крейт", statusBar, checkIcon,
-                    warningIcon));
+            setStatusBar(false, "Выделите крейт");
         } else {
-            new Thread(() -> {
-                cratesListView.setDisable(true);
-                chooseCrateButton.setDisable(true);
-                saveSettingsButton.setDisable(true);
-                toggleProgressIndicatorState(false);
-                Platform.runLater(() -> statusBarLine.setStatus("Устанавливается соединение с модулями",
-                        statusBar));
-            }).start();
+            setStatusBar(true, "Устанавливается соединение с модулями");
+            cratesListView.setDisable(true);
+            chooseCrateButton.setDisable(true);
+            saveSettingsButton.setDisable(true);
 
             new Thread(() -> {
                 cm.createListModulesControllers(hardwareSettings.getModulesNames());
                 hardwareSettings.initialize();
-                toggleProgressIndicatorState(true);
+                clearStatusBar();
             }).start();
         }
     }
 
-    public void toggleProgressIndicatorState(boolean hide) {
-        if (hide) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-            statusBarLine.clearStatusBar(statusBar);
-        } else {
+    public void setStatusBar(boolean isProcess, String text) {
+        statusBarLine.setMainView(true);
+
+        if (isProcess) {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
+            statusBarLine.setStatus(text, statusBar);
+        } else {
+            Platform.runLater(() -> statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon));
         }
+    }
+
+    public void clearStatusBar() {
+        Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        statusBarLine.clearStatusBar(statusBar);
     }
 
     @FXML
@@ -227,16 +227,12 @@ public class Settings implements BaseController {
         boolean isTextFormatCorrect = true;
 
         if (!time.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
-            statusBarLine.setMainView(true);
-            statusBarLine.setStatus("Неверно задано время испытаний", statusBar,
-                    checkIcon, warningIcon);
+            setStatusBar(false, "Неверно задано время испытаний");
             isTextFormatCorrect = false;
         }
 
         if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[2][\\d]{3}")) {
-            statusBarLine.setMainView(true);
-            statusBarLine.setStatus("Неверно задана дата испытаний", statusBar,
-                    checkIcon, warningIcon);
+            setStatusBar(false, "Неверно задана дата испытаний");
             isTextFormatCorrect = false;
         }
 
@@ -254,12 +250,8 @@ public class Settings implements BaseController {
             if (textField.getText().isEmpty()) {
                 label.setVisible(true);
                 isRequiredFieldsFilled = false;
-
-                statusBarLine.setMainView(true);
-                statusBarLine.setStatus
-                        ("Перед сохранением настроек заполните обязательные поля основной информации",
-                                statusBar, checkIcon, warningIcon);
-
+                setStatusBar(false, "Перед сохранением настроек заполните обязательные поля основной информации");
+                break;
             } else {
                 filledFields++;
             }
@@ -279,8 +271,8 @@ public class Settings implements BaseController {
     }
 
     private void toggleUiElements() {
-        toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("Сохранение программы испытаний", statusBar));
+        clearStatusBar();
+        setStatusBar(true, "Сохранение программы испытаний");
         setupModuleButton.setDisable(true);
         saveSettingsButton.setDisable(true);
         hideRequiredFieldsSymbols();
@@ -320,7 +312,8 @@ public class Settings implements BaseController {
             TestProgramRepository.updateTestProgramIndexes();
             cm.loadItemsForMainTableView();
         }).start();
-        toggleProgressIndicatorState(true);
+
+        clearStatusBar();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
@@ -412,14 +405,6 @@ public class Settings implements BaseController {
 
     public Button getSetupModuleButton() {
         return setupModuleButton;
-    }
-
-    public StatusBar getStatusBar() {
-        return statusBar;
-    }
-
-    public StatusBarLine getStatusBarLine() {
-        return statusBarLine;
     }
 
     public TestProgram getTestProgram() {
