@@ -3,7 +3,10 @@ package ru.avem.posum.models.Signal;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPointModel;
 
+import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.LongSummaryStatistics;
 
 public class SignalParametersModel {
     private boolean accurateFrequencyCalculation = true;
@@ -61,17 +64,15 @@ public class SignalParametersModel {
     }
 
     private void calculateMinAndMaxValues() {
-        maxSignalValue = -999_999_999;
-        minSignalValue = 999_999_999;
+        maxSignalValue = 0;
+        minSignalValue = 0;
 
-        for (int i = channel; i < data.length; i += channels) {
-            if (data[i] > maxSignalValue) {
-                maxSignalValue = data[i];
-            }
-
-            if (data[i] < minSignalValue) {
-                minSignalValue = data[i];
-            }
+        for (int pieceIndex = 0; pieceIndex < 10; pieceIndex++) {
+            double[] pieceOfDate = new double[data.length / 10];
+            System.arraycopy(data, pieceIndex * pieceOfDate.length, pieceOfDate, 0, pieceOfDate.length);
+            DoubleSummaryStatistics statistics = Arrays.stream(pieceOfDate).summaryStatistics();
+            maxSignalValue += statistics.getMax() / 10;
+            minSignalValue += statistics.getMin() / 10;
         }
     }
 
