@@ -86,7 +86,7 @@ public class LTR24 extends ADC {
 
     private int[] getLTR24ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
-        settingsList.add(getModuleSettings().get(Settings.FREQUENCY.getSettingName()));
+        settingsList.add(getModuleSettings().get(Settings.FREQUENCY));
 
         int[] settings = new int[settingsList.size()];
 
