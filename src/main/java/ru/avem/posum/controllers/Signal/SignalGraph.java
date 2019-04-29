@@ -182,7 +182,7 @@ public class SignalGraph implements BaseController {
         axis.setUpperBound(signalGraphModel.getUpperBound());
     }
 
-    private void listenScalesComboBox(ComboBox<String> comboBox) {
+    public void listenScalesComboBox(ComboBox<String> comboBox) {
         comboBox.valueProperty().addListener(observable -> {
             if (!comboBox.getSelectionModel().isEmpty()) {
                 signalGraphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());

@@ -2,11 +2,13 @@ package ru.avem.posum.controllers.Signal;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ru.avem.posum.models.Signal.SignalGraphModel;
 
 public class SpectreGraph {
     private int onShowSpectreButtonClicksCounter;
     private int previousScaleValue;
     private SignalGraph signalGraph;
+    private SignalGraphModel signalGraphModel = new SignalGraphModel();
 
     public SpectreGraph(SignalGraph signalGraph) {
         this.signalGraph = signalGraph;
@@ -43,6 +45,8 @@ public class SpectreGraph {
             signalGraph.getHorizontalScalesComboBox().setItems(scaleValues);
             signalGraph.getHorizontalScalesComboBox().getSelectionModel().select(0);
         }
+
+        signalGraph.listenScalesComboBox(signalGraph.getHorizontalScalesComboBox());
     }
 
     public void toggleRarefactionCoefficient() {
