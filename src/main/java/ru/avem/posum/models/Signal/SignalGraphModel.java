@@ -12,7 +12,7 @@ public class SignalGraphModel {
             lowerBound = -scale * 10;
             tickUnit = scale * 2;
             upperBound = scale * 10;
-        } else if (valueName.equals("с")){
+        } else if (valueName.equals("с") || valueName.equals("Гц")){
             lowerBound = 0;
             tickUnit = scale;
             upperBound = scale * 10;

@@ -9,6 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
+import org.vitrivr.cineast.core.util.dsp.fft.FFT;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
@@ -44,6 +45,8 @@ public class SignalGraph implements BaseController {
     private LineChart<Number, Number> graph;
     @FXML
     private ComboBox<String> horizontalScalesComboBox;
+    @FXML
+    private boolean isFFT;
     @FXML
     private Label loadsCounterLabel;
     @FXML
@@ -494,7 +497,11 @@ public class SignalGraph implements BaseController {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.fillBuffer();
                 clearSeries();
-                showGraph();
+                if (isFFT) {
+                    showSpectre();
+                } else {
+                    showGraph();
+                }
                 Utils.sleep(1000);
             }
         }).start();
@@ -511,7 +518,7 @@ public class SignalGraph implements BaseController {
         int scale = signalModel.getRarefactionCoefficient();
 
         for (index = channel; index < data.length && !cm.isStopped(); index += channels * scale) {
-            XYChart.Data point = signalModel.getPoint(index);
+            XYChart.Data<Number, Number> point = signalModel.getPoint(index);
             Runnable addPoint = () -> {
                 if (!graphSeries.getData().contains(point))
                     graphSeries.getData().add(point);
@@ -523,13 +530,35 @@ public class SignalGraph implements BaseController {
             }
 
             if (index + (channels * scale) >= data.length) {
-                XYChart.Data lastPoint = new XYChart.Data(1, data[index]);
+                XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(1, data[index]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(1);
             } else if ((double) point.getXValue() >= signalGraphModel.getUpperBound()) {
                 Platform.runLater(addPoint);
                 Utils.sleep(1);
                 break;
+            }
+        }
+    }
+
+    private void showSpectre() {
+        double[] data = signalModel.getBuffer();
+        spectreGraph.getSpectreGraphModel().doFFT(data);
+        FFT fft = spectreGraph.getSpectreGraphModel().getFft();
+
+        for (int i = 0; i < fft.getMagnitudeSpectrum().size(); i++) {
+            double frequency = fft.getMagnitudeSpectrum().getFrequency(i);
+            double magnitude = fft.getMagnitudeSpectrum().getValue(i);
+            XYChart.Data<Number, Number> point = new XYChart.Data<>(frequency, magnitude);
+
+            Runnable addPoint = () -> {
+                if (!graphSeries.getData().contains(point))
+                    graphSeries.getData().add(point);
+            };
+
+            if ((double) point.getXValue() < signalGraphModel.getUpperBound()) {
+                Platform.runLater(addPoint);
+                Utils.sleep(1);
             }
         }
     }
@@ -638,6 +667,10 @@ public class SignalGraph implements BaseController {
         return showSpectreButton;
     }
 
+    public void setFFT(boolean FFT) {
+        isFFT = FFT;
+    }
+
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
@@ -650,6 +683,7 @@ public class SignalGraph implements BaseController {
 
     @FXML
     public void handleShowSpectre() {
+        spectreGraph.setCalculateFFt();
         spectreGraph.incrementOnShowSpectreButtonClicksCounter();
         spectreGraph.changeGraphTitle();
         spectreGraph.changeGraphHorizontalScales();
@@ -657,6 +691,9 @@ public class SignalGraph implements BaseController {
         spectreGraph.toggleFrequencyCalculation();
         spectreGraph.toggleCalibration();
         spectreGraph.changeButtonTitle();
+        spectreGraph.changeTitlesOfAxis();
+
+        checkCalibration();
     }
 
 }

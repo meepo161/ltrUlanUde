@@ -3,12 +3,14 @@ package ru.avem.posum.controllers.Signal;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.avem.posum.models.Signal.SignalGraphModel;
+import ru.avem.posum.models.Signal.SpectreGraphModel;
 
 public class SpectreGraph {
     private int onShowSpectreButtonClicksCounter;
     private int previousScaleValue;
     private SignalGraph signalGraph;
     private SignalGraphModel signalGraphModel = new SignalGraphModel();
+    private SpectreGraphModel spectreGraphModel = new SpectreGraphModel();
 
     public SpectreGraph(SignalGraph signalGraph) {
         this.signalGraph = signalGraph;
@@ -69,5 +71,23 @@ public class SpectreGraph {
         } else {
             signalGraph.getShowSpectreButton().setText("График сигнала");
         }
+    }
+
+    public void changeTitlesOfAxis() {
+        if (onShowSpectreButtonClicksCounter % 2 == 0) {
+            signalGraph.getGraph().getYAxis().setLabel("Напряжение, В");
+            signalGraph.getGraph().getXAxis().setLabel("Время, с");
+        } else {
+            signalGraph.getGraph().getYAxis().setLabel("Амплитуда, В");
+            signalGraph.getGraph().getXAxis().setLabel("Частота, Гц");
+        }
+    }
+
+    public void setCalculateFFt() {
+        signalGraph.setFFT(onShowSpectreButtonClicksCounter % 2 == 0);
+    }
+
+    public SpectreGraphModel getSpectreGraphModel() {
+        return spectreGraphModel;
     }
 }

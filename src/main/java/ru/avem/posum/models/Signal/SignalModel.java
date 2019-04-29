@@ -161,15 +161,15 @@ public class SignalModel {
         adc.getRingBufferForShow().take(buffer, buffer.length);
     }
 
-    public XYChart.Data getPoint(int valueIndex) {
+    public XYChart.Data<Number, Number> getPoint(int valueIndex) {
         if (calibrationExists) {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = signalParametersModel.applyCalibration(adc, buffer[valueIndex]);
-            return new XYChart.Data<Number, Number>(xValue, yValue);
+            return new XYChart.Data<>(xValue, yValue);
         } else {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;
             double yValue = buffer[valueIndex];
-            return new XYChart.Data<Number, Number>(xValue, yValue);
+            return new XYChart.Data<>(xValue, yValue);
         }
     }
 
