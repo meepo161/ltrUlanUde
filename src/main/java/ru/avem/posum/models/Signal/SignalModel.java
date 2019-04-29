@@ -66,7 +66,7 @@ public class SignalModel {
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
-        int adcMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE.getSettingName());
+        int adcMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE);
         int SAMPLES = adcMode == 0 ? 30720 : 150;
         ltr212.setData(new double[SAMPLES]);
         ltr212.setRingBufferForCalculation(new RingBuffer(SAMPLES));
