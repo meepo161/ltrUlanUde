@@ -47,8 +47,6 @@ public class SpectreGraph {
             signalGraph.getHorizontalScalesComboBox().setItems(scaleValues);
             signalGraph.getHorizontalScalesComboBox().getSelectionModel().select(0);
         }
-
-        signalGraph.listenScalesComboBox(signalGraph.getHorizontalScalesComboBox());
     }
 
     public void toggleRarefactionCoefficient() {

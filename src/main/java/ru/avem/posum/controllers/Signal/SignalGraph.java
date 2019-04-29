@@ -183,6 +183,8 @@ public class SignalGraph implements BaseController {
         axis.setLowerBound(signalGraphModel.getLowerBound());
         axis.setTickUnit(signalGraphModel.getTickUnit());
         axis.setUpperBound(signalGraphModel.getUpperBound());
+        System.out.printf("New bounds: %f, %f, %f\n", signalGraphModel.getLowerBound(), signalGraphModel.getTickUnit(),
+                signalGraphModel.getUpperBound());
     }
 
     public void listenScalesComboBox(ComboBox<String> comboBox) {
