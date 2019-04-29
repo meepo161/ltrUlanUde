@@ -37,6 +37,8 @@ public class SignalGraph implements BaseController {
     @FXML
     private ComboBox<String> frequencyCalculationComboBox;
     @FXML
+    private Label frequencyCalculationLabel;
+    @FXML
     private TextField frequencyTextField;
     @FXML
     private LineChart<Number, Number> graph;
@@ -51,9 +53,13 @@ public class SignalGraph implements BaseController {
     @FXML
     private ComboBox<String> rarefactionCoefficientComboBox;
     @FXML
+    private Label rarefactionCoefficientLabel;
+    @FXML
     private Label rmsLabel;
     @FXML
     private TextField rmsTextField;
+    @FXML
+    private Button showSpectreButton;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -71,6 +77,7 @@ public class SignalGraph implements BaseController {
     private SignalGraphModel signalGraphModel = new SignalGraphModel();
     private volatile XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private SignalModel signalModel = new SignalModel();
+    private SpectreGraph spectreGraph = new SpectreGraph(this);
     private StatusBarLine statusBarLine = new StatusBarLine();
     private WindowsManager wm;
     private double amplitude;
@@ -114,7 +121,7 @@ public class SignalGraph implements BaseController {
 
     private void initializeComboBoxes() {
         addVerticalScaleValues();
-        addHorizontalScaleValues();
+        setHorizontalScaleValues();
         addRarefactionCoefficients();
         setDefaultScales();
         listenScalesComboBox(verticalScalesComboBox);
@@ -136,7 +143,7 @@ public class SignalGraph implements BaseController {
         verticalScalesComboBox.setItems(scaleValues);
     }
 
-    private void addHorizontalScaleValues() {
+    public void setHorizontalScaleValues() {
         ObservableList<String> scaleValues = FXCollections.observableArrayList();
         scaleValues.add("1 мс/дел");
         scaleValues.add("10 мс/дел");
@@ -595,8 +602,40 @@ public class SignalGraph implements BaseController {
         return (int) Math.pow(10, decimalFormatComboBox.getSelectionModel().getSelectedIndex() + 1);
     }
 
+    public ComboBox<String> getFrequencyCalculationComboBox() {
+        return frequencyCalculationComboBox;
+    }
+
+    public Label getFrequencyCalculationLabel() {
+        return frequencyCalculationLabel;
+    }
+
+    public CheckBox getCalibrationCheckBox() {
+        return calibrationCheckBox;
+    }
+
+    public LineChart<Number, Number> getGraph() {
+        return graph;
+    }
+
+    public ComboBox<String> getHorizontalScalesComboBox() {
+        return horizontalScalesComboBox;
+    }
+
+    public ComboBox<String> getRarefactionCoefficientComboBox() {
+        return rarefactionCoefficientComboBox;
+    }
+
+    public Label getRarefactionCoefficientLabel() {
+        return rarefactionCoefficientLabel;
+    }
+
     public SignalModel getSignalModel() {
         return signalModel;
+    }
+
+    public Button getShowSpectreButton() {
+        return showSpectreButton;
     }
 
     @Override
@@ -608,4 +647,16 @@ public class SignalGraph implements BaseController {
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
     }
+
+    @FXML
+    public void handleShowSpectre() {
+        spectreGraph.incrementOnShowSpectreButtonClicksCounter();
+        spectreGraph.changeGraphTitle();
+        spectreGraph.changeGraphHorizontalScales();
+        spectreGraph.toggleRarefactionCoefficient();
+        spectreGraph.toggleFrequencyCalculation();
+        spectreGraph.toggleCalibration();
+        spectreGraph.changeButtonTitle();
+    }
+
 }
