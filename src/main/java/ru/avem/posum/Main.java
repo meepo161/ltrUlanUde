@@ -19,7 +19,7 @@ import ru.avem.posum.controllers.Settings.LTR24.LTR24Settings;
 import ru.avem.posum.controllers.Settings.LTR27.LTR27Settings;
 import ru.avem.posum.controllers.Settings.LTR34.LTR34Settings;
 import ru.avem.posum.controllers.Settings.Settings;
-import ru.avem.posum.controllers.Signal.SignalGraph;
+import ru.avem.posum.controllers.Signal.SignalController;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
@@ -56,7 +56,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene ltr212Scene;
     private Scene signalGraphScene;
     private Scene calibrationScene;
-    private SignalGraph signalGraph;
+    private SignalController signalController;
     private Stage loginStage;
     private Stage primaryStage;
     private boolean stopped;
@@ -140,7 +140,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createSignalGraphScene() throws IOException {
-        signalGraph = (SignalGraph) getController("/layouts/signalGraphView.fxml");
+        signalController = (SignalController) getController("/layouts/signalGraphView.fxml");
         signalGraphScene = createScene(1280, 720);
     }
 
@@ -200,7 +200,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void checkCalibration() {
         Utils.sleep(500);
-        signalGraph.checkCalibration();
+        signalController.checkCalibration();
     }
 
     @Override
@@ -285,7 +285,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public int getDecimalFormatScale() {
-        return signalGraph.getDecimalFormatScale();
+        return signalController.getDecimalFormatScale();
     }
 
     @Override
@@ -295,17 +295,17 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public String getValueName() {
-        return signalGraph.getSignalModel().getValueName();
+        return signalController.getSignalModel().getValueName();
     }
 
     @Override
     public double getZeroShift() {
-        return signalGraph.getSignalModel().getZeroShift();
+        return signalController.getSignalModel().getZeroShift();
     }
 
     @Override
     public void giveChannelInfo(int channel, String moduleType, int slot) {
-        signalGraph.getSignalModel().setFields(moduleType, slot, channel);
+        signalController.getSignalModel().setFields(moduleType, slot, channel);
     }
 
     @Override
@@ -315,7 +315,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void initializeSignalGraphView() {
-        signalGraph.initializeView();
+        signalController.initializeView();
     }
 
     @Override

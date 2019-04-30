@@ -1,6 +1,15 @@
 package ru.avem.posum.models.Signal;
 
-public class SignalGraphModel {
+import javafx.scene.chart.XYChart;
+import org.vitrivr.cineast.core.util.dsp.fft.FFT;
+import org.vitrivr.cineast.core.util.dsp.fft.windows.HanningWindow;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GraphModel {
+    private FFT fft = new FFT();
+    private HanningWindow hanningWindow = new HanningWindow();
     private double lowerBound;
     private double scale;
     private double tickUnit;
@@ -34,6 +43,22 @@ public class SignalGraphModel {
             this.scale = digits;
         }
         System.out.println("Value name: " + valueName);
+    }
+
+    public void doFFT(double[] data) {
+        fft.forward(data, data.length, hanningWindow);
+    }
+
+    public List<XYChart.Data<Number, Number>> getMagnitude() {
+        List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
+
+        for (int i = 0; i < fft.getMagnitudeSpectrum().size(); i++) {
+            double frequency = fft.getMagnitudeSpectrum().getFrequency(i);
+            double magnitude = fft.getMagnitudeSpectrum().getValue(i);
+            intermediateList.add(new XYChart.Data<>(frequency, magnitude));
+        }
+
+        return intermediateList;
     }
 
     public double getLowerBound() {
