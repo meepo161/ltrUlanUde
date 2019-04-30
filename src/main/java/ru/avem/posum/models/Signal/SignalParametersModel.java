@@ -3,6 +3,7 @@ package ru.avem.posum.models.Signal;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPointModel;
 
+import java.net.Inet4Address;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
@@ -64,16 +65,40 @@ public class SignalParametersModel {
     }
 
     private void calculateMinAndMaxValues() {
-        maxSignalValue = 0;
-        minSignalValue = 0;
+        double[] channelData = new double[data.length / 4];
+        maxSignalValue = minSignalValue = 0;
+        double max = Integer.MIN_VALUE;
+        double min = Integer.MAX_VALUE;
 
-        for (int pieceIndex = 0; pieceIndex < 10; pieceIndex++) {
-            double[] pieceOfDate = new double[data.length / 10];
-            System.arraycopy(data, pieceIndex * pieceOfDate.length, pieceOfDate, 0, pieceOfDate.length);
-            DoubleSummaryStatistics statistics = Arrays.stream(pieceOfDate).summaryStatistics();
-            maxSignalValue += statistics.getMax() / 10;
-            minSignalValue += statistics.getMin() / 10;
+        for (int i = channel, j = 0; i < data.length; i += channels) {
+            channelData[j++] = data[i];
         }
+
+        int pieces = 1;
+        if (signalFrequency < 10) {
+            pieces = 1;
+        } else if (signalFrequency > 10 && signalFrequency < 25) {
+            pieces = 5;
+        } else if (signalFrequency > 25) {
+            pieces = 10;
+        }
+
+        int pieceLength = channelData.length / pieces;
+        for (int pieceIndex = 0; pieceIndex < pieces; pieceIndex++) {
+            for (int i = pieceIndex * pieceLength; i < (pieceIndex + 1) * pieceLength; i++) {
+                if (max < channelData[i]) {
+                    max = channelData[i];
+                }
+                if (min > channelData[i]) {
+                    min = channelData[i];
+                }
+            }
+
+            maxSignalValue += max / 10;
+            minSignalValue += min / 10;
+        }
+
+        System.out.printf("Min value: %f, max value: %f\n", minSignalValue, maxSignalValue);
     }
 
     private void calculateParameters(double averageCount) {
@@ -196,7 +221,7 @@ public class SignalParametersModel {
 
         if (signalFrequency < 5) {
             return signalFrequency;
-        } else  if (signalFrequency < estimatedFrequency / 1.5 || signalFrequency > estimatedFrequency * 1.5) {
+        } else if (signalFrequency < estimatedFrequency / 1.5 || signalFrequency > estimatedFrequency * 1.5) {
             return estimatedFrequency;
         } else {
             return signalFrequency;

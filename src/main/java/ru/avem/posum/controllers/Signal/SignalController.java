@@ -24,6 +24,8 @@ public class SignalController implements BaseController {
     @FXML
     private TextField averageTextField;
     @FXML
+    private Button calibrateButton;
+    @FXML
     private CheckBox calibrationCheckBox;
     @FXML
     private Label checkIcon;
@@ -45,6 +47,8 @@ public class SignalController implements BaseController {
     private ProgressIndicator progressIndicator;
     @FXML
     private ComboBox<String> rarefactionCoefficientComboBox;
+    @FXML
+    private Label rarefactionCoefficientLabel;
     @FXML
     private Label rmsLabel;
     @FXML
@@ -353,5 +357,13 @@ public class SignalController implements BaseController {
 
     public ComboBox<String> getGraphTypesComboBox() {
         return graphTypesComboBox;
+    }
+
+    public Label getRarefactionCoefficientLabel() {
+        return rarefactionCoefficientLabel;
+    }
+
+    public Button getCalibrateButton() {
+        return calibrateButton;
     }
 }

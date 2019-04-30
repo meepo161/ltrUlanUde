@@ -42,7 +42,6 @@ public class GraphModel {
             valueName = scale.split(" ")[1].split("/дел")[0];
             this.scale = digits;
         }
-        System.out.println("Value name: " + valueName);
     }
 
     public void doFFT(double[] data) {

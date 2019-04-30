@@ -20,10 +20,10 @@ public class GraphController {
 
     public GraphController(SignalController signalController) {
         this.signalController = signalController;
-        graph = signalController.getGraphController();
     }
 
     public void initGraph() {
+        graph = signalController.getGraphController();
         signalController.getGraphController().getData().clear();
         signalController.getGraphController().getData().add(graphSeries);
         clearSeries();
@@ -43,7 +43,7 @@ public class GraphController {
 
     public void initComboBoxes() {
         setVerticalSignalScales();
-        setHorizontalSignalScales();
+        setHorizontalScales();
         setDefaultScales();
         listenScalesComboBox(signalController.getVerticalScalesComboBox());
         listenScalesComboBox(signalController.getHorizontalScalesComboBox());
@@ -68,12 +68,22 @@ public class GraphController {
         signalController.getVerticalScalesComboBox().getSelectionModel().select(3);
     }
 
-    private void setHorizontalSignalScales() {
+    private void setHorizontalScales() {
         ObservableList<String> scales = FXCollections.observableArrayList();
 
-        scales.add("1 мс/дел");
-        scales.add("10 мс/дел");
-        scales.add("100 мс/дел");
+        if (isFFT) {
+            scales.add("1 Гц/дел");
+            scales.add("2 Гц/дел");
+            scales.add("5 Гц/дел");
+            scales.add("10 Гц/дел");
+            scales.add("20 Гц/дел");
+            scales.add("50 Гц/дел");
+            scales.add("100 Гц/дел");
+        } else {
+            scales.add("1 мс/дел");
+            scales.add("10 мс/дел");
+            scales.add("100 мс/дел");
+        }
 
         signalController.getHorizontalScalesComboBox().setItems(scales);
         signalController.getHorizontalScalesComboBox().getSelectionModel().select(2);
@@ -93,8 +103,6 @@ public class GraphController {
         axis.setLowerBound(graphModel.getLowerBound());
         axis.setTickUnit(graphModel.getTickUnit());
         axis.setUpperBound(graphModel.getUpperBound());
-        System.out.printf("New bounds: %f, %f, %f\n", graphModel.getLowerBound(), graphModel.getTickUnit(),
-                graphModel.getUpperBound());
     }
 
     private void listenScalesComboBox(ComboBox<String> comboBox) {
@@ -171,51 +179,46 @@ public class GraphController {
         types.add(GraphTypes.SIGNAL.getTypeName());
         types.add(GraphTypes.SPECTRUM.getTypeName());
 
-        signalController.getGraphTypesComboBox().getItems().addAll(types);
+        signalController.getGraphTypesComboBox().getItems().setAll(types);
         signalController.getGraphTypesComboBox().getSelectionModel().select(0);
     }
 
     private void listenGraphTypesComboBox() {
         signalController.getGraphTypesComboBox().valueProperty().addListener(observable -> {
             String selectedType = signalController.getGraphTypesComboBox().getSelectionModel().getSelectedItem();
-
-            if (selectedType.equals(GraphTypes.SIGNAL.getTypeName())) {
-                setHorizontalSignalScales();
-                setSignalTitles();
-                isFFT = false;
-            } else if (selectedType.equals(GraphTypes.SPECTRUM.getTypeName())) {
-                setHorizontalSpectrumScales();
-                setSpectrumTitles();
-                isFFT = true;
-            }
+            isFFT = selectedType.equals(GraphTypes.SPECTRUM.getTypeName());
+            toggleGraphLabels();
+            setHorizontalScales();
+            toggleUiElementsState(isFFT);
+            toggleRarefactionCoefficient();
         });
     }
 
-    private void setHorizontalSpectrumScales() {
-        ObservableList<String> scales = FXCollections.observableArrayList();
-
-        scales.add("1 Гц/дел");
-        scales.add("2 Гц/дел");
-        scales.add("5 Гц/дел");
-        scales.add("10 Гц/дел");
-        scales.add("20 Гц/дел");
-        scales.add("50 Гц/дел");
-        scales.add("100 Гц/дел");
-
-        signalController.getHorizontalScalesComboBox().setItems(scales);
-        signalController.getHorizontalScalesComboBox().getSelectionModel().select(0);
+    private void toggleGraphLabels() {
+        if (isFFT) {
+            graph.setTitle("Спектр сигнала");
+            graph.getYAxis().setLabel("Амплитуда, В");
+            graph.getXAxis().setLabel("Частота, Гц");
+        } else {
+            graph.setTitle("График сигнала");
+            graph.getYAxis().setLabel("Напряжение, В");
+            graph.getXAxis().setLabel("Время, с");
+        }
     }
 
-    private void setSpectrumTitles() {
-        graph.setTitle("Спектр сигнала");
-        graph.getYAxis().setLabel("Амплитуда, В");
-        graph.getXAxis().setLabel("Частота, Гц");
+    private void toggleUiElementsState(boolean isDisable) {
+        signalController.getRarefactionCoefficientLabel().setDisable(isDisable);
+        signalController.getRarefactionCoefficientComboBox().setDisable(isDisable);
+        signalController.getCalibrationCheckBox().setDisable(isDisable);
+        signalController.getCalibrateButton().setDisable(isDisable);
     }
 
-    private void setSignalTitles() {
-        graph.setTitle("График сигнала");
-        graph.getYAxis().setLabel("Напряжение, В");
-        graph.getXAxis().setLabel("Время, с");
+    private void toggleRarefactionCoefficient() {
+        if (isFFT) {
+            signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(0);
+        } else {
+            signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(3);
+        }
     }
 
     private void setDecimalFormats() {
@@ -294,7 +297,6 @@ public class GraphController {
         signalController.getAutoRangeCheckBox().setSelected(false);
     }
 
-
     public void disableAverage() {
         signalController.getAverageTextField().setText("");
         signalController.getAverageCheckBox().setSelected(false);
@@ -358,12 +360,13 @@ public class GraphController {
         String selectedGraphScale = signalController.getHorizontalScalesComboBox().getSelectionModel().getSelectedItem();
         graphModel.parseGraphScale(selectedGraphScale);
         graphModel.calculateGraphBounds();
+
         int channel = signalController.getSignalModel().getChannel();
         int channels = signalController.getSignalModel().getAdc().getChannelsCount();
         double[] data = signalController.getSignalModel().getBuffer();
-        int scale = signalController.getSignalModel().getRarefactionCoefficient();
+        int rarefactionCoefficient = signalController.getSignalModel().getRarefactionCoefficient();
 
-        for (int index = channel; index < data.length && !signalController.getCm().isStopped(); index += channels * scale) {
+        for (int index = channel; index < data.length && !signalController.getCm().isStopped(); index += channels * rarefactionCoefficient) {
             XYChart.Data<Number, Number> point = signalController.getSignalModel().getPoint(index);
             Runnable addPoint = () -> {
                 if (!graphSeries.getData().contains(point))
@@ -375,7 +378,7 @@ public class GraphController {
                 Utils.sleep(1);
             }
 
-            if (index + (channels * scale) >= data.length) {
+            if (index + (channels * rarefactionCoefficient) >= data.length) {
                 XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(1, data[index]);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(1);
@@ -389,27 +392,27 @@ public class GraphController {
 
     public void showSpectre() {
         double[] data = signalController.getSignalModel().getBuffer();
-        graphModel.doFFT(data);
+        NumberAxis xAxis = (NumberAxis) graph.getXAxis();
 
-        for (int i = 0; i < graphModel.getMagnitude().size(); i++) {
+        graphModel.doFFT(data);
+        graphSeries.getData().add(new XYChart.Data<>(0, 0));
+
+        for (int i = 0; i < (xAxis.getUpperBound() * 2); i++) {
             XYChart.Data<Number, Number> point = graphModel.getMagnitude().get(i);
             XYChart.Data<Number, Number> previousPoint = new XYChart.Data<>((double) point.getXValue() / 1.001, 0);
             XYChart.Data<Number, Number> nextPoint = new XYChart.Data<>((double) point.getXValue() * 1.001, 0);
 
             Runnable addPoint = () -> {
-                if (!graphSeries.getData().contains(point))
-                    graphSeries.getData().add(previousPoint);
-                    graphSeries.getData().add(point);
-                    graphSeries.getData().add(nextPoint);
+                graphSeries.getData().add(previousPoint);
+                graphSeries.getData().add(point);
+                graphSeries.getData().add(nextPoint);
             };
 
-            if ((double) point.getXValue() < graphModel.getUpperBound()) {
+            if ((double) point.getXValue() < xAxis.getUpperBound() * 2) {
                 Platform.runLater(addPoint);
                 Utils.sleep(1);
             }
         }
-
-        Utils.sleep(1000);
     }
 
     public boolean isFFT() {

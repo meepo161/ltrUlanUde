@@ -48,7 +48,7 @@
                 <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -56,7 +56,6 @@
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
@@ -101,21 +100,21 @@
                 <TextField fx:id="averageTextField" disable="true" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" GridPane.columnIndex="11" GridPane.halignment="LEFT" GridPane.rowIndex="11" />
                 <CheckBox fx:id="calibrationCheckBox" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="13" GridPane.rowIndex="9" />
                 <CheckBox fx:id="autoRangeCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="13" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
-                <Button maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
+                <Button fx:id="calibrateButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                     <GridPane.margin>
                         <Insets right="270.0" />
                     </GridPane.margin></Button>
-                <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="15" GridPane.valignment="BOTTOM">
+                <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                     <GridPane.margin>
                         <Insets left="270.0" />
                     </GridPane.margin></Button>
-                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="16" />
-                <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="15" GridPane.rowIndex="16">
+                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="15" />
+                <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="15" GridPane.rowIndex="15">
                     <GridPane.margin>
                         <Insets left="15.0" />
                     </GridPane.margin></StatusBar>
-                <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="16" />
-                <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="16" />
+                <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="15" />
+                <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="15" />
             </children>
         </GridPane>
     </children>
