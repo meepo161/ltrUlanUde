@@ -23,6 +23,16 @@ public class LTR24SettingsModel {
         this.typesOfChannels = ltr24.getTypeOfChannels();
     }
 
+    public void initModule() {
+        ltr24.checkConnection();
+
+        if (ltr24.checkStatus()) {
+            ltr24.initializeModule();
+        } else {
+            ltr24.openConnection();
+        }
+    }
+
     public String[] getDescriptions() {
         return descriptions;
     }

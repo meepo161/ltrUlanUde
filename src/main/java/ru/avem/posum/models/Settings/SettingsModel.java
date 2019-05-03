@@ -95,7 +95,7 @@ public class SettingsModel implements BaseController {
     private void initLTR212Instance() {
         adc = new LTR212();
         setModuleSettings(adc);
-        setDefaultADCSettings(1, 3);
+        setDefaultADCSettings(0, 3);
         saveModuleInstance(adc);
         adc.openConnection();
     }
@@ -405,11 +405,6 @@ public class SettingsModel implements BaseController {
         testProgramId = testProgram.getId();
 
         findModules();
-        addInitModuleInstructions();
-        for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
-            moduleType = modulesNames.get(moduleIndex).split(" ")[0];
-            runInstructions();
-        }
     }
 
     private void findModules() {

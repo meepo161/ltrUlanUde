@@ -15,6 +15,7 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.models.Settings.SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -177,12 +178,10 @@ public class Settings implements BaseController {
             saveSettingsButton.setDisable(true);
             backButton.setDisable(true);
 
-            new Thread(() -> {
                 cm.createListModulesControllers(hardwareSettings.getModulesNames());
                 hardwareSettings.initialize();
                 statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.clearStatusBar();
-            }).start();
         }
     }
 
@@ -317,6 +316,7 @@ public class Settings implements BaseController {
         this.testProgram = testProgram;
 
         loadGeneralSettings(testProgram);
+        initHardwareSettings();
         hardwareSettings.selectCrate();
         settingsModel.loadChannelsSettings(testProgram, hardwareSettings.getCrate(),
                 hardwareSettings.getSelectedCrate());

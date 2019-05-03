@@ -128,7 +128,7 @@ public class LTR212Settings implements BaseController {
         new Thread(() -> {
             ltr212ChannelsSettings.saveSettings();
             ltr212ModuleSettings.saveSettings();
-            ltr212SettingsModel.getLTR212Instance().initializeModule();
+            ltr212SettingsModel.initModule();
 
             if (!ltr212SettingsModel.getLTR212Instance().checkStatus()) {
                 Platform.runLater(() -> {

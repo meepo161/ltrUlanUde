@@ -115,9 +115,9 @@ public class HardwareSettings extends Settings {
         } else {
             cratesListView.getSelectionModel().select(selectedCrate);
             modulesListView.getSelectionModel().clearSelection();
-            showCrates();
-            showModules();
-            handleChooseCrate();
+            modulesListView.setDisable(true);
+            setupModuleButton.setDisable(true);
+            settings.handleChooseCrate();
         }
     }
 
