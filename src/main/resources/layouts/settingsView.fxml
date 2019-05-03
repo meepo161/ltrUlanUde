@@ -42,6 +42,7 @@
                               <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Название испытания:" GridPane.rowIndex="1">
@@ -158,6 +159,7 @@
                                     <Insets left="10.0" right="10.0" />
                                  </GridPane.margin>
                               </TextArea>
+                              <Button fx:id="backButtonGeneralTab" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
                            </children>
                         </GridPane>
                      </children>

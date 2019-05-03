@@ -7,6 +7,7 @@ import ru.avem.posum.hardware.Crate;
 
 public class HardwareSettings extends Settings {
     private Button backButton;
+    private final Button backButtonGeneralTab;
     private Button chooseCrateButton;
     private Crate crate = new Crate();
     private ListView<String> cratesListView;
@@ -23,6 +24,7 @@ public class HardwareSettings extends Settings {
 
     public HardwareSettings(Settings settings) {
         this.backButton = settings.getBackButton();
+        this.backButtonGeneralTab = settings.getBackButtonGeneralTab();
         this.chooseCrateButton = settings.getChooseCrateButton();
         this.cratesListView = settings.getCratesListView();
         this.modulesListView = settings.getModulesListView();
@@ -53,6 +55,7 @@ public class HardwareSettings extends Settings {
                 crate.initialize(crateSerialNumber);
                 saveSettingsButton.setDisable(false);
                 backButton.setDisable(false);
+                backButtonGeneralTab.setDisable(false);
                 toggleUiElements(true);
             } else {
                 settings.getStatusBarLine().setStatus("Крейт не выбран", false);

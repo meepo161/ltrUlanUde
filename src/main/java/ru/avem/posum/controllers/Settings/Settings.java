@@ -26,6 +26,8 @@ public class Settings implements BaseController {
     @FXML
     private Button backButton;
     @FXML
+    private Button backButtonGeneralTab;
+    @FXML
     private Label checkIcon;
     @FXML
     private Button chooseCrateButton;
@@ -86,6 +88,7 @@ public class Settings implements BaseController {
     private void initialize() {
         initRequiredFieldsSymbols();
         initTimeAndDateFields();
+        hardwareSettings = new HardwareSettings(this);
         initHardwareSettings();
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar,
                 warningIcon);
@@ -135,7 +138,6 @@ public class Settings implements BaseController {
     }
 
     private void initHardwareSettings() {
-        hardwareSettings = new HardwareSettings(this);
         hardwareSettings.showCrates();
         hardwareSettings.showModules();
         addDoubleClickListener(cratesListView, true);
@@ -177,11 +179,20 @@ public class Settings implements BaseController {
             chooseCrateButton.setDisable(true);
             saveSettingsButton.setDisable(true);
             backButton.setDisable(true);
+            backButtonGeneralTab.setDisable(true);
 
+            new Thread(() -> {
                 cm.createListModulesControllers(hardwareSettings.getModulesNames());
                 hardwareSettings.initialize();
+
+                if (editMode) {
+                    settingsModel.loadChannelsSettings(testProgram, hardwareSettings.getCrate(),
+                            hardwareSettings.getSelectedCrate());
+                }
+
                 statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.clearStatusBar();
+            }).start();
         }
     }
 
@@ -269,6 +280,7 @@ public class Settings implements BaseController {
         setupModuleButton.setDisable(true);
         saveSettingsButton.setDisable(true);
         backButton.setDisable(true);
+        backButtonGeneralTab.setDisable(true);
         hideRequiredFieldsSymbols();
     }
 
@@ -318,8 +330,6 @@ public class Settings implements BaseController {
         loadGeneralSettings(testProgram);
         initHardwareSettings();
         hardwareSettings.selectCrate();
-        settingsModel.loadChannelsSettings(testProgram, hardwareSettings.getCrate(),
-                hardwareSettings.getSelectedCrate());
     }
 
     private void loadGeneralSettings(TestProgram testProgram) {
@@ -365,6 +375,10 @@ public class Settings implements BaseController {
 
     public Button getBackButton() {
         return backButton;
+    }
+
+    public Button getBackButtonGeneralTab() {
+        return backButtonGeneralTab;
     }
 
     public Label getCheckIcon() {
