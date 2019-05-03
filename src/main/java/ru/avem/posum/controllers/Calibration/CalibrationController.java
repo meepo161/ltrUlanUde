@@ -69,7 +69,8 @@ public class CalibrationController implements BaseController {
     private ControllerManager cm;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private SignalModel signalModel;
-    private StatusBarLine statusBarLine = new StatusBarLine();
+    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
+            statusBar, warningIcon);
     private WindowsManager wm;
     private boolean stopped;
 
@@ -345,30 +346,18 @@ public class CalibrationController implements BaseController {
 
     private void indicateResult() {
         saveButton.setDisable(true);
-        statusBarLine.setStatusOk(true);
-        statusBarLine.setStatus("Настройки успешно сохранены", statusBar, checkIcon, warningIcon);
+        statusBarLine.setStatus("Настройки успешно сохранены", true);
     }
 
     @FXML
     public void handleBackButton() {
-        toggleProgressIndicatorState(false);
-        Platform.runLater(() -> statusBarLine.setStatus("Подготовка данных для отображения", statusBar));
+        statusBarLine.setStatusOfProcess("Подготовка данных для отображения");
         new Thread(() -> {
             stopped = true;
             clearCalibrationData();
             cm.checkCalibration();
-            toggleProgressIndicatorState(true);
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
-    }
-
-    private void toggleProgressIndicatorState(boolean isHidden) {
-        if (isHidden) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-            statusBarLine.clearStatusBar(statusBar);
-        } else {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
-        }
     }
 
     private void clearCalibrationData() {

@@ -84,7 +84,8 @@ public class LTR24Settings implements BaseController {
         ltr24SettingsModel = new LTR24SettingsModel();
         ltr24ChannelsSettings = new LTR24ChannelsSettings(this);
         ltr24ModuleSettings = new LTR24ModuleSettings(this);
-        statusBarLine = new StatusBarLine();
+        statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar,
+                warningIcon);
 
     }
 
@@ -99,7 +100,7 @@ public class LTR24Settings implements BaseController {
 
     @FXML
     public void handleInitialize() {
-        setStatusBar(true, "Инициализация модуля");
+        statusBarLine.setStatusOfProcess("Инициализация модуля");
         ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 
@@ -115,23 +116,10 @@ public class LTR24Settings implements BaseController {
                 });
             }
 
-            clearStatusBar();
-            setStatusBar(false, ltr24SettingsModel.getLTR24Instance().getStatus());
+            statusBarLine.clearStatusBar();
+            statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(),
+                    ltr24SettingsModel.getLTR24Instance().checkStatus());
         }).start();
-    }
-
-    private void setStatusBar(boolean isProcess, String text) {
-        if (isProcess) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
-            statusBarLine.setStatus(text, statusBar);
-        } else {
-            Platform.runLater(() -> statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon));
-        }
-    }
-
-    private void clearStatusBar() {
-        Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-        statusBarLine.clearStatusBar(statusBar);
     }
 
     @FXML
@@ -146,7 +134,7 @@ public class LTR24Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        statusBarLine.clearStatusBar(statusBar);
+        statusBarLine.clearStatusBar();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -166,7 +154,7 @@ public class LTR24Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        setStatusBar(true, "Подготовка данных для отображения");
+        statusBarLine.setStatusOfProcess("Подготовка данных для отображения");
         ltr24ChannelsSettings.toggleValueOnChannelButtons(true);
         backButton.setDisable(true);
 
@@ -178,7 +166,7 @@ public class LTR24Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            clearStatusBar();
+            statusBarLine.clearStatusBar();
             ltr24ChannelsSettings.toggleValueOnChannelButtons(false);
             backButton.setDisable(false);
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);

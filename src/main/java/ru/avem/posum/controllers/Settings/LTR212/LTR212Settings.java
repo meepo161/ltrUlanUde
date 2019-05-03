@@ -106,7 +106,8 @@ public class LTR212Settings implements BaseController {
         ltr212SettingsModel = new LTR212SettingsModel();
         ltr212ChannelsSettings = new LTR212ChannelsSettings(this);
         ltr212ModuleSettings = new LTR212ModuleSettings(this);
-        statusBarLine = new StatusBarLine();
+        statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar,
+                warningIcon);
     }
 
     public void loadSettings(String moduleName) {
@@ -119,7 +120,7 @@ public class LTR212Settings implements BaseController {
     }
 
     public void handleInitialize() {
-        setStatusBar(true, "Инициализация модуля");
+        statusBarLine.setStatusOfProcess("Инициализация модуля");
         ltr212ChannelsSettings.disableUiElements();
         ltr212ModuleSettings.toggleUiElementsState(true);
 
@@ -135,24 +136,10 @@ public class LTR212Settings implements BaseController {
                 });
             }
 
-            clearStatusBar();
-            Platform.runLater(() -> setStatusBar(false,
-                    ltr212SettingsModel.getLTR212Instance().getStatus()));
+            statusBarLine.clearStatusBar();
+            statusBarLine.setStatus(ltr212SettingsModel.getLTR212Instance().getStatus(),
+                    ltr212SettingsModel.getLTR212Instance().checkStatus());
         }).start();
-    }
-
-    private void setStatusBar(boolean isProcess, String text) {
-        if (isProcess) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
-            statusBarLine.setStatus(text, statusBar);
-        } else {
-            Platform.runLater(() -> statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon));
-        }
-    }
-
-    private void clearStatusBar() {
-        Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-        statusBarLine.clearStatusBar(statusBar);
     }
 
     public void handleBackButton() {
@@ -166,7 +153,7 @@ public class LTR212Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        clearStatusBar();
+        statusBarLine.clearStatusBar();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -186,8 +173,8 @@ public class LTR212Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        clearStatusBar();
-        setStatusBar(true, "Подготовка данных для отображения");
+        statusBarLine.clearStatusBar();
+        statusBarLine.setStatusOfProcess("Подготовка данных для отображения");
         ltr212ChannelsSettings.toggleValueOnChannelButtons(true);
         backButton.setDisable(true);
 
@@ -199,7 +186,7 @@ public class LTR212Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            clearStatusBar();
+            statusBarLine.clearStatusBar();
             ltr212ChannelsSettings.toggleValueOnChannelButtons(false);
             backButton.setDisable(false);
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);

@@ -73,7 +73,8 @@ public class SignalController implements BaseController {
     private double loadsCounter;
     private double rms;
     private SignalModel signalModel = new SignalModel();
-    private StatusBarLine statusBarLine = new StatusBarLine();
+    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
+            statusBar, warningIcon);
     private WindowsManager wm;
     private double zeroShift;
 
@@ -125,8 +126,7 @@ public class SignalController implements BaseController {
             graphController.setGraphBounds();
             setSignalParametersLabels();
         } else {
-            statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", statusBar,
-                    checkIcon, warningIcon);
+            statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", false);
         }
     }
 
@@ -159,7 +159,7 @@ public class SignalController implements BaseController {
     private void checkConnection() {
         if (signalModel.isConnectionLost()) {
             signalModel.setFrequency(0);
-            statusBarLine.setStatus(signalModel.getAdc().getStatus(), statusBar);
+            statusBarLine.setStatus(signalModel.getAdc().getStatus(), signalModel.getAdc().checkStatus());
         }
     }
 
@@ -230,7 +230,7 @@ public class SignalController implements BaseController {
     @FXML
     private void handleBackButton() {
         toggleProgressIndicatorState(false);
-        statusBarLine.setStatus("Загрузка настроек модуля", statusBar);
+        statusBarLine.setStatusOfProcess("Загрузка настроек модуля");
         new Thread(() -> {
             stopReceivingOfData();
             resetShowingSettings();

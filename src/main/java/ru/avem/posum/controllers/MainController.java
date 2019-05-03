@@ -59,7 +59,8 @@ public class MainController implements BaseController {
     private long newTestProgramId;
     private long oldTestProgramId;
     private int selectedIndex;
-    private StatusBarLine statusBarLine = new StatusBarLine();
+    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator,
+            statusBar, warningIcon);
     private TestProgram testProgram;
     private long testProgramId;
     private ObservableList<TestProgram> testPrograms;
@@ -193,10 +194,10 @@ public class MainController implements BaseController {
         selectedIndex = getSelectedItemIndex();
 
         if (testPrograms.isEmpty()) {
-            setStatusBar(false, "Ошибка: отсутсвуют программы испытаний");
+            statusBarLine.setStatus("Ошибка: отсутсвуют программы испытаний", false);
             isTestProgramSelected = false;
         } else if (selectedIndex == -1) {
-            setStatusBar(false, "Ошибка: программа испытаний не выбрана");
+            statusBarLine.setStatus("Ошибка: программа испытаний не выбрана", false);
             isTestProgramSelected = false;
         } else {
             isTestProgramSelected = true;
@@ -221,30 +222,14 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            setStatusBar(true, "Копирование программы испытаний");
+            statusBarLine.setStatusOfProcess("Копирование программы испытаний");
             new Thread(() -> {
                 copyTestProgram();
                 copyModulesSettings();
                 reloadTestProgramsList();
-                statusBarLine.setStatusOk(true);
-                setStatusBar(false, "Программа испытаний скопирована");
+                statusBarLine.setStatus("Программа испытаний скопирована", true);
             }).start();
         }
-    }
-
-    private void setStatusBar(boolean isProcess, String text) {
-        if (isProcess) {
-            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1.0;"));
-            statusBarLine.setMainView(true);
-            statusBarLine.setStatus(text, statusBar);
-        } else {
-            Platform.runLater(() -> statusBarLine.setStatus(text, statusBar, checkIcon, warningIcon));
-        }
-    }
-
-    private void clearStatusBar() {
-        Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
-        statusBarLine.clearStatusBar(statusBar);
     }
 
     private TestProgram getTestProgram(int itemIndex) {
@@ -289,13 +274,12 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            clearStatusBar();
-            setStatusBar(true, "Удаление программы испытаний");
+            statusBarLine.clearStatusBar();
+            statusBarLine.setStatusOfProcess("Удаление программы испытаний");
             new Thread(() -> {
                 delete();
                 reloadTestProgramsList();
-                statusBarLine.setStatusOk(true);
-                setStatusBar(false, "Программа испытаний удалена");
+                statusBarLine.setStatus("Программа испытаний удалена", true);
             }).start();
         }
     }
