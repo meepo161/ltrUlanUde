@@ -116,7 +116,8 @@ public class LTR34SettingsModel {
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = (coefficient * amplitude) / Math.PI * Math.atan(1.0 / Math.tan((double) i / length * Math.PI * frequency + channelPhase));
+            data[i] = (coefficient * amplitude) / Math.PI * Math.atan(1.0 / Math.tan((double) i / length * Math.PI *
+                    frequency + channelPhase));
         }
 
         return data;
