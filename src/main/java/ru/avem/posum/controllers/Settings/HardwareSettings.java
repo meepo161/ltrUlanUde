@@ -13,8 +13,8 @@ public class HardwareSettings extends Settings {
     private String crateSerialNumber;
     private ObservableList<String> crates;
     private String moduleName;
-    private ListView<String> modulesListView;
     private ObservableList<String> modulesNames;
+    private ListView<String> modulesListView;
     private Button saveSettingsButton;
     private int selectedCrate;
     private int selectedModuleIndex;
@@ -105,9 +105,6 @@ public class HardwareSettings extends Settings {
             }
 
             check(notCrateCounter);
-
-            cratesListView.getSelectionModel().select(selectedCrate);
-            modulesListView.getSelectionModel().clearSelection();
         }
     }
 
@@ -116,28 +113,11 @@ public class HardwareSettings extends Settings {
             settings.getStatusBarLine().setStatus("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.",
                     false);
         } else {
-            settings.getStatusBarLine().clearStatusBar();
-            settings.getStatusBarLine().toggleProgressIndicator(false);
-            settings.getStatusBarLine().setStatusOfProgress("Устанавливается соединение с модулями");
-
-            modulesListView.setDisable(true);
-            saveSettingsButton.setDisable(true);
-            setupModuleButton.setDisable(true);
-            backButton.setDisable(true);
-
-            modulesNames = crate.getModulesNames(selectedCrate);
-            modulesListView.setItems(modulesNames);
-            settings.getCm().createListModulesControllers(modulesNames);
-            settings.getSettingsModel().setControllerManager(settings.getCm());
-            settings.getSettingsModel().createModulesInstances(modulesNames);
-
-            modulesListView.setDisable(false);
-            saveSettingsButton.setDisable(false);
-            setupModuleButton.setDisable(false);
-            backButton.setDisable(false);
-
-            settings.getStatusBarLine().toggleProgressIndicator(true);
-            settings.getStatusBarLine().clearStatusBar();
+            cratesListView.getSelectionModel().select(selectedCrate);
+            modulesListView.getSelectionModel().clearSelection();
+            showCrates();
+            showModules();
+            handleChooseCrate();
         }
     }
 

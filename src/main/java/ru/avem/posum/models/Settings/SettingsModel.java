@@ -528,10 +528,6 @@ public class SettingsModel implements BaseController {
         return modulesNames;
     }
 
-    public void setCrateSerialNumber(String crateSerialNumber) {
-        this.crateSerialNumber = crateSerialNumber;
-    }
-
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
