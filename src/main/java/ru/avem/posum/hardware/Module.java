@@ -15,6 +15,8 @@ public abstract class Module {
     public boolean checkStatus() {
         if (status.equals("Операция успешно выполнена")) {
             return true;
+        } else if (status.equals("Потеряно соединение с крейтом")) {
+            return false;
         } else {
             status = textEncoder.cp2utf(status);
             return false;

@@ -141,6 +141,7 @@ public class SignalController implements BaseController {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
                 signalModel.getData();
+                checkConnection();
             }
         }).start();
 
@@ -160,7 +161,7 @@ public class SignalController implements BaseController {
     private void checkConnection() {
         if (signalModel.isConnectionLost()) {
             signalModel.setFrequency(0);
-            statusBarLine.setStatus(signalModel.getAdc().getStatus(), signalModel.getAdc().checkStatus());
+            statusBarLine.setStatus(signalModel.getAdc().getStatus(), false);
         }
     }
 

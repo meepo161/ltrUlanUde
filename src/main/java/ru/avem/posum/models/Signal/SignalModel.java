@@ -122,16 +122,23 @@ public class SignalModel {
         RingBuffer ringBufferForShow = adc.getRingBufferForShow();
 
         adc.checkConnection();
-        if (adc.checkStatus()) {
+        connectionLost = !adc.checkStatus();
+
+        if (!connectionLost) {
             adc.write(data, timeMarks);
-            ringBufferForCalculation.reset();
-            ringBufferForCalculation.put(data);
-            ringBufferForShow.reset();
-            ringBufferForShow.put(data);
+            boolean isReceived = adc.checkStatus();
+            if (isReceived) {
+                ringBufferForCalculation.reset();
+                ringBufferForCalculation.put(data);
+                ringBufferForShow.reset();
+                ringBufferForShow.put(data);
+            }
         } else {
-            connectionLost = true;
             adc.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
             adc.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));
+            for (int i = 0; i < adc.getData().length; i++) {
+                adc.getData()[i] = 0;
+            }
         }
     }
 
