@@ -175,6 +175,7 @@ public class Settings implements BaseController {
             cratesListView.setDisable(true);
             chooseCrateButton.setDisable(true);
             saveSettingsButton.setDisable(true);
+            backButton.setDisable(true);
 
             new Thread(() -> {
                 cm.createListModulesControllers(hardwareSettings.getModulesNames());
@@ -187,16 +188,20 @@ public class Settings implements BaseController {
 
     @FXML
     public void handleSetupModule() {
-        new Thread(() -> {
-            for (int i = 0; i < hardwareSettings.getModulesNames().size(); i++) {
-                if (modulesListView.getSelectionModel().isSelected(i)) {
-                    hardwareSettings.loadModuleSettings();
-                    Platform.runLater(() -> wm.setModuleScene(hardwareSettings.getModuleName(),
-                            hardwareSettings.getSelectedModuleIndex()));
-                    break;
+        if (modulesListView.getSelectionModel().getSelectedIndex() == -1) {
+            statusBarLine.setStatus("Выберите модуль", false);
+        } else {
+            new Thread(() -> {
+                for (int i = 0; i < hardwareSettings.getModulesNames().size(); i++) {
+                    if (modulesListView.getSelectionModel().isSelected(i)) {
+                        hardwareSettings.loadModuleSettings();
+                        Platform.runLater(() -> wm.setModuleScene(hardwareSettings.getModuleName(),
+                                hardwareSettings.getSelectedModuleIndex()));
+                        break;
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     @FXML
@@ -264,6 +269,7 @@ public class Settings implements BaseController {
     private void toggleUiElements() {
         setupModuleButton.setDisable(true);
         saveSettingsButton.setDisable(true);
+        backButton.setDisable(true);
         hideRequiredFieldsSymbols();
     }
 

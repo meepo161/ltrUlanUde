@@ -102,11 +102,11 @@
                 <CheckBox fx:id="autoRangeCheckBox" mnemonicParsing="false" text="Автомасштаб" GridPane.columnIndex="13" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
                 <Button fx:id="calibrateButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                     <GridPane.margin>
-                        <Insets right="270.0" />
+                        <Insets left="270.0" />
                     </GridPane.margin></Button>
                 <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
                     <GridPane.margin>
-                        <Insets left="270.0" />
+                        <Insets right="270.0" />
                     </GridPane.margin></Button>
                 <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="15" />
                 <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="15" GridPane.rowIndex="15">

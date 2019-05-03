@@ -52,6 +52,7 @@ public class HardwareSettings extends Settings {
                 initSettingsModel();
                 crate.initialize(crateSerialNumber);
                 saveSettingsButton.setDisable(false);
+                backButton.setDisable(false);
                 toggleUiElements(true);
             } else {
                 settings.getStatusBarLine().setStatus("Крейт не выбран", false);

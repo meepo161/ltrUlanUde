@@ -169,12 +169,12 @@
             <Label text="Частота дискретизации:" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             <Button fx:id="initializeButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
                <GridPane.margin>
-                  <Insets right="270.0" />
+                  <Insets left="270.0" />
                </GridPane.margin>
             </Button>
             <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="BOTTOM">
                <GridPane.margin>
-                  <Insets left="270.0" />
+                  <Insets right="270.0" />
                </GridPane.margin>
             </Button>
             <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="14" />
