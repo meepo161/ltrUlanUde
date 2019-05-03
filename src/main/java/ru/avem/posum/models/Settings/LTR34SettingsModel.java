@@ -157,22 +157,6 @@ public class LTR34SettingsModel {
         return resultArray;
     }
 
-    public void generate(boolean isAutogenerationMode) {
-        ltr34.generate(signal);
-        ltr34.start();
-        stopped = false;
-
-        if (!isAutogenerationMode) {
-            new Thread(() -> {
-                while (!stopped && ltr34.checkStatus()) {
-                    ltr34.generate(signal);
-                    ltr34.checkConnection();
-                    Utils.sleep(1000);
-                }
-            }).start();
-        }
-    }
-
     public XYChart.Series<Number, Number> createSeries(int channelNumber) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(String.format("Канал %d", channelNumber + 1));
@@ -222,8 +206,16 @@ public class LTR34SettingsModel {
         return phases;
     }
 
+    public double[] getSignal() {
+        return signal;
+    }
+
     public int getSlot() {
         return slot;
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     public void setModuleName(String moduleName) {
@@ -232,5 +224,9 @@ public class LTR34SettingsModel {
 
     public void setSlot(int slot) {
         this.slot = slot;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 }

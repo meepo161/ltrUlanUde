@@ -8,6 +8,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.hardware.LTR34;
 import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
@@ -161,7 +162,7 @@ public class LTR34Settings implements BaseController {
 
             if (ltr34SettingsModel.getLTR34Instance().checkStatus()) {
                 ltr34SettingsModel.calculateSignal(signalTypeComboBox.getSelectionModel().getSelectedIndex());
-                ltr34SettingsModel.generate(dacModeComboBox.getSelectionModel().getSelectedIndex() == 1);
+                generate();
                 showGraph();
             } else {
                 ltr34ModuleSettings.enableUiElements();
@@ -171,6 +172,41 @@ public class LTR34Settings implements BaseController {
             statusBarLine.setStatus(ltr34SettingsModel.getLTR34Instance().getStatus(),
                     ltr34SettingsModel.getLTR34Instance().checkStatus());
         }).start();
+    }
+
+    private void generate() {
+        LTR34 ltr34 = ltr34SettingsModel.getLTR34Instance();
+        ltr34.generate(ltr34SettingsModel.getSignal());
+        ltr34.start();
+        ltr34SettingsModel.setStopped(false);
+        boolean isAutogenerationMode = dacModeComboBox.getSelectionModel().getSelectedIndex() == 1;
+
+        if (!isAutogenerationMode) {
+            new Thread(() -> {
+                while (!ltr34SettingsModel.isStopped() && ltr34.checkStatus()) {
+                    ltr34.generate(ltr34SettingsModel.getSignal());
+                    checkConnection();
+                    Utils.sleep(1000);
+                }
+            }).start();
+        } else {
+            new Thread(() -> {
+                while (!ltr34SettingsModel.isStopped() && ltr34.checkStatus()) {
+                    checkConnection();
+                    Utils.sleep(1000);
+                }
+            }).start();
+        }
+    }
+
+    private void checkConnection() {
+        LTR34 ltr34 = ltr34SettingsModel.getLTR34Instance();
+        ltr34.checkConnection();
+        if (!ltr34.checkStatus()) {
+            ltr34SettingsModel.setStopped(true);
+            statusBarLine.setStatus(ltr34.getStatus(), false);
+            handleStopSignal();
+        }
     }
 
     private void showGraph() {
@@ -194,7 +230,7 @@ public class LTR34Settings implements BaseController {
     @FXML
     public void handleStopSignal() {
         ltr34SettingsModel.stopModule();
-        graph.getData().clear();
+        Platform.runLater(() -> graph.getData().clear());
         ltr34ChannelsSettings.enableUiElements();
         ltr34ModuleSettings.enableUiElements();
     }
