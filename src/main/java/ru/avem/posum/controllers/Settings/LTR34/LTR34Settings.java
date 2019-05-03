@@ -149,7 +149,8 @@ public class LTR34Settings implements BaseController {
 
     @FXML
     public void handleGenerateSignal() {
-        statusBarLine.setStatusOfProcess("Запуск генерации сигнала");
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Запуск генерации сигнала");
         ltr34ChannelsSettings.disableUiElementsState();
         ltr34ModuleSettings.disableUiElementsState();
 
@@ -166,6 +167,7 @@ public class LTR34Settings implements BaseController {
                 ltr34ModuleSettings.enableUiElements();
             }
 
+            statusBarLine.toggleProgressIndicator(true);
             statusBarLine.setStatus(ltr34SettingsModel.getLTR34Instance().getStatus(),
                     ltr34SettingsModel.getLTR34Instance().checkStatus());
         }).start();

@@ -352,12 +352,14 @@ public class CalibrationController implements BaseController {
 
     @FXML
     public void handleBackButton() {
-        statusBarLine.setStatusOfProcess("Подготовка данных для отображения");
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
         new Thread(() -> {
             stopped = true;
             clearCalibrationData();
             cm.checkCalibration();
             statusBarLine.clearStatusBar();
+            statusBarLine.toggleProgressIndicator(true);
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
     }

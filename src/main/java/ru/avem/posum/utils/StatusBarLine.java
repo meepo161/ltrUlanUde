@@ -25,10 +25,10 @@ public class StatusBarLine {
         this.warningIcon = warningIcon;
     }
 
-    public void setStatusOfProcess(String text) {
+    public void setStatusOfProgress(String text) {
+        clearStatusBar();
         Platform.runLater(() -> {
             hideIcons();
-            progressIndicator.setStyle("-fx-opacity: 1;");
             statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
             statusBar.setText(text);
             handleStatusBar();
@@ -60,6 +60,7 @@ public class StatusBarLine {
     }
 
     public void setStatus(String text, boolean isStatusOk) {
+        clearStatusBar();
         Platform.runLater(() -> {
             statusBar.setText(text);
             initIcons(isStatusOk);
@@ -68,7 +69,6 @@ public class StatusBarLine {
     }
 
     private void initIcons(boolean isStatusOk) {
-        progressIndicator.setStyle("-fx-opacity: 0;");
         checkIcon.setTextFill(Color.web("#009700"));
         warningIcon.setTextFill(Color.web("#D30303"));
 
@@ -86,8 +86,15 @@ public class StatusBarLine {
     public void clearStatusBar() {
         Platform.runLater(() -> {
             hideIcons();
-            progressIndicator.setStyle("-fx-opacity: 0;");
             statusBar.setText("");
         });
+    }
+
+    public void toggleProgressIndicator(boolean isHidden) {
+        if (isHidden) {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 0;"));
+        } else {
+            Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1;"));
+        }
     }
 }

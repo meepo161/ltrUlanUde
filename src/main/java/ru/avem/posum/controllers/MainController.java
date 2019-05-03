@@ -59,8 +59,7 @@ public class MainController implements BaseController {
     private long newTestProgramId;
     private long oldTestProgramId;
     private int selectedIndex;
-    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator,
-            statusBar, warningIcon);
+    private StatusBarLine statusBarLine;
     private TestProgram testProgram;
     private long testProgramId;
     private ObservableList<TestProgram> testPrograms;
@@ -70,6 +69,8 @@ public class MainController implements BaseController {
     private void initialize() {
         initTableView();
         addMouseListener();
+        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar,
+                warningIcon);
     }
 
     private void initTableView() {
@@ -222,11 +223,13 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            statusBarLine.setStatusOfProcess("Копирование программы испытаний");
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Копирование программы испытаний");
             new Thread(() -> {
                 copyTestProgram();
                 copyModulesSettings();
                 reloadTestProgramsList();
+                statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.setStatus("Программа испытаний скопирована", true);
             }).start();
         }
@@ -275,10 +278,12 @@ public class MainController implements BaseController {
 
         if (isTestProgramSelected) {
             statusBarLine.clearStatusBar();
-            statusBarLine.setStatusOfProcess("Удаление программы испытаний");
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Удаление программы испытаний");
             new Thread(() -> {
                 delete();
                 reloadTestProgramsList();
+                statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.setStatus("Программа испытаний удалена", true);
             }).start();
         }

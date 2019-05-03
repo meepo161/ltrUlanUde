@@ -100,7 +100,8 @@ public class LTR24Settings implements BaseController {
 
     @FXML
     public void handleInitialize() {
-        statusBarLine.setStatusOfProcess("Инициализация модуля");
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Инициализация модуля");
         ltr24ChannelsSettings.disableUiElementsState();
         ltr24ModuleSettings.toggleUiElementsState(true);
 
@@ -116,6 +117,7 @@ public class LTR24Settings implements BaseController {
                 });
             }
 
+            statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clearStatusBar();
             statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(),
                     ltr24SettingsModel.getLTR24Instance().checkStatus());
@@ -154,7 +156,8 @@ public class LTR24Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        statusBarLine.setStatusOfProcess("Подготовка данных для отображения");
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
         ltr24ChannelsSettings.toggleValueOnChannelButtons(true);
         backButton.setDisable(true);
 
@@ -166,9 +169,10 @@ public class LTR24Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            statusBarLine.clearStatusBar();
             ltr24ChannelsSettings.toggleValueOnChannelButtons(false);
             backButton.setDisable(false);
+            statusBarLine.toggleProgressIndicator(true);
+            statusBarLine.clearStatusBar();
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
         }).start();
     }

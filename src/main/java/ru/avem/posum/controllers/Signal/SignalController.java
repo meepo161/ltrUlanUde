@@ -232,7 +232,7 @@ public class SignalController implements BaseController {
     @FXML
     private void handleBackButton() {
         toggleProgressIndicatorState(false);
-        statusBarLine.setStatusOfProcess("Загрузка настроек модуля");
+        statusBarLine.setStatusOfProgress("Загрузка настроек модуля");
         new Thread(() -> {
             stopReceivingOfData();
             resetShowingSettings();

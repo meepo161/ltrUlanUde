@@ -116,7 +116,8 @@ public class HardwareSettings extends Settings {
                     false);
         } else {
             settings.getStatusBarLine().clearStatusBar();
-            settings.getStatusBarLine().setStatusOfProcess("Устанавливается соединение с модулями");
+            settings.getStatusBarLine().toggleProgressIndicator(false);
+            settings.getStatusBarLine().setStatusOfProgress("Устанавливается соединение с модулями");
 
             modulesListView.setDisable(true);
             saveSettingsButton.setDisable(true);
@@ -134,6 +135,7 @@ public class HardwareSettings extends Settings {
             setupModuleButton.setDisable(false);
             backButton.setDisable(false);
 
+            settings.getStatusBarLine().toggleProgressIndicator(true);
             settings.getStatusBarLine().clearStatusBar();
         }
     }

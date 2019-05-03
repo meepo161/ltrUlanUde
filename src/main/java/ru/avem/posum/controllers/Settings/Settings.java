@@ -170,7 +170,8 @@ public class Settings implements BaseController {
         if (cratesListView.getSelectionModel().getSelectedIndex() == -1) {
             statusBarLine.setStatus("Выделите крейт", false);
         } else {
-            statusBarLine.setStatusOfProcess("Устанавливается соединение с модулями");
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Устанавливается соединение с модулями");
             cratesListView.setDisable(true);
             chooseCrateButton.setDisable(true);
             saveSettingsButton.setDisable(true);
@@ -178,6 +179,7 @@ public class Settings implements BaseController {
             new Thread(() -> {
                 cm.createListModulesControllers(hardwareSettings.getModulesNames());
                 hardwareSettings.initialize();
+                statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.clearStatusBar();
             }).start();
         }
@@ -251,14 +253,15 @@ public class Settings implements BaseController {
     }
 
     private void save() {
+        statusBarLine.clearStatusBar();
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Сохранение программы испытаний");
         toggleUiElements();
         saveSettings();
         Platform.runLater(this::handleBackButton);
     }
 
     private void toggleUiElements() {
-        statusBarLine.clearStatusBar();
-        statusBarLine.setStatusOfProcess("Сохранение программы испытаний");
         setupModuleButton.setDisable(true);
         saveSettingsButton.setDisable(true);
         hideRequiredFieldsSymbols();
@@ -299,6 +302,7 @@ public class Settings implements BaseController {
             cm.loadItemsForMainTableView();
         }).start();
 
+        statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
         wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
