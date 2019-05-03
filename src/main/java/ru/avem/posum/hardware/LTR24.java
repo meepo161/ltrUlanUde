@@ -13,7 +13,6 @@ public class LTR24 extends ADC {
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot());
-        checkStatus();
     }
 
     @Override
@@ -29,7 +28,6 @@ public class LTR24 extends ADC {
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR24ModuleSettings());
-        checkStatus();
     }
 
     @Override
@@ -40,7 +38,6 @@ public class LTR24 extends ADC {
     @Override
     public void start() {
         status = start(getSlot());
-        checkStatus();
     }
 
     @Override
@@ -51,13 +48,11 @@ public class LTR24 extends ADC {
     @Override
     public void stop() {
         status = stop(getSlot());
-        checkStatus();
     }
 
     @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
-        checkStatus();
     }
 
     public native String openConnection(String crate, int slot);

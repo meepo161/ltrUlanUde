@@ -302,7 +302,7 @@
                   <Insets left="140.0" />
                </GridPane.margin>
             </Button>
-            <ProgressIndicator fx:id="progressIndicator" maxWidth="20.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="14" />
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="14" />
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="14">
                <GridPane.margin>
                   <Insets left="15.0" />

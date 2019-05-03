@@ -44,8 +44,15 @@ public class GraphModel {
         }
     }
 
-    public void doFFT(double[] data) {
-        fft.forward(data, data.length, hanningWindow);
+    public void doFFT(int channel, double[] data) {
+        int channels = 4; // TODO: delete this shit
+        double[] channelData = new double[data.length / 4];
+
+        for (int i = channel, j = 0; i < data.length; i += channels) {
+            channelData[j++] = data[i];
+        }
+
+        fft.forward(channelData, channelData.length, hanningWindow);
     }
 
     public List<XYChart.Data<Number, Number>> getMagnitude() {

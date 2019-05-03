@@ -23,16 +23,6 @@ public class LTR212SettingsModel {
         this.typesOfChannels = ltr212.getTypeOfChannels();
     }
 
-    public void initModule() {
-        ltr212.checkConnection();
-
-        if (ltr212.checkStatus()) {
-            ltr212.initializeModule();
-        } else {
-            ltr212.openConnection();
-        }
-    }
-
     public String[] getDescriptions() {
         return descriptions;
     }

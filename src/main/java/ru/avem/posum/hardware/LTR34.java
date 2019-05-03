@@ -21,7 +21,6 @@ public class LTR34 extends DAC {
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot());
-        checkStatus();
     }
 
     @Override
@@ -29,7 +28,6 @@ public class LTR34 extends DAC {
         Crate crate = new Crate();
         if (!crate.getCratesNames().isEmpty()) {
             status = checkConnection(getSlot());
-            checkStatus();
         } else {
             openConnection();
             status = "Потеряно соединение с крейтом";
@@ -59,13 +57,11 @@ public class LTR34 extends DAC {
     @Override
     public void stop() {
         status = stop(getSlot());
-        checkStatus();
     }
 
     @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
-        checkStatus();
     }
 
     public native String openConnection(String crate, int slot);

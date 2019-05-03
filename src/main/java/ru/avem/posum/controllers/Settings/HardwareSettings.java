@@ -54,7 +54,7 @@ public class HardwareSettings extends Settings {
                 saveSettingsButton.setDisable(false);
                 toggleUiElements(true);
             } else {
-                settings.setStatusBar(false, "Крейт не выбран");
+                settings.getStatusBarLine().setStatus("Крейт не выбран", false);
             }
         }
     }
@@ -81,7 +81,8 @@ public class HardwareSettings extends Settings {
         boolean isCrateChosen = false;
 
         if (!chooseCrateButton.isDisabled()) {
-            settings.setStatusBar(false, "Перед сохранением настроек необходимо выбрать крейт");
+            settings.getStatusBarLine().setStatus("Перед сохранением настроек необходимо выбрать крейт",
+                    false);
         } else {
             isCrateChosen = true;
         }
@@ -111,10 +112,11 @@ public class HardwareSettings extends Settings {
 
     private void check(int notCrateCounter) {
         if (notCrateCounter == crate.getCratesNames().size()) {
-            settings.setStatusBar(false, "Ошибка загрузки настроек: крейт с указанным серийным номером не найден.");
+            settings.getStatusBarLine().setStatus("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.",
+                    false);
         } else {
-            settings.clearStatusBar();
-            settings.setStatusBar(true, "Устанавливается соединение с модулями");
+            settings.getStatusBarLine().clearStatusBar();
+            settings.getStatusBarLine().setStatusOfProcess("Устанавливается соединение с модулями");
 
             modulesListView.setDisable(true);
             saveSettingsButton.setDisable(true);
@@ -132,7 +134,7 @@ public class HardwareSettings extends Settings {
             setupModuleButton.setDisable(false);
             backButton.setDisable(false);
 
-            settings.clearStatusBar();
+            settings.getStatusBarLine().clearStatusBar();
         }
     }
 

@@ -73,12 +73,13 @@ public class SignalController implements BaseController {
     private double loadsCounter;
     private double rms;
     private SignalModel signalModel = new SignalModel();
-    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
-            statusBar, warningIcon);
+    private StatusBarLine statusBarLine;
     private WindowsManager wm;
     private double zeroShift;
 
     public void initializeView() {
+        statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
+                statusBar, warningIcon);
         setTitleLabel();
         graphController.initGraph();
         graphController.initComboBoxes();

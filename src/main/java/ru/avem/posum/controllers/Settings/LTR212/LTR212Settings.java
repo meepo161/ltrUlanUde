@@ -127,13 +127,15 @@ public class LTR212Settings implements BaseController {
         new Thread(() -> {
             ltr212ChannelsSettings.saveSettings();
             ltr212ModuleSettings.saveSettings();
-            ltr212SettingsModel.initModule();
+            ltr212SettingsModel.getLTR212Instance().initializeModule();
 
             if (!ltr212SettingsModel.getLTR212Instance().checkStatus()) {
                 Platform.runLater(() -> {
                     ltr212ChannelsSettings.enableUiElements();
                     ltr212ModuleSettings.toggleUiElementsState(false);
                 });
+            } else {
+
             }
 
             statusBarLine.clearStatusBar();

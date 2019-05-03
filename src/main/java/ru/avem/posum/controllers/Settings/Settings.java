@@ -77,8 +77,7 @@ public class Settings implements BaseController {
     private HardwareSettings hardwareSettings;
     private List<Pair<Label, TextField>> requiredFields = new ArrayList<>();
     private SettingsModel settingsModel = new SettingsModel();
-    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator,
-            statusBar, warningIcon);
+    private StatusBarLine statusBarLine;
     private TestProgram testProgram;
     private WindowsManager wm;
 
@@ -87,6 +86,8 @@ public class Settings implements BaseController {
         initRequiredFieldsSymbols();
         initTimeAndDateFields();
         initHardwareSettings();
+        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar,
+                warningIcon);
     }
 
     private void initRequiredFieldsSymbols() {
@@ -237,7 +238,6 @@ public class Settings implements BaseController {
                 isRequiredFieldsFilled = false;
                 statusBarLine.setStatus("Перед сохранением настроек заполните обязательные поля основной информации",
                         false);
-                break;
             } else {
                 filledFields++;
             }
@@ -391,6 +391,10 @@ public class Settings implements BaseController {
 
     public Button getSetupModuleButton() {
         return setupModuleButton;
+    }
+
+    public StatusBarLine getStatusBarLine() {
+        return statusBarLine;
     }
 
     public TestProgram getTestProgram() {

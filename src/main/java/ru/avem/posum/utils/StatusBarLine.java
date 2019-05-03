@@ -61,13 +61,14 @@ public class StatusBarLine {
 
     public void setStatus(String text, boolean isStatusOk) {
         Platform.runLater(() -> {
-            initIcons(isStatusOk);
             statusBar.setText(text);
+            initIcons(isStatusOk);
             handleStatusBar();
         });
     }
 
     private void initIcons(boolean isStatusOk) {
+        progressIndicator.setStyle("-fx-opacity: 0;");
         checkIcon.setTextFill(Color.web("#009700"));
         warningIcon.setTextFill(Color.web("#D30303"));
 

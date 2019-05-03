@@ -282,7 +282,7 @@ public class GraphController {
     }
 
     private void listenAutoRangeCheckBox() {
-        signalController.getAverageCheckBox().selectedProperty().addListener(observable -> {
+        signalController.getAutoRangeCheckBox().selectedProperty().addListener(observable -> {
             if (signalController.getAverageCheckBox().isSelected()) {
                 toggleAutoRange(true);
             } else {
@@ -394,7 +394,7 @@ public class GraphController {
         double[] data = signalController.getSignalModel().getBuffer();
         NumberAxis xAxis = (NumberAxis) graph.getXAxis();
 
-        graphModel.doFFT(data);
+        graphModel.doFFT(signalController.getSignalModel().getChannel(), data);
         graphSeries.getData().add(new XYChart.Data<>(0, 0));
 
         for (int i = 0; i < (xAxis.getUpperBound() * 2); i++) {

@@ -69,8 +69,7 @@ public class CalibrationController implements BaseController {
     private ControllerManager cm;
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private SignalModel signalModel;
-    private StatusBarLine statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
-            statusBar, warningIcon);
+    private StatusBarLine statusBarLine;
     private WindowsManager wm;
     private boolean stopped;
 
@@ -83,6 +82,8 @@ public class CalibrationController implements BaseController {
         initContextMenu();
         listenSetChannelValueCheckBox();
         listenMouse();
+        statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
+                statusBar, warningIcon);
     }
 
     private void initTextFields() {
@@ -356,6 +357,7 @@ public class CalibrationController implements BaseController {
             stopped = true;
             clearCalibrationData();
             cm.checkCalibration();
+            statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
     }

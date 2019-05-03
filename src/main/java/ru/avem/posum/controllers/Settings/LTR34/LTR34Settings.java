@@ -158,7 +158,7 @@ public class LTR34Settings implements BaseController {
             ltr34ModuleSettings.saveSettings();
             ltr34SettingsModel.initModule();
 
-            if (ltr34SettingsModel.getLTR34Instance().getStatus().equals("Операция успешно выполнена")) {
+            if (ltr34SettingsModel.getLTR34Instance().checkStatus()) {
                 ltr34SettingsModel.calculateSignal(signalTypeComboBox.getSelectionModel().getSelectedIndex());
                 ltr34SettingsModel.generate(dacModeComboBox.getSelectionModel().getSelectedIndex() == 1);
                 showGraph();

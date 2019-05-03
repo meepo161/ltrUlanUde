@@ -15,7 +15,6 @@ public class LTR212 extends ADC {
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
-        checkStatus();
     }
 
     @Override
@@ -30,25 +29,21 @@ public class LTR212 extends ADC {
 
     public void testEEPROM() {
         status = testEEPROM(getSlot());
-        checkStatus();
     }
 
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR212ModuleSettings(), firFilePath, iirFilePath);
-        checkStatus();
     }
 
     @Override
     public void defineFrequency() {
         status = getFrequency(getSlot());
-        checkStatus();
     }
 
     @Override
     public void start() {
         status = start(getSlot());
-        checkStatus();
     }
 
     @Override
@@ -59,13 +54,11 @@ public class LTR212 extends ADC {
     @Override
     public void stop() {
         status = stop(getSlot());
-        checkStatus();
     }
 
     @Override
     public void closeConnection() {
         closeConnection(getSlot());
-        checkStatus();
     }
 
     public native String openConnection(String crate, int slot, String path);
