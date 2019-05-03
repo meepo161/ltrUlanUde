@@ -283,7 +283,7 @@ public class GraphController {
 
     private void listenAutoRangeCheckBox() {
         signalController.getAutoRangeCheckBox().selectedProperty().addListener(observable -> {
-            if (signalController.getAverageCheckBox().isSelected()) {
+            if (signalController.getAutoRangeCheckBox().isSelected()) {
                 toggleAutoRange(true);
             } else {
                 toggleAutoRange(false);
