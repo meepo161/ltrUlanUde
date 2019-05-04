@@ -189,10 +189,10 @@ public class GraphController {
             String selectedType = signalController.getGraphTypesComboBox().getSelectionModel().getSelectedItem();
             isFFT = selectedType.equals(GraphTypes.SPECTRUM.getTypeName());
             toggleGraphLabels();
-            setHorizontalScales();
             toggleUiElementsState(isFFT);
             toggleRarefactionCoefficient();
             restartOfShow();
+            setHorizontalScales();
         });
     }
 
@@ -370,7 +370,6 @@ public class GraphController {
 
         for (int index = channel; index < data.length && !signalController.getCm().isStopped(); index += channels * rarefactionCoefficient) {
             if (isShowFinished) {
-                Platform.runLater(() -> graphSeries.getData().clear());
                 break;
             }
 
@@ -406,7 +405,6 @@ public class GraphController {
 
         for (int i = 0; i < (xAxis.getUpperBound() * 2); i++) {
             if (isShowFinished) {
-                Platform.runLater(() -> graphSeries.getData().clear());
                 break;
             }
 
@@ -429,6 +427,7 @@ public class GraphController {
 
     private void restartOfShow() {
         isShowFinished = true;
+        Platform.runLater(() -> graphSeries.getData().clear());
         Utils.sleep(100);
         isShowFinished = false;
     }
