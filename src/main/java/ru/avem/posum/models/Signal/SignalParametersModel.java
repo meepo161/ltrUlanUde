@@ -64,15 +64,49 @@ public class SignalParametersModel {
     }
 
     private void calculateMinAndMaxValues() {
+        maxSignalValue = Integer.MIN_VALUE;
+        minSignalValue = Integer.MAX_VALUE;
+
+        for (int i = channel; i < data.length; i += channels) {
+            if (data[i] > maxSignalValue) {
+                maxSignalValue = data[i];
+            }
+
+            if (data[i] < minSignalValue) {
+                minSignalValue = data[i];
+            }
+        }
+
+        if (signalFrequency > 0) {
+            calculateAverageMinAndMaxValues();
+        }
+    }
+
+    private void calculateAverageMinAndMaxValues() {
         maxSignalValue = 0;
         minSignalValue = 0;
+        int pieces = 0;
 
-        for (int pieceIndex = 0; pieceIndex < 10; pieceIndex++) {
-            double[] pieceOfDate = new double[data.length / 10];
+        if (signalFrequency < 5) {
+            pieces = 1;
+        } else if (signalFrequency > 5 && signalFrequency < 10) {
+            pieces = 2;
+        } else if (signalFrequency > 10 && signalFrequency < 20) {
+            pieces = 4;
+        } else if (signalFrequency > 20 && signalFrequency < 50) {
+            pieces = 5;
+        } else if (signalFrequency > 50 && signalFrequency < 100) {
+            pieces = 10;
+        } else {
+            pieces = 20;
+        }
+
+        for (int pieceIndex = 0; pieceIndex < pieces; pieceIndex++) {
+            double[] pieceOfDate = new double[data.length / pieces];
             System.arraycopy(data, pieceIndex * pieceOfDate.length, pieceOfDate, 0, pieceOfDate.length);
             DoubleSummaryStatistics statistics = Arrays.stream(pieceOfDate).summaryStatistics();
-            maxSignalValue += statistics.getMax() / 10;
-            minSignalValue += statistics.getMin() / 10;
+            maxSignalValue += statistics.getMax() / pieces;
+            minSignalValue += statistics.getMin() / pieces;
         }
     }
 
