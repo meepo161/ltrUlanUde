@@ -62,6 +62,34 @@ public class SignalModel {
         ltr24.setRingBufferForShow(new RingBuffer(SAMPLES));
         ltr24.setTimeMarks(new double[SAMPLES * 2]);
         ltr24.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
+        setMinAccuracy();
+    }
+
+    private void setMinAccuracy() {
+        double adcFrequency = adc.getFrequency();
+
+        if (adcFrequency < 1000) {
+            signalParametersModel.setAccuracyCoefficient(10);
+            signalParametersModel.setMinSamples(5);
+        } else if (adcFrequency > 1000 && adcFrequency < 5000) {
+            signalParametersModel.setAccuracyCoefficient(25);
+            signalParametersModel.setMinSamples(10);
+        } else if (adcFrequency > 5000 && adcFrequency < 10000) {
+            signalParametersModel.setAccuracyCoefficient(50);
+            signalParametersModel.setMinSamples(20);
+        } else if (adcFrequency > 10000 && adcFrequency < 20000) {
+            signalParametersModel.setAccuracyCoefficient(75);
+            signalParametersModel.setMinSamples(30);
+        } else if ((adcFrequency > 20000 && adcFrequency < 50000)) {
+            signalParametersModel.setAccuracyCoefficient(85);
+            signalParametersModel.setMinSamples(50);
+        } else if (adcFrequency > 50000 && adcFrequency < 100000) {
+            signalParametersModel.setAccuracyCoefficient(100);
+            signalParametersModel.setMinSamples(100);
+        } else {
+            signalParametersModel.setAccuracyCoefficient(200);
+            signalParametersModel.setMinSamples(200);
+        }
     }
 
     private void initLTR212Module() {
@@ -73,6 +101,7 @@ public class SignalModel {
         ltr212.setRingBufferForShow(new RingBuffer(SAMPLES));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
+        setMinAccuracy();
     }
 
     private void runInstructions() {

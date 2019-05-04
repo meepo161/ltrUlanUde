@@ -8,6 +8,7 @@ import java.net.Inet4Address;
 import java.util.*;
 
 public class SignalParametersModel {
+    private double accuracyCoefficient;
     private boolean accurateFrequencyCalculation = true;
     private ADC adc;
     private int averageIterator;
@@ -32,9 +33,10 @@ public class SignalParametersModel {
     private int channel;
     private int channels;
     private double[] data;
-    private int loadsCounter;
+    private double loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
+    private int minSamples = 20;
     private double minSignalValue;
     private double rms;
     private int samplesPerSemiPeriod;
@@ -77,8 +79,6 @@ public class SignalParametersModel {
 
         minSignalValue = min;
         maxSignalValue = max;
-
-        System.out.printf("In accurate calculation min: %f, max: %f\n", minSignalValue, maxSignalValue);
 
         if (signalFrequency > 2) {
             calculateAverageMinAndMaxValues();
@@ -139,8 +139,6 @@ public class SignalParametersModel {
 
         minSignalValue = min;
         maxSignalValue = max;
-
-        System.out.printf("In average calculation min: %f, max: %f\n", minSignalValue, maxSignalValue);
     }
 
     private void calculateParameters(double averageCount) {
@@ -176,7 +174,7 @@ public class SignalParametersModel {
     private double calculateFrequency() {
         double estimatedFrequency = estimateFrequency();
 
-        if (estimatedFrequency < 50) {
+        if (estimatedFrequency < accuracyCoefficient) {
             return defineFrequency(estimatedFrequency);
         } else {
             return estimatedFrequency;
@@ -187,29 +185,30 @@ public class SignalParametersModel {
     private double estimateFrequency() {
         boolean positivePartOfSignal = false;
         double frequency = 0;
+        double filteringCoefficient = 1.05;
 
         for (int i = channel; i < data.length; i += channels) {
             if (amplitude + zeroShift > 0) {
                 if (zeroShift > 0) {
-                    if (data[i] > zeroShift * 1.05 && !positivePartOfSignal) {
+                    if (data[i] > zeroShift * filteringCoefficient && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift / 1.05 && positivePartOfSignal) {
+                    } else if (data[i] < zeroShift / filteringCoefficient && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 } else {
-                    if (data[i] > zeroShift / 1.05 && !positivePartOfSignal) {
+                    if (data[i] > zeroShift / filteringCoefficient && !positivePartOfSignal) {
                         frequency++;
                         positivePartOfSignal = true;
-                    } else if (data[i] < zeroShift * 1.05 && positivePartOfSignal) {
+                    } else if (data[i] < zeroShift * filteringCoefficient && positivePartOfSignal) {
                         positivePartOfSignal = false;
                     }
                 }
             } else if (amplitude + zeroShift < 0 && zeroShift < 0) {
-                if (data[i] < zeroShift * 1.05 && !positivePartOfSignal) {
+                if (data[i] < zeroShift * filteringCoefficient && !positivePartOfSignal) {
                     frequency++;
                     positivePartOfSignal = true;
-                } else if (data[i] > zeroShift / 1.05 && positivePartOfSignal) {
+                } else if (data[i] > zeroShift / filteringCoefficient && positivePartOfSignal) {
                     positivePartOfSignal = false;
                 }
             }
@@ -232,7 +231,6 @@ public class SignalParametersModel {
 
             countSamples(zeroTransitionCounter);
 
-            int minSamples = 20;
             if (firstValue > centerOfSignal) {
                 if (value > centerOfSignal && firstPeriod && (index > channels * minSamples)) {
                     positivePartOfSignal = true;
@@ -264,7 +262,7 @@ public class SignalParametersModel {
 
         if (signalFrequency < 5) {
             return signalFrequency;
-        } else if (signalFrequency < estimatedFrequency / 1.5 || signalFrequency > estimatedFrequency * 1.5) {
+        } else if (signalFrequency < estimatedFrequency / 2.5 || signalFrequency > estimatedFrequency * 2.5) {
             return estimatedFrequency;
         } else {
             return signalFrequency;
@@ -449,6 +447,10 @@ public class SignalParametersModel {
         return zeroShift;
     }
 
+    public void setAccuracyCoefficient(double accuracyCoefficient) {
+        this.accuracyCoefficient = accuracyCoefficient;
+    }
+
     public void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {
         this.accurateFrequencyCalculation = accurateFrequencyCalculation;
     }
@@ -463,6 +465,10 @@ public class SignalParametersModel {
 
     public void setLoadsCounter(int loadsCounter) {
         this.loadsCounter = loadsCounter;
+    }
+
+    public void setMinSamples(int minSamples) {
+        this.minSamples = minSamples;
     }
 
     public void setRMS(int rms) {
