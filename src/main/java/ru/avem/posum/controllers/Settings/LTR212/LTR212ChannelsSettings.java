@@ -228,7 +228,7 @@ class LTR212ChannelsSettings extends LTR212Settings {
             descriptions.get(channelIndex).setDisable(!checkBox.isSelected());
             typesOfChannelComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
             measuringRangesComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
-            valueOnChannelButtons.get(channelIndex).setDisable(true);
+            valueOnChannelButtons.get(channelIndex).setDisable(!checkBox.isSelected());
         }
         applyForAllChannels.setDisable(false);
         initializeButton.setDisable(false);

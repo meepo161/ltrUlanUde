@@ -205,7 +205,9 @@ public class LTR34Settings implements BaseController {
         if (!ltr34.checkStatus()) {
             ltr34SettingsModel.setStopped(true);
             statusBarLine.setStatus(ltr34.getStatus(), false);
-            handleStopSignal();
+            Platform.runLater(() -> graph.getData().clear());
+            ltr34ChannelsSettings.enableUiElements();
+            ltr34ModuleSettings.enableUiElements();
         }
     }
 
