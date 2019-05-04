@@ -1,13 +1,11 @@
 package ru.avem.posum.models.Signal;
 
+import com.j256.ormlite.stmt.query.In;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPointModel;
 
 import java.net.Inet4Address;
-import java.util.Arrays;
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.LongSummaryStatistics;
+import java.util.*;
 
 public class SignalParametersModel {
     private boolean accurateFrequencyCalculation = true;
@@ -64,50 +62,85 @@ public class SignalParametersModel {
     }
 
     private void calculateMinAndMaxValues() {
-        maxSignalValue = Integer.MIN_VALUE;
-        minSignalValue = Integer.MAX_VALUE;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
 
         for (int i = channel; i < data.length; i += channels) {
-            if (data[i] > maxSignalValue) {
-                maxSignalValue = data[i];
+            if (data[i] > max) {
+                max = data[i];
             }
 
-            if (data[i] < minSignalValue) {
-                minSignalValue = data[i];
+            if (data[i] < min) {
+                min = data[i];
             }
         }
 
-        if (signalFrequency > 0) {
+        minSignalValue = min;
+        maxSignalValue = max;
+
+        System.out.printf("In accurate calculation min: %f, max: %f\n", minSignalValue, maxSignalValue);
+
+        if (signalFrequency > 2) {
             calculateAverageMinAndMaxValues();
         }
     }
 
     private void calculateAverageMinAndMaxValues() {
-        maxSignalValue = 0;
-        minSignalValue = 0;
-        int pieces = 0;
+        double[] channelData = new double[data.length / channels];
+        List<Double> maxs = new ArrayList<>();
+        List<Double> mins = new ArrayList<>();
+        int pieces;
 
         if (signalFrequency < 5) {
-            pieces = 1;
-        } else if (signalFrequency > 5 && signalFrequency < 10) {
             pieces = 2;
-        } else if (signalFrequency > 10 && signalFrequency < 20) {
+        } else if (signalFrequency > 5 && signalFrequency < 10) {
             pieces = 4;
-        } else if (signalFrequency > 20 && signalFrequency < 50) {
+        } else if (signalFrequency > 10 && signalFrequency < 20) {
             pieces = 5;
-        } else if (signalFrequency > 50 && signalFrequency < 100) {
-            pieces = 10;
         } else {
-            pieces = 20;
+            pieces = 10;
+        }
+
+        for (int i = channel, j = 0; i < data.length; i += channels) {
+            channelData[j++] = data[i];
         }
 
         for (int pieceIndex = 0; pieceIndex < pieces; pieceIndex++) {
-            double[] pieceOfDate = new double[data.length / pieces];
-            System.arraycopy(data, pieceIndex * pieceOfDate.length, pieceOfDate, 0, pieceOfDate.length);
+            double[] pieceOfDate = new double[channelData.length / pieces];
+            System.arraycopy(channelData, pieceIndex * pieceOfDate.length, pieceOfDate, 0, pieceOfDate.length);
             DoubleSummaryStatistics statistics = Arrays.stream(pieceOfDate).summaryStatistics();
-            maxSignalValue += statistics.getMax() / pieces;
-            minSignalValue += statistics.getMin() / pieces;
+            maxs.add(statistics.getMax());
+            mins.add(statistics.getMin());
         }
+
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
+        int indexOfMax = 0;
+        int indexOfMin = 0;
+        for (int i = 0; i < maxs.size(); i++) {
+            if (max < maxs.get(i)) {
+                max = maxs.get(i);
+                indexOfMax = i;
+            }
+            if (min > mins.get(i)) {
+                min = mins.get(i);
+                indexOfMin = i;
+            }
+        }
+
+        maxs.remove(indexOfMax);
+        mins.remove(indexOfMin);
+        max = min = 0;
+
+        for (int i = 0; i < maxs.size(); i++) {
+            max += maxs.get(i) / maxs.size();
+            min += mins.get(i) / mins.size();
+        }
+
+        minSignalValue = min;
+        maxSignalValue = max;
+
+        System.out.printf("In average calculation min: %f, max: %f\n", minSignalValue, maxSignalValue);
     }
 
     private void calculateParameters(double averageCount) {
