@@ -17,6 +17,7 @@ public class GraphController {
     private GraphModel graphModel = new GraphModel();
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private boolean isFFT;
+    private boolean isShowFinished;
 
     public GraphController(SignalController signalController) {
         this.signalController = signalController;
@@ -191,6 +192,7 @@ public class GraphController {
             setHorizontalScales();
             toggleUiElementsState(isFFT);
             toggleRarefactionCoefficient();
+            restartOfShow();
         });
     }
 
@@ -367,6 +369,11 @@ public class GraphController {
         int rarefactionCoefficient = signalController.getSignalModel().getRarefactionCoefficient();
 
         for (int index = channel; index < data.length && !signalController.getCm().isStopped(); index += channels * rarefactionCoefficient) {
+            if (isShowFinished) {
+                Platform.runLater(() -> graphSeries.getData().clear());
+                break;
+            }
+
             XYChart.Data<Number, Number> point = signalController.getSignalModel().getPoint(index);
             Runnable addPoint = () -> {
                 if (!graphSeries.getData().contains(point))
@@ -398,6 +405,11 @@ public class GraphController {
         graphSeries.getData().add(new XYChart.Data<>(0, 0));
 
         for (int i = 0; i < (xAxis.getUpperBound() * 2); i++) {
+            if (isShowFinished) {
+                Platform.runLater(() -> graphSeries.getData().clear());
+                break;
+            }
+
             XYChart.Data<Number, Number> point = graphModel.getMagnitude().get(i);
             XYChart.Data<Number, Number> previousPoint = new XYChart.Data<>((double) point.getXValue() / 1.001, 0);
             XYChart.Data<Number, Number> nextPoint = new XYChart.Data<>((double) point.getXValue() * 1.001, 0);
@@ -413,6 +425,12 @@ public class GraphController {
                 Utils.sleep(1);
             }
         }
+    }
+
+    private void restartOfShow() {
+        isShowFinished = true;
+        Utils.sleep(100);
+        isShowFinished = false;
     }
 
     public boolean isFFT() {
