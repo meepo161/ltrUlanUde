@@ -64,6 +64,8 @@ public class Settings implements BaseController {
     @FXML
     private StatusBar statusBar;
     @FXML
+    private TabPane mainTabPane;
+    @FXML
     private TextField testProgramNameTextField;
     @FXML
     private TextField testProgramTimeTextField;
@@ -314,14 +316,17 @@ public class Settings implements BaseController {
 
     @FXML
     public void handleBackButton() {
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Загрузка списка программ испытаний");
+
         new Thread(() -> {
             TestProgramRepository.updateTestProgramIndexes();
             cm.loadItemsForMainTableView();
+            cm.stopAllModules();
+            statusBarLine.toggleProgressIndicator(true);
+            statusBarLine.clearStatusBar();
+            Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.MAIN_SCENE));
         }).start();
-
-        statusBarLine.toggleProgressIndicator(true);
-        statusBarLine.clearStatusBar();
-        wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
     public void showTestProgram(TestProgram testProgram) {
@@ -371,6 +376,12 @@ public class Settings implements BaseController {
 
     public void refreshModulesList() {
         modulesListView.setItems(hardwareSettings.getModulesNames());
+    }
+
+    @FXML
+    public void selectGeneralSettingsTab() {
+        mainTabPane.getSelectionModel().select(0);
+        Platform.runLater(() -> mainTabPane.requestFocus());
     }
 
     public Button getBackButton() {

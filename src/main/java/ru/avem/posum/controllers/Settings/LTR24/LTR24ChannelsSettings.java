@@ -217,7 +217,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
             descriptions.get(checkBoxIndex).setDisable(true);
             typesOfChannelComboBoxes.get(checkBoxIndex).setDisable(true);
             measuringRangesComboBoxes.get(checkBoxIndex).setDisable(true);
-            valueOnChannelButtons.get(checkBoxIndex).setDisable(false);
+            valueOnChannelButtons.get(checkBoxIndex).setDisable(!checkBoxes.get(checkBoxIndex).isSelected());
         }
         applyForAllChannels.setDisable(true);
         initializeButton.setDisable(true);
@@ -230,15 +230,21 @@ class LTR24ChannelsSettings extends LTR24Settings {
             descriptions.get(channelIndex).setDisable(!checkBox.isSelected());
             typesOfChannelComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
             measuringRangesComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
-            valueOnChannelButtons.get(channelIndex).setDisable(!checkBox.isSelected());
+            valueOnChannelButtons.get(channelIndex).setDisable(true);
         }
         applyForAllChannels.setDisable(false);
         initializeButton.setDisable(false);
     }
 
-    void toggleValueOnChannelButtons(boolean isDisable) {
+    void disableValueOnChannelButtonsState() {
         for (Button valueOnChannelButton : valueOnChannelButtons) {
-            valueOnChannelButton.setDisable(isDisable);
+            valueOnChannelButton.setDisable(true);
+        }
+    }
+
+    void enableValueOnChannelButtonsState() {
+        for (int i = 0; i < checkBoxes.size(); i++) {
+            valueOnChannelButtons.get(i).setDisable(!checkBoxes.get(i).isSelected());
         }
     }
 }

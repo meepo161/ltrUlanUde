@@ -172,6 +172,7 @@ public class MainController implements BaseController {
         cm.loadDefaultSettings();
         cm.setEditMode(false);
         cm.hideRequiredFieldsSymbols();
+        cm.selectGeneralSettingsTab();
     }
 
     private void showSettingsScene() {
@@ -208,6 +209,7 @@ public class MainController implements BaseController {
     private void prepareEditSettingsScene() {
         cm.setEditMode(true);
         cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
+        cm.selectGeneralSettingsTab();
     }
 
     private int getSelectedItemIndex() {

@@ -131,20 +131,12 @@ public class LTR24Settings implements BaseController {
             ltr24ChannelsSettings.saveSettings();
             ltr24ModuleSettings.toggleUiElementsState(false);
             ltr24ModuleSettings.saveSettings();
-            closeConnection();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();
 
         statusBarLine.clearStatusBar();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
-    }
-
-    private void closeConnection() {
-        ltr24SettingsModel.getLTR24Instance().checkConnection();
-        if (ltr24SettingsModel.getLTR24Instance().checkStatus()) {
-            ltr24SettingsModel.getLTR24Instance().closeConnection();
-        }
     }
 
     private void changeScene(WindowsManager.Scenes settingsScene) {
@@ -158,7 +150,7 @@ public class LTR24Settings implements BaseController {
     private void showChannelValue(int channel) {
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
-        ltr24ChannelsSettings.toggleValueOnChannelButtons(true);
+        ltr24ChannelsSettings.disableValueOnChannelButtonsState();
         backButton.setDisable(true);
 
         new Thread(() -> {
@@ -169,7 +161,7 @@ public class LTR24Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            ltr24ChannelsSettings.toggleValueOnChannelButtons(false);
+            ltr24ChannelsSettings.enableValueOnChannelButtonsState();
             backButton.setDisable(false);
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clearStatusBar();

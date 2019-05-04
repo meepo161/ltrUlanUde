@@ -253,7 +253,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
         System.out.println("Version_1.0 closed");
     }
 
-    private void stopAllModules() {
+    @Override
+    public void stopAllModules() {
         ObservableList<String> modulesNames = settings.getSettingsModel().getModulesNames();
         HashMap<Integer, Module> modules = getCrateModelInstance().getModulesList();
 
@@ -367,6 +368,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 ltr212Settings.loadSettings(moduleName);
                 break;
         }
+    }
+
+    @Override
+    public void selectGeneralSettingsTab() {
+        settings.selectGeneralSettingsTab();
     }
 
     @Override

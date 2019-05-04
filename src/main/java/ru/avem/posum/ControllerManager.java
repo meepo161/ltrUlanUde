@@ -45,6 +45,8 @@ public interface ControllerManager {
 
     void loadModuleSettings(int selectedModuleIndex, String moduleName);
 
+    void selectGeneralSettingsTab();
+
     void setClosed(boolean closed);
 
     void setStopped(boolean stopped);
@@ -54,4 +56,6 @@ public interface ControllerManager {
     void showChannelValue();
 
     void showTestProgram(TestProgram testProgram);
+
+    void stopAllModules();
 }

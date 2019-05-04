@@ -135,8 +135,6 @@ public class LTR212Settings implements BaseController {
                     ltr212ChannelsSettings.enableUiElements();
                     ltr212ModuleSettings.toggleUiElementsState(false);
                 });
-            } else {
-
             }
 
             statusBarLine.clearStatusBar();
@@ -152,20 +150,12 @@ public class LTR212Settings implements BaseController {
             ltr212ChannelsSettings.saveSettings();
             ltr212ModuleSettings.enableUiElements();
             ltr212ModuleSettings.saveSettings();
-            closeConnection();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();
 
         statusBarLine.clearStatusBar();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
-    }
-
-    private void closeConnection() {
-        ltr212SettingsModel.getLTR212Instance().checkConnection();
-        if (ltr212SettingsModel.getLTR212Instance().checkStatus()) {
-            ltr212SettingsModel.getLTR212Instance().closeConnection();
-        }
     }
 
     private void changeScene(WindowsManager.Scenes settingsScene) {
@@ -180,7 +170,7 @@ public class LTR212Settings implements BaseController {
         statusBarLine.clearStatusBar();
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
-        ltr212ChannelsSettings.toggleValueOnChannelButtons(true);
+        ltr212ChannelsSettings.disableValueOnChannelButtonsState();
         backButton.setDisable(true);
 
         new Thread(() -> {
@@ -191,7 +181,7 @@ public class LTR212Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            ltr212ChannelsSettings.toggleValueOnChannelButtons(false);
+            ltr212ChannelsSettings.enableValueOnChannelButtonsState();
             backButton.setDisable(false);
             statusBarLine.clearStatusBar();
             statusBarLine.toggleProgressIndicator(true);
