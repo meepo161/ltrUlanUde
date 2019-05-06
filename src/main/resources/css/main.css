@@ -18,7 +18,6 @@
 
 .status-bar {
 	-fx-background-color: none;
-	-fx-border-radius: 3px;
 }
 
 .chart-title, .axis-label {
@@ -49,7 +48,6 @@
 }
 
 .wrapper {
-    -fx-border-radius: 3px;
     -fx-border-color: #7D7D7D;
 }
 
@@ -77,4 +75,44 @@
 .tree-table-row-cell:filled > .tree-table-cell:selected {
     -fx-background: -fx-selection-bar;
     -fx-table-cell-border-color: derive(-fx-selection-bar, 20%);
+}
+
+.context-menu  {
+	-fx-min-width: 100px;
+	-fx-padding: 5 0 5 0;
+	-fx-border-color: #7D7D7D;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 0);
+}
+
+.context-menu .separator:horizontal .line {
+	-fx-border-insets: 5 0 4 0;
+	-fx-max-height: 1px;
+}
+
+.combo-box-popup > .list-view {
+	-fx-border-color: #7D7D7D;
+	-fx-background-color: rgba(255, 255, 255, 1);
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 20, 0, 0, 0);
+}
+
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
+.combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
+	-fx-background-color: -fx-background;
+}
+
+.context-menu, .combo-box-base, .combo-box-popup > .list-view, .text-field, .button, .check-box > .box,
+.status-bar, .wrapper, .text-area .content, .text-area, .text-area .scroll-pane,
+.text-area .scroll-pane .viewport, .text-area .scroll-pane .content
+{
+	-fx-background-radius: 5px;
+	-fx-border-radius: 5px;
+}
+
+.tab {
+    -fx-background-radius: 5 5 0 0 ;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
 }
