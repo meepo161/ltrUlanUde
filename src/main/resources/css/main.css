@@ -98,12 +98,13 @@
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected:hover {
 	-fx-background-color: -fx-background;
+	-fx-background-radius: 5px;
+    -fx-border-radius: 5px;
 }
 
 .context-menu, .combo-box-base, .combo-box-popup > .list-view, .text-field, .button, .check-box > .box,
 .status-bar, .wrapper, .text-area .content, .text-area, .text-area .scroll-pane,
-.text-area .scroll-pane .viewport, .text-area .scroll-pane .content
-{
+.text-area .scroll-pane .viewport, .text-area .scroll-pane .content {
 	-fx-background-radius: 5px;
 	-fx-border-radius: 5px;
 }
