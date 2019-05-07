@@ -191,7 +191,7 @@ public class SignalController implements BaseController {
         } else {
             amplitude = Utils.roundValue(signalModel.getAmplitude(), decimalFormatScale);
             frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
-            loadsCounter = Utils.roundValue(signalModel.getLoadsCounter(), decimalFormatScale);
+            loadsCounter = Utils.roundValue((int) signalModel.getLoadsCounter(), decimalFormatScale);
             rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
             zeroShift = Utils.roundValue(signalModel.getZeroShift(), decimalFormatScale);
         }
