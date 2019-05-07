@@ -188,7 +188,7 @@ public class SignalModel {
         frequency = signalParametersModel.getSignalFrequency();
         loadsCounter = signalParametersModel.getLoadsCounter();
         rms = signalParametersModel.getRms();
-        zeroShift = signalParametersModel.getZeroShift();
+        zeroShift = signalParametersModel.getDc();
     }
 
     public void fillBuffer() {
@@ -322,6 +322,6 @@ public class SignalModel {
     }
 
     public void setZeroShift(int zeroShift) {
-        signalParametersModel.setZeroShift(zeroShift);
+        signalParametersModel.setDc(zeroShift);
     }
 }
