@@ -87,7 +87,7 @@ public class SignalModel {
             signalParametersModel.setAccuracyCoefficient(1000);
             signalParametersModel.setMinSamples(100);
         } else {
-            signalParametersModel.setAccuracyCoefficient(2000);
+            signalParametersModel.setAccuracyCoefficient(65);
             signalParametersModel.setMinSamples(200);
         }
     }

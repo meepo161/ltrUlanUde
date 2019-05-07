@@ -41,6 +41,7 @@ public class SignalParametersModel {
     private double minSignalValue;
     private double rms;
     private int samplesPerSemiPeriods;
+    private int samplesPerSemiPeriod;
     private double signalFrequency;
     private double tickUnit;
     private double upperBound;
@@ -174,7 +175,12 @@ public class SignalParametersModel {
 
     private double calculateFrequency() {
         double estimatedFrequency = estimateFrequency();
-        return defineFrequency(estimatedFrequency);
+
+        if (estimatedFrequency < accuracyCoefficient) {
+            return defineFrequencyFirstAlgorithm(estimatedFrequency);
+        } else {
+            return defineFrequencySecondAlgorythm(estimatedFrequency);
+        }
     }
 
     private double estimateFrequency() {
@@ -212,7 +218,65 @@ public class SignalParametersModel {
         return frequency;
     }
 
-    private double defineFrequency(double estimatedFrequency) {
+    private double defineFrequencyFirstAlgorithm(double estimatedFrequency) {
+        int shift = 1_000;
+        double firstValue = data[channel] + shift;
+        double zeroTransitionCounter = 0;
+        boolean firstPeriod = true;
+        boolean positivePartOfSignal = !(firstValue > (zeroShift + shift));
+        samplesPerSemiPeriod = 0;
+
+        for (int index = channel; index < data.length; index += channels) {
+            double value = data[index] + shift;
+            double centerOfSignal = zeroShift + shift;
+
+            countSamplesFirtsAlgorithm(zeroTransitionCounter);
+
+            if (firstValue > centerOfSignal) {
+                if (value > centerOfSignal && firstPeriod && (index > channels * minSamples)) {
+                    positivePartOfSignal = true;
+                } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod == 0)) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = false;
+                    firstPeriod = false;
+                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod > minSamples) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = true;
+                }
+            }
+
+            if (firstValue < centerOfSignal) {
+                if (value < centerOfSignal && firstPeriod && (index > channels * minSamples)) {
+                    positivePartOfSignal = false;
+                } else if ((value > centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod == 0)) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = true;
+                    firstPeriod = false;
+                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod > minSamples) {
+                    zeroTransitionCounter++;
+                    positivePartOfSignal = false;
+                }
+            }
+        }
+
+        double signalFrequency = (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
+
+        if (signalFrequency < 5) {
+            return signalFrequency;
+        } else if (signalFrequency < estimatedFrequency / 2.5 || signalFrequency > estimatedFrequency * 2.5) {
+            return estimatedFrequency;
+        } else {
+            return signalFrequency;
+        }
+    }
+
+    private void countSamplesFirtsAlgorithm(double frequency) {
+        if (frequency == 1) {
+            samplesPerSemiPeriod++;
+        }
+    }
+
+    private double defineFrequencySecondAlgorythm(double estimatedFrequency) {
         int shift = 1_000;
         double firstValue = data[0] + shift;
         boolean firstPeriod = true;
@@ -225,7 +289,7 @@ public class SignalParametersModel {
             double value = data[index] + shift;
             double centerOfSignal = zeroShift + shift;
 
-            countSamples(zeroTransitionCounter);
+            countSamplesSecondAlgorithm(zeroTransitionCounter);
 
             if (firstValue >= centerOfSignal) {
                 if (value >= centerOfSignal && firstPeriod && (index >= channels * minSamples)) {
@@ -273,8 +337,6 @@ public class SignalParametersModel {
         double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : bufferedSamplesPerSemiPeriods / periods;
         double signalFrequency = (samplesPerPeriod == 0 ? 0 : (adc.getFrequency() / samplesPerPeriod));
 
-        System.out.println("Samples per period: " + samplesPerPeriod);
-
         if (signalFrequency < 5) {
             return signalFrequency;
         } else if (signalFrequency < estimatedFrequency / 2.5 || signalFrequency > estimatedFrequency * 2.5) {
@@ -284,7 +346,7 @@ public class SignalParametersModel {
         }
     }
 
-    private void countSamples(double zeroTransitionCounter) {
+    private void countSamplesSecondAlgorithm(double zeroTransitionCounter) {
         if (zeroTransitionCounter >= 1) {
             samplesPerSemiPeriods++;
         }
