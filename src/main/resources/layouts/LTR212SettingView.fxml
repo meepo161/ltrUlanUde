@@ -177,10 +177,10 @@
             <ComboBox fx:id="referenceVoltageComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
             <CheckBox fx:id="iirCheckBox" mnemonicParsing="false" text="Включить БИХ фильтр" GridPane.columnIndex="4" GridPane.rowIndex="10" />
             <CheckBox fx:id="firCheckBox" mnemonicParsing="false" text="Включить КИХ фильтр" GridPane.columnIndex="4" GridPane.rowIndex="11" />
-            <TextField fx:id="iirPathTextField" disable="true" maxWidth="150.0" GridPane.columnIndex="6" GridPane.rowIndex="10" />
-            <Button fx:id="iirPathButton" disable="true" maxWidth="50.0" mnemonicParsing="false" onAction="#handleChoosingIIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
-            <TextField fx:id="firPathTextField" disable="true" maxWidth="150.0" GridPane.columnIndex="6" GridPane.rowIndex="11" />
-            <Button fx:id="firPathButton" disable="true" maxWidth="50.0" mnemonicParsing="false" onAction="#handleChoosingFIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
+            <TextField fx:id="iirPathTextField" disable="true" GridPane.columnIndex="6" GridPane.rowIndex="10" />
+            <Button fx:id="iirPathButton" disable="true" maxWidth="20.0" mnemonicParsing="false" onAction="#handleChoosingIIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
+            <TextField fx:id="firPathTextField" disable="true" GridPane.columnIndex="6" GridPane.rowIndex="11" />
+            <Button fx:id="firPathButton" disable="true" maxWidth="20.0" mnemonicParsing="false" onAction="#handleChoosingFIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
             <CheckBox fx:id="factoryCalibrationCheckBox" mnemonicParsing="false" text="Завод. калибр. коэф." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="10" />
             <CheckBox fx:id="referenceVoltageTypeCheckBox" mnemonicParsing="false" text="Пост. опорное напр." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="11" />
             <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
