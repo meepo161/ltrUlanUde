@@ -42,7 +42,6 @@ public class SignalParametersModel {
     private int periods;
     private int samplesPerSemiPeriods;
     private int samplesPerSemiPeriod;
-    private int shift = 1_000;
     private double signalFrequency;
     private double tickUnit;
     private double upperBound;
@@ -67,8 +66,8 @@ public class SignalParametersModel {
     }
 
     private void calculateMinAndMaxValues() {
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
+        double min = Integer.MAX_VALUE;
+        double max = Integer.MIN_VALUE;
 
         for (int i = channel; i < data.length; i += channels) {
             if (data[i] > max) {
@@ -80,8 +79,8 @@ public class SignalParametersModel {
             }
         }
 
-        maxSignalValue = max + shift;
-        minSignalValue = min + shift;
+        maxSignalValue = max;
+        minSignalValue = min;
 
         if (signalFrequency > 2) {
             calculateAverageMinAndMaxValues();
@@ -140,8 +139,8 @@ public class SignalParametersModel {
             min += mins.get(i) / mins.size();
         }
 
-        maxSignalValue = max + shift;
-        minSignalValue = min + shift;
+        maxSignalValue = max;
+        minSignalValue = min;
     }
 
     private void calculateParameters(double averageCount) {
@@ -171,11 +170,11 @@ public class SignalParametersModel {
     }
 
     private double calculateAmplitude() {
-        return ((maxSignalValue - minSignalValue) / 2) - shift;
+        return (maxSignalValue - minSignalValue) / 2;
     }
 
     private double calculateDC() {
-        return ((maxSignalValue + minSignalValue) / 2) - shift;
+        return (maxSignalValue + minSignalValue) / 2;
     }
 
     private double calculateRms() {
