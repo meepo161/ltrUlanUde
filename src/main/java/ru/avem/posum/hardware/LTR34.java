@@ -81,7 +81,7 @@ public class LTR34 extends DAC {
     public native String closeConnection(int slot);
 
     static {
-        System.loadLibrary("LTR34Library");
+//        System.loadLibrary("LTR34Library");
     }
 
     private void initializeModuleSettings() {

@@ -3,6 +3,7 @@ package ru.avem.posum.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import ru.avem.posum.ControllerManager;
 import ru.avem.posum.Main;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.db.AccountRepository;
@@ -17,6 +18,7 @@ public class LoginController implements BaseController {
     @FXML
     private TextField loginTextField;
 
+    private ControllerManager cm;
     private Main main;
     private WindowsManager wm;
 
@@ -46,6 +48,7 @@ public class LoginController implements BaseController {
             boolean isLastAccount = (accountIndex == accounts.size() - 1);
 
             if (isLoginsEquals && isPasswordsEquals) {
+                cm.setAdministration(login.equals("admin"));
                 main.setMainView();
                 break;
             } else if (isLastAccount) {
@@ -66,5 +69,8 @@ public class LoginController implements BaseController {
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
     }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) { this.cm = cm; }
 }
 

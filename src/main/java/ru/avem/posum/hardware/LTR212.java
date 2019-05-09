@@ -80,7 +80,7 @@ public class LTR212 extends ADC {
     public native String closeConnection(int slot);
 
     static {
-        System.loadLibrary("LTR212Library");
+//        System.loadLibrary("LTR212Library");
     }
 
     private void initializeModuleSettings() {

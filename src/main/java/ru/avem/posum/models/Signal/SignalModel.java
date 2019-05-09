@@ -126,7 +126,7 @@ public class SignalModel {
     }
 
     private void setValueName() {
-        this.valueName = signalParametersModel.getCalibrationValueName();
+        this.valueName = signalParametersModel.getCalibratedValueName();
     }
 
     public void setDefaultValueName() {
@@ -229,7 +229,7 @@ public class SignalModel {
     }
 
     public double getCalibratedZeroShift() {
-        return signalParametersModel.getCalibratedZeroShift();
+        return signalParametersModel.getCalibratedDC();
     }
 
     public int getChannel() {

@@ -22,13 +22,13 @@ public class SignalParametersModel {
     private double bufferedSamplesPerSemiPeriods;
     private double calibratedAmplitude;
     private double calibratedRms;
-    private double calibratedZeroShift;
+    private double calibratedDC;
     private double calibratedValue;
     private double firstLoadValue;
     private double firstCahnnelValue;
     private double secondLoadValue;
     private double secondChannalValue;
-    private String calibrationValueName;
+    private String calibratedValueName;
     private int channel;
     private int channels;
     private double[] data;
@@ -355,13 +355,13 @@ public class SignalParametersModel {
             bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(adc, amplitude);
             bufferedCalibratedRms += calibratedRms = applyCalibration(adc, rms);
         }
-        bufferedCalibratedZeroShift += calibratedZeroShift = applyCalibration(adc, dc);
+        bufferedCalibratedZeroShift += calibratedDC = applyCalibration(adc, dc);
     }
 
     private void calculateCalibratedParameters(double averageCount) {
         calibratedAmplitude = bufferedCalibratedAmplitude / averageCount;
         calibratedRms = bufferedCalibratedRms / averageCount;
-        calibratedZeroShift = bufferedCalibratedZeroShift / averageCount;
+        calibratedDC = bufferedCalibratedZeroShift / averageCount;
         bufferedCalibratedAmplitude = bufferedCalibratedRms = bufferedCalibratedZeroShift = 0;
     }
 
@@ -421,7 +421,7 @@ public class SignalParametersModel {
     public void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         if (!calibrationSettings.isEmpty()) {
-            calibrationValueName = CalibrationPointModel.parseValueName(calibrationSettings.get(0));
+            calibratedValueName = CalibrationPointModel.parseValueName(calibrationSettings.get(0));
             double minLoadValue = Double.MAX_VALUE;
             double maxLoadValue = Double.MIN_VALUE;
             int GRAPH_SCALE = 5;
@@ -451,16 +451,20 @@ public class SignalParametersModel {
         return calibratedAmplitude;
     }
 
+    public double getCalibratedDC() {
+        return calibratedDC;
+    }
+
     public double getCalibratedRms() {
         return calibratedRms;
     }
 
-    public double getCalibratedZeroShift() {
-        return calibratedZeroShift;
+    public String getCalibratedValueName() {
+        return calibratedValueName;
     }
 
-    public String getCalibrationValueName() {
-        return calibrationValueName;
+    public double getDc() {
+        return dc;
     }
 
     public double getLowerBound() {
@@ -485,10 +489,6 @@ public class SignalParametersModel {
 
     public double getTickUnit() {
         return tickUnit;
-    }
-
-    public double getDc() {
-        return dc;
     }
 
     public void setAccuracyCoefficient(double accuracyCoefficient) {

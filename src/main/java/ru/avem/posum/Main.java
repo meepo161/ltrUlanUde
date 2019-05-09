@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.controllers.Calibration.CalibrationController;
+import ru.avem.posum.controllers.Process.ProcessController;
 import ru.avem.posum.controllers.Settings.LTR212.LTR212Settings;
 import ru.avem.posum.controllers.Settings.LTR24.LTR24Settings;
 import ru.avem.posum.controllers.Settings.LTR27.LTR27Settings;
@@ -34,31 +35,31 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
+    private CalibrationController calibrationController;
+    private Scene calibrationScene;
     private volatile boolean closed;
     private LoginController loginController;
-    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
-    private LTR24Settings ltr24Settings;
-    private LTR27Settings ltr27Settings;
-    private LTR34Settings ltr34Settings;
-    private LTR212Settings ltr212Settings;
-    private CalibrationController calibrationController;
-    private MainController mainController;
-    private Parent parent;
-    private ProcessController processController;
-    private Settings settings;
-    private Scene mainScene;
     private Scene loginScene;
-    private Scene settingsScene;
-    private Scene processScene;
-    private Scene ltr24Scene;
-    private Scene ltr27Scene;
-    private Scene ltr34Scene;
-    private Scene ltr212Scene;
-    private Scene signalGraphScene;
-    private Scene calibrationScene;
-    private SignalController signalController;
     private Stage loginStage;
+    private LTR24Settings ltr24Settings;
+    private Scene ltr24Scene;
+    private LTR27Settings ltr27Settings;
+    private Scene ltr27Scene;
+    private LTR34Settings ltr34Settings;
+    private Scene ltr34Scene;
+    private LTR212Settings ltr212Settings;
+    private Scene ltr212Scene;
+    private Scene mainScene;
+    private MainController mainController;
+    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
+    private Parent parent;
     private Stage primaryStage;
+    private ProcessController processController;
+    private Scene processScene;
+    private Settings settings;
+    private Scene settingsScene;
+    private SignalController signalController;
+    private Scene signalGraphScene;
     private boolean stopped;
 
     @Override
@@ -373,6 +374,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void selectGeneralSettingsTab() {
         settings.selectGeneralSettingsTab();
+    }
+
+    @Override
+    public void setAdministration(boolean administration) {
+        mainController.setAdministration(administration);
+        mainController.initMenu();
     }
 
     @Override

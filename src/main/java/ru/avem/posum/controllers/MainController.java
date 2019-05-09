@@ -21,7 +21,9 @@ import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainController implements BaseController {
@@ -42,6 +44,8 @@ public class MainController implements BaseController {
     @FXML
     private TableColumn<TestProgram, String> columnTestProgramType;
     @FXML
+    private Menu menuEdit;
+    @FXML
     private Button openExperimentButton;
     @FXML
     private ProgressIndicator progressIndicator;
@@ -52,6 +56,7 @@ public class MainController implements BaseController {
     @FXML
     private Label warningIcon;
 
+    private boolean isAdministration;
     private List<TestProgram> allTestPrograms;
     private ControllerManager cm;
     private ContextMenu contextMenu = new ContextMenu();
@@ -69,8 +74,14 @@ public class MainController implements BaseController {
     private void initialize() {
         initTableView();
         addMouseListener();
-        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar,
-                warningIcon);
+        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
+    }
+
+    public void initMenu() {
+        menuEdit.setDisable(!isAdministration);
+        if (!isAdministration) {
+            clearContextMenu();
+        }
     }
 
     private void initTableView() {
@@ -139,12 +150,16 @@ public class MainController implements BaseController {
         contextMenu.getItems().addAll(menuItemEdit, menuItemCopy, menuItemDelete);
     }
 
+    public void clearContextMenu() {
+        contextMenu.getItems().clear();
+    }
+
     private void addMouseListener() {
         testProgramTableView.setRowFactory(tv -> {
             TableRow<TestProgram> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    handleMenuItemEdit();
+                    handleOpenExperiment();
                 }
 
                 if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
@@ -329,18 +344,19 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            getTestProgram(selectedIndex);
-            setExperimentId();
-            showExperimentScene();
+            statusBarLine.clearStatusBar();
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Открытие программы испытаний");
+
+            new Thread(() -> {
+                getTestProgram(selectedIndex);
+                cm.getExperimentModel().SetTestId(testProgram.getId());
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.clearStatusBar();
+                Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
+            }).start();
+
         }
-    }
-
-    private void setExperimentId() {
-        cm.getExperimentModel().SetTestId(testProgram.getId());
-    }
-
-    private void showExperimentScene() {
-        wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE);
     }
 
     public void handleMenuItemExit() {
@@ -349,6 +365,10 @@ public class MainController implements BaseController {
 
     public Button getOpenExperimentButton() {
         return openExperimentButton;
+    }
+
+    public void setAdministration(boolean administration) {
+        isAdministration = administration;
     }
 
     @Override

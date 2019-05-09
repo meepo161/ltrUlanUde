@@ -1,24 +1,29 @@
-package ru.avem.posum.controllers;
+package ru.avem.posum.controllers.Process;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.models.*;
+import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
+    private Label checkIcon;
+    @FXML
     private AnchorPane mainPanel;
     @FXML
-    private LineChart<Number, Number> processLineChart;
-    @FXML
-    private StatusBar processStatusBar;
+    private LineChart<Number, Number> processGraph;
     @FXML
     private TableColumn<Events, String> eventTimeColumn;
     @FXML
@@ -54,16 +59,23 @@ public class ProcessController implements BaseController {
     @FXML
     private TableColumn<ProcessSample, String> group4Value2SampleColumn;
     @FXML
+    private ProgressIndicator progressIndicator;
+    @FXML
+    private StatusBar statusBar;
+    @FXML
     private TableView<Events> tableEvent;
     @FXML
     private ToolBar toolbarSettings;
     @FXML
     private VBox topPanel;
+    @FXML
+    private Label warningIcon;
 
-    private WindowsManager wm;
-    private ExperimentModel experimentModel = new ExperimentModel();
     private EventsModel eventModel = new EventsModel();
+    private ExperimentModel experimentModel = new ExperimentModel();
     private ProcessSampleModel processSampleModel = new ProcessSampleModel();
+    private StatusBarLine statusBarLine;
+    private WindowsManager wm;
 
     @FXML
     private void initialize() {
@@ -100,16 +112,18 @@ public class ProcessController implements BaseController {
         processSampleModel.SetProcessSampleColumnFunction(group4Value2SampleColumn);
         processSampleModel.fitTable();
         showSettingsPanel(true);
-        processStatusBar.setText("Инициализация произведена!");
+        statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
+        statusBarLine.setProcessView(true);
+        statusBarLine.setStatus("Программа испытаний загружена", true);
 
-        processSampleModel.chart(processLineChart);
+        processSampleModel.chart(processGraph);
         experimentModel.setProcessSampleModel(processSampleModel);
     }
 
     private void showSettingsPanel(boolean hide) {
         double needHeight = mainPanel.getMaxHeight();
         toolbarSettings.setVisible(!hide);
-        if(!hide) {
+        if (!hide) {
             needHeight = needHeight + toolbarSettings.getPrefHeight();
         }
         topPanel.setPrefHeight(needHeight);
@@ -153,18 +167,25 @@ public class ProcessController implements BaseController {
     }
 
     public void handleBackButton() {
-        if(experimentModel.getRun()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setHeaderText("Вы уверены что хотите прекратить испытание?");
-            Optional<ButtonType> option = alert.showAndWait();
-            if (option.get() == null) {
-                return;
-            } else if (option.get() == ButtonType.CANCEL) {
-                return;
+        if (experimentModel.getRun()) {
+            ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
+            alert.setTitle("Подтвердите действие");
+            alert.setHeaderText("Вернуться в главное окно?");
+            ButtonBar buttonBar = (ButtonBar)alert.getDialogPane().lookup(".button-bar");
+            buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 14px;\n" + "-fx-background-radius: 5px;\n" +
+                    "\t-fx-border-radius: 5px;"));
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent()) {
+                if (result.get() == ok) {
+                    experimentModel.Terminate();
+                    wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
+                }
             }
         }
-        experimentModel.Terminate();
-        wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
     }
 
     public void handleAddEventButton() {

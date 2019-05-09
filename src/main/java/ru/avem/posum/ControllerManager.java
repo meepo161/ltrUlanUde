@@ -47,6 +47,8 @@ public interface ControllerManager {
 
     void selectGeneralSettingsTab();
 
+    void setAdministration(boolean administration);
+
     void setClosed(boolean closed);
 
     void setStopped(boolean stopped);

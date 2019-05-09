@@ -117,7 +117,7 @@ public class ProcessSampleModel {
                             default: colorRow = 0;
                         }
                     }
-                    setStyle(setStyleByCode(colorRow));
+//                    setStyle(setStyleByCode(colorRow));
                 }
             };
         });
@@ -220,7 +220,7 @@ public class ProcessSampleModel {
                         hBox.setMaxHeight(22);
                         hBox.getChildren().add(chBox);
                         hBox.getChildren().add(colorPicker);
-                        hBox.setStyle(setStyleByCode(0));
+//                        hBox.setStyle(setStyleByCode(0));
                     }
 
                     @Override
@@ -230,7 +230,7 @@ public class ProcessSampleModel {
                             setGraphic(null);
                         } else {
                             setGraphic(hBox);
-                            setStyle(setStyleByCode(0));
+//                            setStyle(setStyleByCode(0));
                         }
                     }
                 };
@@ -255,9 +255,9 @@ public class ProcessSampleModel {
             int countItems = tableSample.getItems().size();
             double heightRow = 24;
             double heightTable = 49 + (countItems * heightRow);
-            tableSample.setPrefHeight(heightTable);
-            tableSample.setMaxHeight(heightTable);
-            tableSample.setMinHeight(heightTable);
+//            tableSample.setPrefHeight(heightTable);
+//            tableSample.setMaxHeight(heightTable);
+//            tableSample.setMinHeight(heightTable);
         }
     }
 

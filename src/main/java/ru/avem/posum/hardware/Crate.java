@@ -23,13 +23,13 @@ public class Crate {
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public Crate() {
-        initEmptyCratesList();
-        setCratesList();
-        setCratesInfo();
-        initEmptyModulesList();
-        setModulesList();
-        closeConnection();
-        fillCratesNames();
+//        initEmptyCratesList();
+//        setCratesList();
+//        setCratesInfo();
+//        initEmptyModulesList();
+//        setModulesList();
+//        closeConnection();
+//        fillCratesNames();
     }
 
     private void initEmptyCratesList() {
@@ -127,6 +127,6 @@ public class Crate {
     }
 
     static {
-        System.loadLibrary("CrateLibrary");
+//        System.loadLibrary("CrateLibrary");
     }
 }

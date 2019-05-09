@@ -26,7 +26,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemExit" text="Закрыть" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Редактировать">
+                <Menu fx:id="menuEdit" mnemonicParsing="false" text="Редактировать">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAdd" text="Добавить" />
                         <MenuItem mnemonicParsing="false" onAction="#handleMenuItemEdit" text="Настроить" />
@@ -37,7 +37,7 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Помощь">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAboutUs" text="О нас" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleMenuItemAboutUs" text="О программе" />
                     </items>
                 </Menu>
             </menus>
@@ -61,7 +61,7 @@
                                 <Label text="Нет данных для отображения" />
                             </placeholder>
                             <columns>
-                                <TableColumn fx:id="columnTableViewIndex" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" style="-fx-alignment: center;" text="ID" />
+                                <TableColumn fx:id="columnTableViewIndex" maxWidth="54.0" minWidth="54.0" prefWidth="54.0" style="-fx-alignment: center;" text="ID" />
                                 <TableColumn fx:id="columnTestProgramName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
                                 <TableColumn fx:id="columnTestProgramCreatingDate" minWidth="80.0" text="Дата создания" />
                                 <TableColumn fx:id="columnTestProgramChangingDate" minWidth="80.0" text="Дата изменения" />

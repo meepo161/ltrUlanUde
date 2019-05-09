@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -23,46 +24,57 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.StatusBar?>
 
-<BorderPane fx:id="processViewPanel" minHeight="680.0" minWidth="1200.0" prefHeight="680.0" prefWidth="1200.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.ProcessController">
+<BorderPane fx:id="processViewPanel" minHeight="680.0" minWidth="1200.0" prefHeight="680.0" prefWidth="1200.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.Process.ProcessController">
    <center>
-      <SplitPane dividerPositions="0.8126740947075209">
+      <SplitPane dividerPositions="0.788, 0.5">
          <items>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <GridPane>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
                <children>
                   <TableView fx:id="tableSample" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pickOnBounds="false" styleClass="processTable">
                     <columns>
-                      <TableColumn fx:id="mainTextSampleColumn" editable="false" maxWidth="150.0" prefWidth="90.0" sortable="false" text="основные" />
-                      <TableColumn fx:id="group1ColorSampleColumn" editable="false" maxWidth="70.0" minWidth="63.0" prefWidth="65.0" text="отклик" />
-                        <TableColumn fx:id="group1Value1SampleColumn" editable="false" maxWidth="70.0" minWidth="63.0" prefWidth="65.0" text="амп отклик" />
-                        <TableColumn fx:id="group1Value2SampleColumn" editable="false" maxWidth="70.0" minWidth="63.0" prefWidth="65.0" text="амп норма" />
-                        <TableColumn fx:id="group1Value3SampleColumn" editable="false" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" text="амп откл, %" />
-                        <TableColumn fx:id="group2Value1SampleColumn" editable="false" maxWidth="80.0" minWidth="63.0" prefWidth="65.0" text="Фаза отклик" />
-                        <TableColumn fx:id="group2Value2SampleColumn" editable="false" maxWidth="80.0" minWidth="63.0" prefWidth="65.0" text="фаза норма" />
-                        <TableColumn fx:id="group2Value3SampleColumn" editable="false" maxWidth="80.0" minWidth="70.0" prefWidth="70.0" text="фаза откл, %" />
-                        <TableColumn fx:id="group3Value1SampleColumn" editable="false" maxWidth="100.0" minWidth="87.0" prefWidth="87.0" text="выход доп отклик" />
-                        <TableColumn fx:id="group3Value2SampleColumn" editable="false" maxWidth="100.0" minWidth="80.0" text="выход доп норма" />
-                        <TableColumn fx:id="group3Value3SampleColumn" editable="false" maxWidth="90.0" minWidth="80.0" text="выход доп откл, %" />
-                        <TableColumn fx:id="group4Value1SampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП амп" />
-                        <TableColumn fx:id="group4Value2SampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП стат" />
-                        <TableColumn fx:id="group4ColorSampleColumn" editable="false" maxWidth="60.0" minWidth="40.0" prefWidth="60.0" text="ЦАП" />
+                      <TableColumn fx:id="mainTextSampleColumn" editable="false" maxWidth="150.0" minWidth="80.0" sortable="false" text="основные" />
+                      <TableColumn fx:id="group1ColorSampleColumn" editable="false" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" text="отклик" />
+                        <TableColumn fx:id="group1Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="68.0" prefWidth="68.0" text="амп отклик" />
+                        <TableColumn fx:id="group1Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="амп норма" />
+                        <TableColumn fx:id="group1Value3SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="амп откл, %" />
+                        <TableColumn fx:id="group2Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="фаза отклик" />
+                        <TableColumn fx:id="group2Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="фаза норма" />
+                        <TableColumn fx:id="group2Value3SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="фаза откл, %" />
+                        <TableColumn fx:id="group3Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="выход доп отклик" />
+                        <TableColumn fx:id="group3Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="выход доп норма" />
+                        <TableColumn fx:id="group3Value3SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="выход доп откл, %" />
+                        <TableColumn fx:id="group4Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="ЦАП амп" />
+                        <TableColumn fx:id="group4Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="68.0" prefWidth="68.0" text="ЦАП стат" />
+                        <TableColumn fx:id="group4ColorSampleColumn" editable="false" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" text="ЦАП" />
                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
                   </TableView>
-                  <LineChart fx:id="processLineChart" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308">
+                  <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" styleClass="programGraph" stylesheets="@../css/processGraph.css" GridPane.rowIndex="1">
                       <xAxis>
-                           <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
+                           <NumberAxis animated="false" autoRanging="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                         </xAxis>
                         <yAxis>
                            <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />
                         </yAxis>
                   </LineChart>
                </children>
-            </VBox>
-            <SplitPane dividerPositions="0.1755050505050505" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="792.0" prefWidth="420.0">
+            </GridPane>
+            <VBox prefHeight="200.0" prefWidth="100.0" />
+            <SplitPane dividerPositions="0.1755" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="212.0">
               <items>
                   <TableView fx:id="tableViewProgramProcess" minHeight="75.0" styleClass="programTable">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="Команда" />
-                      <TableColumn prefWidth="75.0" text="Свойства" />
+                      <TableColumn minWidth="110.0" prefWidth="110.0" text="Команда" />
+                      <TableColumn minWidth="110.0" prefWidth="110.0" text="Свойства" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -70,7 +82,7 @@
                   </TableView>
                   <GridPane alignment="CENTER" maxHeight="1.7976931348623157E308" minHeight="25.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                      </columnConstraints>
                      <rowConstraints>
@@ -80,8 +92,8 @@
                      <children>
                         <TableView fx:id="tableEvent" minHeight="75.0" styleClass="eventTable" GridPane.columnSpan="2">
                           <columns>
-                            <TableColumn fx:id="eventTimeColumn" prefWidth="73.0" text="Время" />
-                            <TableColumn fx:id="eventDescriptionColumn" prefWidth="144.0" text="Событие" />
+                            <TableColumn fx:id="eventDescriptionColumn" minWidth="110.0" prefWidth="110.0" text="Событие" />
+                            <TableColumn fx:id="eventTimeColumn" minWidth="110.0" prefWidth="110.0" text="Время" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -92,7 +104,7 @@
                            <Font name="Arial" size="12.0" />
                         </font>
                         </Button>
-                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" prefWidth="110.0" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
@@ -104,9 +116,6 @@
          </items>
       </SplitPane>
    </center>
-   <bottom>
-      <StatusBar fx:id="processStatusBar" BorderPane.alignment="CENTER" />
-   </bottom>
    <top>
       <VBox fx:id="topPanel" maxHeight="200.0" minHeight="89.0" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
@@ -177,7 +186,7 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" layoutX="1174.0" layoutY="-3.0" prefWidth="106.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1040.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Button fx:id="back_Button" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" textAlignment="CENTER" wrapText="true">
+                        <Button fx:id="back_Button" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" styleClass="eventTable" text="Назад" textAlignment="CENTER" wrapText="true">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin></Button>
@@ -333,4 +342,30 @@
          </children>
       </VBox>
    </top>
+   <bottom>
+      <HBox maxHeight="30.0" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </ProgressIndicator>
+            <Label fx:id="checkIcon" style="-fx-opacity: 0;" text="✔">
+               <HBox.margin>
+                  <Insets left="-16.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <Label fx:id="warningIcon" style="-fx-opacity: 0;" text="❗">
+               <HBox.margin>
+                  <Insets left="-12.0" top="5.0" />
+               </HBox.margin>
+            </Label>
+            <StatusBar fx:id="statusBar" prefWidth="1000.0" styleClass="status-bar" stylesheets="@../css/main.css" text="Ok">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </StatusBar>
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>

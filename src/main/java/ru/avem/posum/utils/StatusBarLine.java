@@ -11,6 +11,7 @@ import static java.lang.Thread.sleep;
 public class StatusBarLine {
     private Label checkIcon;
     private boolean isMainView;
+    private boolean isProcessView;
     private ProgressIndicator progressIndicator;
     private StatusBar statusBar;
     private Thread statusBarThread;
@@ -71,14 +72,17 @@ public class StatusBarLine {
     private void initIcons(boolean isStatusOk) {
         checkIcon.setTextFill(Color.web("#009700"));
         warningIcon.setTextFill(Color.web("#D30303"));
+        String padding;
 
         if (isStatusOk) {
             checkIcon.setStyle("-fx-opacity: 1;");
-            String padding = isMainView ? "-fx-padding: 0 0 0 4;" : "-fx-padding: 0 0 0 1.1;";
-            statusBar.setStyle(padding);
+            padding = isMainView ? "-fx-padding: 0 0 0 4;" : "-fx-padding: 0 0 0 1.1;";
         } else {
             warningIcon.setStyle("-fx-opacity: 1;");
-            String padding = isMainView ? "-fx-padding: 0 0 0 -1.1;" : "-fx-padding: 0 0 0 -1.9;";
+            padding = isMainView ? "-fx-padding: 0 0 0 -1.1;" : "-fx-padding: 0 0 0 -1.9;";
+        }
+
+        if (!isProcessView) {
             statusBar.setStyle(padding);
         }
     }
@@ -96,5 +100,9 @@ public class StatusBarLine {
         } else {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1;"));
         }
+    }
+
+    public void setProcessView(boolean processView) {
+        isProcessView = processView;
     }
 }
