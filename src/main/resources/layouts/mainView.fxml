@@ -61,13 +61,13 @@
                                 <Label text="Нет данных для отображения" />
                             </placeholder>
                             <columns>
-                                <TableColumn fx:id="columnTableViewIndex" maxWidth="54.0" minWidth="54.0" prefWidth="54.0" style="-fx-alignment: center;" text="ID" />
-                                <TableColumn fx:id="columnTestProgramName" minWidth="150.0" prefWidth="150.0" text="Название испытания" />
-                                <TableColumn fx:id="columnTestProgramCreatingDate" minWidth="80.0" text="Дата создания" />
-                                <TableColumn fx:id="columnTestProgramChangingDate" minWidth="80.0" text="Дата изменения" />
-                                <TableColumn fx:id="columnTestProgramTime" minWidth="80.0" text="Длительность испытания" />
-                                <TableColumn fx:id="columnTestProgramType" minWidth="80.0" text="Тип испытаний" />
-                                <TableColumn fx:id="columnTestingSample" minWidth="80.0" text="Объект испытаний" />
+                                <TableColumn fx:id="columnTableViewIndex" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: center;" text="ID" />
+                                <TableColumn fx:id="columnTestProgramName" minWidth="300.0" prefWidth="300.0" text="Название испытания" />
+                                <TableColumn fx:id="columnTestProgramCreatingDate" minWidth="150.0" prefWidth="200.0" text="Дата создания" />
+                                <TableColumn fx:id="columnTestProgramChangingDate" minWidth="150.0" prefWidth="200.0" text="Дата изменения" />
+                                <TableColumn fx:id="columnTestProgramTime" minWidth="150.0" prefWidth="200.0" text="Длительность испытания" />
+                                <TableColumn fx:id="columnTestProgramType" minWidth="150.0" prefWidth="200.0" text="Тип испытаний" />
+                                <TableColumn fx:id="columnTestingSample" minWidth="150.0" prefWidth="200.0" text="Объект испытаний" />
                             </columns>
                             <GridPane.margin>
                                 <Insets />

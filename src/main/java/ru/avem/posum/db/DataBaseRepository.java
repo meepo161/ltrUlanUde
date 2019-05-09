@@ -22,7 +22,6 @@ public class DataBaseRepository {
             Account user = new Account("user", "user");
             AccountRepository.insertAccount(user);
 
-
             Event event = new Event(0, "База создана");
             EventRepository.insertEvent(event);
         }
