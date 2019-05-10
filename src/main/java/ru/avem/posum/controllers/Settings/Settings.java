@@ -1,6 +1,7 @@
 package ru.avem.posum.controllers.Settings;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -323,6 +324,8 @@ public class Settings implements BaseController {
             TestProgramRepository.updateTestProgramIndexes();
             cm.loadItemsForMainTableView();
             cm.stopAllModules();
+            cratesListView.setItems(FXCollections.observableArrayList());
+            modulesListView.setItems(FXCollections.observableArrayList());
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.MAIN_SCENE));

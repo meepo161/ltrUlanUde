@@ -34,6 +34,8 @@ public class HardwareSettings extends Settings {
     }
 
     public void showCrates() {
+        crate.initCratesList();
+
         if (crate.getCratesNames().isPresent()) {
             crates = crate.getCratesNames().get();
             cratesListView.setItems(crates);
@@ -46,10 +48,11 @@ public class HardwareSettings extends Settings {
     public void showModules() {
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
-            crateSerialNumber = crate.getCrates()[0][selectedCrate];
-            modulesNames = crate.getModulesNames(selectedCrate);
-            modulesListView.setItems(modulesNames);
-
+            if (selectedCrate != -1) {
+                crateSerialNumber = crate.getCrates()[0][selectedCrate];
+                modulesNames = crate.getModulesNames(selectedCrate);
+                modulesListView.setItems(modulesNames);
+            }
         }));
     }
 
@@ -88,39 +91,49 @@ public class HardwareSettings extends Settings {
 
     public boolean checkHardwareSettings() {
         boolean isCrateChosen = false;
+        if (crate.getCratesNames().isPresent()) {
+            isCrateChosen = !crate.getCratesNames().get().isEmpty() && !chooseCrateButton.isDisabled();
+        }
 
-        if (!chooseCrateButton.isDisabled()) {
+        if (!isCrateChosen) {
             settings.getStatusBarLine().setStatus("Перед сохранением настроек необходимо выбрать крейт",
                     false);
-        } else {
-            isCrateChosen = true;
         }
 
         return isCrateChosen;
     }
 
     public void selectCrate() {
-        crate.setCratesList();
-
         if (crate.getCratesNames().isPresent()) {
-            ObservableList<String> cratesNames = crate.getCratesNames().get();
-
-            for (int i = 0; i < cratesNames.size(); i++) {
-                String crateName = cratesNames.get(i);
-                crateSerialNumber = settings.getTestProgram().getCrateSerialNumber();
-                int notCrateCounter = 0;
-
-                if (crateName.contains(crateSerialNumber)) {
-                    selectedCrate = i;
-                    toggleUiElements(true);
-                } else {
-                    notCrateCounter++;
-                }
-
-                check(cratesNames, notCrateCounter);
+            if (crate.getCratesNames().get().isEmpty()) {
+                settings.getStatusBarLine().setStatus("Не найдены подключенные крейты", false);
+                cratesListView.setDisable(true);
+                modulesListView.setDisable(true);
+                chooseCrateButton.setDisable(true);
+                setupModuleButton.setDisable(true);
+                saveSettingsButton.setDisable(true);
+            } else {
+                findCrate();
             }
-        } else {
-            getStatusBarLine().setStatus("Не найдены подключенные крейты", false);
+        }
+    }
+
+    private void findCrate() {
+        ObservableList<String> cratesNames = crate.getCratesNames().get();
+
+        for (int i = 0; i < cratesNames.size(); i++) {
+            String crateName = cratesNames.get(i);
+            crateSerialNumber = settings.getTestProgram().getCrateSerialNumber();
+            int notCrateCounter = 0;
+
+            if (crateName.contains(crateSerialNumber)) {
+                selectedCrate = i;
+                toggleUiElements(true);
+            } else {
+                notCrateCounter++;
+            }
+
+            check(cratesNames, notCrateCounter);
         }
     }
 

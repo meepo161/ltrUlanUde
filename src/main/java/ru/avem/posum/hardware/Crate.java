@@ -4,7 +4,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.avem.posum.utils.TextEncoder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -17,7 +16,7 @@ public class Crate {
     private static final int LTR_MODULES_PER_CRATE_MAX = 16;
 
     private String[][] crates = new String[LTR_CRATES_MAX][LTR_CRATES_MAX]; // массив хранит серийные номера, имена и интерфейс подключения крейтов
-    private Optional<ObservableList<String>> cratesNames = Optional.of(FXCollections.observableArrayList());
+    private Optional<ObservableList<String>> cratesNames;
     private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX];
     private HashMap<Integer, Module> modulesList = new HashMap<>();
     private String status;
@@ -25,18 +24,16 @@ public class Crate {
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public Crate() {
-        setCratesList();
+        initCratesList();
+    }
+
+    public void initCratesList() {
+        initEmptyCratesList();
+        fillCratesList(crates[0]);
         setCratesInfo();
-        initEmptyModulesList();
         setModulesList();
         closeConnection();
         fillCratesNames();
-    }
-
-    public void setCratesList() {
-        initEmptyCratesList();
-        status = fillCratesList(crates[0]);
-        checkStatus();
     }
 
     private void initEmptyCratesList() {
@@ -46,8 +43,6 @@ public class Crate {
             }
         }
     }
-
-    public native String fillCratesList(String[] crates);
 
     private void checkStatus() {
         if (wasError) {
@@ -62,18 +57,9 @@ public class Crate {
         }
     }
 
-    public native String getCratesInfo(String[] names, String[] connectionInterfaces);
-
-    private void initEmptyModulesList() {
-        for (int i = 0; i < modules.length; i++) {
-            for (int j = 0; j < modules.length; j++) {
-                modules[i][j] = "";
-            }
-
-        }
-    }
-
     private void setModulesList() {
+        initEmptyModulesList();
+
         for (int i = 0; i < crates[0].length; i++) {
             if (!crates[0][i].isEmpty()) {
                 status = fillModulesList(crates[0][i], modules[i]);
@@ -82,7 +68,13 @@ public class Crate {
         }
     }
 
-    public native String fillModulesList(String crate, String[] modules);
+    private void initEmptyModulesList() {
+        for (int i = 0; i < modules.length; i++) {
+            for (int j = 0; j < modules.length; j++) {
+                modules[i][j] = "";
+            }
+        }
+    }
 
     private void closeConnection() {
         status = close();
@@ -92,6 +84,8 @@ public class Crate {
     public native String close();
 
     private void fillCratesNames() {
+        cratesNames = Optional.of(FXCollections.observableArrayList());
+
         for (int i = 0; i < crates[1].length; i++) {
             if (!crates[1][i].isEmpty()) {
                 cratesNames.get().add(crates[1][i] + " (" + crates[0][i] + "), " + crates[2][i]);
@@ -113,6 +107,12 @@ public class Crate {
     }
 
     public native String initialize(String crateSN);
+
+    public native String fillCratesList(String[] crates);
+
+    public native String getCratesInfo(String[] names, String[] connectionInterfaces);
+
+    public native String fillModulesList(String crate, String[] modules);
 
     public HashMap<Integer, Module> getModulesList() {
         return modulesList;
