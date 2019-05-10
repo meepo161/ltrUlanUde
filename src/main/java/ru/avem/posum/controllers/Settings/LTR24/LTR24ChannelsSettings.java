@@ -89,6 +89,8 @@ class LTR24ChannelsSettings extends LTR24Settings {
         types.add("Дифференциальный вход без отсечки постоянной составляющей");
         types.add("Дифференциальный вход с отсечкой постоянной составляющей");
         types.add("Режим ICP-вход");
+        types.add("Режим измерения собственного нуля");
+        types.add("Режим \"ICP - тест\"");
 
         for (ComboBox<String> comboBox : typesOfChannelComboBoxes) {
             comboBox.getItems().addAll(types);
