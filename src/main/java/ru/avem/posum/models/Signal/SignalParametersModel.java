@@ -2,6 +2,7 @@ package ru.avem.posum.models.Signal;
 
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPointModel;
+import ru.avem.posum.utils.MovingAverage;
 
 import java.util.*;
 
@@ -61,6 +62,9 @@ public class SignalParametersModel {
     }
 
     private void setFields(double[] rawData, int channel) {
+        //TODO
+//        MovingAverage ma=new MovingAverage(10);
+//        this.data = ma.exponentialMovingAverage(rawData,channel);
         this.data = rawData;
         this.channel = channel;
     }
@@ -174,13 +178,17 @@ public class SignalParametersModel {
     }
 
     private double calculateDC() {
-        return (maxSignalValue + minSignalValue) / 2;
+        //TODO
+//        double shift = -0.00049;
+        double shift = -0;
+        return (maxSignalValue + minSignalValue) / 2 - shift;
     }
 
     private double calculateRms() {
         double summ = 0;
         for (int i = channel; i < data.length; i += channels) {
-            summ += (data[i] - dc) * (data[i] - dc);
+            summ += (data[i] - dc) * (data[i] - dc); //TODO
+//            summ += (data[i]) * (data[i]);
         }
         return Math.sqrt(summ / data.length * channels);
     }
