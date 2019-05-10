@@ -34,8 +34,13 @@ public class HardwareSettings extends Settings {
     }
 
     public void showCrates() {
-        crates = crate.getCratesNames();
-        cratesListView.setItems(crates);
+        if (crate.getCratesNames().isPresent()) {
+            crates = crate.getCratesNames().get();
+            cratesListView.setItems(crates);
+        } else {
+            getStatusBarLine().setStatus("Не найдены подключенные крейты", false);
+        }
+
     }
 
     public void showModules() {
@@ -95,24 +100,32 @@ public class HardwareSettings extends Settings {
     }
 
     public void selectCrate() {
-        for (int i = 0; i < crate.getCratesNames().size(); i++) {
-            String crateName = crate.getCratesNames().get(i);
-            crateSerialNumber = settings.getTestProgram().getCrateSerialNumber();
-            int notCrateCounter = 0;
+        crate.setCratesList();
 
-            if (crateName.contains(crateSerialNumber)) {
-                selectedCrate = i;
-                toggleUiElements(true);
-            } else {
-                notCrateCounter++;
+        if (crate.getCratesNames().isPresent()) {
+            ObservableList<String> cratesNames = crate.getCratesNames().get();
+
+            for (int i = 0; i < cratesNames.size(); i++) {
+                String crateName = cratesNames.get(i);
+                crateSerialNumber = settings.getTestProgram().getCrateSerialNumber();
+                int notCrateCounter = 0;
+
+                if (crateName.contains(crateSerialNumber)) {
+                    selectedCrate = i;
+                    toggleUiElements(true);
+                } else {
+                    notCrateCounter++;
+                }
+
+                check(cratesNames, notCrateCounter);
             }
-
-            check(notCrateCounter);
+        } else {
+            getStatusBarLine().setStatus("Не найдены подключенные крейты", false);
         }
     }
 
-    private void check(int notCrateCounter) {
-        if (notCrateCounter == crate.getCratesNames().size()) {
+    private void check(ObservableList<String> cratesNames, int notCrateCounter) {
+        if (notCrateCounter == cratesNames.size()) {
             settings.getStatusBarLine().setStatus("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.",
                     false);
         } else {

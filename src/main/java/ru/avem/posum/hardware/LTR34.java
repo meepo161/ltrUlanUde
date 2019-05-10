@@ -1,5 +1,7 @@
 package ru.avem.posum.hardware;
 
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +28,16 @@ public class LTR34 extends DAC {
     @Override
     public void checkConnection() {
         Crate crate = new Crate();
-        if (!crate.getCratesNames().isEmpty()) {
-            status = checkConnection(getSlot());
-        } else {
-            openConnection();
-            status = "Потеряно соединение с крейтом";
+
+        if (crate.getCratesNames().isPresent()) {
+            ObservableList<String> cratesNames = crate.getCratesNames().get();
+
+            if (!cratesNames.isEmpty()) {
+                status = checkConnection(getSlot());
+            } else {
+                status = "Потеряно соединение с крейтом";
+                openConnection();
+            }
         }
     }
 
@@ -81,7 +88,7 @@ public class LTR34 extends DAC {
     public native String closeConnection(int slot);
 
     static {
-//        System.loadLibrary("LTR34Library");
+        System.loadLibrary("LTR34Library");
     }
 
     private void initializeModuleSettings() {

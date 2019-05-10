@@ -4,7 +4,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import ru.avem.posum.utils.TextEncoder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class Crate {
     public static final String LTR24 = "LTR24";
@@ -15,7 +17,7 @@ public class Crate {
     private static final int LTR_MODULES_PER_CRATE_MAX = 16;
 
     private String[][] crates = new String[LTR_CRATES_MAX][LTR_CRATES_MAX]; // массив хранит серийные номера, имена и интерфейс подключения крейтов
-    private ObservableList<String> cratesNames;
+    private Optional<ObservableList<String>> cratesNames = Optional.of(FXCollections.observableArrayList());
     private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX];
     private HashMap<Integer, Module> modulesList = new HashMap<>();
     private String status;
@@ -23,13 +25,18 @@ public class Crate {
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public Crate() {
-//        initEmptyCratesList();
-//        setCratesList();
-//        setCratesInfo();
-//        initEmptyModulesList();
-//        setModulesList();
-//        closeConnection();
-//        fillCratesNames();
+        setCratesList();
+        setCratesInfo();
+        initEmptyModulesList();
+        setModulesList();
+        closeConnection();
+        fillCratesNames();
+    }
+
+    public void setCratesList() {
+        initEmptyCratesList();
+        status = fillCratesList(crates[0]);
+        checkStatus();
     }
 
     private void initEmptyCratesList() {
@@ -38,11 +45,6 @@ public class Crate {
                 crates[i][j] = "";
             }
         }
-    }
-
-    private void setCratesList() {
-        status = fillCratesList(crates[0]);
-        checkStatus();
     }
 
     public native String fillCratesList(String[] crates);
@@ -90,11 +92,9 @@ public class Crate {
     public native String close();
 
     private void fillCratesNames() {
-        cratesNames = FXCollections.observableArrayList();
-
         for (int i = 0; i < crates[1].length; i++) {
             if (!crates[1][i].isEmpty()) {
-                cratesNames.add(crates[1][i] + " (" + crates[0][i] + "), " + crates[2][i]);
+                cratesNames.get().add(crates[1][i] + " (" + crates[0][i] + "), " + crates[2][i]);
             }
         }
     }
@@ -122,11 +122,11 @@ public class Crate {
         return crates;
     }
 
-    public ObservableList<String> getCratesNames() {
+    public Optional<ObservableList<String>> getCratesNames() {
         return cratesNames;
     }
 
     static {
-//        System.loadLibrary("CrateLibrary");
+        System.loadLibrary("CrateLibrary");
     }
 }

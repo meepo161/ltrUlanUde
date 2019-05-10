@@ -1,5 +1,7 @@
 package ru.avem.posum.hardware;
 
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +22,16 @@ public class LTR212 extends ADC {
     @Override
     public void checkConnection() {
         Crate crate = new Crate();
-        if (!crate.getCratesNames().isEmpty()) {
-            status = checkConnection(getSlot());
-        } else {
-            status = "Потеряно соединение с крейтом";
+
+        if (crate.getCratesNames().isPresent()) {
+            ObservableList<String> cratesNames = crate.getCratesNames().get();
+
+            if (!cratesNames.isEmpty()) {
+                status = checkConnection(getSlot());
+            } else {
+                status = "Потеряно соединение с крейтом";
+                openConnection();
+            }
         }
     }
 
@@ -80,7 +88,7 @@ public class LTR212 extends ADC {
     public native String closeConnection(int slot);
 
     static {
-//        System.loadLibrary("LTR212Library");
+        System.loadLibrary("LTR212Library");
     }
 
     private void initializeModuleSettings() {
