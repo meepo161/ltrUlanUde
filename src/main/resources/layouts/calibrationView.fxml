@@ -58,7 +58,7 @@
                </GridPane.margin>
             </Label>
             <TextField fx:id="channelValueTextField" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Label fx:id="channelValueMultiplier1" text="Множитель:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+            <Label fx:id="channelValueMultiplierLabel" text="Множитель:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
@@ -70,7 +70,7 @@
                </GridPane.margin>
             </Label>
             <TextField fx:id="loadValueTextField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-            <Label fx:id="channelValueMultiplier11" text="Множитель:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+            <Label fx:id="loadValueMultiplierLabel" text="Множитель:" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
@@ -81,12 +81,17 @@
                   <Insets right="10.0" />
                </GridPane.margin></Label>
             <TextField fx:id="loadValueNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <CheckBox fx:id="setChannelValueCheckBox" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="5">
+            <CheckBox fx:id="setChannelValueCheckBox" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="10.0" />
                </GridPane.margin>
             </CheckBox>
-            <Button fx:id="addToTableButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="252.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+            <CheckBox fx:id="setNulCheckBox" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="3" GridPane.columnSpan="2" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </CheckBox>
+            <Button fx:id="addToTableButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="252.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.columnIndex="1" GridPane.columnSpan="4" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
             <TableView fx:id="calibrationTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.columnSpan="2" GridPane.rowIndex="3" GridPane.rowSpan="5">
                 <placeholder>
                     <Label text="Нет данных для отображения" />

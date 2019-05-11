@@ -297,8 +297,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public double getZeroShift() {
-        return signalController.getSignalModel().getZeroShift();
+    public double getDc() {
+        return signalController.getSignalModel().getDc();
     }
 
     @Override

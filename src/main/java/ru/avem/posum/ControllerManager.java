@@ -23,7 +23,7 @@ public interface ControllerManager {
 
     String getValueName();
 
-    double getZeroShift();
+    double getDc();
 
     void giveChannelInfo(int channel, String moduleType, int slot);
 

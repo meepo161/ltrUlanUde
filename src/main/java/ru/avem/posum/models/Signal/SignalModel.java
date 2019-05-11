@@ -30,7 +30,7 @@ public class SignalModel {
     private double tickUnit;
     private double upperBound;
     private String valueName = "В";
-    private double zeroShift;
+    private double dc;
 
     public void setFields(String moduleType, int slot, int channel) {
         this.moduleType = moduleType;
@@ -188,7 +188,7 @@ public class SignalModel {
         frequency = signalParametersModel.getSignalFrequency();
         loadsCounter = signalParametersModel.getLoadsCounter();
         rms = signalParametersModel.getRms();
-        zeroShift = signalParametersModel.getDc();
+        dc = signalParametersModel.getDc();
     }
 
     public void fillBuffer() {
@@ -276,8 +276,8 @@ public class SignalModel {
         return valueName;
     }
 
-    public double getZeroShift() {
-        return zeroShift;
+    public double getDc() {
+        return dc;
     }
 
     public boolean isCalibrationExists() {
@@ -321,7 +321,7 @@ public class SignalModel {
         signalParametersModel.setRMS(rms);
     }
 
-    public void setZeroShift(int zeroShift) {
-        signalParametersModel.setDc(zeroShift);
+    public void setDc(int dc) {
+        signalParametersModel.setDc(dc);
     }
 }

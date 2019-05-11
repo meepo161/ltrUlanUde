@@ -50,6 +50,8 @@ public class CalibrationController implements BaseController {
     @FXML
     private TextField loadValueTextField;
     @FXML
+    private Label loadValueMultiplierLabel;
+    @FXML
     private TextField loadValueNameTextField;
     @FXML
     private ProgressIndicator progressIndicator;
@@ -57,6 +59,8 @@ public class CalibrationController implements BaseController {
     private Button saveButton;
     @FXML
     private CheckBox setChannelValueCheckBox;
+    @FXML
+    private CheckBox setNulCheckBox;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -81,6 +85,7 @@ public class CalibrationController implements BaseController {
         initGraph();
         initContextMenu();
         listenSetChannelValueCheckBox();
+        listenSettingNul();
         listenMouse();
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator,
                 statusBar, warningIcon);
@@ -216,12 +221,29 @@ public class CalibrationController implements BaseController {
 
         new Thread(() -> {
             while (!stopped) {
-                double value = Utils.roundValue(cm.getZeroShift(), calibrationModel.getDecimalFormatScale());
+                double value = Utils.roundValue(cm.getDc(), calibrationModel.getDecimalFormatScale());
                 String formattedValue = Utils.convertFromExponentialFormat(value, calibrationModel.getDecimalFormatScale());
                 Platform.runLater(() -> channelValueTextField.setText(formattedValue));
                 Utils.sleep(100);
             }
         }).start();
+    }
+
+    private void listenSettingNul() {
+        setNulCheckBox.selectedProperty().addListener(observable -> {
+            if (setNulCheckBox.isSelected()) {
+                channelValueLabel.setText("Статика, В:");
+            } else {
+                channelValueLabel.setText("Значение, В:");
+            }
+
+            loadValueLabel.setDisable(setNulCheckBox.isSelected());
+            loadValueTextField.setDisable(setNulCheckBox.isSelected());
+            loadValueNameLabel.setDisable(setNulCheckBox.isSelected());
+            loadValueNameTextField.setDisable(setNulCheckBox.isSelected());
+            loadValueMultiplierLabel.setDisable(setNulCheckBox.isSelected());
+            loadValueMultiplierComboBox.setDisable(setNulCheckBox.isSelected());
+        });
     }
 
     private void listenMouse() {
@@ -309,11 +331,14 @@ public class CalibrationController implements BaseController {
         double channelValueMultiplierCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
         int decimalFormatScale = cm.getDecimalFormatScale();
         double channelValue = setChannelValueCheckBox.isSelected() ? parse(channelValueTextField, channelValueMultiplierCoefficient) :
-                Utils.roundValue(cm.getZeroShift(), decimalFormatScale) * channelValueMultiplierCoefficient;
+                Utils.roundValue(cm.getDc(), decimalFormatScale) * channelValueMultiplierCoefficient;
+        double loadValue = setNulCheckBox.isSelected() ? 0 : parse(loadValueTextField, loadValueMultiplierCoefficient);
+        String valueName = setNulCheckBox.isSelected() ? "Ноль" : loadValueNameTextField.getText();
+
         calibrationModel.setDecimalFormatScale(decimalFormatScale);
         calibrationModel.setChannelValue(channelValue);
-        calibrationModel.setLoadValue(parse(loadValueTextField, loadValueMultiplierCoefficient));
-        calibrationModel.setValueName(loadValueNameTextField.getText());
+        calibrationModel.setLoadValue(loadValue);
+        calibrationModel.setValueName(valueName);
     }
 
     private double parse(TextField textField, double multiplierCoefficient) {

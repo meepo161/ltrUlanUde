@@ -105,7 +105,7 @@ public class SignalController implements BaseController {
         signalModel.setFrequency(0);
         signalModel.setLoadsCounter(0);
         signalModel.setRMS(0);
-        signalModel.setZeroShift(0);
+        signalModel.setDc(0);
     }
 
     public void setSignalParametersLabels() {
@@ -193,7 +193,7 @@ public class SignalController implements BaseController {
             frequency = Utils.roundValue(signalModel.getFrequency(), decimalFormatScale);
             loadsCounter = Utils.roundValue((int) signalModel.getLoadsCounter(), decimalFormatScale);
             rms = Utils.roundValue(signalModel.getRms(), decimalFormatScale);
-            zeroShift = Utils.roundValue(signalModel.getZeroShift(), decimalFormatScale);
+            zeroShift = Utils.roundValue(signalModel.getDc(), decimalFormatScale);
         }
     }
 
