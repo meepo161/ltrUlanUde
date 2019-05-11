@@ -217,7 +217,7 @@ public class CalibrationController implements BaseController {
 
     public void showChannelValue() {
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
-        Platform.runLater(() -> channelValueLabel.setText(String.format("Значение, %s:", cm.getValueName())));
+        Platform.runLater(() -> channelValueLabel.setText(String.format("Статика, %s:", cm.getValueName())));
 
         new Thread(() -> {
             while (!stopped) {
@@ -232,9 +232,11 @@ public class CalibrationController implements BaseController {
     private void listenSettingNul() {
         setNulCheckBox.selectedProperty().addListener(observable -> {
             if (setNulCheckBox.isSelected()) {
-                channelValueLabel.setText("Статика, В:");
+                loadValueTextField.setText("0.0");
+                loadValueNameTextField.setText("Ноль");
             } else {
-                channelValueLabel.setText("Значение, В:");
+                loadValueTextField.setText("");
+                loadValueNameTextField.setText("");
             }
 
             loadValueLabel.setDisable(setNulCheckBox.isSelected());
