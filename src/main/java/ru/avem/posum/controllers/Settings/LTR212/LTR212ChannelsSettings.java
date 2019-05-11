@@ -6,6 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.util.Pair;
+import ru.avem.posum.hardware.ADC;
+import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.models.Settings.LTR212SettingsModel;
 
 import java.util.ArrayList;
@@ -243,6 +246,46 @@ class LTR212ChannelsSettings extends LTR212Settings {
     void enableValueOnChannelButtonsState() {
         for (int i = 0; i < checkBoxes.size(); i++) {
             valueOnChannelButtons.get(i).setDisable(!checkBoxes.get(i).isSelected());
+        }
+    }
+
+    void saveMeasuringRangeOfChannel(int channel) {
+        LTR212 ltr212 = ltr212SettingsModel.getLTR212Instance();
+        int measuringRange = ltr212.getMeasuringRanges()[channel];
+
+        switch (measuringRange) {
+            case 0:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-10);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(10);
+                break;
+            case 1:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-20);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(20);
+                break;
+            case 2:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-40);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(40);
+                break;
+            case 3:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-80);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(80);
+                break;
+            case 4:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(10);
+                break;
+            case 5:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(20);
+                break;
+            case 6:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(40);
+                break;
+            case 7:
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(80);
+                break;
         }
     }
 }

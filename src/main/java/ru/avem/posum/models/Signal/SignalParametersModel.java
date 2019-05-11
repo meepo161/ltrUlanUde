@@ -2,7 +2,6 @@ package ru.avem.posum.models.Signal;
 
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPointModel;
-import ru.avem.posum.utils.MovingAverage;
 
 import java.util.*;
 
@@ -26,9 +25,9 @@ public class SignalParametersModel {
     private double calibratedDC;
     private double calibratedValue;
     private double firstLoadValue;
-    private double firstCahnnelValue;
+    private double firstChannelValue;
     private double secondLoadValue;
-    private double secondChannalValue;
+    private double secondChannelValue;
     private String calibratedValueName;
     private int channel;
     private int channels;
@@ -194,7 +193,18 @@ public class SignalParametersModel {
     }
 
     private double calculateFrequency() {
-        return estimateFrequency() < accuracyCoefficient ? defineFrequencyFirstAlgorithm() : defineFrequencySecondAlgorithm();
+        double frequency;
+
+        if (estimateFrequency() < accuracyCoefficient) {
+            frequency = defineFrequencyFirstAlgorithm();
+        } else {
+            frequency = defineFrequencySecondAlgorithm();
+        }
+
+        double lowerLimitOfAmplitude = ((double) Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue() +
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue()) / 2) * 0.01;
+
+        return amplitude < lowerLimitOfAmplitude ? 0 : frequency;
     }
 
     private double estimateFrequency() {
@@ -380,19 +390,19 @@ public class SignalParametersModel {
     }
 
     private void defineBounds() {
-        if (firstCahnnelValue > secondChannalValue) {
+        if (firstChannelValue > secondChannelValue) {
             double bufferForLoadValue = firstLoadValue;
-            double bufferForChannelValue = firstCahnnelValue;
+            double bufferForChannelValue = firstChannelValue;
             firstLoadValue = secondLoadValue;
-            firstCahnnelValue = secondChannalValue;
+            firstChannelValue = secondChannelValue;
             secondLoadValue = bufferForLoadValue;
-            secondChannalValue = bufferForChannelValue;
+            secondChannelValue = bufferForChannelValue;
         }
     }
 
     private void setBounds() {
-        lowerBound = firstCahnnelValue;
-        upperBound = secondChannalValue;
+        lowerBound = firstChannelValue;
+        upperBound = secondChannelValue;
     }
 
     public double applyCalibration(ADC adc, double value) {
@@ -412,16 +422,16 @@ public class SignalParametersModel {
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
-        firstCahnnelValue = CalibrationPointModel.parseChannelValue(firstCalibrationPoint);
+        firstChannelValue = CalibrationPointModel.parseChannelValue(firstCalibrationPoint);
         firstLoadValue = CalibrationPointModel.parseLoadValue(firstCalibrationPoint);
-        secondChannalValue = CalibrationPointModel.parseChannelValue(secondCalibrationPoint);
+        secondChannelValue = CalibrationPointModel.parseChannelValue(secondCalibrationPoint);
         secondLoadValue = CalibrationPointModel.parseLoadValue(secondCalibrationPoint);
     }
 
     private void calibrate(double value) {
         if (value > lowerBound * 1.2 & value <= upperBound * 1.2) {
-            double k = (secondLoadValue - firstLoadValue) / (secondChannalValue - firstCahnnelValue);
-            double b = firstLoadValue - k * firstCahnnelValue;
+            double k = (secondLoadValue - firstLoadValue) / (secondChannelValue - firstChannelValue);
+            double b = firstLoadValue - k * firstChannelValue;
             calibratedValue = k * value + b;
         }
     }

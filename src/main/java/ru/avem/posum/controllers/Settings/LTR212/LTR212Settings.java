@@ -174,6 +174,7 @@ public class LTR212Settings implements BaseController {
         backButton.setDisable(true);
 
         new Thread(() -> {
+            ltr212ChannelsSettings.saveMeasuringRangeOfChannel(channel);
             ltr212SettingsModel.getLTR212Instance().defineFrequency();
             ltr212SettingsModel.getLTR212Instance().start(ltr212SettingsModel.getSlot());
 

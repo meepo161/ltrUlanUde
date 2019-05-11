@@ -154,6 +154,7 @@ public class LTR24Settings implements BaseController {
         backButton.setDisable(true);
 
         new Thread(() -> {
+            ltr24ChannelsSettings.saveMeasuringRangeOfChannel(channel);
             ltr24SettingsModel.getLTR24Instance().defineFrequency();
             ltr24SettingsModel.getLTR24Instance().start(ltr24SettingsModel.getSlot());
 

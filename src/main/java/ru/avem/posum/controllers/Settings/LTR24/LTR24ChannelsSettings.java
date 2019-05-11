@@ -6,6 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import ru.avem.posum.hardware.ADC;
+import ru.avem.posum.hardware.LTR212;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.Settings.LTR24SettingsModel;
 
 import java.util.ArrayList;
@@ -247,6 +250,33 @@ class LTR24ChannelsSettings extends LTR24Settings {
     void enableValueOnChannelButtonsState() {
         for (int i = 0; i < checkBoxes.size(); i++) {
             valueOnChannelButtons.get(i).setDisable(!checkBoxes.get(i).isSelected());
+        }
+    }
+
+    void saveMeasuringRangeOfChannel(int channel) {
+        LTR24 ltr24 = ltr24SettingsModel.getLTR24Instance();
+        int measuringRange = ltr24.getMeasuringRanges()[channel];
+        int typeOfChannel = ltr24.getTypeOfChannels()[channel];
+
+        switch (measuringRange) {
+            case 0:
+                if (typeOfChannel == 2) {
+                    ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-1);
+                    ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(1);
+                } else {
+                    ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-2);
+                    ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(2);
+                }
+                break;
+            case 1:
+                if (typeOfChannel == 2) {
+                    ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-5);
+                    ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(5);
+                } else {
+                    ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-10);
+                    ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(10);
+                }
+                break;
         }
     }
 }

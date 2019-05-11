@@ -20,9 +20,23 @@ public abstract class ADC extends Module {
         Settings(String settingName) {
             this.settingName = settingName;
         }
+    }
 
-        public String getSettingName() {
-            return settingName;
+    public enum MeasuringRangeOfChannel {
+        LOWER_BOUND(0), UPPER_BOUND(0);
+
+        private int boundValue;
+
+        MeasuringRangeOfChannel(int boundValue) {
+            this.boundValue = boundValue;
+        }
+
+        public void setBoundValue(int boundValue) {
+            this.boundValue = boundValue;
+        }
+
+        public int getBoundValue() {
+            return boundValue;
         }
     }
 
