@@ -89,12 +89,12 @@ public class Settings implements BaseController {
 
     @FXML
     private void initialize() {
+        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar,
+                warningIcon);
         initRequiredFieldsSymbols();
         initTimeAndDateFields();
         hardwareSettings = new HardwareSettings(this);
         initHardwareSettings();
-        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar,
-                warningIcon);
     }
 
     private void initRequiredFieldsSymbols() {
@@ -324,8 +324,7 @@ public class Settings implements BaseController {
             TestProgramRepository.updateTestProgramIndexes();
             cm.loadItemsForMainTableView();
             cm.stopAllModules();
-            cratesListView.setItems(FXCollections.observableArrayList());
-            modulesListView.setItems(FXCollections.observableArrayList());
+            hardwareSettings.clear();
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.MAIN_SCENE));
@@ -364,10 +363,8 @@ public class Settings implements BaseController {
         leadEngineerTextField.setText("");
         commentsTextArea.setText("");
 
-        cratesListView.getSelectionModel().clearSelection();
-        modulesListView.getSelectionModel().clearSelection();
-        modulesListView.getItems().clear();
-
+        hardwareSettings.clear();
+        hardwareSettings.showCrates();
         hardwareSettings.toggleUiElements(false);
     }
 

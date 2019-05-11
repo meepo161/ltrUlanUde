@@ -37,12 +37,13 @@ public class HardwareSettings extends Settings {
         crate.initCratesList();
 
         if (crate.getCratesNames().isPresent()) {
-            crates = crate.getCratesNames().get();
-            cratesListView.setItems(crates);
-        } else {
-            getStatusBarLine().setStatus("Не найдены подключенные крейты", false);
+            if (crate.getCratesNames().get().isEmpty()) {
+                settings.getStatusBarLine().setStatus("Не найдены подключенные крейты", false);
+            } else {
+                crates = crate.getCratesNames().get();
+                cratesListView.setItems(crates);
+            }
         }
-
     }
 
     public void showModules() {
@@ -54,6 +55,13 @@ public class HardwareSettings extends Settings {
                 modulesListView.setItems(modulesNames);
             }
         }));
+    }
+
+    public void clear() {
+        cratesListView.getSelectionModel().clearSelection();
+        cratesListView.getItems().clear();
+        modulesListView.getSelectionModel().clearSelection();
+        modulesListView.getItems().clear();
     }
 
     public void initialize() {

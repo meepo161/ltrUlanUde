@@ -63,7 +63,7 @@ public class SignalParametersModel {
 
     private void setFields(double[] rawData, int channel) {
         //TODO
-//        MovingAverage ma=new MovingAverage(10);
+//        MovingAverage ma = new MovingAverage(10);
 //        this.data = ma.exponentialMovingAverage(rawData,channel);
         this.data = rawData;
         this.channel = channel;
@@ -205,8 +205,6 @@ public class SignalParametersModel {
         double lowerLimitOfAmplitude = ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
                 Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.0001;
 
-        System.out.printf("Lower limit: %f, amplitude: %f\n", lowerLimitOfAmplitude, amplitude);
-
         return amplitude < lowerLimitOfAmplitude ? 0 : frequency;
     }
 
@@ -241,6 +239,8 @@ public class SignalParametersModel {
                 }
             }
         }
+
+        System.out.printf("Estimated frequency: %f\n", frequency);
 
         return frequency;
     }

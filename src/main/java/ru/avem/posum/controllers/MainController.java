@@ -181,6 +181,7 @@ public class MainController implements BaseController {
     private void initModulesList() {
         Crate crate = cm.getCrateModelInstance();
         crate.getModulesList().clear();
+        crate.initCratesList();
     }
 
     private void prepareSettingsScene() {
