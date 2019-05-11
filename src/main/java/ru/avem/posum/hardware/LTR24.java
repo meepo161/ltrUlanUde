@@ -37,6 +37,13 @@ public class LTR24 extends ADC {
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR24ModuleSettings());
+
+        for (int i = 0; i < 4; i++) {
+            System.out.printf("Slot: %d. Type of channel %d: %d, measuring range: %d.\n", getSlot(), i, getTypeOfChannels()[i], getMeasuringRanges()[i]);
+            for (int j = 0; j < getLTR24ModuleSettings().length; j++) {
+                System.out.println("Setting:" + getLTR24ModuleSettings()[j]);
+            }
+        }
     }
 
     @Override

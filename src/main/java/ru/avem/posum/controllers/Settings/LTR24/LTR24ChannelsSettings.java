@@ -39,6 +39,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         listenComboBoxes(typesOfChannelComboBoxes);
         listenComboBoxes(measuringRangesComboBoxes);
         listenICPItemSelection();
+        listenTestModes();
     }
 
     private void fillListOfCheckBoxes(LTR24Settings ltr24Settings) {
@@ -185,6 +186,24 @@ class LTR24ChannelsSettings extends LTR24Settings {
         });
     }
 
+    private void listenTestModes() {
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            toggleTestModes(typesOfChannelComboBoxes.get(channelIndex));
+        }
+    }
+
+    private void toggleTestModes(ComboBox<String> typesOfChannel) {
+        typesOfChannel.valueProperty().addListener(observable -> {
+            int selectedMode = typesOfChannel.getSelectionModel().getSelectedIndex();
+
+            if (typesOfChannel.getSelectionModel().isSelected(3) || typesOfChannel.getSelectionModel().isSelected(4)) { // выбран тестовый режим
+                for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+                    checkBoxes.get(channelIndex).setSelected(true);
+                    typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(selectedMode);
+                }
+            }
+        });
+    }
 
     void setSettings() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {

@@ -132,6 +132,7 @@ public class LTR24Settings implements BaseController {
             ltr24ChannelsSettings.saveSettings();
             ltr24ModuleSettings.toggleUiElementsState(false);
             ltr24ModuleSettings.saveSettings();
+            ltr24SettingsModel.getLTR24Instance().closeConnection();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();
