@@ -255,36 +255,36 @@ class LTR212ChannelsSettings extends LTR212Settings {
 
         switch (measuringRange) {
             case 0:
-                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-10);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(10);
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-0.010);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.010);
                 break;
             case 1:
-                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-20);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(20);
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-0.020);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.020);
                 break;
             case 2:
-                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-40);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(40);
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-0.040);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.040);
                 break;
             case 3:
-                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-80);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(80);
+                ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(-0.080);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.080);
                 break;
             case 4:
                 ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(10);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.010);
                 break;
             case 5:
                 ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(20);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.020);
                 break;
             case 6:
                 ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(40);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.040);
                 break;
             case 7:
                 ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
-                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(80);
+                ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.080);
                 break;
         }
     }

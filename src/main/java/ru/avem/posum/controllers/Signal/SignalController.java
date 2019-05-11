@@ -244,6 +244,7 @@ public class SignalController implements BaseController {
         cm.setStopped(true);
         Utils.sleep(1000);
         signalModel.getAdc().stop();
+        signalModel.getAdc().closeConnection();
     }
 
     private void toggleProgressIndicatorState(boolean isHidden) {

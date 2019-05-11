@@ -25,17 +25,17 @@ public abstract class ADC extends Module {
     public enum MeasuringRangeOfChannel {
         LOWER_BOUND(0), UPPER_BOUND(0);
 
-        private int boundValue;
+        private double boundValue;
 
-        MeasuringRangeOfChannel(int boundValue) {
+        MeasuringRangeOfChannel(double boundValue) {
             this.boundValue = boundValue;
         }
 
-        public void setBoundValue(int boundValue) {
+        public void setBoundValue(double boundValue) {
             this.boundValue = boundValue;
         }
 
-        public int getBoundValue() {
+        public double getBoundValue() {
             return boundValue;
         }
     }
