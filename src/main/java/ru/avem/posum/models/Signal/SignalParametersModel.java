@@ -2,6 +2,7 @@ package ru.avem.posum.models.Signal;
 
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPointModel;
+import ru.avem.posum.utils.MovingAverage;
 
 import java.util.*;
 
