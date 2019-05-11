@@ -203,7 +203,9 @@ public class SignalParametersModel {
         }
 
         double lowerLimitOfAmplitude = ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
-                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
+                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.0001;
+
+        System.out.printf("Lower limit: %f, amplitude: %f\n", lowerLimitOfAmplitude, amplitude);
 
         return amplitude < lowerLimitOfAmplitude ? 0 : frequency;
     }

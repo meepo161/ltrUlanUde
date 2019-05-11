@@ -95,7 +95,6 @@ public class SettingsModel implements BaseController {
         setModuleSettings(adc);
         setDefaultADCSettings(0, 3);
         saveModuleInstance(adc);
-        adc.openConnection();
     }
 
     private void setModuleSettings(Module module) {

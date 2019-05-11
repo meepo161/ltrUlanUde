@@ -6,6 +6,7 @@ public abstract class Module {
     int channelsCount;
     String crateSerialNumber;
     private int slot;
+    private boolean connectionOpen;
     private long moduleId;
     String[] descriptions;
     boolean[] checkedChannels;
@@ -57,8 +58,16 @@ public abstract class Module {
         return slot;
     }
 
+    public boolean isConnectionOpen() {
+        return connectionOpen;
+    }
+
     public String getStatus() {
         return status;
+    }
+
+    public void setConnectionOpen(boolean connectionOpen) {
+        this.connectionOpen = connectionOpen;
     }
 
     public void setCrateSerialNumber(String crateSerialNumber) {

@@ -108,6 +108,7 @@ public class LTR24Settings implements BaseController {
         new Thread(() -> {
             ltr24ChannelsSettings.saveSettings();
             ltr24ModuleSettings.saveSettings();
+            ltr24SettingsModel.getLTR24Instance().openConnection();
             ltr24SettingsModel.initModule();
 
             if (!ltr24SettingsModel.getLTR24Instance().checkStatus()) {

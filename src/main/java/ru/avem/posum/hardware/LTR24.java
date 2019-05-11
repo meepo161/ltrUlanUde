@@ -15,6 +15,7 @@ public class LTR24 extends ADC {
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot());
+        setConnectionOpen(checkStatus());
     }
 
     @Override
@@ -50,7 +51,7 @@ public class LTR24 extends ADC {
 
     @Override
     public void write(double[] data, double[] timeMarks) {
-        write(getSlot(), data, timeMarks);
+        write(getSlot(), data, timeMarks, data.length);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class LTR24 extends ADC {
     @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
+        setConnectionOpen(checkStatus());
     }
 
     public native String openConnection(String crate, int slot);
@@ -73,7 +75,7 @@ public class LTR24 extends ADC {
 
     public native String start(int slot);
 
-    public native String write(int slot, double[] data, double[] timeMarks);
+    public native String write(int slot, double[] data, double[] timeMarks, int dataLength);
 
     public native String stop(int slot);
 

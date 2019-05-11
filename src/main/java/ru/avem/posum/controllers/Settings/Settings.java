@@ -177,7 +177,7 @@ public class Settings implements BaseController {
             statusBarLine.setStatus("Выделите крейт", false);
         } else {
             statusBarLine.toggleProgressIndicator(false);
-            statusBarLine.setStatusOfProgress("Устанавливается соединение с модулями");
+            statusBarLine.setStatusOfProgress("Инициализация крейта");
             cratesListView.setDisable(true);
             chooseCrateButton.setDisable(true);
             saveSettingsButton.setDisable(true);

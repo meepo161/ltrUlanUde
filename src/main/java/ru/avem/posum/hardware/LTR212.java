@@ -17,6 +17,7 @@ public class LTR212 extends ADC {
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
+        setConnectionOpen(checkStatus());
     }
 
     @Override
@@ -66,7 +67,8 @@ public class LTR212 extends ADC {
 
     @Override
     public void closeConnection() {
-        closeConnection(getSlot());
+        status = closeConnection(getSlot());
+        setConnectionOpen(checkStatus());
     }
 
     public native String openConnection(String crate, int slot, String path);
@@ -81,7 +83,7 @@ public class LTR212 extends ADC {
 
     public native String start(int slot);
 
-    public native String write(int slot, double[] data, double[] timeMarks, int size);
+    public native String write(int slot, double[] data, double[] timeMarks, int dataLength);
 
     public native String stop(int slot);
 
