@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CalibrationModel {
     private ADC adc;
-    private ObservableList<CalibrationPointModel> calibrationPointModels = FXCollections.observableArrayList();
+    private ObservableList<CalibrationPoint> calibrationPoints = FXCollections.observableArrayList();
     private int channelNumber;
     private double channelValue;
     private List<Double> calibrationCoefficients = new ArrayList<>();
@@ -30,24 +30,24 @@ public class CalibrationModel {
 
     private void calculateCalibrationCoefficients() {
         for (String settings : adc.getCalibrationSettings().get(channelNumber)) {
-            double loadValue = CalibrationPointModel.parseLoadValue(settings);
-            double channelValue = CalibrationPointModel.parseChannelValue(settings);
+            double loadValue = CalibrationPoint.parseLoadValue(settings);
+            double channelValue = CalibrationPoint.parseChannelValue(settings);
             calibrationCoefficients.add(loadValue / channelValue);
         }
     }
 
     public void parse(String calibration) {
-        loadValue = CalibrationPointModel.parseLoadValue(calibration);
-        channelValue = CalibrationPointModel.parseChannelValue(calibration);
-        valueName = CalibrationPointModel.parseValueName(calibration);
+        loadValue = CalibrationPoint.parseLoadValue(calibration);
+        channelValue = CalibrationPoint.parseChannelValue(calibration);
+        valueName = CalibrationPoint.parseValueName(calibration);
     }
 
     public List<Double> getCalibrationCoefficients() {
         return calibrationCoefficients;
     }
 
-    public ObservableList<CalibrationPointModel> getCalibrationPointModels() {
-        return calibrationPointModels;
+    public ObservableList<CalibrationPoint> getCalibrationPoints() {
+        return calibrationPoints;
     }
 
     public double getChannelValue() {

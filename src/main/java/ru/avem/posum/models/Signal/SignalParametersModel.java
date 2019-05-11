@@ -1,8 +1,7 @@
 package ru.avem.posum.models.Signal;
 
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.models.Calibration.CalibrationPointModel;
-import ru.avem.posum.utils.MovingAverage;
+import ru.avem.posum.models.Calibration.CalibrationPoint;
 
 import java.util.*;
 
@@ -425,10 +424,10 @@ public class SignalParametersModel {
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
-        firstChannelValue = CalibrationPointModel.parseChannelValue(firstCalibrationPoint);
-        firstLoadValue = CalibrationPointModel.parseLoadValue(firstCalibrationPoint);
-        secondChannelValue = CalibrationPointModel.parseChannelValue(secondCalibrationPoint);
-        secondLoadValue = CalibrationPointModel.parseLoadValue(secondCalibrationPoint);
+        firstChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
+        firstLoadValue = CalibrationPoint.parseLoadValue(firstCalibrationPoint);
+        secondChannelValue = CalibrationPoint.parseChannelValue(secondCalibrationPoint);
+        secondLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
     }
 
     private void calibrate(double value) {
@@ -442,13 +441,13 @@ public class SignalParametersModel {
     public void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         if (!calibrationSettings.isEmpty()) {
-            calibratedValueName = CalibrationPointModel.parseValueName(calibrationSettings.get(0));
+            calibratedValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
             double minLoadValue = Double.MAX_VALUE;
             double maxLoadValue = Double.MIN_VALUE;
             int GRAPH_SCALE = 5;
 
             for (String calibrationSetting : calibrationSettings) {
-                double loadValue = CalibrationPointModel.parseLoadValue(calibrationSetting);
+                double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
 
                 if (minLoadValue > loadValue) {
                     minLoadValue = loadValue;

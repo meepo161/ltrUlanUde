@@ -5,13 +5,13 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 
-public class CalibrationPointModel {
+public class CalibrationPoint {
     private int channelNumber;
     private String loadValue;
     private String channelValue;
     private String valueName;
 
-    public CalibrationPointModel(int channelNumber, CalibrationModel calibrationModel) {
+    public CalibrationPoint(int channelNumber, CalibrationModel calibrationModel) {
         double loadValue = calibrationModel.getLoadValue();
         double channelValue = calibrationModel.getChannelValue();
         int decimalFormatScale = calibrationModel.getDecimalFormatScale();
@@ -22,10 +22,10 @@ public class CalibrationPointModel {
         this.valueName = calibrationModel.getValueName();
     }
 
-    public static ArrayList<String> toString(ObservableList<CalibrationPointModel> points) {
+    public static ArrayList<String> toString(ObservableList<CalibrationPoint> points) {
         ArrayList<String> convertedList = new ArrayList<>();
 
-        for (CalibrationPointModel point : points) {
+        for (CalibrationPoint point : points) {
             String settings = String.format("Channel: %d, load value: %s, channel value: %s, value name: %s",
                     point.getChannelNumber(), point.getLoadValue(), point.getChannelValue(), point.getValueName());
 
@@ -47,7 +47,7 @@ public class CalibrationPointModel {
         return loadValue.replaceAll(",", ".");
     }
 
-    private String getValueName() {
+    public String getValueName() {
         return valueName;
     }
 
