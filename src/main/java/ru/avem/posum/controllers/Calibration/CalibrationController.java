@@ -178,9 +178,7 @@ public class CalibrationController implements BaseController {
         int MIN_CALIBRATION_POINTS = 2;
 
         changeUiElementsState(calibrationPoints.size() == MAX_CALIBRATION_POINTS);
-        saveButton.setDisable(calibrationPoints.size() < MIN_CALIBRATION_POINTS);
-
-        checkSettingOfNul();
+        saveButton.setDisable(calibrationPoints.size() < MIN_CALIBRATION_POINTS | checkSettingOfNul());
     }
 
     private void changeUiElementsState(boolean isDisable) {
@@ -193,12 +191,15 @@ public class CalibrationController implements BaseController {
         addToTableButton.setDisable(isDisable);
     }
 
-    private void checkSettingOfNul() {
+    private boolean checkSettingOfNul() {
         for (CalibrationPoint calibrationPoint : calibrationModel.getCalibrationPoints()) {
             if (calibrationPoint.getValueName().equals("Ноль")) {
-                saveButton.setDisable(false);
+                statusBarLine.setStatus("Ноль уже градуирован", false);
+                return false;
             }
         }
+
+        return true;
     }
 
     private void clearCalibrationPoints() {
@@ -345,12 +346,14 @@ public class CalibrationController implements BaseController {
         double channelValue = setChannelValueCheckBox.isSelected() ? parse(channelValueTextField, channelValueMultiplierCoefficient) :
                 Utils.roundValue(cm.getDc(), decimalFormatScale) * channelValueMultiplierCoefficient;
         double loadValue = setNulCheckBox.isSelected() ? 0 : parse(loadValueTextField, loadValueMultiplierCoefficient);
-        String valueName = setNulCheckBox.isSelected() ? "Ноль" : loadValueNameTextField.getText();
+        String valueName = loadValueNameTextField.getText();
 
-        calibrationModel.setDecimalFormatScale(decimalFormatScale);
-        calibrationModel.setChannelValue(channelValue);
-        calibrationModel.setLoadValue(loadValue);
-        calibrationModel.setValueName(valueName);
+        if ((valueName.equals("Ноль") & checkSettingOfNul()) || !valueName.equals("Ноль")) {
+            calibrationModel.setDecimalFormatScale(decimalFormatScale);
+            calibrationModel.setChannelValue(channelValue);
+            calibrationModel.setLoadValue(loadValue);
+            calibrationModel.setValueName(valueName);
+        }
     }
 
     private double parse(TextField textField, double multiplierCoefficient) {
