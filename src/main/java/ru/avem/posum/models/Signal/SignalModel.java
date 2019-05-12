@@ -1,8 +1,10 @@
 package ru.avem.posum.models.Signal;
 
 import javafx.scene.chart.XYChart;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
+import ru.avem.posum.models.Calibration.CalibrationPoint;
 import ru.avem.posum.utils.RingBuffer;
 
 import java.util.HashMap;
@@ -16,6 +18,7 @@ public class SignalModel {
     private boolean calibrationExists;
     private int channel;
     private boolean connectionLost;
+    private double dc;
     private double frequency;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private double loadsCounter;
@@ -30,7 +33,6 @@ public class SignalModel {
     private double tickUnit;
     private double upperBound;
     private String valueName = "В";
-    private double dc;
 
     public void setFields(String moduleType, int slot, int channel) {
         this.moduleType = moduleType;
@@ -109,6 +111,8 @@ public class SignalModel {
     }
 
     public void checkCalibration() {
+        checkSettingOfNul();
+
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
 
         if (!calibrationCoefficients.isEmpty()) {
@@ -116,6 +120,20 @@ public class SignalModel {
             signalParametersModel.defineCalibratedBounds(adc);
             setBounds();
             setValueName();
+        }
+    }
+
+    private void checkSettingOfNul() {
+        List<String> calibrations = adc.getCalibrationSettings().get(channel);
+
+        for (String calibration : calibrations) {
+            int channelFromCalibration = Integer.parseInt(calibration.substring(9, 10));
+            if (channel == channelFromCalibration) {
+                if (CalibrationPoint.parseValueName(calibration).equals("Ноль")) {
+                    signalParametersModel.setShift(CalibrationPoint.parseChannelValue(calibration));
+                    break;
+                }
+            }
         }
     }
 

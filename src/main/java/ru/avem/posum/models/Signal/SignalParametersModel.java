@@ -42,6 +42,7 @@ public class SignalParametersModel {
     private int periods;
     private int samplesPerSemiPeriods;
     private int samplesPerSemiPeriod;
+    private double shift;
     private double signalFrequency;
     private double tickUnit;
     private double upperBound;
@@ -173,14 +174,13 @@ public class SignalParametersModel {
     }
 
     private double calculateAmplitude() {
-        return (maxSignalValue - minSignalValue) / 2;
+        return (maxSignalValue - minSignalValue) / 2 + shift;
     }
 
     private double calculateDC() {
         //TODO
 //        double shift = -0.00049;
-        double shift = -0;
-        return (maxSignalValue + minSignalValue) / 2 - shift;
+        return (maxSignalValue + minSignalValue) / 2 + shift;
     }
 
     private double calculateRms() {
@@ -523,6 +523,10 @@ public class SignalParametersModel {
         this.amplitude = amplitude;
     }
 
+    public void setDc(int dc) {
+        this.dc = dc;
+    }
+
     public void setFrequency(int frequency) {
         this.signalFrequency = frequency;
     }
@@ -539,7 +543,7 @@ public class SignalParametersModel {
         this.rms = rms;
     }
 
-    public void setDc(int dc) {
-        this.dc = dc;
+    public void setShift(double shift) {
+        this.shift = shift;
     }
 }

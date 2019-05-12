@@ -178,7 +178,7 @@ public class CalibrationController implements BaseController {
         int MIN_CALIBRATION_POINTS = 2;
 
         changeUiElementsState(calibrationPoints.size() == MAX_CALIBRATION_POINTS);
-        saveButton.setDisable(calibrationPoints.size() < MIN_CALIBRATION_POINTS | checkSettingOfNul());
+        saveButton.setDisable(checkSettingOfNul() && calibrationPoints.size() < MIN_CALIBRATION_POINTS);
     }
 
     private void changeUiElementsState(boolean isDisable) {
@@ -308,15 +308,19 @@ public class CalibrationController implements BaseController {
     }
 
     private void showCalibration() {
-        addCalibrationPointToTableView();
-        addPointToGraph();
-        checkNumberOfCalibrationPoints();
+        boolean isSettingOfNul = calibrationModel.getValueName().equals("Ноль");
+
+        if ((isSettingOfNul & checkSettingOfNul()) || !isSettingOfNul) {
+            addCalibrationPointToTableView();
+            addPointToGraph();
+            checkNumberOfCalibrationPoints();
+        }
     }
 
     private void addCalibrationPointToTableView() {
         int channel = signalModel.getChannel();
         CalibrationPoint point = new CalibrationPoint(channel, calibrationModel);
-        calibrationModel.getCalibrationPoints().add(point);
+        calibrationModel.add(point);
         loadChannelColumn.textProperty().set(String.format("Величина нагрузки, %s", calibrationModel.getValueName()));
     }
 
@@ -348,12 +352,10 @@ public class CalibrationController implements BaseController {
         double loadValue = setNulCheckBox.isSelected() ? 0 : parse(loadValueTextField, loadValueMultiplierCoefficient);
         String valueName = loadValueNameTextField.getText();
 
-        if ((valueName.equals("Ноль") & checkSettingOfNul()) || !valueName.equals("Ноль")) {
-            calibrationModel.setDecimalFormatScale(decimalFormatScale);
-            calibrationModel.setChannelValue(channelValue);
-            calibrationModel.setLoadValue(loadValue);
-            calibrationModel.setValueName(valueName);
-        }
+        calibrationModel.setDecimalFormatScale(decimalFormatScale);
+        calibrationModel.setChannelValue(channelValue);
+        calibrationModel.setLoadValue(loadValue);
+        calibrationModel.setValueName(valueName);
     }
 
     private double parse(TextField textField, double multiplierCoefficient) {
@@ -368,11 +370,11 @@ public class CalibrationController implements BaseController {
 
     @FXML
     public void handleSaveButton() {
-        savePoints();
+        saveCalibrationPoints();
         indicateResult();
     }
 
-    private void savePoints() {
+    private void saveCalibrationPoints() {
         ADC adc = signalModel.getAdc();
         int channel = signalModel.getChannel();
 

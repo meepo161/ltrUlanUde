@@ -18,6 +18,10 @@ public class CalibrationModel {
     private double loadValue;
     private String valueName = "";
 
+    public void add(CalibrationPoint calibrationPoint) {
+        calibrationPoints.add(calibrationPoint);
+    }
+
     public void calibrate(ADC adc, int channelNumber) {
         setFields(adc, channelNumber);
         calculateCalibrationCoefficients();
@@ -32,7 +36,11 @@ public class CalibrationModel {
         for (String settings : adc.getCalibrationSettings().get(channelNumber)) {
             double loadValue = CalibrationPoint.parseLoadValue(settings);
             double channelValue = CalibrationPoint.parseChannelValue(settings);
-            calibrationCoefficients.add(loadValue / channelValue);
+            String valueName = CalibrationPoint.parseValueName(settings);
+
+            if (!valueName.equals("Ноль")) {
+                calibrationCoefficients.add(loadValue / channelValue);
+            }
         }
     }
 
