@@ -385,7 +385,9 @@ public class GraphController {
             }
 
             if (index + (channels * rarefactionCoefficient) >= data.length) {
-                XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(1, data[index]);
+                double xValue = 1;
+                double yValue = (double) signalController.getSignalModel().getPoint(index).getYValue();
+                XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(xValue, yValue);
                 Platform.runLater(() -> graphSeries.getData().add(lastPoint));
                 Utils.sleep(1);
             } else if ((double) point.getXValue() >= graphModel.getUpperBound()) {

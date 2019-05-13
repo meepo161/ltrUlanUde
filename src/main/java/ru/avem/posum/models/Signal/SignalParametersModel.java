@@ -1,5 +1,6 @@
 package ru.avem.posum.models.Signal;
 
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
 
@@ -178,16 +179,21 @@ public class SignalParametersModel {
     }
 
     private double calculateDC() {
-        //TODO
-//        double shift = -0.00049;
-        return (maxSignalValue + minSignalValue) / 2 + shift;
+        double dc = (maxSignalValue + minSignalValue) / 2;
+        double upperBound = ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue();
+        double lowerBound = ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue();
+
+        if (dc != upperBound || dc != lowerBound) {
+            dc -= shift;
+        }
+
+        return dc;
     }
 
     private double calculateRms() {
         double summ = 0;
         for (int i = channel; i < data.length; i += channels) {
-            summ += (data[i] - dc) * (data[i] - dc); //TODO
-//            summ += (data[i]) * (data[i]);
+            summ += (data[i] - dc) * (data[i] - dc);
         }
         return Math.sqrt(summ / data.length * channels);
     }
@@ -201,41 +207,26 @@ public class SignalParametersModel {
             frequency = defineFrequencySecondAlgorithm();
         }
 
-        double lowerLimitOfAmplitude = ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
-                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.0001;
+        return amplitude < getLowerLimitOfAmplitude() ? 0 : frequency;
+    }
 
-        return amplitude < lowerLimitOfAmplitude ? 0 : frequency;
+
+    private double getLowerLimitOfAmplitude() {
+        return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
+                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.001;
     }
 
     private double estimateFrequency() {
         boolean positivePartOfSignal = false;
         double frequency = 0;
-        double filteringCoefficient = 1.05;
+        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
 
         for (int i = channel; i < data.length; i += channels) {
-            if (amplitude + dc >= 0) {
-                if (dc >= 0) {
-                    if (data[i] >= dc * filteringCoefficient && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < dc / filteringCoefficient && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                } else {
-                    if (data[i] >= dc / filteringCoefficient && !positivePartOfSignal) {
-                        frequency++;
-                        positivePartOfSignal = true;
-                    } else if (data[i] < dc * filteringCoefficient && positivePartOfSignal) {
-                        positivePartOfSignal = false;
-                    }
-                }
-            } else if (amplitude + dc < 0 && dc < 0) {
-                if (data[i] < dc * filteringCoefficient && !positivePartOfSignal) {
-                    frequency++;
-                    positivePartOfSignal = true;
-                } else if (data[i] >= dc / filteringCoefficient && positivePartOfSignal) {
-                    positivePartOfSignal = false;
-                }
+            if (data[i] >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
+                frequency++;
+                positivePartOfSignal = true;
+            } else if (data[i] < dc - lowerLimitOfAmplitude && positivePartOfSignal) {
+                positivePartOfSignal = false;
             }
         }
 
@@ -441,12 +432,15 @@ public class SignalParametersModel {
     public void defineCalibratedBounds(ADC adc) {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         if (!calibrationSettings.isEmpty()) {
-            calibratedValueName = CalibrationPoint.parseValueName(calibrationSettings.get(0));
             double minLoadValue = Double.MAX_VALUE;
             double maxLoadValue = Double.MIN_VALUE;
             int GRAPH_SCALE = 5;
 
+            defineValueName();
+
             for (String calibrationSetting : calibrationSettings) {
+
+
                 double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
 
                 if (minLoadValue > loadValue) {
@@ -460,6 +454,20 @@ public class SignalParametersModel {
             lowerBound = minLoadValue;
             upperBound = maxLoadValue;
             tickUnit = maxLoadValue / GRAPH_SCALE;
+        }
+    }
+
+    private void defineValueName() {
+        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
+
+        for (String calibration : calibrationSettings) {
+            calibratedValueName = CalibrationPoint.parseValueName(calibration);
+
+            if (!calibratedValueName.equals("Ноль")) {
+                calibratedValueName = "В";
+            } else {
+                break;
+            }
         }
     }
 
