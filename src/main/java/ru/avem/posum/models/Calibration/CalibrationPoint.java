@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class CalibrationPoint {
     private int channelNumber;
@@ -60,6 +61,12 @@ public class CalibrationPoint {
     }
 
     public static String parseValueName(String settings) {
-        return settings.split(", ")[3].split("value name: ")[1];
+        String[] splittedSettings = settings.split(", ")[3].split("value name: ");
+
+        if (splittedSettings.length == 2) {
+            return splittedSettings[1];
+        } else {
+            return "";
+        }
     }
 }

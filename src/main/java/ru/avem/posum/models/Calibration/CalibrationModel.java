@@ -38,7 +38,7 @@ public class CalibrationModel {
             double channelValue = CalibrationPoint.parseChannelValue(settings);
             String valueName = CalibrationPoint.parseValueName(settings);
 
-            if (!valueName.equals("Ноль")) {
+            if (!valueName.isEmpty()) {
                 calibrationCoefficients.add(loadValue / channelValue);
             }
         }
@@ -76,7 +76,11 @@ public class CalibrationModel {
     }
 
     public String getValueName() {
-        return valueName;
+        if (valueName.equals("Ноль")) {
+            return "";
+        } else {
+            return valueName;
+        }
     }
 
     public void setChannelValue(double channelValue) {

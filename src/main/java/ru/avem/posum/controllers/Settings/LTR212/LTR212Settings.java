@@ -142,6 +142,8 @@ public class LTR212Settings implements BaseController {
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.setStatus(ltr212SettingsModel.getLTR212Instance().getStatus(),
                     ltr212SettingsModel.getLTR212Instance().checkStatus());
+            ltr212ChannelsSettings.enableValueOnChannelButtonsState();
+            backButton.setDisable(false);
         }).start();
     }
 
@@ -151,6 +153,7 @@ public class LTR212Settings implements BaseController {
             ltr212ChannelsSettings.saveSettings();
             ltr212ModuleSettings.enableUiElements();
             ltr212ModuleSettings.saveSettings();
+            ltr212SettingsModel.getLTR212Instance().closeConnection();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();
@@ -232,6 +235,10 @@ public class LTR212Settings implements BaseController {
 
     CheckBox getApplyForAllChannels() {
         return applyForAllChannels;
+    }
+
+    public Button getBackButton() {
+        return backButton;
     }
 
     CheckBox getCheckChannelN1() {

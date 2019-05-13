@@ -122,6 +122,7 @@ public class LTR24Settings implements BaseController {
             statusBarLine.clearStatusBar();
             statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(),
                     ltr24SettingsModel.getLTR24Instance().checkStatus());
+            backButton.setDisable(false);
         }).start();
     }
 
@@ -186,6 +187,10 @@ public class LTR24Settings implements BaseController {
 
     CheckBox getApplyForAllChannels() {
         return applyForAllChannels;
+    }
+
+    public Button getBackButton() {
+        return backButton;
     }
 
     CheckBox getCheckChannelN1() {

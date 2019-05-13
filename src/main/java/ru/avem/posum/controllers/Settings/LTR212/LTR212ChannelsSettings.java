@@ -17,6 +17,7 @@ import java.util.List;
 
 class LTR212ChannelsSettings extends LTR212Settings {
     private CheckBox applyForAllChannels;
+    private Button backButton;
     private List<ComboBox<String>> typesOfChannelComboBoxes = new ArrayList<>();
     private List<CheckBox> checkBoxes = new ArrayList<>();
     private List<TextField> descriptions = new ArrayList<>();
@@ -27,6 +28,7 @@ class LTR212ChannelsSettings extends LTR212Settings {
 
     LTR212ChannelsSettings(LTR212Settings ltr212Settings) {
         this.applyForAllChannels = ltr212Settings.getApplyForAllChannels();
+        this.backButton = ltr212Settings.getBackButton();
         this.initializeButton = ltr212Settings.getInitializeButton();
         this.ltr212SettingsModel = ltr212Settings.getLtr212SettingsModel();
         fillListOfCheckBoxes(ltr212Settings);
@@ -194,6 +196,8 @@ class LTR212ChannelsSettings extends LTR212Settings {
             measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(measuringRange);
             descriptions.get(channelIndex).setText(description);
         }
+
+        toggleInitializebutton();
     }
 
     void saveSettings() {
@@ -218,9 +222,10 @@ class LTR212ChannelsSettings extends LTR212Settings {
             descriptions.get(checkBoxIndex).setDisable(true);
             typesOfChannelComboBoxes.get(checkBoxIndex).setDisable(true);
             measuringRangesComboBoxes.get(checkBoxIndex).setDisable(true);
-            valueOnChannelButtons.get(checkBoxIndex).setDisable(!checkBoxes.get(checkBoxIndex).isSelected());
+            valueOnChannelButtons.get(checkBoxIndex).setDisable(true);
         }
         applyForAllChannels.setDisable(true);
+        backButton.setDisable(true);
         initializeButton.setDisable(true);
     }
 
@@ -232,9 +237,10 @@ class LTR212ChannelsSettings extends LTR212Settings {
             typesOfChannelComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
             measuringRangesComboBoxes.get(channelIndex).setDisable(!checkBox.isSelected());
             valueOnChannelButtons.get(channelIndex).setDisable(true);
+            initializeButton.setDisable(!checkBox.isSelected());
         }
         applyForAllChannels.setDisable(false);
-        initializeButton.setDisable(false);
+        backButton.setDisable(false);
     }
 
     void disableValueOnChannelButtonsState() {
@@ -286,6 +292,16 @@ class LTR212ChannelsSettings extends LTR212Settings {
                 ADC.MeasuringRangeOfChannel.LOWER_BOUND.setBoundValue(0);
                 ADC.MeasuringRangeOfChannel.UPPER_BOUND.setBoundValue(0.080);
                 break;
+        }
+    }
+
+
+    void toggleInitializebutton() {
+        for (CheckBox checkBox : checkBoxes) {
+            if (checkBox.isSelected()) {
+                initializeButton.setDisable(false);
+                break;
+            }
         }
     }
 }

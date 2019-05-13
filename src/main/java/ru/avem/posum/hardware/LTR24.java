@@ -37,13 +37,6 @@ public class LTR24 extends ADC {
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR24ModuleSettings());
-
-        for (int i = 0; i < 4; i++) {
-            System.out.printf("Slot: %d. Type of channel %d: %d, measuring range: %d.\n", getSlot(), i, getTypeOfChannels()[i], getMeasuringRanges()[i]);
-            for (int j = 0; j < getLTR24ModuleSettings().length; j++) {
-                System.out.println("Setting:" + getLTR24ModuleSettings()[j]);
-            }
-        }
     }
 
     @Override
@@ -68,8 +61,10 @@ public class LTR24 extends ADC {
 
     @Override
     public void closeConnection() {
-        status = closeConnection(getSlot());
-        setConnectionOpen(checkStatus());
+        if (isConnectionOpen()) {
+            status = closeConnection(getSlot());
+            setConnectionOpen(checkStatus());
+        }
     }
 
     public native String openConnection(String crate, int slot);
@@ -89,7 +84,7 @@ public class LTR24 extends ADC {
     public native String closeConnection(int slot);
 
     static {
-        System.loadLibrary( "LTR24Library");
+        System.loadLibrary("LTR24Library");
     }
 
     private void initializeModuleSettings() {

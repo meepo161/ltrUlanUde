@@ -182,7 +182,7 @@ public class CalibrationController implements BaseController {
     }
 
     private void changeUiElementsState(boolean isDisable) {
-        loadValueNameTextField.setDisable(calibrationModel.getCalibrationPoints().size() != 0);
+        loadValueNameTextField.setDisable(calibrationModel.getCalibrationPoints().size() > 1);
         loadValueLabel.setDisable(isDisable);
         loadValueTextField.setDisable(isDisable);
         channelValueLabel.setDisable(isDisable);
@@ -193,8 +193,7 @@ public class CalibrationController implements BaseController {
 
     private boolean checkSettingOfNul() {
         for (CalibrationPoint calibrationPoint : calibrationModel.getCalibrationPoints()) {
-            if (calibrationPoint.getValueName().equals("Ноль")) {
-                statusBarLine.setStatus("Ноль уже градуирован", false);
+            if (calibrationPoint.getValueName().isEmpty()) {
                 return false;
             }
         }
@@ -308,9 +307,11 @@ public class CalibrationController implements BaseController {
     }
 
     private void showCalibration() {
-        boolean isSettingOfNul = calibrationModel.getValueName().equals("Ноль");
+        boolean isSettingOfNul = calibrationModel.getValueName().isEmpty();
 
-        if ((isSettingOfNul & checkSettingOfNul()) || !isSettingOfNul) {
+        if (isSettingOfNul & !checkSettingOfNul()) {
+            statusBarLine.setStatus("Ноль уже градуирован", false);
+        } else {
             addCalibrationPointToTableView();
             addPointToGraph();
             checkNumberOfCalibrationPoints();
@@ -321,7 +322,10 @@ public class CalibrationController implements BaseController {
         int channel = signalModel.getChannel();
         CalibrationPoint point = new CalibrationPoint(channel, calibrationModel);
         calibrationModel.add(point);
-        loadChannelColumn.textProperty().set(String.format("Величина нагрузки, %s", calibrationModel.getValueName()));
+
+        String valueName = calibrationModel.getValueName();
+        String loadChannelHeader = valueName.isEmpty() ? "Величина нагрузки" : "Величина нагрузки, " + valueName;
+        loadChannelColumn.textProperty().set(loadChannelHeader);
     }
 
     private void addPointToGraph() {
@@ -411,6 +415,7 @@ public class CalibrationController implements BaseController {
         channelValueTextField.setText("");
         loadValueNameTextField.setText("");
         setChannelValueCheckBox.setSelected(false);
+        setNulCheckBox.setSelected(false);
         calibrationModel.getCalibrationPoints().clear();
         graphSeries.getData().clear();
     }

@@ -67,8 +67,10 @@ public class LTR212 extends ADC {
 
     @Override
     public void closeConnection() {
-        status = closeConnection(getSlot());
-        setConnectionOpen(checkStatus());
+        if (isConnectionOpen()) {
+            status = closeConnection(getSlot());
+            setConnectionOpen(checkStatus());
+        }
     }
 
     public native String openConnection(String crate, int slot, String path);

@@ -230,7 +230,7 @@ public class SignalParametersModel {
             }
         }
 
-        System.out.printf("Estimated frequency: %f\n", frequency);
+//        System.out.printf("Estimated frequency: %f\n", frequency);
 
         return frequency;
     }
@@ -439,8 +439,6 @@ public class SignalParametersModel {
             defineValueName();
 
             for (String calibrationSetting : calibrationSettings) {
-
-
                 double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
 
                 if (minLoadValue > loadValue) {
@@ -463,9 +461,10 @@ public class SignalParametersModel {
         for (String calibration : calibrationSettings) {
             calibratedValueName = CalibrationPoint.parseValueName(calibration);
 
-            if (!calibratedValueName.equals("Ноль")) {
+            if (!calibratedValueName.isEmpty()) {
                 calibratedValueName = "В";
             } else {
+                System.out.println("Value name: " + calibratedValueName);
                 break;
             }
         }
