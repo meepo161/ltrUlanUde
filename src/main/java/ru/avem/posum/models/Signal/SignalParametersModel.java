@@ -377,6 +377,7 @@ public class SignalParametersModel {
     }
 
     private double applyCalibration(double value) {
+        defineValueName();
         defineBounds();
         setBounds();
         return calibratedValue = value / (Math.abs(lowerBound) + Math.abs(upperBound)) * secondLoadValue;
@@ -403,6 +404,7 @@ public class SignalParametersModel {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
         for (int settingsIndex = 0; settingsIndex < calibrationCoefficients.size() - 1; settingsIndex++) {
+            defineValueName();
             parseCalibrationSettings(calibrationSettings, settingsIndex);
             defineBounds();
             setBounds();
@@ -413,6 +415,10 @@ public class SignalParametersModel {
     }
 
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
+        if (CalibrationPoint.parseValueName(calibrationSettings.get(i)).isEmpty()) { // если ноль градуирован
+            i++;
+        }
+
         String firstCalibrationPoint = calibrationSettings.get(i);
         String secondCalibrationPoint = calibrationSettings.get(i + 1);
         firstChannelValue = CalibrationPoint.parseChannelValue(firstCalibrationPoint);
@@ -422,6 +428,8 @@ public class SignalParametersModel {
     }
 
     private void calibrate(double value) {
+        System.out.printf("Value: %f, lower bound: %f, upper bound: %f\n", value, lowerBound, upperBound);
+
         if (value > lowerBound * 1.2 & value <= upperBound * 1.2) {
             double k = (secondLoadValue - firstLoadValue) / (secondChannelValue - firstChannelValue);
             double b = firstLoadValue - k * firstChannelValue;
@@ -439,8 +447,12 @@ public class SignalParametersModel {
             defineValueName();
 
             for (String calibrationSetting : calibrationSettings) {
-                double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
+                String calibratedValueName = CalibrationPoint.parseValueName(calibrationSetting);
+                if (calibratedValueName.isEmpty()) {
+                    continue;
+                }
 
+                double loadValue = CalibrationPoint.parseLoadValue(calibrationSetting);
                 if (minLoadValue > loadValue) {
                     minLoadValue = loadValue;
                 }
@@ -461,10 +473,9 @@ public class SignalParametersModel {
         for (String calibration : calibrationSettings) {
             calibratedValueName = CalibrationPoint.parseValueName(calibration);
 
-            if (!calibratedValueName.isEmpty()) {
+            if (calibratedValueName.isEmpty()) {
                 calibratedValueName = "В";
             } else {
-                System.out.println("Value name: " + calibratedValueName);
                 break;
             }
         }
