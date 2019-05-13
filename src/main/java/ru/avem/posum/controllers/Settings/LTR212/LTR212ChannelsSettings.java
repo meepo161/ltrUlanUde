@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.util.Pair;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.models.Settings.LTR212SettingsModel;
@@ -197,7 +196,7 @@ class LTR212ChannelsSettings extends LTR212Settings {
             descriptions.get(channelIndex).setText(description);
         }
 
-        toggleInitializebutton();
+        toggleInitializeButton();
     }
 
     void saveSettings() {
@@ -296,7 +295,7 @@ class LTR212ChannelsSettings extends LTR212Settings {
     }
 
 
-    void toggleInitializebutton() {
+    void toggleInitializeButton() {
         for (CheckBox checkBox : checkBoxes) {
             if (checkBox.isSelected()) {
                 initializeButton.setDisable(false);

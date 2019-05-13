@@ -123,6 +123,8 @@ public class LTR24Settings implements BaseController {
             statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(),
                     ltr24SettingsModel.getLTR24Instance().checkStatus());
             backButton.setDisable(false);
+            ltr24ChannelsSettings.enableValueOnChannelButtonsState();
+            backButton.setDisable(false);
         }).start();
     }
 

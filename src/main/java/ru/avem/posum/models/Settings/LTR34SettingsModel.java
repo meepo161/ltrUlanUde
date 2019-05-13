@@ -34,9 +34,8 @@ public class LTR34SettingsModel {
     }
 
     public void initModule() {
-        if (!connectionOpen) {
+        if (!ltr34.isConnectionOpen()) {
             ltr34.openConnection();
-            connectionOpen = true;
         }
 
         ltr34.countChannels();
