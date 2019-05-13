@@ -100,7 +100,7 @@ public class HardwareSettings extends Settings {
     public boolean checkHardwareSettings() {
         boolean isCrateChosen = false;
         if (crate.getCratesNames().isPresent()) {
-            isCrateChosen = !crate.getCratesNames().get().isEmpty() && !chooseCrateButton.isDisabled();
+            isCrateChosen = !crate.getCratesNames().get().isEmpty() && chooseCrateButton.isDisabled();
         }
 
         if (!isCrateChosen) {

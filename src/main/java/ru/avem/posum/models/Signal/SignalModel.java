@@ -129,7 +129,7 @@ public class SignalModel {
         for (String calibration : calibrations) {
             int channelFromCalibration = Integer.parseInt(calibration.substring(9, 10));
             if (channel == channelFromCalibration) {
-                if (CalibrationPoint.parseValueName(calibration).isEmpty()) {
+                if (CalibrationPoint.parseValueName(calibration).isEmpty() ) {
                     signalParametersModel.setShift(CalibrationPoint.parseChannelValue(calibration));
                     break;
                 }

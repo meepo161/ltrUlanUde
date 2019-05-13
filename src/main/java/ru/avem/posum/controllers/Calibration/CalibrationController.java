@@ -26,6 +26,8 @@ public class CalibrationController implements BaseController {
     @FXML
     private Button addToTableButton;
     @FXML
+    private Button backButton;
+    @FXML
     private LineChart<Number, Number> calibrationGraph;
     @FXML
     private TableView<CalibrationPoint> calibrationTableView;
@@ -400,12 +402,17 @@ public class CalibrationController implements BaseController {
     public void handleBackButton() {
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
+        backButton.setDisable(true);
+        saveButton.setDisable(true);
+
         new Thread(() -> {
             stopped = true;
-            clearCalibrationData();
             cm.checkCalibration();
             statusBarLine.clearStatusBar();
             statusBarLine.toggleProgressIndicator(true);
+            backButton.setDisable(false);
+            saveButton.setDisable(false);
+            clearCalibrationData();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
     }
