@@ -13,6 +13,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
 import ru.avem.posum.models.Calibration.CalibrationModel;
@@ -326,16 +327,28 @@ public class CalibrationController implements BaseController {
         calibrationModel.add(point);
 
         String valueName = calibrationModel.getValueName();
+        if (valueName.isEmpty()) {
+            for (CalibrationPoint calibrationPoint : calibrationModel.getCalibrationPoints()) {
+                if (!calibrationPoint.getValueName().isEmpty()) {
+                    valueName = calibrationPoint.getValueName();
+                }
+            }
+        }
+
         String loadChannelHeader = valueName.isEmpty() ? "Величина нагрузки" : "Величина нагрузки, " + valueName;
         loadChannelColumn.textProperty().set(loadChannelHeader);
     }
 
     private void addPointToGraph() {
-        int lastPointIndex = calibrationModel.getCalibrationPoints().size() - 1;
-        CalibrationPoint lastPoint = calibrationModel.getCalibrationPoints().get(lastPointIndex);
-        double xValue = Double.parseDouble(lastPoint.getLoadValue());
-        double yValue = Double.parseDouble(lastPoint.getChannelValue());
-        graphSeries.getData().add(new XYChart.Data<>(xValue, yValue));
+        for (CalibrationPoint calibrationPoint : calibrationModel.getCalibrationPoints()) {
+            double xValue = Double.parseDouble(calibrationPoint.getLoadValue());
+            double yValue = Double.parseDouble(calibrationPoint.getChannelValue());
+            XYChart.Data<Number, Number> graphPoint = new XYChart.Data<>(xValue, yValue);
+
+            if (!graphSeries.getData().contains(graphPoint)) {
+                graphSeries.getData().add(graphPoint);
+            }
+        }
     }
 
     private void setLoadValueTextFields() {

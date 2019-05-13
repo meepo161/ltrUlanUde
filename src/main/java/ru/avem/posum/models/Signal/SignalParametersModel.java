@@ -428,8 +428,6 @@ public class SignalParametersModel {
     }
 
     private void calibrate(double value) {
-        System.out.printf("Value: %f, lower bound: %f, upper bound: %f\n", value, lowerBound, upperBound);
-
         if (value > lowerBound * 1.2 & value <= upperBound * 1.2) {
             double k = (secondLoadValue - firstLoadValue) / (secondChannelValue - firstChannelValue);
             double b = firstLoadValue - k * firstChannelValue;
@@ -469,16 +467,7 @@ public class SignalParametersModel {
 
     private void defineValueName() {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-
-        for (String calibration : calibrationSettings) {
-            calibratedValueName = CalibrationPoint.parseValueName(calibration);
-
-            if (calibratedValueName.isEmpty()) {
-                calibratedValueName = "В";
-            } else {
-                break;
-            }
-        }
+        calibratedValueName = CalibrationPoint.parseValueName(calibrationSettings.get(calibrationSettings.size() - 1));
     }
 
     public double getAmplitude() {

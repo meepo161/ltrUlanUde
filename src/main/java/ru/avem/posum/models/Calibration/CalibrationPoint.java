@@ -49,7 +49,11 @@ public class CalibrationPoint {
     }
 
     public String getValueName() {
-        return valueName;
+        if (valueName.equals("Ноль")) {
+            return "";
+        } else {
+            return valueName;
+        }
     }
 
     public static double parseChannelValue(String settings) {

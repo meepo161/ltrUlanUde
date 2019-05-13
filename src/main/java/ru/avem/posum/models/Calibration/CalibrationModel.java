@@ -19,7 +19,11 @@ public class CalibrationModel {
     private String valueName = "";
 
     public void add(CalibrationPoint calibrationPoint) {
-        calibrationPoints.add(calibrationPoint);
+        if (calibrationPoint.getValueName().isEmpty()) {
+            calibrationPoints.add(0, calibrationPoint);
+        } else {
+            calibrationPoints.add(calibrationPoint);
+        }
     }
 
     public void calibrate(ADC adc, int channelNumber) {
