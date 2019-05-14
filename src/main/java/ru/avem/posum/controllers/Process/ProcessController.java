@@ -1,9 +1,7 @@
 package ru.avem.posum.controllers.Process;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -11,9 +9,9 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.models.*;
+import ru.avem.posum.db.models.TestProgram;
+import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
-import ru.avem.posum.utils.Utils;
 
 import java.util.Optional;
 
@@ -71,9 +69,12 @@ public class ProcessController implements BaseController {
     @FXML
     private Label warningIcon;
 
+    private ControllerManager cm;
     private EventsModel eventModel = new EventsModel();
     private ExperimentModel experimentModel = new ExperimentModel();
     private ProcessSampleModel processSampleModel = new ProcessSampleModel();
+    private ProgramController programController;
+    private TestProgram testProgram;
     private StatusBarLine statusBarLine;
     private WindowsManager wm;
 
@@ -111,29 +112,17 @@ public class ProcessController implements BaseController {
         processSampleModel.SetProcessSampleColumnFunction(group4Value1SampleColumn);
         processSampleModel.SetProcessSampleColumnFunction(group4Value2SampleColumn);
         processSampleModel.fitTable();
-        showSettingsPanel(true);
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
         statusBarLine.setProcessView(true);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
         processSampleModel.chart(processGraph);
         experimentModel.setProcessSampleModel(processSampleModel);
-    }
 
-    private void showSettingsPanel(boolean hide) {
-        double needHeight = mainPanel.getMaxHeight();
-        toolbarSettings.setVisible(!hide);
-        if (!hide) {
-            needHeight = needHeight + toolbarSettings.getPrefHeight();
-        }
-        topPanel.setPrefHeight(needHeight);
-        topPanel.maxHeight(needHeight);
-        topPanel.minHeight(needHeight);
-        processSampleModel.fitTable();
+        programController = new ProgramController(mainPanel, processSampleModel, toolbarSettings, topPanel);
     }
 
     public void handleInitButton() {
-        showSettingsPanel(true);
         experimentModel.Init();
     }
 
@@ -149,9 +138,14 @@ public class ProcessController implements BaseController {
         experimentModel.Stop();
     }
 
-    public void handleToProgrammButton() {
+    public void handleToProgramButton() {
         experimentModel.ChangeParam();
-        showSettingsPanel(false);
+        programController.toggleSettingsPanel();
+    }
+
+    public void handleLinkButton() {
+        cm.initListViews();
+        wm.setScene(WindowsManager.Scenes.LINKING_SCENE);
     }
 
     public void handleSavePointButton() {
@@ -207,16 +201,20 @@ public class ProcessController implements BaseController {
     }
 
     @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
+    }
+
+    @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
     }
 
-    @Override
-    public void setControllerManager(ControllerManager cm) {
-
-    }
-
     public ExperimentModel getExperimentModel() {
         return experimentModel;
+    }
+
+    public void setTestProgram(TestProgram testProgram) {
+        this.testProgram = testProgram;
     }
 }

@@ -3,7 +3,9 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @DatabaseTable(tableName = "modules")
 public class Modules {
@@ -129,8 +131,26 @@ public class Modules {
         this.measuringRanges = settingsToString(measuringRanges);
     }
 
-    public String getChannelsDescription() {
+    public String getChannelsDescriptions() {
         return channelsDescription;
+    }
+
+    public static List<String> getChannelsDescriptions(Modules module) {
+        List<String> outputList = new ArrayList<>();
+        String[] checkedChannels = module.getCheckedChannels().split(", ");
+        String[] descriptions = module.getChannelsDescriptions().split(", ");
+
+        for (int channelIndex = 0; channelIndex < checkedChannels.length; channelIndex++) {
+            if (checkedChannels[channelIndex].equals("true")) {
+                if (channelIndex < descriptions.length) { // если описание существует
+                    outputList.add(descriptions[channelIndex]);
+                } else {
+                    outputList.add("Канал " + (channelIndex + 1));
+                }
+            }
+        }
+
+        return outputList;
     }
 
     public void setChannelsDescription(String[] channelsDescription) {

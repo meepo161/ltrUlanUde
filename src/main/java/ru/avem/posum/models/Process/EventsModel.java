@@ -1,4 +1,4 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Process;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,7 +6,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import ru.avem.posum.db.EventRepository;
 import ru.avem.posum.db.models.Event;
-import ru.avem.posum.utils.Toast;
 
 import java.util.List;
 

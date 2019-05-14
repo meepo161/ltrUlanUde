@@ -351,7 +351,7 @@ public class MainController implements BaseController {
 
             new Thread(() -> {
                 getTestProgram(selectedIndex);
-                cm.getExperimentModel().SetTestId(testProgram.getId());
+                cm.setTestProgram();
                 statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.clearStatusBar();
                 Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
@@ -366,6 +366,10 @@ public class MainController implements BaseController {
 
     public Button getOpenExperimentButton() {
         return openExperimentButton;
+    }
+
+    public TestProgram getSelectedTestProgram() {
+        return testProgramTableView.getSelectionModel().getSelectedItem();
     }
 
     public void setAdministration(boolean administration) {

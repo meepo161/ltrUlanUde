@@ -455,7 +455,7 @@ public class SettingsModel implements BaseController {
         String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
         String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
         String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
-        String[] parsedChannelsDescriptions = module.getChannelsDescription().split(", ", 5);
+        String[] parsedChannelsDescriptions = module.getChannelsDescriptions().split(", ", 5);
 
         adc.setSlot(slot);
         adc.setModuleId(module.getId());
@@ -498,7 +498,7 @@ public class SettingsModel implements BaseController {
     private void parseDACSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
-            String[] parsedChannelsDescription = module.getChannelsDescription().split(", ", 9);
+            String[] parsedChannelsDescription = module.getChannelsDescriptions().split(", ", 9);
             String[] parsedAmplitudes = module.getAmplitudes().split(", ", 9);
             String[] parsedFrequencies = module.getFrequencies().split(", ", 9);
             String[] parsedPhases = module.getPhases().split(", ", 9);

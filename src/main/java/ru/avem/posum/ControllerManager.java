@@ -2,7 +2,7 @@ package ru.avem.posum;
 
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.Process.ExperimentModel;
 import ru.avem.posum.models.Signal.SignalModel;
 
 import java.util.List;
@@ -31,6 +31,8 @@ public interface ControllerManager {
 
     void initializeSignalGraphView();
 
+    void initListViews();
+
     boolean isClosed();
 
     boolean isStopped();
@@ -50,6 +52,8 @@ public interface ControllerManager {
     void setAdministration(boolean administration);
 
     void setClosed(boolean closed);
+
+    void setTestProgram();
 
     void setStopped(boolean stopped);
 

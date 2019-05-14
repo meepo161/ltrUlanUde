@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.controllers.Calibration.CalibrationController;
+import ru.avem.posum.controllers.Process.LinkingController;
 import ru.avem.posum.controllers.Process.ProcessController;
 import ru.avem.posum.controllers.Settings.LTR212.LTR212Settings;
 import ru.avem.posum.controllers.Settings.LTR24.LTR24Settings;
@@ -25,7 +26,7 @@ import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
-import ru.avem.posum.models.ExperimentModel;
+import ru.avem.posum.models.Process.ExperimentModel;
 import ru.avem.posum.models.Signal.SignalModel;
 import ru.avem.posum.utils.Utils;
 
@@ -39,6 +40,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene calibrationScene;
     private volatile boolean closed;
     private LoginController loginController;
+    private LinkingController linkingController;
+    private Scene linkingScene;
     private Scene loginScene;
     private Stage loginStage;
     private LTR24Settings ltr24Settings;
@@ -70,6 +73,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createMainScene();
         createSettingsScene();
         createProcessScene();
+        createLinkingScene();
         createLTR24Scene();
         createLTR34Scene();
         createLTR212Scene();
@@ -123,6 +127,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createProcessScene() throws IOException {
         processController = (ProcessController) getController("/layouts/processView.fxml");
         processScene = createScene(1280, 720);
+    }
+
+    private void createLinkingScene() throws IOException {
+        linkingController = (LinkingController) getController("/layouts/linkingView.fxml");
+        linkingScene = createScene(1280, 720);
     }
 
     private void createLTR24Scene() throws IOException {
@@ -312,6 +321,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void initListViews() {
+        linkingController.initListViews();
+    }
+
+    @Override
     public void initializeSignalGraphView() {
         signalController.initializeView();
     }
@@ -389,6 +403,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public void setTestProgram() {
+        TestProgram testProgram = mainController.getSelectedTestProgram();
+
+        processController.setTestProgram(testProgram);
+        linkingController.setTestProgram(testProgram);
+    }
+
+    @Override
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
     }
@@ -422,8 +444,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Процесс испытаний");
                 primaryStage.setScene(processScene);
                 break;
+            case LINKING_SCENE:
+                primaryStage.setTitle("Связывание каналов ЦАП и АЦП");
+                primaryStage.setScene(linkingScene);
+                break;
             case LTR24_SCENE:
-                primaryStage.setTitle("Настройки модуля LTR24Table");
+                primaryStage.setTitle("Настройки модуля LTR24");
                 primaryStage.setScene(ltr24Scene);
                 break;
             case LTR34_SCENE:

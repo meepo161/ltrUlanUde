@@ -1,4 +1,4 @@
-package ru.avem.posum.models;
+package ru.avem.posum.models.Process;
 
 import javafx.beans.property.*;
 
