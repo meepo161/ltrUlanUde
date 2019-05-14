@@ -49,7 +49,7 @@ public class LinkingController implements BaseController {
             adcChannelsListView.getItems().clear();
 
             dacChannelsListView.setItems(linkingModel.getChannelsDescriptions(Crate.LTR34));
-            adcChannelsListView.setItems(linkingModel.getChannelsDescriptions(Crate.LTR24, Crate.LTR212));
+            adcChannelsListView.setItems(linkingModel.getChannelsDescriptions(Crate.LTR212, Crate.LTR24));
 
             listen(dacChannelsListView);
             listen(adcChannelsListView);

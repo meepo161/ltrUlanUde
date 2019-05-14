@@ -17,7 +17,23 @@ import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
+    private Slider amplitudeSlider;
+    @FXML
+    private TextField amplitudeTextField;
+    @FXML
+    private TextField calibratedAmplitudeTextField;
+    @FXML
+    private TextField calibratedFrequencyTextField;
+    @FXML
     private Label checkIcon;
+    @FXML
+    private Slider dcSlider;
+    @FXML
+    private TextField dcTextField;
+    @FXML
+    private Slider frequencySlider;
+    @FXML
+    private TextField frequencyTextField;
     @FXML
     private AnchorPane mainPanel;
     @FXML
@@ -56,6 +72,10 @@ public class ProcessController implements BaseController {
     private TableColumn<ProcessSample, String> group4Value1SampleColumn;
     @FXML
     private TableColumn<ProcessSample, String> group4Value2SampleColumn;
+    @FXML
+    private Slider phaseSlider;
+    @FXML
+    private TextField phaseTextField;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -119,7 +139,9 @@ public class ProcessController implements BaseController {
         processSampleModel.chart(processGraph);
         experimentModel.setProcessSampleModel(processSampleModel);
 
-        programController = new ProgramController(mainPanel, processSampleModel, toolbarSettings, topPanel);
+        programController = new ProgramController(amplitudeSlider, amplitudeTextField, calibratedAmplitudeTextField,
+                calibratedFrequencyTextField, dcSlider, dcTextField, frequencySlider, frequencyTextField, mainPanel,
+                processSampleModel, phaseSlider, phaseTextField, toolbarSettings, topPanel);
     }
 
     public void handleInitButton() {

@@ -124,7 +124,7 @@ public class ProcessSample {
     }
 
     public ProcessSample(String mainText) {
-        this(mainText,Color.white, Color.white, Color.white, Color.white, Color.white, Color.white);
+        this(mainText,Color.white, Color.BLACK, Color.white, Color.white, Color.white, Color.white);
     }
     public ProcessSample() {
         this(null,Color.white, Color.white, Color.white, Color.white, Color.white, Color.white);

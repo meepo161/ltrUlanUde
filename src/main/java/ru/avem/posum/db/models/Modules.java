@@ -143,9 +143,11 @@ public class Modules {
         for (int channelIndex = 0; channelIndex < checkedChannels.length; channelIndex++) {
             if (checkedChannels[channelIndex].equals("true")) {
                 if (channelIndex < descriptions.length) { // если описание существует
-                    outputList.add(descriptions[channelIndex]);
+                    String description = String.format("%s (модуль %s, слот %d)", descriptions[channelIndex], module.getModuleType(), module.getSlot());
+                    outputList.add(description);
                 } else {
-                    outputList.add("Канал " + (channelIndex + 1));
+                    String description = String.format("Канал %d (модуль %s, слот %d)", (channelIndex + 1), module.getModuleType(), module.getSlot());
+                    outputList.add(description);
                 }
             }
         }

@@ -1,9 +1,7 @@
 package ru.avem.posum.models.Process;
 
-
-
 public class ExperimentModel extends Thread{
-    long    testId = 0;
+    long testId = 0;
     ProcessSampleModel processSampleModel;
     private boolean doStop = false;
     private boolean bRun = false;

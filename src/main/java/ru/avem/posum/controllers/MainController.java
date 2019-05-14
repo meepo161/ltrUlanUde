@@ -352,6 +352,7 @@ public class MainController implements BaseController {
             new Thread(() -> {
                 getTestProgram(selectedIndex);
                 cm.setTestProgram();
+                cm.getExperimentModel().SetTestId(testProgram.getId());
                 statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.clearStatusBar();
                 Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
