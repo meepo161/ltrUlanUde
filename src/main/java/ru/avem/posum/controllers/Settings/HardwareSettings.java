@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Settings;
 
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -147,6 +148,12 @@ public class HardwareSettings extends Settings {
 
     private void check(ObservableList<String> cratesNames, int notCrateCounter) {
         if (notCrateCounter == cratesNames.size()) {
+            clearListViews();
+            cratesListView.setDisable(true);
+            modulesListView.setDisable(true);
+            chooseCrateButton.setDisable(true);
+            saveSettingsButton.setDisable(true);
+
             settings.getStatusBarLine().setStatus("Ошибка загрузки настроек: крейт с указанным серийным номером не найден.",
                     false);
         } else {
@@ -156,6 +163,16 @@ public class HardwareSettings extends Settings {
             setupModuleButton.setDisable(true);
             settings.handleChooseCrate();
         }
+    }
+
+    private void clearListViews() {
+        ObservableList<String> crates = cratesListView.getItems();
+        ObservableList<String> modules = modulesListView.getItems();
+
+        cratesListView.getSelectionModel().clearSelection();
+        cratesListView.getItems().removeAll(crates);
+        modulesListView.getSelectionModel().clearSelection();
+        modulesListView.getItems().removeAll(modules);
     }
 
     public Crate getCrate() {
