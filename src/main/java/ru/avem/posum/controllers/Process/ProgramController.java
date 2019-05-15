@@ -1,7 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
@@ -9,45 +8,49 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.models.Process.ProcessModel;
 import ru.avem.posum.models.Process.ProgramModel;
-import ru.avem.posum.models.Process.ProcessSampleModel;
 
 public class ProgramController implements BaseController {
     private Slider amplitudeSlider;
     private TextField amplitudeTextField;
     private TextField calibratedAmplitudeTextField;
-    private TextField calibratedFrequencyTextField;
-    private Slider dcSlider;
-    private TextField dcTextField;
+    private Slider dSlider;
+    private TextField dTextField;
     private Slider frequencySlider;
     private TextField frequencyTextField;
+    private Slider iSlider;
+    private TextField iTextField;
     private AnchorPane mainPanel;
-    private ProcessSampleModel processSampleModel;
     private Slider phaseSlider;
     private TextField phaseTextField;
     private ProgramModel programModel = new ProgramModel();
+    private Slider pSlider;
+    private TextField pTextField;
     private ToolBar toolbarSettings;
     private VBox topPanel;
     private WindowsManager wm;
 
     public ProgramController(Slider amplitudeSlider, TextField amplitudeTextField,
-                             TextField calibratedAmplitudeTextField, TextField calibratedFrequencyTextField,
-                             Slider dcSlider, TextField dcTextField, Slider frequencySlider,
-                             TextField frequencyTextField, AnchorPane mainPanel, ProcessSampleModel processSampleModel,
-                             Slider phaseSlider, TextField phaseTextField, ToolBar toolbarSettings, VBox topPanel) {
+                             TextField calibratedAmplitudeTextField, Slider dSlider, TextField dTextField,
+                             Slider frequencySlider, TextField frequencyTextField, Slider iSlider,
+                             TextField iTextField, AnchorPane mainPanel, Slider phaseSlider, TextField phaseTextField,
+                             Slider pSlider, TextField pTextField, ToolBar toolbarSettings, VBox topPanel) {
 
         this.amplitudeSlider = amplitudeSlider;
         this.amplitudeTextField = amplitudeTextField;
         this.calibratedAmplitudeTextField = calibratedAmplitudeTextField;
-        this.calibratedFrequencyTextField = calibratedFrequencyTextField;
-        this.dcSlider = dcSlider;
-        this.dcTextField = dcTextField;
+        this.dSlider = dSlider;
+        this.dTextField = dTextField;
         this.frequencySlider = frequencySlider;
         this.frequencyTextField = frequencyTextField;
+        this.iSlider = iSlider;
+        this.iTextField = iTextField;
         this.mainPanel = mainPanel;
-        this.processSampleModel = processSampleModel;
         this.phaseSlider = phaseSlider;
         this.phaseTextField = phaseTextField;
+        this.pSlider = pSlider;
+        this.pTextField = pTextField;
         this.toolbarSettings = toolbarSettings;
         this.topPanel = topPanel;
 
@@ -65,14 +68,15 @@ public class ProgramController implements BaseController {
         topPanel.setPrefHeight(neededHeight);
         topPanel.maxHeight(neededHeight);
         topPanel.minHeight(neededHeight);
-        processSampleModel.fitTable();
     }
 
     private void initSliders() {
         init(amplitudeSlider, amplitudeTextField);
-        init(dcSlider, dcTextField);
         init(frequencySlider, frequencyTextField);
         init(phaseSlider, phaseTextField);
+        init(pSlider, pTextField);
+        init(iSlider, iTextField);
+        init(dSlider, dTextField);
     }
 
     private void init(Slider slider, TextField textField) {

@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ProcessSample {
-
-    private final StringProperty mainText;
-
+public class PairModel {
+    private final StringProperty name;
     private final StringProperty group1Color;
     private final IntegerProperty group1GraphNum;
     private final BooleanProperty group1Enable;
@@ -56,8 +54,8 @@ public class ProcessSample {
 
     private List<StringProperty> properties = new ArrayList<>();
 
-    public ProcessSample(String mainText, Color group1Color, Color group2Color, Color group3Color, Color group4Color, Color group5Color, Color group6Color) {
-        this.mainText = new SimpleStringProperty(mainText);
+    public PairModel(String name, Color group1Color, Color group2Color, Color group3Color, Color group4Color, Color group5Color, Color group6Color) {
+        this.name = new SimpleStringProperty(name);
         this.group1Color = new SimpleStringProperty(String.format("%d, %d, %d",
                 (int) (group1Color.getRed() * 255),
                 (int) (group1Color.getGreen() * 255),
@@ -118,26 +116,26 @@ public class ProcessSample {
         this.group6Value1 = new SimpleStringProperty("0");
         this.group6Value2 = new SimpleStringProperty("0");
         this.group6Value3 = new SimpleStringProperty("0");
-        properties.addAll(Arrays.asList(this.mainText, this.group1Color , this.group1Value1 , this.group1Value2 , this.group1Value3 , this.group2Color , this.group2Value1 , this.group2Value2 , this.group2Value3 ,
+        properties.addAll(Arrays.asList(this.name, this.group1Color , this.group1Value1 , this.group1Value2 , this.group1Value3 , this.group2Color , this.group2Value1 , this.group2Value2 , this.group2Value3 ,
                                                        this.group3Color , this.group3Value1 , this.group3Value2 , this.group3Value3 , this.group4Color , this.group4Value1 , this.group4Value2 , this.group4Value3 ,
                                                        this.group5Color , this.group5Value1 , this.group5Value2 , this.group5Value3 , this.group6Color , this.group6Value1 , this.group6Value2 , this.group6Value3 ));
     }
 
-    public ProcessSample(String mainText) {
-        this(mainText,Color.white, Color.BLACK, Color.white, Color.white, Color.white, Color.white);
+    public PairModel(String name) {
+        this(name,Color.white, Color.BLACK, Color.white, Color.white, Color.white, Color.white);
     }
-    public ProcessSample() {
+    public PairModel() {
         this(null,Color.white, Color.white, Color.white, Color.white, Color.white, Color.white);
     }
 
-    public String getMainText() {
-        return mainText.get();
+    public String getName() {
+        return name.get();
     }
-    public StringProperty mainTextProperty() {
-        return mainText;
+    public StringProperty nameProperty() {
+        return name;
     }
-    public void setMainText(String description) {
-        this.mainText.set(description);
+    public void setName(String description) {
+        this.name.set(description);
     }
 
     public String getGroup1Color() { return group1Color.get(); }

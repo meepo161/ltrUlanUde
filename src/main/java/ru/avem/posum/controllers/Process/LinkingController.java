@@ -13,6 +13,8 @@ import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.LinkingModel;
+import ru.avem.posum.models.Process.PairModel;
+import ru.avem.posum.models.Process.ProcessModel;
 import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.Optional;
@@ -32,6 +34,7 @@ public class LinkingController implements BaseController {
     private Label warningIcon;
 
     private LinkingModel linkingModel = new LinkingModel();
+    private ProcessModel processModel;
     private StatusBarLine statusBarLine;
     private TestProgram testProgram;
     private WindowsManager wm;
@@ -87,6 +90,10 @@ public class LinkingController implements BaseController {
         selectedDacChannel.ifPresent(checkBox -> dacChannelsListView.getItems().remove(checkBox));
         selectedAdcChannel.ifPresent(checkBox -> adcChannelsListView.getItems().remove(checkBox));
 
+        String pairName = selectedDacChannel.get().getText().split(" \\(")[0] + " - " +
+                          selectedAdcChannel.get().getText().split(" \\(")[0];
+        processModel.getProcessData().add(new PairModel(pairName));
+
         enableChooseOfChannels(dacChannelsListView);
         enableChooseOfChannels(adcChannelsListView);
 
@@ -131,5 +138,9 @@ public class LinkingController implements BaseController {
 
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
+    }
+
+    public void setProcessModel(ProcessModel processModel) {
+        this.processModel = processModel;
     }
 }

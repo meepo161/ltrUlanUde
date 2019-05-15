@@ -37,38 +37,39 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <children>
-                        <TableView fx:id="tableSample" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pickOnBounds="false" styleClass="processTable">
-                            <placeholder>
-                                <Label text="Нет данных для отображения" />
-                            </placeholder>
-                            <columns>
-                                <TableColumn fx:id="mainTextSampleColumn" editable="false" maxWidth="150.0" minWidth="80.0" sortable="false" text="основные" />
-                                <TableColumn fx:id="group1ColorSampleColumn" editable="false" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" text="отклик" />
-                                <TableColumn fx:id="group1Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="68.0" prefWidth="68.0" text="амп отклик" />
-                                <TableColumn fx:id="group1Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="амп норма" />
-                                <TableColumn fx:id="group1Value3SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="амп откл, %" />
-                                <TableColumn fx:id="group2Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="фаза отклик" />
-                                <TableColumn fx:id="group2Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="фаза норма" />
-                                <TableColumn fx:id="group2Value3SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="фаза откл, %" />
-                                <TableColumn fx:id="group3Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="выход доп отклик" />
-                                <TableColumn fx:id="group3Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="выход доп норма" />
-                                <TableColumn fx:id="group3Value3SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="выход доп откл, %" />
-                                <TableColumn fx:id="group4Value1SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="69.0" prefWidth="69.0" text="ЦАП амп" />
-                                <TableColumn fx:id="group4Value2SampleColumn" editable="false" maxWidth="1.7976931348623157E308" minWidth="68.0" prefWidth="68.0" text="ЦАП стат" />
-                                <TableColumn fx:id="group4ColorSampleColumn" editable="false" maxWidth="73.0" minWidth="73.0" prefWidth="73.0" text="ЦАП" />
-                            </columns>
-                            <columnResizePolicy>
-                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                            </columnResizePolicy>
-                        </TableView>
-                        <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" styleClass="programGraph" stylesheets="@../css/processGraph.css" GridPane.rowIndex="1">
-                            <xAxis>
-                                <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
-                            </xAxis>
-                            <yAxis>
-                                <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />
-                            </yAxis>
-                        </LineChart>
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
+                    <items>
+                              <TableView fx:id="tableSample" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pickOnBounds="false" styleClass="processTable">
+                                  <placeholder>
+                                      <Label text="Нет данных для отображения" />
+                                  </placeholder>
+                                  <columns>
+                                      <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Пара, канал ЦАП - канал АЦП" />
+                                      <TableColumn fx:id="responseColumn" editable="false" minWidth="70.0" prefWidth="70.0" text="Отклик" />
+                                      <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Амплитуда отклик" />
+                                      <TableColumn fx:id="ampColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Амплитуда норма" />
+                                      <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Амплитуда отклик, %" />
+                                      <TableColumn fx:id="frequencyResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота отклик" />
+                                      <TableColumn fx:id="frequencyColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота норма" />
+                                      <TableColumn fx:id="frequencyRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота отклик, %" />
+                                      <TableColumn fx:id="phaseResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Фаза отклик" />
+                                      <TableColumn fx:id="phaseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Фаза норма" />
+                                      <TableColumn fx:id="phaseRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Фаза отклик, %" />
+                                  </columns>
+                                  <columnResizePolicy>
+                                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                  </columnResizePolicy>
+                              </TableView>
+                              <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" styleClass="programGraph" stylesheets="@../css/processGraph.css">
+                                  <xAxis>
+                                      <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
+                                  </xAxis>
+                                  <yAxis>
+                                      <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />
+                                  </yAxis>
+                              </LineChart>
+                    </items>
+                  </SplitPane>
                     </children>
                 </GridPane>
                 <SplitPane dividerPositions="0.1755" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="212.0">
@@ -211,7 +212,7 @@
                 </AnchorPane>
                 <ToolBar fx:id="toolbarSettings" maxHeight="110.0" minHeight="110.0" prefHeight="110.0">
                     <items>
-                        <Pane prefHeight="90.0" prefWidth="550.0">
+                        <Pane prefHeight="90.0" prefWidth="436.0">
                             <children>
                                 <ListView fx:id="plug_ListView" prefHeight="97.0" prefWidth="54.0" style="-fx-background-radius: 5px;" />
                                 <Button fx:id="plug_Button" layoutX="53.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран">
@@ -219,7 +220,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Label layoutX="110.0" layoutY="2.0" text="Амплитуда">
+                                <Label layoutX="110.0" text="Амплитуда">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -245,107 +246,81 @@
                                     </font>
                                 </TextField>
                                 <Slider fx:id="amplitudeSlider" blockIncrement="1.0" layoutX="196.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                                <Label layoutX="220.0" layoutY="1.0" text="Статика">
+                                <Label layoutX="220.0" text="Частота">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="220.0" layoutY="30.0" text="мВ">
+                                <Label layoutX="220.0" layoutY="30.0" text="Гц">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="dcTextField" layoutX="243.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="frequencyTextField" layoutX="243.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Label layoutX="220.0" layoutY="60.0" text="ед">
+                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="308.0" layoutY="3.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Label layoutX="330.0" text="Фаза">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="calibratedFrequencyTextField" layoutX="243.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <Label layoutX="330.0" layoutY="30.0" text="°">
+                                    <font>
+                                        <Font name="Arial" size="12.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="phaseTextField" layoutX="345.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="dcSlider" blockIncrement="1.0" layoutX="308.0" layoutY="3.0" max="10.0" min="-10.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
-                                <Label layoutX="330.0" text="Частота">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <Label layoutX="330.0" layoutY="30.0" text="Гц">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="frequencyTextField" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
-                                    <font>
-                                        <Font name="Arial Bold" size="12.0" />
-                                    </font>
-                                </TextField>
-                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="415.0" layoutY="3.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
-                                <Label layoutX="440.0" text="Фаза">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <Label layoutX="440.0" layoutY="30.0" text="°">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="phaseTextField" layoutX="452.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
-                                    <font>
-                                        <Font name="Arial Bold" size="12.0" />
-                                    </font>
-                                </TextField>
-                                <Slider fx:id="phaseSlider" blockIncrement="1.0" layoutX="518.0" layoutY="3.0" max="360.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Slider fx:id="phaseSlider" blockIncrement="1.0" layoutX="410.0" layoutY="3.0" max="360.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
                             </children>
                         </Pane>
                         <Pane prefHeight="97.0" prefWidth="387.0">
                             <children>
-                                <Label layoutY="8.0" text="П">
+                                <Label layoutY="10.0" text="П">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Label layoutY="37.0" text="И">
+                                <Label layoutY="39.0" text="И">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Label layoutY="66.0" text="Д">
+                                <Label layoutY="68.0" text="Д">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Slider fx:id="p_Slider" layoutX="18.0" layoutY="10.0" prefHeight="14.0" prefWidth="175.0" />
-                                <Slider fx:id="i_Slider" layoutX="18.0" layoutY="39.0" prefHeight="14.0" prefWidth="175.0" />
-                                <Slider fx:id="d_Slider" layoutX="18.0" layoutY="68.0" prefHeight="14.0" prefWidth="175.0" />
-                                <TextField fx:id="pValue_TextEdit" layoutX="198.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <Slider fx:id="pSlider" blockIncrement="1.0" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="175.0" />
+                                <Slider fx:id="iSlider" blockIncrement="1.0" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="175.0" />
+                                <Slider fx:id="dSlider" blockIncrement="1.0" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="175.0" />
+                                <TextField fx:id="pTextField" layoutX="198.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="iValue_TextEdit" layoutX="198.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="iTextField" layoutX="198.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="dValue_TextEdit" layoutX="198.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="dTextField" layoutX="198.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="linkDACWithADCButton" layoutX="263.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Создать пару ЦАП - АЦП" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="linkDACWithADCButton" layoutX="268.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Создать пару ЦАП - АЦП" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="savePid_Button" layoutX="373.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handlePidButton" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
+                                <Button fx:id="savePid_Button" layoutX="378.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handlePidButton" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>

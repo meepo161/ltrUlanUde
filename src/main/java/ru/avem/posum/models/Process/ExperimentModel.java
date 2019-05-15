@@ -2,7 +2,7 @@ package ru.avem.posum.models.Process;
 
 public class ExperimentModel extends Thread{
     long testId = 0;
-    ProcessSampleModel processSampleModel;
+    ProcessModel processModel;
     private boolean doStop = false;
     private boolean bRun = false;
     double tick = 0;
@@ -28,12 +28,12 @@ public class ExperimentModel extends Thread{
             if(keepRunning()) {
                 if(tick > range) {
                     tick = 0;
-                    for (int j = 0; j < this.processSampleModel.getCurrentIndex(); j++) {
-                        this.processSampleModel.chartClearData(j);
+                    for (int j = 0; j < this.processModel.getCurrentIndex(); j++) {
+                        this.processModel.clearSeries(j);
                     }
                 }
-                for (int j = 0; j < this.processSampleModel.getCurrentIndex(); j++) {
-                    this.processSampleModel.chartAddData(j, Math.sin(tickGlobal+(j*deltaX*delta)), tick);
+                for (int j = 0; j < this.processModel.getCurrentIndex(); j++) {
+                    this.processModel.addSeriesData(j, Math.sin(tickGlobal+(j*deltaX*delta)), tick);
                 }
                 tick += deltaX;
                 tickGlobal += deltaX;
@@ -50,29 +50,15 @@ public class ExperimentModel extends Thread{
         return !bRun;
     }
 
-    public void setProcessSampleModel(ProcessSampleModel processSampleModel) {
-        this.processSampleModel = processSampleModel;
+    public void setProcessModel(ProcessModel processModel) {
+        this.processModel = processModel;
     }
 
     public void SetTestId(long testId){
         this.DeInit();
         this.testId = testId;
-        //TODO получаем TestId и выбираем параметры для теста из БД.
-        //подготовка таблицы
-        //if( stend_130)
-        this.processSampleModel.getProcessSampleData().add(new ProcessSample("АЦП1 ЦАП1"));
-        this.processSampleModel.getProcessSampleData().add(new ProcessSample("АЦП2 ЦАП2"));
-        this.processSampleModel.getProcessSampleData().add(new ProcessSample("АЦП3 ЦАП3"));
-        this.processSampleModel.getProcessSampleData().add(new ProcessSample("АЦП4 ЦАП4"));
-        this.processSampleModel.getProcessSampleData().add(new ProcessSample("АЦП5 ЦАП5"));
-        this.processSampleModel.fitTable();
-        this.processSampleModel.setXAxis(range);
-
-        //if( stend_49)
-        //this.processSampleModel.getProcessSampleData().add(new ProcessSample("АЦП1 ЦАП1"));
-
-
-
+        this.processModel.getProcessData().add(new PairModel("АЦП5 ЦАП5"));
+        this.processModel.setXAxis(range);
     }
 
     public void DeInit(){
