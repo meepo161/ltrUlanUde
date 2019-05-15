@@ -310,7 +310,13 @@ public class CalibrationController implements BaseController {
     }
 
     private void showCalibration() {
-        boolean isSettingOfNul = calibrationModel.getValueName().isEmpty();
+        ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
+        boolean isSettingOfNul = false;
+
+        for (CalibrationPoint calibrationPoint : calibrationPoints) {
+            isSettingOfNul = Double.parseDouble(calibrationPoint.getLoadValue()) == 0;
+        }
+
 
         if (isSettingOfNul & !checkSettingOfNul()) {
             statusBarLine.setStatus("Ноль уже градуирован", false);
@@ -434,6 +440,8 @@ public class CalibrationController implements BaseController {
         loadValueTextField.setText("");
         channelValueTextField.setText("");
         loadValueNameTextField.setText("");
+        channelValueMultiplierComboBox.getSelectionModel().select(5);
+        loadValueMultiplierComboBox.getSelectionModel().select(5);
         setChannelValueCheckBox.setSelected(false);
         setNulCheckBox.setSelected(false);
         calibrationModel.getCalibrationPoints().clear();
