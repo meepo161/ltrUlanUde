@@ -4,14 +4,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.geometry.Pos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import ru.avem.posum.utils.Utils;
 
@@ -33,13 +30,12 @@ public class ProcessModel {
 
     public void testData() {
         for (int i = 0; i < processData.size(); i++) {
-            processData.get(i).setGroup1Status(i % 7);
-            processData.get(i).setGroup2Status((i + 1) % 7);
-            processData.get(i).setGroup3Status(7 + (i) % 3);
-            processData.get(i).setGroup4Status((i + 3) % 7);
-            processData.get(i).setGroup1Value1(i + " %");
-            processData.get(i).setGroup2Value1((i + 1) + " В");
-            processData.get(i).setGroup3Value1((i + 2) + "234 %\n" + (i + 3) + "123 В");
+            processData.get(i).setAmplitudeStatus(i % 7);
+            processData.get(i).setFrequencyStatus((i + 1) % 7);
+            processData.get(i).setPhaseStatus(7 + (i) % 3);
+            processData.get(i).setResponseAmplitude(i + " %");
+            processData.get(i).setResponseFrequency((i + 1) + " В");
+            processData.get(i).setResponsePhase((i + 2) + "234 %\n" + (i + 3) + "123 В");
         }
     }
 
@@ -103,54 +99,29 @@ public class ProcessModel {
                             PairModel row = getTableView().getItems().get(getIndex());
                             switch (Integer.parseInt(groupNum)) {
                                 case 1:
-                                    row.setGroup1Enable(chBox.isSelected());
-                                    if (row.getGroup1GraphNum() < 0) {
-                                        row.setGroup1GraphNum(chartsAdd());
-                                        setSeriesColor(row.getGroup1GraphNum(), row.getGroup1Color());
+                                    row.setAmplitudeEnable(chBox.isSelected());
+                                    if (row.getAmplitudeGraphNum() < 0) {
+                                        row.setAmplitudeGraphNum(chartsAdd());
+                                        setSeriesColor(row.getAmplitudeGraphNum(), row.getAmplitudeColor());
                                     }
-                                    toggleSeries(row.getGroup1GraphNum(), chBox.isSelected());
+                                    toggleSeries(row.getAmplitudeGraphNum(), chBox.isSelected());
                                     break;
                                 case 2:
-                                    row.setGroup2Enable(chBox.isSelected());
-                                    if (row.getGroup2GraphNum() < 0) {
-                                        row.setGroup2GraphNum(chartsAdd());
-                                        setSeriesColor(row.getGroup2GraphNum(), row.getGroup2Color());
+                                    row.setFrequencyEnable(chBox.isSelected());
+                                    if (row.getFrequencyGraphNum() < 0) {
+                                        row.setFrequencyGraphNum(chartsAdd());
+                                        setSeriesColor(row.getFrequencyGraphNum(), row.getFrequencyColor());
                                     }
-                                    toggleSeries(row.getGroup2GraphNum(), chBox.isSelected());
+                                    toggleSeries(row.getFrequencyGraphNum(), chBox.isSelected());
                                     break;
                                 case 3:
-                                    row.setGroup3Enable(chBox.isSelected());
-                                    if (row.getGroup3GraphNum() < 0) {
-                                        row.setGroup3GraphNum(chartsAdd());
-                                        setSeriesColor(row.getGroup3GraphNum(), row.getGroup3Color());
+                                    row.setPhaseEnable(chBox.isSelected());
+                                    if (row.getPhaseGraphNum() < 0) {
+                                        row.setPhaseGraphNum(chartsAdd());
+                                        setSeriesColor(row.getPhaseGraphNum(), row.getPhaseColor());
                                     }
-                                    toggleSeries(row.getGroup3GraphNum(), chBox.isSelected());
+                                    toggleSeries(row.getPhaseGraphNum(), chBox.isSelected());
                                     break;
-                                case 4:
-                                    row.setGroup4Enable(chBox.isSelected());
-                                    if (row.getGroup4GraphNum() < 0) {
-                                        row.setGroup4GraphNum(chartsAdd());
-                                        setSeriesColor(row.getGroup4GraphNum(), row.getGroup4Color());
-                                    }
-                                    toggleSeries(row.getGroup4GraphNum(), chBox.isSelected());
-                                    break;
-                                case 5:
-                                    row.setGroup5Enable(chBox.isSelected());
-                                    if (row.getGroup5GraphNum() < 0) {
-                                        row.setGroup5GraphNum(chartsAdd());
-                                        setSeriesColor(row.getGroup5GraphNum(), row.getGroup5Color());
-                                    }
-                                    toggleSeries(row.getGroup5GraphNum(), chBox.isSelected());
-                                    break;
-                                case 6:
-                                    row.setGroup6Enable(chBox.isSelected());
-                                    if (row.getGroup6GraphNum() < 0) {
-                                        row.setGroup6GraphNum(chartsAdd());
-                                        setSeriesColor(row.getGroup6GraphNum(), row.getGroup6Color());
-                                    }
-                                    toggleSeries(row.getGroup6GraphNum(), chBox.isSelected());
-                                    break;
-                                default:
                             }
                         });
                     }
@@ -172,30 +143,16 @@ public class ProcessModel {
                             System.out.println("ColorPicker: " + row + " groupNum:" + groupNum + " isColor:" + colorValue);
                             switch (Integer.parseInt(groupNum)) {
                                 case 1:
-                                    row.setGroup1Color(colorValue);
-                                    setSeriesColor(row.getGroup1GraphNum(), row.getGroup1Color());
+                                    row.setAmplitudeColor(colorValue);
+                                    setSeriesColor(row.getAmplitudeGraphNum(), row.getAmplitudeColor());
                                     break;
                                 case 2:
-                                    row.setGroup2Color(colorValue);
-                                    setSeriesColor(row.getGroup2GraphNum(), row.getGroup2Color());
+                                    row.setFrequencyColor(colorValue);
+                                    setSeriesColor(row.getFrequencyGraphNum(), row.getFrequencyColor());
                                     break;
                                 case 3:
-                                    row.setGroup3Color(colorValue);
-                                    setSeriesColor(row.getGroup3GraphNum(), row.getGroup3Color());
-                                    break;
-                                case 4:
-                                    row.setGroup4Color(colorValue);
-                                    setSeriesColor(row.getGroup4GraphNum(), row.getGroup4Color());
-                                    break;
-                                case 5:
-                                    row.setGroup5Color(colorValue);
-                                    setSeriesColor(row.getGroup5GraphNum(), row.getGroup5Color());
-                                    break;
-                                case 6:
-                                    row.setGroup6Color(colorValue);
-                                    setSeriesColor(row.getGroup6GraphNum(), row.getGroup6Color());
-                                    break;
-                                default:
+                                    row.setPhaseColor(colorValue);
+                                    setSeriesColor(row.getPhaseGraphNum(), row.getPhaseColor());
                                     break;
                             }
                         });

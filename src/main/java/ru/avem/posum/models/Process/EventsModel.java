@@ -12,7 +12,7 @@ import java.util.List;
 public class EventsModel {
 
     private ObservableList<Events> eventData = FXCollections.observableArrayList();
-    private long testId = 0;
+    private long testId;
 
     public EventsModel( ) {
         this.testId = 0;

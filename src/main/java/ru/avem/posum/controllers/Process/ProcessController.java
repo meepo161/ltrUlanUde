@@ -1,8 +1,10 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.StatusBar;
@@ -28,7 +30,7 @@ public class ProcessController implements BaseController {
     @FXML
     private Slider dSlider;
     @FXML
-    private TextField dTextField;
+    private TextField dValueTextField;
     @FXML
     private Slider frequencySlider;
     @FXML
@@ -36,7 +38,7 @@ public class ProcessController implements BaseController {
     @FXML
     private Slider iSlider;
     @FXML
-    private TextField iTextField;
+    private TextField iValueTextField;
     @FXML
     private AnchorPane mainPanel;
     @FXML
@@ -46,7 +48,7 @@ public class ProcessController implements BaseController {
     @FXML
     private TableColumn<Events, String> eventDescriptionColumn;
     @FXML
-    private TableView<PairModel> tableSample;
+    private TableView<PairModel> table;
     @FXML
     private TableColumn<PairModel, String> pairColumn;
     @FXML
@@ -78,7 +80,7 @@ public class ProcessController implements BaseController {
     @FXML
     private Slider pSlider;
     @FXML
-    private TextField pTextField;
+    private TextField pValueTextField;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -90,6 +92,7 @@ public class ProcessController implements BaseController {
     @FXML
     private Label warningIcon;
 
+    private ContextMenu contextMenu = new ContextMenu();
     private ControllerManager cm;
     private EventsModel eventModel = new EventsModel();
     private ExperimentModel experimentModel = new ExperimentModel();
@@ -107,6 +110,8 @@ public class ProcessController implements BaseController {
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
 
         initTableView();
+        initContextMenu();
+        listenMouse();
 
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
         statusBarLine.setProcessView(true);
@@ -116,12 +121,12 @@ public class ProcessController implements BaseController {
         experimentModel.setProcessModel(processModel);
 
         programController = new ProgramController(amplitudeSlider, amplitudeTextField, calibratedAmplitudeTextField,
-                dSlider, dTextField, frequencySlider, frequencyTextField, iSlider, iTextField, mainPanel,
-                phaseSlider, phaseTextField, pSlider, pTextField, toolbarSettings, topPanel);
+                dSlider, dValueTextField, frequencySlider, frequencyTextField, iSlider, iValueTextField, mainPanel,
+                phaseSlider, phaseTextField, pSlider, pValueTextField, toolbarSettings, topPanel);
     }
 
     private void initTableView() {
-        processModel.initProcessSampleData(tableSample);
+        processModel.initProcessSampleData(table);
         processModel.SetProcessSampleColumnColorFunction(responseColumn);
         Utils.makeHeaderWrappable(pairColumn);
         processModel.init(ampResponseColumn);
@@ -135,15 +140,61 @@ public class ProcessController implements BaseController {
         processModel.init(phaseRelativeResponseColumn);
 
         pairColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        ampResponseColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value1Property());
-        ampColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value2Property());
-        ampRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().group1Value3Property());
-        phaseResponseColumn.setCellValueFactory(cellData -> cellData.getValue().group2Value1Property());
-        phaseColumn.setCellValueFactory(cellData -> cellData.getValue().group2Value2Property());
-        phaseRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().group2Value3Property());
-        frequencyResponseColumn.setCellValueFactory(cellData -> cellData.getValue().group3Value1Property());
-        frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().group3Value2Property());
-        frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().group3Value3Property());
+        ampResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseAmplitudeProperty());
+        ampColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
+        ampRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseAmplitudeProperty());
+        frequencyResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseFrequencyProperty());
+        frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
+        frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseFrequencyProperty());
+        phaseResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responsePhaseProperty());
+        phaseColumn.setCellValueFactory(cellData -> cellData.getValue().phaseProperty());
+        phaseRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponsePhaseProperty());
+    }
+
+    private void initContextMenu() {
+        MenuItem menuItemDelete = new MenuItem("Удалить");
+        MenuItem menuItemClear = new MenuItem("Удалить все");
+
+        menuItemDelete.setOnAction(event -> deletePairModel());
+        menuItemClear.setOnAction(event -> clearPairModels());
+
+        contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
+    }
+
+    private void deletePairModel() {
+        PairModel selectedPairModel = table.getSelectionModel().getSelectedItem();
+        table.getItems().remove(selectedPairModel);
+        statusBarLine.setStatus("Пара успешно удалена", true);
+    }
+
+    private void clearPairModels() {
+       ObservableList<PairModel> pairModels = table.getItems();
+       table.getItems().removeAll(pairModels);
+       statusBarLine.setStatus("Все пары успешно удалены", true);
+    }
+
+    private void listenMouse() {
+        table.setRowFactory(tv -> {
+            TableRow<PairModel> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                    contextMenu.show(table, event.getScreenX(), event.getScreenY());
+                } else if (event.getClickCount() == 1) {
+                    contextMenu.hide();
+                }
+
+                if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
+                    PairModel pair = table.getSelectionModel().getSelectedItem();
+                    amplitudeTextField.setText(pair.getAmplitude());
+                    frequencyTextField.setText(pair.getFrequency());
+                    phaseTextField.setText(pair.getPhase());
+                    pValueTextField.setText(pair.getpValue());
+                    iValueTextField.setText(pair.getiValue());
+                    dValueTextField.setText(pair.getdValue());
+                }
+            });
+            return row;
+        });
     }
 
     public void handleInitButton() {
@@ -218,7 +269,21 @@ public class ProcessController implements BaseController {
     public void handleExpandEventTableButton() {
     }
 
-    public void handlePidButton() {
+    public void handleSavePair() {
+        if (table.getSelectionModel().getSelectedIndex() != -1) {
+            PairModel pair = table.getSelectionModel().getSelectedItem();
+
+            pair.setAmplitude(amplitudeTextField.getText());
+            pair.setFrequency(frequencyTextField.getText());
+            pair.setPhase(phaseTextField.getText());
+            pair.setPvalue(pValueTextField.getText());
+            pair.setIvalue(iValueTextField.getText());
+            pair.setDvalue(dValueTextField.getText());
+
+            statusBarLine.setStatus("Пара успешно сохранена", true);
+        } else {
+            statusBarLine.setStatus("Не выбрана пара для сохранения", false);
+        }
     }
 
     public void handlePlugButton() {

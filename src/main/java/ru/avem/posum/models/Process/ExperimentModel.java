@@ -57,7 +57,6 @@ public class ExperimentModel extends Thread{
     public void SetTestId(long testId){
         this.DeInit();
         this.testId = testId;
-        this.processModel.getProcessData().add(new PairModel("АЦП5 ЦАП5"));
         this.processModel.setXAxis(range);
     }
 
