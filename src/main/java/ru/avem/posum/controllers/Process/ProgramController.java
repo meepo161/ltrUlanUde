@@ -107,14 +107,20 @@ public class ProgramController implements BaseController {
         });
     }
 
-
-
-    public void loadDacAndAdcChannels() {
-
+    public void clear() {
+        toolbarSettings.setVisible(false);
+        topPanel.setPrefHeight(mainPanel.getMaxHeight());
+        topPanel.maxHeight(mainPanel.getMaxHeight());
+        topPanel.minHeight(mainPanel.getMaxHeight());
+        programModel.resetProgramClickCounter();
     }
 
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
+    }
+
+    public ProgramModel getProgramModel() {
+        return programModel;
     }
 }

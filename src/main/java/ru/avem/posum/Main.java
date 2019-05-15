@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Screen;
@@ -298,6 +299,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public ExperimentModel getExperimentModel() {
         return processController.getExperimentModel();
+    }
+
+    @Override
+    public ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions() {
+        return linkingController.getLinkingModel().getRemovedDescriptions();
     }
 
     @Override

@@ -12,4 +12,8 @@ public class ProgramModel {
             return true;
         }
     }
+
+    public void resetProgramClickCounter() {
+        toProgramCounter = 2;
+    }
 }

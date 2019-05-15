@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -7,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -164,13 +166,32 @@ public class ProcessController implements BaseController {
     private void deletePairModel() {
         PairModel selectedPairModel = table.getSelectionModel().getSelectedItem();
         table.getItems().remove(selectedPairModel);
+        deleteDescriptions(selectedPairModel);
         statusBarLine.setStatus("Пара успешно удалена", true);
+    }
+
+    private void deleteDescriptions(PairModel pairModel) {
+        String descriptionOfDacChannel = pairModel.getName().split(" - ")[0];
+        String descriptionOfAdcChannel = pairModel.getName().split(" - ")[1];
+
+        for (Pair<CheckBox, CheckBox> descriptions : cm.getRemovedDescriptions()) {
+            if (descriptions.getKey().getText().contains(descriptionOfDacChannel) ||
+                    descriptions.getValue().getText().contains(descriptionOfAdcChannel)) {
+                Platform.runLater(() -> cm.getRemovedDescriptions().remove(descriptions));
+            }
+        }
     }
 
     private void clearPairModels() {
        ObservableList<PairModel> pairModels = table.getItems();
        table.getItems().removeAll(pairModels);
+       clearDescriptions();
        statusBarLine.setStatus("Все пары успешно удалены", true);
+    }
+
+    private void clearDescriptions() {
+        ObservableList<Pair<CheckBox, CheckBox>> descriptions = cm.getRemovedDescriptions();
+        cm.getRemovedDescriptions().removeAll(descriptions);
     }
 
     private void listenMouse() {
@@ -251,6 +272,7 @@ public class ProcessController implements BaseController {
             if (result.isPresent()) {
                 if (result.get() == ok) {
                     experimentModel.Terminate();
+                    programController.clear();
                     wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
                 }
             }

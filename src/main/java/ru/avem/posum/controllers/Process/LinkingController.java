@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressIndicator;
+import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
@@ -51,8 +52,8 @@ public class LinkingController implements BaseController {
             dacChannelsListView.getItems().clear();
             adcChannelsListView.getItems().clear();
 
-            dacChannelsListView.setItems(linkingModel.getChannelsDescriptions(Crate.LTR34));
-            adcChannelsListView.setItems(linkingModel.getChannelsDescriptions(Crate.LTR212, Crate.LTR24));
+            dacChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR34));
+            adcChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24));
 
             listen(dacChannelsListView);
             listen(adcChannelsListView);
@@ -87,11 +88,13 @@ public class LinkingController implements BaseController {
             return;
         }
 
-        selectedDacChannel.ifPresent(checkBox -> dacChannelsListView.getItems().remove(checkBox));
-        selectedAdcChannel.ifPresent(checkBox -> adcChannelsListView.getItems().remove(checkBox));
+        dacChannelsListView.getItems().remove(selectedDacChannel.get());
+        adcChannelsListView.getItems().remove(selectedAdcChannel.get());
+        linkingModel.removeChannelsDescriptions(new Pair<>(selectedDacChannel.get(), selectedAdcChannel.get()));
 
         String pairName = selectedDacChannel.get().getText().split(" \\(")[0] + " - " +
                           selectedAdcChannel.get().getText().split(" \\(")[0];
+
         processModel.getProcessData().add(new PairModel(pairName));
 
         enableChooseOfChannels(dacChannelsListView);
@@ -134,6 +137,10 @@ public class LinkingController implements BaseController {
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
+    }
+
+    public LinkingModel getLinkingModel() {
+        return linkingModel;
     }
 
     public void setTestProgram(TestProgram testProgram) {
