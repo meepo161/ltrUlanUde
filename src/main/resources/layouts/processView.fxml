@@ -212,7 +212,7 @@
                 </AnchorPane>
                 <ToolBar fx:id="toolbarSettings" maxHeight="110.0" minHeight="110.0" prefHeight="110.0">
                     <items>
-                        <Pane prefHeight="90.0" prefWidth="436.0">
+                        <Pane prefHeight="90.0" prefWidth="580.0">
                             <children>
                                 <ListView fx:id="plug_ListView" prefHeight="97.0" prefWidth="54.0" style="-fx-background-radius: 5px;" />
                                 <Button fx:id="plug_Button" layoutX="53.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран">
@@ -225,7 +225,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="110.0" layoutY="30.0" text="мВ">
+                                <Label layoutX="110.0" layoutY="30.0" text="В">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -240,44 +240,70 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="calibratedAmplitudeTextField" layoutX="131.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="calibratedAmplitudeTextField" layoutX="130.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
                                 <Slider fx:id="amplitudeSlider" blockIncrement="1.0" layoutX="196.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                                <Label layoutX="220.0" text="Частота">
+                        <Label layoutX="220.0" text="Статика">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="220.0" layoutY="30.0" text="В">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="dcTextField" layoutX="243.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="220.0" layoutY="60.0" text="ед">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="calibratedDcTextField" layoutX="243.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Slider fx:id="dcSlider" blockIncrement="1.0" layoutX="308.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                                <Label layoutX="330.0" text="Частота">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="220.0" layoutY="30.0" text="Гц">
+                                <Label layoutX="330.0" layoutY="30.0" text="Гц">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="frequencyTextField" layoutX="243.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="frequencyTextField" layoutX="353.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="308.0" layoutY="3.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
-                                <Label layoutX="330.0" text="Фаза">
+                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="418.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Label layoutX="440.0" text="Фаза">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="330.0" layoutY="30.0" text="°">
+                                <Label layoutX="440.0" layoutY="30.0" text="°">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="phaseTextField" layoutX="345.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="phaseTextField" layoutX="463.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="phaseSlider" blockIncrement="1.0" layoutX="410.0" layoutY="3.0" max="360.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Slider fx:id="phaseSlider" blockIncrement="1.0" layoutX="528.0" layoutY="6.0" max="360.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
                             </children>
                         </Pane>
                         <Pane prefHeight="97.0" prefWidth="387.0">
@@ -297,30 +323,30 @@
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Slider fx:id="pSlider" blockIncrement="1.0" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="175.0" />
-                                <Slider fx:id="iSlider" blockIncrement="1.0" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="175.0" />
-                                <Slider fx:id="dSlider" blockIncrement="1.0" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="175.0" />
-                                <TextField fx:id="pValueTextField" layoutX="198.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <Slider fx:id="pSlider" blockIncrement="1.0" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
+                                <Slider fx:id="iSlider" blockIncrement="1.0" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
+                                <Slider fx:id="dSlider" blockIncrement="1.0" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
+                                <TextField fx:id="pValueTextField" layoutX="168.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="iValueTextField" layoutX="198.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="iValueTextField" layoutX="168.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="dValueTextField" layoutX="198.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="dValueTextField" layoutX="168.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="linkDACWithADCButton" layoutX="268.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Создать пару ЦАП - АЦП" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="linkDACWithADCButton" layoutX="233.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Создать пару ЦАП - АЦП" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="savePair" layoutX="378.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePair" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
+                                <Button fx:id="savePair" layoutX="343.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePair" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>

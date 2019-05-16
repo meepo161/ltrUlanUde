@@ -2,6 +2,7 @@ package ru.avem.posum.db.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,20 +150,20 @@ public class Modules {
         return channelsDescription;
     }
 
-    public static List<String> getChannelsDescriptions(Modules module) {
-        List<String> outputList = new ArrayList<>();
+    public static List<Pair<Integer, String>> getChannelsDescriptions(Modules module) {
+        List<Pair<Integer, String>> outputList = new ArrayList<>();
         String[] checkedChannels = module.getCheckedChannels().split(", ");
         String[] descriptions = module.getChannelsDescriptions().split(", ");
+        String description;
 
         for (int channelIndex = 0; channelIndex < checkedChannels.length; channelIndex++) {
             if (checkedChannels[channelIndex].equals("true")) {
                 if (channelIndex < descriptions.length) { // если описание существует
-                    String description = String.format("%s (модуль %s, слот %d)", descriptions[channelIndex], module.getModuleType(), module.getSlot());
-                    outputList.add(description);
+                    description = String.format("%s (модуль %s, слот %d)", descriptions[channelIndex], module.getModuleType(), module.getSlot());
                 } else {
-                    String description = String.format("Канал %d (модуль %s, слот %d)", (channelIndex + 1), module.getModuleType(), module.getSlot());
-                    outputList.add(description);
+                    description = String.format("Канал %d (модуль %s, слот %d)", (channelIndex + 1), module.getModuleType(), module.getSlot());
                 }
+                outputList.add(new Pair<>(channelIndex + 1, description));
             }
         }
 
@@ -183,16 +184,40 @@ public class Modules {
         return amplitudes;
     }
 
+    public static double getAmplitude(Modules module, int channel) {
+        String[] amplitudes = module.getAmplitudes().split(", ");
+        return Double.parseDouble(amplitudes[channel - 1]);
+    }
+
     public String getDc() {
         return dc;
+    }
+
+    public static double getDc(Modules module, int channel) {
+        String[] dc = module.getDc().split(", ");
+        return Double.parseDouble(dc[channel - 1]);
     }
 
     public String getFrequencies() {
         return frequencies;
     }
 
+    public static int getFrequency(Modules module, int channel) {
+        String[] frequencies = module.getFrequencies().split(", ");
+        return Integer.parseInt(frequencies[channel - 1]);
+    }
+
+    public static String getModuleName(Modules module) {
+        return String.format("модуль %s, слот %d", module.getModuleType(), module.getSlot());
+    }
+
     public String getPhases() {
         return phases;
+    }
+
+    public static int getPhase(Modules module, int channel) {
+        String[] phases = module.getPhases().split(", ");
+        return Integer.parseInt(phases[channel - 1]);
     }
 
     public String getSettings() {

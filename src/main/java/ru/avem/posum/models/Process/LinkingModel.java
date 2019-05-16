@@ -10,11 +10,15 @@ import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class LinkingModel {
-    private TestProgram testProgram;
+    private HashMap<String, List<Pair<Integer, String>>> channelsHashMap = new HashMap<>();
+    private List<Pair<Integer, String>> descriptions;
+    private HashMap<String, Modules> modulesHashMap = new HashMap<>();
     private ObservableList<Pair<CheckBox, CheckBox>> removedDescriptions = FXCollections.observableArrayList();
+    private TestProgram testProgram;
 
     public ObservableList<CheckBox> getDescriptionsOfChannels(String... moduleTypes) {
         ObservableList<CheckBox> descriptions = loadDescriptionsOfChannels(moduleTypes);
@@ -30,10 +34,14 @@ public class LinkingModel {
             List<Modules> modules = getModules(moduleType);
 
             for (Modules module : modules) {
-                List<String> descriptions = Modules.getChannelsDescriptions(module);
+                String moduleName = Modules.getModuleName(module);
+                descriptions = Modules.getChannelsDescriptions(module);
 
-                for (String description : descriptions) {
-                    channels.add(new CheckBox(description));
+                channelsHashMap.put(moduleName, descriptions);
+
+                for (Pair<Integer, String> description : descriptions) {
+                    channels.add(new CheckBox(description.getValue()));
+                    modulesHashMap.put(description.getValue(), module); // сохранение описания канала с объектом базы данных
                 }
             }
         }
@@ -71,6 +79,14 @@ public class LinkingModel {
         if (!removedDescriptions.contains(descriptions)) {
             removedDescriptions.add(descriptions);
         }
+    }
+
+    public HashMap<String, List<Pair<Integer, String>>> getChannelsHashMap() {
+        return channelsHashMap;
+    }
+
+    public Modules getModule(String channelDescription) {
+        return modulesHashMap.get(channelDescription);
     }
 
     public ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions() {

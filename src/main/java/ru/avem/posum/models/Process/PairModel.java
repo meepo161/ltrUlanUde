@@ -16,6 +16,7 @@ public class PairModel {
     private final StringProperty responseAmplitude;
     private final StringProperty amplitude;
     private final StringProperty relativeResponseAmplitude;
+    private final StringProperty dc;
     private final StringProperty frequencyColor;
     private final IntegerProperty frequencyGraphNum;
     private final BooleanProperty frequencyEnable;
@@ -48,6 +49,7 @@ public class PairModel {
         this.responseAmplitude = new SimpleStringProperty("0");
         this.amplitude = new SimpleStringProperty("0");
         this.relativeResponseAmplitude = new SimpleStringProperty("0");
+        this.dc = new SimpleStringProperty("0");
         this.frequencyColor = new SimpleStringProperty(String.format("%d, %d, %d",
                 (frequencyColor.getRed() * 255),
                 (frequencyColor.getGreen() * 255),
@@ -121,6 +123,10 @@ public class PairModel {
     public String getRelativeResponseAmplitude() { return relativeResponseAmplitude.get(); }
     public StringProperty relativeResponseAmplitudeProperty() { return relativeResponseAmplitude; }
     public void setRelativeResponseAmplitude(String relativeResponseAmplitude) { this.relativeResponseAmplitude.set(relativeResponseAmplitude); }
+
+    public String getDc() { return dc.get(); }
+    public StringProperty dc() { return dc; }
+    public void setDc(String dc) { this.dc.set(dc); }
 
     public String getFrequencyColor() { return frequencyColor.get(); }
     public StringProperty frequencyColorProperty() { return frequencyColor; }

@@ -15,6 +15,9 @@ public class ProgramController implements BaseController {
     private Slider amplitudeSlider;
     private TextField amplitudeTextField;
     private TextField calibratedAmplitudeTextField;
+    private TextField calibratedDcTextField;
+    private Slider dcSlider;
+    private TextField dcTextField;
     private Slider dSlider;
     private TextField dTextField;
     private Slider frequencySlider;
@@ -32,7 +35,8 @@ public class ProgramController implements BaseController {
     private WindowsManager wm;
 
     public ProgramController(Slider amplitudeSlider, TextField amplitudeTextField,
-                             TextField calibratedAmplitudeTextField, Slider dSlider, TextField dTextField,
+                             TextField calibratedAmplitudeTextField, TextField calibratedDcTextField,
+                             Slider dcSlider, TextField dcTextField, Slider dSlider, TextField dTextField,
                              Slider frequencySlider, TextField frequencyTextField, Slider iSlider,
                              TextField iTextField, AnchorPane mainPanel, Slider phaseSlider, TextField phaseTextField,
                              Slider pSlider, TextField pTextField, ToolBar toolbarSettings, VBox topPanel) {
@@ -40,6 +44,9 @@ public class ProgramController implements BaseController {
         this.amplitudeSlider = amplitudeSlider;
         this.amplitudeTextField = amplitudeTextField;
         this.calibratedAmplitudeTextField = calibratedAmplitudeTextField;
+        this.calibratedDcTextField = calibratedDcTextField;
+        this.dcSlider = dcSlider;
+        this.dcTextField = dcTextField;
         this.dSlider = dSlider;
         this.dTextField = dTextField;
         this.frequencySlider = frequencySlider;
@@ -72,6 +79,7 @@ public class ProgramController implements BaseController {
 
     private void initSliders() {
         init(amplitudeSlider, amplitudeTextField);
+        init(dcSlider, dcTextField);
         init(frequencySlider, frequencyTextField);
         init(phaseSlider, phaseTextField);
         init(pSlider, pTextField);

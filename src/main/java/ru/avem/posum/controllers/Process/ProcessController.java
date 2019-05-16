@@ -28,7 +28,13 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField calibratedAmplitudeTextField;
     @FXML
+    private TextField calibratedDcTextField;
+    @FXML
     private Label checkIcon;
+    @FXML
+    private Slider dcSlider;
+    @FXML
+    private TextField dcTextField;
     @FXML
     private Slider dSlider;
     @FXML
@@ -123,8 +129,9 @@ public class ProcessController implements BaseController {
         experimentModel.setProcessModel(processModel);
 
         programController = new ProgramController(amplitudeSlider, amplitudeTextField, calibratedAmplitudeTextField,
-                dSlider, dValueTextField, frequencySlider, frequencyTextField, iSlider, iValueTextField, mainPanel,
-                phaseSlider, phaseTextField, pSlider, pValueTextField, toolbarSettings, topPanel);
+                calibratedDcTextField, dcSlider, dcTextField, dSlider, dValueTextField, frequencySlider,
+                frequencyTextField, iSlider, iValueTextField, mainPanel, phaseSlider, phaseTextField, pSlider,
+                pValueTextField, toolbarSettings, topPanel);
     }
 
     private void initTableView() {
@@ -207,6 +214,7 @@ public class ProcessController implements BaseController {
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
                     PairModel pair = table.getSelectionModel().getSelectedItem();
                     amplitudeTextField.setText(pair.getAmplitude());
+                    dcTextField.setText(pair.getDc());
                     frequencyTextField.setText(pair.getFrequency());
                     phaseTextField.setText(pair.getPhase());
                     pValueTextField.setText(pair.getpValue());
@@ -296,6 +304,7 @@ public class ProcessController implements BaseController {
             PairModel pair = table.getSelectionModel().getSelectedItem();
 
             pair.setAmplitude(amplitudeTextField.getText());
+            pair.setDc(dcTextField.getText());
             pair.setFrequency(frequencyTextField.getText());
             pair.setPhase(phaseTextField.getText());
             pair.setPvalue(pValueTextField.getText());

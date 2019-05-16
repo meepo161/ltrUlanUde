@@ -278,21 +278,22 @@ class LTR34ChannelsSettings extends LTR34Settings {
 
     private void replaceNul(CheckBox channel, double value, TextField textField) {
         String textFieldName = textField.getId();
-        int roundedValue = 0;
-
-        if (!textFieldName.contains("dc") || !textFieldName.contains("amplitude")) {
-            roundedValue = (int) value;
-        }
 
         if (value != 0) {
-            if (textFieldName.contains("amplitude") || textFieldName.contains("dc")) {
+            boolean isSettingOfAmplitudeOrDc = textFieldName.contains("amplitude") || textFieldName.contains("dc");
+
+            if (isSettingOfAmplitudeOrDc) {
                 textField.setText(String.valueOf(value));
             } else {
-                textField.setText(String.valueOf(roundedValue));
+                textField.setText(String.valueOf((int) value));
             }
-        } else if (channel.isSelected()) {
+        }
+
+        if (value == 0 && channel.isSelected()) {
             textField.setText("0");
-        } else {
+        }
+
+        if (value == 0 && !channel.isSelected()){
             textField.setText("");
         }
     }

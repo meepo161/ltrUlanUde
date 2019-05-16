@@ -85,17 +85,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN1" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN1" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN1" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN1" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN1" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN1" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="1" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -115,17 +115,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN2" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN2" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="2" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN2" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN2" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="2" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN2" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN2" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="2" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -145,17 +145,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN3" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN3" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="3" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN3" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN3" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="3" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN3" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN3" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="3" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -175,17 +175,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN4" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="4" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN4" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="4" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN4" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="4" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN4" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="4" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN4" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="4" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN4" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="4" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -205,17 +205,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN5" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="5" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN5" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="5" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN5" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="5" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN5" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="5" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN5" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="5" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN5" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="5" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -235,17 +235,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN6" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="6" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN6" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="6" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN6" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="6" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN6" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="6" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN6" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="6" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN6" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="6" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -265,17 +265,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN7" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="7" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN7" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="7" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN7" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="7" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN7" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="7" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN7" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="7" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN7" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="7" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -295,17 +295,17 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="frequencyOfChannelN8" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="8" GridPane.rowIndex="4">
+                        <TextField fx:id="dcOfChannelN8" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="8" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="phaseOfChannelN8" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="8" GridPane.rowIndex="5">
+                        <TextField fx:id="frequencyOfChannelN8" disable="true" maxWidth="120.0" promptText="Частота" GridPane.columnIndex="8" GridPane.rowIndex="5">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
-                        <TextField fx:id="dcOfChannelN8" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="8" GridPane.rowIndex="6">
+                        <TextField fx:id="phaseOfChannelN8" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="8" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
