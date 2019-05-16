@@ -21,7 +21,7 @@ import java.util.List;
 
 public class SettingsModel implements BaseController {
     private ADC adc;
-    private int[] amplitudes;
+    private double[] amplitudes;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
     private String[] descriptions;
@@ -32,6 +32,7 @@ public class SettingsModel implements BaseController {
     private String crateSerialNumber;
     private Crate crate;
     private DAC dac;
+    private double[] dc;
     private int[] frequencies;
     private boolean isEditMode;
     private HashMap<String, Actionable> instructions = new HashMap<>();
@@ -156,6 +157,7 @@ public class SettingsModel implements BaseController {
         measuringRanges = null;
         descriptions = dac.getDescriptions();
         amplitudes = dac.getAmplitudes();
+        dc = dac.getDc();
         frequencies = dac.getFrequencies();
         phases = dac.getPhases();
     }
@@ -349,12 +351,14 @@ public class SettingsModel implements BaseController {
         StringBuilder checkedChannelsLine = new StringBuilder();
         StringBuilder channelsDescriptionsLine = new StringBuilder();
         StringBuilder amplitudesLine = new StringBuilder();
+        StringBuilder dcLine = new StringBuilder();
         StringBuilder frequenciesLine = new StringBuilder();
         StringBuilder phasesLine = new StringBuilder();
 
         for (int i = 0; i < dac.getChannelsCount(); i++) {
             checkedChannelsLine.append(checkedChannels[i]).append(", ");
             amplitudesLine.append(amplitudes[i]).append(", ");
+            dcLine.append(dc[i]).append(", ");
             channelsDescriptionsLine.append(descriptions[i]).append(", ");
             frequenciesLine.append(frequencies[i]).append(", ");
             phasesLine.append(phases[i]).append(", ");
@@ -366,6 +370,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Checked channels", checkedChannelsLine.toString());
         moduleSettings.put("Channels description", channelsDescriptionsLine.toString());
         moduleSettings.put("Amplitudes", amplitudesLine.toString());
+        moduleSettings.put("Dc", dcLine.toString());
         moduleSettings.put("Frequencies", frequenciesLine.toString());
         moduleSettings.put("Phases", phasesLine.toString());
     }
@@ -375,6 +380,7 @@ public class SettingsModel implements BaseController {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
                 module.setCheckedChannels(dac.getCheckedChannels());
                 module.setAmplitudes(dac.getAmplitudes());
+                module.setDc(dac.getDc());
                 module.setChannelsDescription(dac.getDescriptions());
                 module.setFrequencies(dac.getFrequencies());
                 module.setPhases(dac.getPhases());
@@ -500,6 +506,7 @@ public class SettingsModel implements BaseController {
             String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
             String[] parsedChannelsDescription = module.getChannelsDescriptions().split(", ", 9);
             String[] parsedAmplitudes = module.getAmplitudes().split(", ", 9);
+            String[] parsedDc = module.getDc().split(", ", 9);
             String[] parsedFrequencies = module.getFrequencies().split(", ", 9);
             String[] parsedPhases = module.getPhases().split(", ", 9);
 
@@ -509,7 +516,8 @@ public class SettingsModel implements BaseController {
             for (int i = 0; i < channels; i++) {
                 checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
                 descriptions[i] = parsedChannelsDescription[i];
-                amplitudes[i] = Integer.parseInt(parsedAmplitudes[i]);
+                amplitudes[i] = Double.parseDouble(parsedAmplitudes[i]);
+                dc[i] = Double.parseDouble(parsedDc[i]);
                 frequencies[i] = Integer.parseInt(parsedFrequencies[i]);
                 phases[i] = Integer.parseInt(parsedPhases[i]);
             }

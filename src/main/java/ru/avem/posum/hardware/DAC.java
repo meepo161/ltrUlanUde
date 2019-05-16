@@ -18,7 +18,7 @@ public abstract class DAC extends Module {
         }
     }
 
-    private int[] amplitudes;
+    private double[] amplitudes;
     private int checkedChannelsCounter;
     private double[] dc;
     private int[] frequencies;
@@ -27,7 +27,7 @@ public abstract class DAC extends Module {
 
     DAC() {
         channelsCount = 8; // 8 каналов, поскольку в проекте используется LTR34-8
-        amplitudes = new int[channelsCount];
+        amplitudes = new double[channelsCount];
         checkedChannels = new boolean[channelsCount];
         dc = new double[channelsCount];
         descriptions = new String[channelsCount];
@@ -40,7 +40,7 @@ public abstract class DAC extends Module {
 
     public abstract double getFrequency();
 
-    public int[] getAmplitudes() {
+    public double[] getAmplitudes() {
         return amplitudes;
     }
 

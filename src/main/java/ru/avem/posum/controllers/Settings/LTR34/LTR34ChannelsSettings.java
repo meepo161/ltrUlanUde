@@ -213,8 +213,8 @@ class LTR34ChannelsSettings extends LTR34Settings {
      */
     private void setAmplitudeFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("^[1-9]|(10)|$")) {
+            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
+            if (!newValue.matches("^[1-9](\\.|,)\\d+|^[1-9](\\.|,)|^[1-9]|^10|^10(\\.|,)0|^[0](\\.|,)\\d+|^[0](\\.|,)|^[0]|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -256,7 +256,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
     private void setDcFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
-            if (!newValue.matches("^-?[1-9](\\.|,)\\d+|^-?[1-9](\\.|,)|^-?[1-9]|-|(10)|(-10)|^-?[0](\\.|,)\\d+|^-?[0](\\.|,)|^-?[0]|$")) {
+            if (!newValue.matches("^-?[1-9](\\.|,)\\d+|^-?[1-9](\\.|,)|^-?[1-9]|-|10|-10(\\.|,)0|^-?[0](\\.|,)\\d+|^-?[0](\\.|,)|^-?[0]|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -270,14 +270,26 @@ class LTR34ChannelsSettings extends LTR34Settings {
             descriptionsTextFields.get(channelIndex).setText(ltr34SettingsModel.getDescriptions()[channelIndex]);
             frequenciesTextFields.get(channelIndex).setText(String.valueOf(ltr34SettingsModel.getFrequencies()[channelIndex]));
 
+            replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getAmplitudes()[channelIndex], amplitudesTextFields.get(channelIndex));
             replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getPhases()[channelIndex], phasesTextFields.get(channelIndex));
             replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getDc()[channelIndex], dcTextFields.get(channelIndex));
         }
     }
 
-    private void replaceNul(CheckBox channel, double value,  TextField textField) {
+    private void replaceNul(CheckBox channel, double value, TextField textField) {
+        String textFieldName = textField.getId();
+        int roundedValue = 0;
+
+        if (!textFieldName.contains("dc") || !textFieldName.contains("amplitude")) {
+            roundedValue = (int) value;
+        }
+
         if (value != 0) {
-            textField.setText(String.valueOf(value));
+            if (textFieldName.contains("amplitude") || textFieldName.contains("dc")) {
+                textField.setText(String.valueOf(value));
+            } else {
+                textField.setText(String.valueOf(roundedValue));
+            }
         } else if (channel.isSelected()) {
             textField.setText("0");
         } else {
@@ -300,7 +312,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             if (checkBoxes.get(channelIndex).isSelected()) {
                 ltr34SettingsModel.getCheckedChannels()[channelIndex] = true; // true - канал выбран
-                ltr34SettingsModel.getAmplitudes()[channelIndex] = parseInteger(amplitudesTextFields.get(channelIndex));
+                ltr34SettingsModel.getAmplitudes()[channelIndex] = parseDouble(amplitudesTextFields.get(channelIndex));
                 ltr34SettingsModel.getDc()[channelIndex] = parseDouble(dcTextFields.get(channelIndex));
                 ltr34SettingsModel.getDescriptions()[channelIndex] = descriptionsTextFields.get(channelIndex).getText();
                 ltr34SettingsModel.getFrequencies()[channelIndex] = parseInteger(frequenciesTextFields.get(channelIndex));
@@ -308,6 +320,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
             } else {
                 ltr34SettingsModel.getCheckedChannels()[channelIndex] = false; // false - канал не выбран
                 ltr34SettingsModel.getAmplitudes()[channelIndex] = 0;
+                ltr34SettingsModel.getDc()[channelIndex] = 0;
                 ltr34SettingsModel.getDescriptions()[channelIndex] = "";
                 ltr34SettingsModel.getFrequencies()[channelIndex] = 0;
                 ltr34SettingsModel.getPhases()[channelIndex] = 0;

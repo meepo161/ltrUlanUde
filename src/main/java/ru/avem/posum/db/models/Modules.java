@@ -37,6 +37,9 @@ public class Modules {
     private String amplitudes;
 
     @DatabaseField
+    private String dc;
+
+    @DatabaseField
     private String frequencies;
 
     @DatabaseField
@@ -58,12 +61,23 @@ public class Modules {
         measuringRanges = moduleSettings.getOrDefault("Measuring ranges", "");
         channelsDescription = moduleSettings.getOrDefault("Channels description", "");
         amplitudes = moduleSettings.getOrDefault("Amplitudes", "");
+        dc = moduleSettings.getOrDefault("Dc", "");
         frequencies = moduleSettings.getOrDefault("Frequencies", "");
         phases = moduleSettings.getOrDefault("Phases", "");
         settings = moduleSettings.getOrDefault("Module HardwareSettings", "");
     }
 
     private String settingsToString(int[] settings) {
+        StringBuffer settingsLine = new StringBuffer();
+
+        for (Object value : settings) {
+            settingsLine.append(value).append(", ");
+        }
+
+        return String.valueOf(settingsLine);
+    }
+
+    private String settingsToString(double[] settings) {
         StringBuffer settingsLine = new StringBuffer();
 
         for (Object value : settings) {
@@ -169,28 +183,36 @@ public class Modules {
         return amplitudes;
     }
 
-    public void setAmplitudes(int[] amplitudes) {
-        this.amplitudes = settingsToString(amplitudes);
+    public String getDc() {
+        return dc;
     }
 
     public String getFrequencies() {
         return frequencies;
     }
 
-    public void setFrequencies(int[] frequencies) {
-        this.frequencies = settingsToString(frequencies);
-    }
-
     public String getPhases() {
         return phases;
     }
 
-    public void setPhases(int[] phases) {
-        this.phases = settingsToString(phases);
-    }
-
     public String getSettings() {
         return settings;
+    }
+
+    public void setAmplitudes(double[] amplitudes) {
+        this.amplitudes = settingsToString(amplitudes);
+    }
+
+    public void setDc(double[] dc) {
+        this.dc = settingsToString(dc);
+    }
+
+    public void setFrequencies(int[] frequencies) {
+        this.frequencies = settingsToString(frequencies);
+    }
+
+    public void setPhases(int[] phases) {
+        this.phases = settingsToString(phases);
     }
 
     public void setSettings(String settings) {

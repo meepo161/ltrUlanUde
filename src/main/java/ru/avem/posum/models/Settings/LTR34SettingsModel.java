@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 public class LTR34SettingsModel {
-    private int[] amplitudes;
+    private double[] amplitudes;
     private boolean[] checkedChannels;
     private boolean connectionOpen = true;
     private double[] dc;
@@ -23,7 +23,7 @@ public class LTR34SettingsModel {
     private Random random = new Random();
     private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
     private int slot;
-    private boolean stopped;
+    private boolean stopped = true;
 
     public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
         this.ltr34 = (LTR34) instancesOfModules.get(slot);
@@ -79,7 +79,7 @@ public class LTR34SettingsModel {
         signal = mergeArrays(channelsData);
     }
 
-    private double[] createSinSignal(int length, int amplitude, double dc, int frequency, int phase) {
+    private double[] createSinSignal(int length, double amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
@@ -90,7 +90,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
-    private double[] createSquareSignal(int length, int amplitude, double dc, int frequency, int phase) {
+    private double[] createSquareSignal(int length, double amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
@@ -101,7 +101,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
-    private double[] createTriangleSignal(int length, int amplitude, double dc, int frequency, int phase) {
+    private double[] createTriangleSignal(int length, double amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
@@ -112,7 +112,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
-    private double[] createSawtoothSignal(int length, int amplitude, double dc, int frequency, int phase, double coefficient) {
+    private double[] createSawtoothSignal(int length, double amplitude, double dc, int frequency, int phase, double coefficient) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
@@ -125,7 +125,7 @@ public class LTR34SettingsModel {
     }
 
 
-    private double[] createNoiseSignal(int length, int amplitude, double dc, int frequency, int phase) {
+    private double[] createNoiseSignal(int length, double amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
@@ -171,13 +171,13 @@ public class LTR34SettingsModel {
     }
 
     public void stopModule() {
-        if (connectionOpen) {
+        if (!stopped) {
             ltr34.stop();
             stopped = true;
         }
     }
 
-    public int[] getAmplitudes() {
+    public double[] getAmplitudes() {
         return amplitudes;
     }
 
