@@ -181,6 +181,7 @@ public class LTR34Settings implements BaseController {
                 generate();
                 showGraph();
             } else {
+                ltr34ChannelsSettings.enableUiElements();
                 ltr34ModuleSettings.enableUiElements();
             }
 
@@ -258,6 +259,7 @@ public class LTR34Settings implements BaseController {
         new Thread(() -> {
             ltr34ChannelsSettings.saveSettings();
             ltr34ModuleSettings.saveSettings();
+            ltr34SettingsModel.stopModule();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();

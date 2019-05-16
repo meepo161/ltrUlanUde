@@ -20,6 +20,7 @@ public abstract class DAC extends Module {
 
     private int[] amplitudes;
     private int checkedChannelsCounter;
+    private double[] dc;
     private int[] frequencies;
     HashMap<String, Integer> moduleSettings;
     private int[] phases;
@@ -28,6 +29,7 @@ public abstract class DAC extends Module {
         channelsCount = 8; // 8 каналов, поскольку в проекте используется LTR34-8
         amplitudes = new int[channelsCount];
         checkedChannels = new boolean[channelsCount];
+        dc = new double[channelsCount];
         descriptions = new String[channelsCount];
         frequencies = new int[channelsCount];
         moduleSettings = new HashMap<>();
@@ -44,6 +46,10 @@ public abstract class DAC extends Module {
 
     public int getCheckedChannelsCounter() {
         return checkedChannelsCounter;
+    }
+
+    public double[] getDc() {
+        return dc;
     }
 
     public int[] getFrequencies() {

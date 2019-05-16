@@ -95,6 +95,11 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
+                        <TextField fx:id="dcOfChannelN1" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
                         <CheckBox fx:id="checkChannelN2" mnemonicParsing="false" text="Канал 2" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="10.0" />
@@ -116,6 +121,11 @@
                            </GridPane.margin>
                         </TextField>
                         <TextField fx:id="phaseOfChannelN2" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="dcOfChannelN2" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="2" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -145,6 +155,11 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
+                        <TextField fx:id="dcOfChannelN3" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
                         <CheckBox fx:id="checkChannelN4" mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="4" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="10.0" />
@@ -166,6 +181,11 @@
                            </GridPane.margin>
                         </TextField>
                         <TextField fx:id="phaseOfChannelN4" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="4" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="dcOfChannelN4" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="4" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -195,6 +215,11 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
+                        <TextField fx:id="dcOfChannelN5" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="5" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
                         <CheckBox fx:id="checkChannelN6" mnemonicParsing="false" text="Канал 6" GridPane.columnIndex="6" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="10.0" />
@@ -216,6 +241,11 @@
                            </GridPane.margin>
                         </TextField>
                         <TextField fx:id="phaseOfChannelN6" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="6" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="dcOfChannelN6" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="6" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -245,6 +275,11 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </TextField>
+                        <TextField fx:id="dcOfChannelN7" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="7" GridPane.rowIndex="6">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
                         <CheckBox fx:id="checkChannelN8" mnemonicParsing="false" text="Канал 8" GridPane.columnIndex="8" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="10.0" />
@@ -266,6 +301,11 @@
                            </GridPane.margin>
                         </TextField>
                         <TextField fx:id="phaseOfChannelN8" disable="true" maxWidth="120.0" promptText="Фаза" GridPane.columnIndex="8" GridPane.rowIndex="5">
+                           <GridPane.margin>
+                              <Insets left="10.0" />
+                           </GridPane.margin>
+                        </TextField>
+                        <TextField fx:id="dcOfChannelN8" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="8" GridPane.rowIndex="6">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
@@ -303,46 +343,6 @@
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </ComboBox>
-                        <TextField fx:id="dcOfChannelN1" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN2" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN3" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="3" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN4" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="4" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN5" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="5" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN6" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="6" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN7" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="7" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
-                        <TextField fx:id="dcOfChannelN8" disable="true" maxWidth="120.0" promptText="Статика" GridPane.columnIndex="8" GridPane.rowIndex="6">
-                           <GridPane.margin>
-                              <Insets left="10.0" />
-                           </GridPane.margin>
-                        </TextField>
                      </children>
                   </GridPane>
                </items>
@@ -358,7 +358,10 @@
                   <Insets right="145.0" />
                </GridPane.margin>
             </Button>
-            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+            <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets left="15.0" />
+               </GridPane.margin></StatusBar>
             <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;" GridPane.rowIndex="5" />
             <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.rowIndex="5" />
             <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.rowIndex="5" />

@@ -14,6 +14,7 @@ public class LTR34SettingsModel {
     private int[] amplitudes;
     private boolean[] checkedChannels;
     private boolean connectionOpen = true;
+    private double[] dc;
     private String[] descriptions;
     private int[] frequencies;
     private LTR34 ltr34 = new LTR34();
@@ -28,6 +29,7 @@ public class LTR34SettingsModel {
         this.ltr34 = (LTR34) instancesOfModules.get(slot);
         this.checkedChannels = ltr34.getCheckedChannels();
         this.amplitudes = ltr34.getAmplitudes();
+        this.dc = ltr34.getDc();
         this.descriptions = ltr34.getDescriptions();
         this.frequencies = ltr34.getFrequencies();
         this.phases = ltr34.getPhases();
@@ -50,72 +52,72 @@ public class LTR34SettingsModel {
             switch (signalType) {
                 case 0:
                     channelsData.add(createSinSignal(signal.length / channels, amplitudes[channelIndex],
-                            frequencies[channelIndex], phases[channelIndex]));
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex]));
                     break;
                 case 1:
                     channelsData.add(createSquareSignal(signal.length / channels, amplitudes[channelIndex],
-                            frequencies[channelIndex], phases[channelIndex]));
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex]));
                     break;
                 case 2:
                     channelsData.add(createTriangleSignal(signal.length / channels, amplitudes[channelIndex],
-                            frequencies[channelIndex], phases[channelIndex]));
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex]));
                     break;
                 case 3:
                     channelsData.add(createSawtoothSignal(signal.length / channels, amplitudes[channelIndex],
-                            frequencies[channelIndex], phases[channelIndex], -2));
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex], -2));
                     break;
                 case 4:
                     channelsData.add(createSawtoothSignal(signal.length / channels, amplitudes[channelIndex],
-                            frequencies[channelIndex], phases[channelIndex], 2));
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex], 2));
                     break;
                 case 5:
                     channelsData.add(createNoiseSignal(signal.length / channels, amplitudes[channelIndex],
-                            frequencies[channelIndex], phases[channelIndex]));
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex]));
             }
         }
 
         signal = mergeArrays(channelsData);
     }
 
-    private double[] createSinSignal(int length, int amplitude, int frequency, int phase) {
+    private double[] createSinSignal(int length, int amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
+            data[i] = dc + amplitude * Math.sin(2 * Math.PI * frequency * i / length + channelPhase);
         }
 
         return data;
     }
 
-    private double[] createSquareSignal(int length, int amplitude, int frequency, int phase) {
+    private double[] createSquareSignal(int length, int amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * Math.signum(Math.sin(2 * Math.PI * frequency * i / length + channelPhase));
+            data[i] = dc + amplitude * Math.signum(Math.sin(2 * Math.PI * frequency * i / length + channelPhase));
         }
 
         return data;
     }
 
-    private double[] createTriangleSignal(int length, int amplitude, int frequency, int phase) {
+    private double[] createTriangleSignal(int length, int amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = (2 * amplitude) / Math.PI * Math.asin(Math.sin(2 * Math.PI * frequency * i / length + channelPhase));
+            data[i] = dc + (2 * amplitude) / Math.PI * Math.asin(Math.sin(2 * Math.PI * frequency * i / length + channelPhase));
         }
 
         return data;
     }
 
-    private double[] createSawtoothSignal(int length, int amplitude, int frequency, int phase, double coefficient) {
+    private double[] createSawtoothSignal(int length, int amplitude, double dc, int frequency, int phase, double coefficient) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = (coefficient * amplitude) / Math.PI * Math.atan(1.0 / Math.tan((double) i / length * Math.PI *
+            data[i] = dc + (coefficient * amplitude) / Math.PI * Math.atan(1.0 / Math.tan((double) i / length * Math.PI *
                     frequency + channelPhase));
         }
 
@@ -123,12 +125,12 @@ public class LTR34SettingsModel {
     }
 
 
-    private double[] createNoiseSignal(int length, int amplitude, int frequency, int phase) {
+    private double[] createNoiseSignal(int length, int amplitude, double dc, int frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
 
         for (int i = 0; i < length; i++) {
-            data[i] = amplitude * random.nextDouble() * Math.sin(2 * Math.PI * (frequency + random.nextDouble()) *
+            data[i] = dc + amplitude * random.nextDouble() * Math.sin(2 * Math.PI * (frequency + random.nextDouble()) *
                     i / length + channelPhase);
         }
 
@@ -172,13 +174,15 @@ public class LTR34SettingsModel {
         if (connectionOpen) {
             ltr34.stop();
             stopped = true;
-            ltr34.closeConnection();
-            connectionOpen = false;
         }
     }
 
     public int[] getAmplitudes() {
         return amplitudes;
+    }
+
+    public double[] getDc() {
+        return dc;
     }
 
     public boolean[] getCheckedChannels() {

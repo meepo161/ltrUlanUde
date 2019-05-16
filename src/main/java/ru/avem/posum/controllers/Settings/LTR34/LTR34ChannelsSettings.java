@@ -115,6 +115,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             toggleUiElementsState(checkBoxes.get(channelIndex), channelIndex);
             listen(amplitudesTextFields, channelIndex);
+            listen(dcTextFields, channelIndex);
             listen(frequenciesTextFields, channelIndex);
             listen(phasesTextFields, channelIndex);
         }
@@ -134,48 +135,18 @@ class LTR34ChannelsSettings extends LTR34Settings {
     private void resetSettings(int channelNumber) {
         checkBoxes.get(channelNumber).setSelected(false);
         amplitudesTextFields.get(channelNumber).setText("");
+        dcTextFields.get(channelNumber).setText("");
         descriptionsTextFields.get(channelNumber).setText("");
         frequenciesTextFields.get(channelNumber).setText("");
         phasesTextFields.get(channelNumber).setText("");
-        dcTextFields.get(channelNumber).setText("");
     }
 
     private void toggleUiElementsState(int channelNumber, boolean isDisable) {
         amplitudesTextFields.get(channelNumber).setDisable(isDisable);
+        dcTextFields.get(channelNumber).setDisable(isDisable);
         descriptionsTextFields.get(channelNumber).setDisable(isDisable);
         frequenciesTextFields.get(channelNumber).setDisable(isDisable);
         phasesTextFields.get(channelNumber).setDisable(isDisable);
-        dcTextFields.get(channelNumber).setDisable(isDisable);
-    }
-
-    private void checkConditionForTurningOnTheGenerateButton() {
-        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            if (checkBoxes.get(channelIndex).isSelected() &
-                    !amplitudesTextFields.get(channelIndex).getText().isEmpty() &
-                    !frequenciesTextFields.get(channelIndex).getText().isEmpty() &
-                    !phasesTextFields.get(channelIndex).getText().isEmpty() &
-                    !dcTextFields.get(channelIndex).getText().isEmpty()) {
-                generateSignalButton.setDisable(false);
-            }
-        }
-    }
-
-    private void checkConditionForTurningOffTheGenerateButton() {
-        int disabledChannelsCounter = 0;
-        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            if (checkBoxes.get(channelIndex).isSelected() &
-                    (amplitudesTextFields.get(channelIndex).getText().isEmpty() ||
-                            frequenciesTextFields.get(channelIndex).getText().isEmpty() ||
-                            phasesTextFields.get(channelIndex).getText().isEmpty() ||
-                            dcTextFields.get(channelIndex).getText().isEmpty())) {
-                generateSignalButton.setDisable(true);
-            }
-
-            if (!checkBoxes.get(channelIndex).isSelected()) {
-                disabledChannelsCounter++;
-            }
-        }
-        generateSignalButton.setDisable(disabledChannelsCounter == checkBoxes.size());
     }
 
     private void listen(List<TextField> textFields, int channelNumber) {
@@ -183,6 +154,38 @@ class LTR34ChannelsSettings extends LTR34Settings {
             checkConditionForTurningOnTheGenerateButton();
             checkConditionForTurningOffTheGenerateButton();
         });
+    }
+
+    private void checkConditionForTurningOnTheGenerateButton() {
+        int disabledChannelsCounter = 0;
+
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            if (checkBoxes.get(channelIndex).isSelected() &
+                    !amplitudesTextFields.get(channelIndex).getText().isEmpty() &
+                    !dcTextFields.get(channelIndex).getText().isEmpty() &
+                    !frequenciesTextFields.get(channelIndex).getText().isEmpty() &
+                    !phasesTextFields.get(channelIndex).getText().isEmpty()) {
+                generateSignalButton.setDisable(false);
+            }
+
+            if (!checkBoxes.get(channelIndex).isSelected()) {
+                disabledChannelsCounter++;
+            }
+        }
+
+        generateSignalButton.setDisable(disabledChannelsCounter == checkBoxes.size());
+    }
+
+    private void checkConditionForTurningOffTheGenerateButton() {
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            if (checkBoxes.get(channelIndex).isSelected() &
+                    (amplitudesTextFields.get(channelIndex).getText().isEmpty() ||
+                            dcTextFields.get(channelIndex).getText().isEmpty() ||
+                            frequenciesTextFields.get(channelIndex).getText().isEmpty() ||
+                            phasesTextFields.get(channelIndex).getText().isEmpty())) {
+                generateSignalButton.setDisable(true);
+            }
+        }
     }
 
     private void setDigitFilter() {
@@ -253,7 +256,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
     private void setDcFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
-            if (!newValue.matches("^-?[1-9](\\.|,)\\d+|^-?[1-9](\\.|,)|^-?[1-9]|-|(10)|(-10)|$")) {
+            if (!newValue.matches("^-?[1-9](\\.|,)\\d+|^-?[1-9](\\.|,)|^-?[1-9]|-|(10)|(-10)|^-?[0](\\.|,)\\d+|^-?[0](\\.|,)|^-?[0]|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -263,24 +266,30 @@ class LTR34ChannelsSettings extends LTR34Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setSelected(ltr34SettingsModel.getCheckedChannels()[channelIndex]);
             amplitudesTextFields.get(channelIndex).setText(String.valueOf(ltr34SettingsModel.getAmplitudes()[channelIndex]));
+            dcTextFields.get(channelIndex).setText(String.valueOf(ltr34SettingsModel.getDc()[channelIndex]));
             descriptionsTextFields.get(channelIndex).setText(ltr34SettingsModel.getDescriptions()[channelIndex]);
             frequenciesTextFields.get(channelIndex).setText(String.valueOf(ltr34SettingsModel.getFrequencies()[channelIndex]));
 
-            if (ltr34SettingsModel.getPhases()[channelIndex] != 0) {
-                phasesTextFields.get(channelIndex).setText(String.valueOf(ltr34SettingsModel.getPhases()[channelIndex]));
-            } else if (checkBoxes.get(channelIndex).isSelected()) {
-                phasesTextFields.get(channelIndex).setText("0");
-            } else {
-                phasesTextFields.get(channelIndex).setText("");
-            }
+            replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getPhases()[channelIndex], phasesTextFields.get(channelIndex));
+            replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getDc()[channelIndex], dcTextFields.get(channelIndex));
         }
     }
 
+    private void replaceNul(CheckBox channel, double value,  TextField textField) {
+        if (value != 0) {
+            textField.setText(String.valueOf(value));
+        } else if (channel.isSelected()) {
+            textField.setText("0");
+        } else {
+            textField.setText("");
+        }
+    }
 
     void disableUiElementsState() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setDisable(true);
             amplitudesTextFields.get(channelIndex).setDisable(true);
+            dcTextFields.get(channelIndex).setDisable(true);
             descriptionsTextFields.get(channelIndex).setDisable(true);
             frequenciesTextFields.get(channelIndex).setDisable(true);
             phasesTextFields.get(channelIndex).setDisable(true);
@@ -291,10 +300,11 @@ class LTR34ChannelsSettings extends LTR34Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             if (checkBoxes.get(channelIndex).isSelected()) {
                 ltr34SettingsModel.getCheckedChannels()[channelIndex] = true; // true - канал выбран
-                ltr34SettingsModel.getAmplitudes()[channelIndex] = parse(amplitudesTextFields.get(channelIndex));
+                ltr34SettingsModel.getAmplitudes()[channelIndex] = parseInteger(amplitudesTextFields.get(channelIndex));
+                ltr34SettingsModel.getDc()[channelIndex] = parseDouble(dcTextFields.get(channelIndex));
                 ltr34SettingsModel.getDescriptions()[channelIndex] = descriptionsTextFields.get(channelIndex).getText();
-                ltr34SettingsModel.getFrequencies()[channelIndex] = parse(frequenciesTextFields.get(channelIndex));
-                ltr34SettingsModel.getPhases()[channelIndex] = parse(phasesTextFields.get(channelIndex));
+                ltr34SettingsModel.getFrequencies()[channelIndex] = parseInteger(frequenciesTextFields.get(channelIndex));
+                ltr34SettingsModel.getPhases()[channelIndex] = parseInteger(phasesTextFields.get(channelIndex));
             } else {
                 ltr34SettingsModel.getCheckedChannels()[channelIndex] = false; // false - канал не выбран
                 ltr34SettingsModel.getAmplitudes()[channelIndex] = 0;
@@ -305,9 +315,18 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
-    private int parse(TextField textField) {
+    private int parseInteger(TextField textField) {
         if (!textField.getText().isEmpty()) {
             return Integer.parseInt(textField.getText());
+        } else {
+            return 0;
+        }
+    }
+
+    private double parseDouble(TextField textField) {
+        if (!textField.getText().isEmpty()) {
+            String value = textField.getText().replace(",", ".");
+            return Double.parseDouble(value);
         } else {
             return 0;
         }
@@ -317,6 +336,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setDisable(false);
             amplitudesTextFields.get(channelIndex).setDisable(!checkBoxes.get(channelIndex).isSelected());
+            dcTextFields.get(channelIndex).setDisable(!checkBoxes.get(channelIndex).isSelected());
             descriptionsTextFields.get(channelIndex).setDisable(!checkBoxes.get(channelIndex).isSelected());
             frequenciesTextFields.get(channelIndex).setDisable(!checkBoxes.get(channelIndex).isSelected());
             phasesTextFields.get(channelIndex).setDisable(!checkBoxes.get(channelIndex).isSelected());
