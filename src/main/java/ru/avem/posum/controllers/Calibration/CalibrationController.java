@@ -13,7 +13,6 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
 import ru.avem.posum.models.Calibration.CalibrationModel;
@@ -185,12 +184,15 @@ public class CalibrationController implements BaseController {
     }
 
     private void changeUiElementsState(boolean isDisable) {
-        loadValueNameTextField.setDisable(calibrationModel.getCalibrationPoints().size() > 1);
-        loadValueLabel.setDisable(isDisable);
-        loadValueTextField.setDisable(isDisable);
+        double loadValue = Double.parseDouble(loadValueTextField.getText());
+        boolean isSetNul = (loadValue == 0);
+
+        loadValueNameLabel.setDisable(isSetNul);
+        loadValueNameTextField.setDisable(isSetNul);
+        loadValueLabel.setDisable(isSetNul);
+        loadValueTextField.setDisable(isSetNul);
         channelValueLabel.setDisable(isDisable);
         channelValueTextField.setDisable(isDisable);
-        loadValueNameLabel.setDisable(isDisable);
         addToTableButton.setDisable(isDisable);
     }
 
@@ -316,11 +318,32 @@ public class CalibrationController implements BaseController {
 
         if (isSettingOfNul & !checkSettingOfNul()) {
             statusBarLine.setStatus("Ноль уже градуирован", false);
-        } else {
+        } else if (checkExistingPoints()){
             addCalibrationPointToTableView();
             addPointToGraph();
             checkNumberOfCalibrationPoints();
         }
+    }
+
+    private boolean checkExistingPoints() {
+        ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
+
+        for (CalibrationPoint calibrationPoint : calibrationPoints) {
+            double channelValue = Double.parseDouble(calibrationPoint.getChannelValue());
+            double loadValue = Double.parseDouble(calibrationPoint.getLoadValue());
+
+            if (channelValue == calibrationModel.getChannelValue()) {
+                statusBarLine.setStatus("Данное значение уже градуировано", false);
+                return false;
+            }
+
+            if (loadValue == calibrationModel.getLoadValue()) {
+                statusBarLine.setStatus("Данная нагрузка уже градуирована", false);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void addCalibrationPointToTableView() {
@@ -380,7 +403,7 @@ public class CalibrationController implements BaseController {
     }
 
     private double parse(TextField textField, double multiplierCoefficient) {
-        if (!textField.getText().equals("-")) {
+        if (!textField.getText().equals("-") && !textField.getText().isEmpty()) {
             String digits = textField.getText().replaceAll(",", ".");
             double value = Utils.roundValue(Double.valueOf(digits), calibrationModel.getDecimalFormatScale());
             return value * multiplierCoefficient;
