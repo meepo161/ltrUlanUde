@@ -12,6 +12,7 @@ import java.util.List;
 class LTR34ChannelsSettings extends LTR34Settings {
     private List<TextField> amplitudesTextFields = new ArrayList<>();
     private List<CheckBox> checkBoxes = new ArrayList<>();
+    private List<TextField> dcTextFields = new ArrayList<>();
     private List<TextField> descriptionsTextFields = new ArrayList<>();
     private List<TextField> frequenciesTextFields = new ArrayList<>();
     private Button generateSignalButton;
@@ -27,6 +28,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         fillListOfChannelsDescription(ltr34Settings);
         fillListOfChannelsFrequencyTextFields(ltr34Settings);
         fillListOfChannelsPhases(ltr34Settings);
+        fillListOfDcTextFields(ltr34Settings);
         listenCheckBoxes();
         setDigitFilter();
     }
@@ -96,6 +98,19 @@ class LTR34ChannelsSettings extends LTR34Settings {
         ));
     }
 
+    private void fillListOfDcTextFields(LTR34Settings ltr34Settings) {
+        dcTextFields.addAll(Arrays.asList(
+                ltr34Settings.getDcOfChannelN1(),
+                ltr34Settings.getDcOfChannelN2(),
+                ltr34Settings.getDcOfChannelN3(),
+                ltr34Settings.getDcOfChannelN4(),
+                ltr34Settings.getDcOfChannelN5(),
+                ltr34Settings.getDcOfChannelN6(),
+                ltr34Settings.getDcOfChannelN7(),
+                ltr34Settings.getDcOfChannelN8()
+        ));
+    }
+
     private void listenCheckBoxes() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             toggleUiElementsState(checkBoxes.get(channelIndex), channelIndex);
@@ -122,6 +137,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         descriptionsTextFields.get(channelNumber).setText("");
         frequenciesTextFields.get(channelNumber).setText("");
         phasesTextFields.get(channelNumber).setText("");
+        dcTextFields.get(channelNumber).setText("");
     }
 
     private void toggleUiElementsState(int channelNumber, boolean isDisable) {
@@ -129,6 +145,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         descriptionsTextFields.get(channelNumber).setDisable(isDisable);
         frequenciesTextFields.get(channelNumber).setDisable(isDisable);
         phasesTextFields.get(channelNumber).setDisable(isDisable);
+        dcTextFields.get(channelNumber).setDisable(isDisable);
     }
 
     private void checkConditionForTurningOnTheGenerateButton() {
@@ -136,7 +153,8 @@ class LTR34ChannelsSettings extends LTR34Settings {
             if (checkBoxes.get(channelIndex).isSelected() &
                     !amplitudesTextFields.get(channelIndex).getText().isEmpty() &
                     !frequenciesTextFields.get(channelIndex).getText().isEmpty() &
-                    !phasesTextFields.get(channelIndex).getText().isEmpty()) {
+                    !phasesTextFields.get(channelIndex).getText().isEmpty() &
+                    !dcTextFields.get(channelIndex).getText().isEmpty()) {
                 generateSignalButton.setDisable(false);
             }
         }
@@ -148,7 +166,8 @@ class LTR34ChannelsSettings extends LTR34Settings {
             if (checkBoxes.get(channelIndex).isSelected() &
                     (amplitudesTextFields.get(channelIndex).getText().isEmpty() ||
                             frequenciesTextFields.get(channelIndex).getText().isEmpty() ||
-                            phasesTextFields.get(channelIndex).getText().isEmpty())) {
+                            phasesTextFields.get(channelIndex).getText().isEmpty() ||
+                            dcTextFields.get(channelIndex).getText().isEmpty())) {
                 generateSignalButton.setDisable(true);
             }
 
@@ -177,6 +196,10 @@ class LTR34ChannelsSettings extends LTR34Settings {
 
         for (TextField textField : phasesTextFields) {
             setPhaseFilter(textField);
+        }
+
+        for (TextField textField : dcTextFields) {
+            setDcFilter(textField);
         }
     }
 
@@ -217,6 +240,20 @@ class LTR34ChannelsSettings extends LTR34Settings {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^\\d]", ""));
             if (!newValue.matches("^(?:360|3[0-5]\\d|[12]\\d{2}|[1-9]\\d?)|0|$")) {
+                textField.setText(oldValue);
+            }
+        });
+    }
+
+    /**
+     * Ввод дробных цифр -10...10 в текстовых полях "Фаза"
+     *
+     * @param textField текстовое поле к которому нужно применить фильтр
+     */
+    private void setDcFilter(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
+            if (!newValue.matches("^-?[1-9](\\.|,)\\d+|^-?[1-9](\\.|,)|^-?[1-9]|-|(10)|(-10)|$")) {
                 textField.setText(oldValue);
             }
         });

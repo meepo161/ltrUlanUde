@@ -57,6 +57,22 @@ public class LTR34Settings implements BaseController {
     @FXML
     private Label dacModeLabel;
     @FXML
+    private TextField dcOfChannelN1;
+    @FXML
+    private TextField dcOfChannelN2;
+    @FXML
+    private TextField dcOfChannelN3;
+    @FXML
+    private TextField dcOfChannelN4;
+    @FXML
+    private TextField dcOfChannelN5;
+    @FXML
+    private TextField dcOfChannelN6;
+    @FXML
+    private TextField dcOfChannelN7;
+    @FXML
+    private TextField dcOfChannelN8;
+    @FXML
     private TextField descriptionOfChannelN1;
     @FXML
     private TextField descriptionOfChannelN2;
@@ -328,6 +344,38 @@ public class LTR34Settings implements BaseController {
 
     Label getDacModeLabel() {
         return dacModeLabel;
+    }
+
+    public TextField getDcOfChannelN1() {
+        return dcOfChannelN1;
+    }
+
+    public TextField getDcOfChannelN2() {
+        return dcOfChannelN2;
+    }
+
+    public TextField getDcOfChannelN3() {
+        return dcOfChannelN3;
+    }
+
+    public TextField getDcOfChannelN4() {
+        return dcOfChannelN4;
+    }
+
+    public TextField getDcOfChannelN5() {
+        return dcOfChannelN5;
+    }
+
+    public TextField getDcOfChannelN6() {
+        return dcOfChannelN6;
+    }
+
+    public TextField getDcOfChannelN7() {
+        return dcOfChannelN7;
+    }
+
+    public TextField getDcOfChannelN8() {
+        return dcOfChannelN8;
     }
 
     TextField getDescriptionOfChannelN1() {
