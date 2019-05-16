@@ -195,8 +195,10 @@ public class CalibrationController implements BaseController {
     }
 
     private boolean checkSettingOfNul() {
-        for (CalibrationPoint calibrationPoint : calibrationModel.getCalibrationPoints()) {
-            if (calibrationPoint.getValueName().isEmpty()) {
+        ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
+
+        for (CalibrationPoint calibrationPoint : calibrationPoints) {
+            if (Double.parseDouble(calibrationPoint.getLoadValue()) == 0 && calibrationModel.getLoadValue() == 0) {
                 return false;
             }
         }
@@ -310,13 +312,7 @@ public class CalibrationController implements BaseController {
     }
 
     private void showCalibration() {
-        ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
-        boolean isSettingOfNul = false;
-
-        for (CalibrationPoint calibrationPoint : calibrationPoints) {
-            isSettingOfNul = Double.parseDouble(calibrationPoint.getLoadValue()) == 0;
-        }
-
+        boolean isSettingOfNul = calibrationModel.getLoadValue() == 0;
 
         if (isSettingOfNul & !checkSettingOfNul()) {
             statusBarLine.setStatus("Ноль уже градуирован", false);
@@ -440,8 +436,10 @@ public class CalibrationController implements BaseController {
         loadValueTextField.setText("");
         channelValueTextField.setText("");
         loadValueNameTextField.setText("");
-        channelValueMultiplierComboBox.getSelectionModel().select(5);
-        loadValueMultiplierComboBox.getSelectionModel().select(5);
+        Platform.runLater(() -> {
+            channelValueMultiplierComboBox.getSelectionModel().select(5);
+            loadValueMultiplierComboBox.getSelectionModel().select(5);
+        });
         setChannelValueCheckBox.setSelected(false);
         setNulCheckBox.setSelected(false);
         calibrationModel.getCalibrationPoints().clear();

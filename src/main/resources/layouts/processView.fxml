@@ -39,7 +39,7 @@
                     <children>
                   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
                     <items>
-                              <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pickOnBounds="false" styleClass="processTable">
+                              <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" pickOnBounds="false" styleClass="processTable">
                                   <placeholder>
                                       <Label text="Нет данных для отображения" />
                                   </placeholder>
@@ -60,7 +60,7 @@
                                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                   </columnResizePolicy>
                               </TableView>
-                              <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" styleClass="programGraph" stylesheets="@../css/processGraph.css">
+                              <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
                                   <xAxis>
                                       <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                                   </xAxis>
@@ -74,7 +74,7 @@
                 </GridPane>
                 <SplitPane dividerPositions="0.1755" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="212.0">
                     <items>
-                        <TableView fx:id="tableViewProgramProcess" minHeight="75.0" styleClass="programTable">
+                        <TableView fx:id="tableViewProgramProcess" minHeight="75.0" minWidth="0.0" styleClass="programTable">
                             <columns>
                                 <TableColumn minWidth="110.0" prefWidth="110.0" text="Команда" />
                                 <TableColumn minWidth="110.0" prefWidth="110.0" text="Свойства" />
@@ -93,7 +93,7 @@
                                 <RowConstraints maxHeight="25.0" minHeight="10.0" vgrow="SOMETIMES" />
                             </rowConstraints>
                             <children>
-                                <TableView fx:id="tableEvent" minHeight="75.0" styleClass="eventTable" GridPane.columnSpan="2">
+                                <TableView fx:id="tableEvent" minHeight="75.0" minWidth="0.0" styleClass="eventTable" GridPane.columnSpan="2">
                                     <columns>
                                         <TableColumn fx:id="eventDescriptionColumn" minWidth="110.0" prefWidth="110.0" text="Событие" />
                                         <TableColumn fx:id="eventTimeColumn" minWidth="110.0" prefWidth="110.0" text="Время" />
