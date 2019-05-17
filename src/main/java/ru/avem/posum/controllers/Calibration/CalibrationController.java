@@ -237,7 +237,7 @@ public class CalibrationController implements BaseController {
 
     public void showChannelValue() {
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
-        Platform.runLater(() -> dcLabel.setText(String.format("Статика, %s:", cm.getValueName())));
+        Platform.runLater(() -> dcLabel.setText(String.format("Значение, %s:", cm.getValueName())));
 
         new Thread(() -> {
             while (!stopped) {
