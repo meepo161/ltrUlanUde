@@ -15,7 +15,6 @@ import java.util.List;
 
 public class LinkingModel {
     private HashMap<String, List<Pair<Integer, String>>> channelsHashMap = new HashMap<>();
-    private List<Pair<Integer, String>> descriptions;
     private HashMap<String, Modules> modulesHashMap = new HashMap<>();
     private ObservableList<Pair<CheckBox, CheckBox>> removedDescriptions = FXCollections.observableArrayList();
     private TestProgram testProgram;
@@ -35,7 +34,7 @@ public class LinkingModel {
 
             for (Modules module : modules) {
                 String moduleName = Modules.getModuleName(module);
-                descriptions = Modules.getChannelsDescriptions(module);
+                List<Pair<Integer, String>> descriptions = Modules.getChannelsDescriptions(module);
 
                 channelsHashMap.put(moduleName, descriptions);
 

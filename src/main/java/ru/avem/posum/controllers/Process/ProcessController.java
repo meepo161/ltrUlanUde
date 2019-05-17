@@ -182,8 +182,8 @@ public class ProcessController implements BaseController {
         String descriptionOfAdcChannel = pairModel.getName().split(" - ")[1];
 
         for (Pair<CheckBox, CheckBox> descriptions : cm.getRemovedDescriptions()) {
-            if (descriptions.getKey().getText().contains(descriptionOfDacChannel) ||
-                    descriptions.getValue().getText().contains(descriptionOfAdcChannel)) {
+            if (descriptions.getKey().getText().split(" \\(")[0].equals(descriptionOfDacChannel) ||
+                    descriptions.getValue().getText().split(" \\(")[0].equals(descriptionOfAdcChannel)) {
                 Platform.runLater(() -> cm.getRemovedDescriptions().remove(descriptions));
             }
         }

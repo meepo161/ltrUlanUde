@@ -1,6 +1,5 @@
 package ru.avem.posum.controllers.Settings;
 
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
