@@ -24,6 +24,10 @@ import java.util.List;
 
 public class CalibrationController implements BaseController {
     @FXML
+    private Label amplitudeCoefficientLabel;
+    @FXML
+    private ComboBox<String> dcMultipliersComboBox;
+    @FXML
     private Button addToTableButton;
     @FXML
     private Button backButton;
@@ -34,25 +38,23 @@ public class CalibrationController implements BaseController {
     @FXML
     private TableColumn<CalibrationPoint, String> channelValueColumn;
     @FXML
-    private Label channelValueLabel;
-    @FXML
-    private ComboBox<String> channelValueMultiplierComboBox;
-    @FXML
-    private TextField channelValueTextField;
-    @FXML
     private Label checkIcon;
+    @FXML
+    private Label dcLabel;
+    @FXML
+    private TextField dcTextField;
     @FXML
     private TableColumn<CalibrationPoint, String> loadChannelColumn;
     @FXML
     private ComboBox<String> loadValueMultiplierComboBox;
+    @FXML
+    private Label loadValueCoefficientLabel;
     @FXML
     private Label loadValueLabel;
     @FXML
     private Label loadValueNameLabel;
     @FXML
     private TextField loadValueTextField;
-    @FXML
-    private Label loadValueMultiplierLabel;
     @FXML
     private TextField loadValueNameTextField;
     @FXML
@@ -96,14 +98,14 @@ public class CalibrationController implements BaseController {
     private void initTextFields() {
         toggleUiElementsIfEmptyField(loadValueTextField);
         toggleUiElementsIfEmptyField(loadValueNameTextField);
-        setDigitFilterToTextField(channelValueTextField);
+        setDigitFilterToTextField(dcTextField);
         setDigitFilterToTextField(loadValueTextField);
     }
 
     private void toggleUiElementsIfEmptyField(TextField textField) {
         textField.textProperty().addListener((observable) -> {
             if (!loadValueTextField.getText().isEmpty() &
-                    !channelValueTextField.getText().isEmpty() &
+                    !dcTextField.getText().isEmpty() &
                     !loadValueNameTextField.getText().isEmpty() &
                     calibrationModel.getCalibrationPoints().size() <= 20) {
                 addToTableButton.setDisable(false);
@@ -141,9 +143,10 @@ public class CalibrationController implements BaseController {
         coefficients.add("10000");
         coefficients.add("100000");
 
-        channelValueMultiplierComboBox.setItems(coefficients);
+        dcMultipliersComboBox.setItems(coefficients);
+        dcMultipliersComboBox.getSelectionModel().select(5);
+
         loadValueMultiplierComboBox.setItems(coefficients);
-        channelValueMultiplierComboBox.getSelectionModel().select(5);
         loadValueMultiplierComboBox.getSelectionModel().select(5);
     }
 
@@ -191,8 +194,8 @@ public class CalibrationController implements BaseController {
         loadValueNameTextField.setDisable(isSetNul);
         loadValueLabel.setDisable(isSetNul);
         loadValueTextField.setDisable(isSetNul);
-        channelValueLabel.setDisable(isDisable);
-        channelValueTextField.setDisable(isDisable);
+        dcLabel.setDisable(isDisable);
+        dcTextField.setDisable(isDisable);
         addToTableButton.setDisable(isDisable);
     }
 
@@ -218,15 +221,15 @@ public class CalibrationController implements BaseController {
         setChannelValueCheckBox.selectedProperty().addListener(observable -> {
             if (setChannelValueCheckBox.isSelected()) {
                 stopped = true;
-                channelValueTextField.setEditable(true);
-                channelValueTextField.setFocusTraversable(true);
-                channelValueTextField.setMouseTransparent(false);
-                channelValueTextField.setText("");
+                dcTextField.setEditable(true);
+                dcTextField.setFocusTraversable(true);
+                dcTextField.setMouseTransparent(false);
+                dcTextField.setText("");
             } else {
                 stopped = false;
-                channelValueTextField.setEditable(false);
-                channelValueTextField.setFocusTraversable(false);
-                channelValueTextField.setMouseTransparent(true);
+                dcTextField.setEditable(false);
+                dcTextField.setFocusTraversable(false);
+                dcTextField.setMouseTransparent(true);
                 showChannelValue();
             }
         });
@@ -234,13 +237,13 @@ public class CalibrationController implements BaseController {
 
     public void showChannelValue() {
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
-        Platform.runLater(() -> channelValueLabel.setText(String.format("Статика, %s:", cm.getValueName())));
+        Platform.runLater(() -> dcLabel.setText(String.format("Статика, %s:", cm.getValueName())));
 
         new Thread(() -> {
             while (!stopped) {
                 double value = Utils.roundValue(cm.getDc(), calibrationModel.getDecimalFormatScale());
                 String formattedValue = Utils.convertFromExponentialFormat(value, calibrationModel.getDecimalFormatScale());
-                Platform.runLater(() -> channelValueTextField.setText(formattedValue));
+                Platform.runLater(() -> dcTextField.setText(formattedValue));
                 Utils.sleep(100);
             }
         }).start();
@@ -260,7 +263,7 @@ public class CalibrationController implements BaseController {
             loadValueTextField.setDisable(setNulCheckBox.isSelected());
             loadValueNameLabel.setDisable(setNulCheckBox.isSelected());
             loadValueNameTextField.setDisable(setNulCheckBox.isSelected());
-            loadValueMultiplierLabel.setDisable(setNulCheckBox.isSelected());
+            loadValueMultiplierComboBox.setDisable(setNulCheckBox.isSelected());
             loadValueMultiplierComboBox.setDisable(setNulCheckBox.isSelected());
         });
     }
@@ -292,10 +295,10 @@ public class CalibrationController implements BaseController {
 
     private void loadDefaultUiElementsState() {
         loadValueLabel.setDisable(false);
-        channelValueLabel.setDisable(false);
+        dcLabel.setDisable(false);
         loadValueNameLabel.setDisable(false);
         loadValueTextField.setDisable(false);
-        channelValueTextField.setDisable(false);
+        dcTextField.setDisable(false);
         loadValueNameTextField.setDisable(false);
         saveButton.setDisable(false);
     }
@@ -389,9 +392,9 @@ public class CalibrationController implements BaseController {
 
     private void parseData() {
         double loadValueMultiplierCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
-        double channelValueMultiplierCoefficient = Double.parseDouble(channelValueMultiplierComboBox.getSelectionModel().getSelectedItem());
+        double channelValueMultiplierCoefficient = Double.parseDouble(dcMultipliersComboBox.getSelectionModel().getSelectedItem());
         int decimalFormatScale = cm.getDecimalFormatScale();
-        double channelValue = setChannelValueCheckBox.isSelected() ? parse(channelValueTextField, channelValueMultiplierCoefficient) :
+        double channelValue = setChannelValueCheckBox.isSelected() ? parse(dcTextField, channelValueMultiplierCoefficient) :
                 Utils.roundValue(cm.getDc(), decimalFormatScale) * channelValueMultiplierCoefficient;
         double loadValue = setNulCheckBox.isSelected() ? 0 : parse(loadValueTextField, loadValueMultiplierCoefficient);
         String valueName = loadValueNameTextField.getText();
@@ -457,10 +460,10 @@ public class CalibrationController implements BaseController {
 
     private void clearCalibrationData() {
         loadValueTextField.setText("");
-        channelValueTextField.setText("");
+        dcTextField.setText("");
         loadValueNameTextField.setText("");
         Platform.runLater(() -> {
-            channelValueMultiplierComboBox.getSelectionModel().select(5);
+            dcMultipliersComboBox.getSelectionModel().select(5);
             loadValueMultiplierComboBox.getSelectionModel().select(5);
         });
         setChannelValueCheckBox.setSelected(false);
