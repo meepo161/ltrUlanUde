@@ -325,6 +325,7 @@ public class SignalParametersModel {
         }
 
         double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : bufferedSamplesPerSemiPeriods / periods;
+        System.out.printf("Frequency: %f\n", adc.getFrequency());
         return (samplesPerPeriod == 0 ? 0 : (adc.getFrequency() / samplesPerPeriod));
     }
 

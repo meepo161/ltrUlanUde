@@ -5,7 +5,6 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import ru.avem.posum.db.models.Modules;
 
 import java.io.IOException;
