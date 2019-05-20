@@ -46,15 +46,15 @@
                                   <columns>
                                       <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Пара, канал ЦАП - канал АЦП" />
                                       <TableColumn fx:id="responseColumn" editable="false" minWidth="70.0" prefWidth="70.0" text="Отклик" />
-                                      <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Амплитуда отклик" />
-                                      <TableColumn fx:id="ampColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Амплитуда норма" />
-                                      <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Амплитуда отклик, %" />
+                                      <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
+                                      <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />
+                                      <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик, %" />
                                       <TableColumn fx:id="frequencyResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота отклик" />
                                       <TableColumn fx:id="frequencyColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота норма" />
                                       <TableColumn fx:id="frequencyRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота отклик, %" />
-                                      <TableColumn fx:id="phaseResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Фаза отклик" />
-                                      <TableColumn fx:id="phaseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Фаза норма" />
-                                      <TableColumn fx:id="phaseRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Фаза отклик, %" />
+                                      <TableColumn fx:id="phaseResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Фаза отклик" />
+                                      <TableColumn fx:id="phaseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Фаза норма" />
+                                      <TableColumn fx:id="phaseRelativeResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Фаза отклик, %" />
                                   </columns>
                                   <columnResizePolicy>
                                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -131,7 +131,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="init_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitButton" text="Инициализация">
+                                <Button fx:id="init_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>

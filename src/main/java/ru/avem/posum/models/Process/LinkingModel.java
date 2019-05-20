@@ -80,6 +80,17 @@ public class LinkingModel {
         }
     }
 
+    public List<Modules> getLinkedModules() {
+        List<Modules> modules = new ArrayList<>();
+
+        for (Pair<CheckBox, CheckBox> description : removedDescriptions) {
+            modules.add(modulesHashMap.get(description.getKey().getText()));
+            modules.add(modulesHashMap.get(description.getValue().getText()));
+        }
+
+        return modules;
+    }
+
     public HashMap<String, List<Pair<Integer, String>>> getChannelsHashMap() {
         return channelsHashMap;
     }

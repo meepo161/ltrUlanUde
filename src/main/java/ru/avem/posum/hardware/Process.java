@@ -3,17 +3,23 @@ package ru.avem.posum.hardware;
 import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.TextEncoder;
 
+import java.util.List;
 import java.util.Random;
 
 public class Process {
     private final int SLOTS = 16; // количество слотов в крейте
+
+    private String bioPath = LTR212.getBioPath();
+    private int[] channelsCount = new int[SLOTS];
+    private String crateSerialNumber;
     private double[][] data = new double[SLOTS][SLOTS];
-    private String firPath;
-    private String iirPath;
-    private int ltr34ChannelsCount;
+    private String[] firPath = new String[SLOTS];
+    private String[] iirPath = new String[SLOTS];
     private int[][] measuringRanges = new int[SLOTS][SLOTS];
+    private int[] modulesTypes = new int[SLOTS];
     private String[] operations = new String[SLOTS];
     private int[][] settingsOfModules = new int[SLOTS][SLOTS];
+    private int[] slots = new int[SLOTS];
     private String[] statuses = new String[SLOTS];
     private TextEncoder textEncoder = new TextEncoder();
     private double[][] timeMarks = new double[SLOTS][SLOTS];
@@ -27,19 +33,15 @@ public class Process {
         for (int stringIndex = 0; stringIndex < statuses.length; stringIndex++) {
             operations[stringIndex] = "";
             statuses[stringIndex] = "";
+            firPath[stringIndex] = "";
+            iirPath[stringIndex] = "";
         }
 
-        firPath = "";
-        iirPath = "";
+        crateSerialNumber = "";
     }
 
     public void connect() {
-        String crateSerialNumber = "2T364030";
-        int[] modulesTypes = {2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 1};
-        int[] slots = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-        String ltr212bioPath = System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio";
-
-        openConnection(crateSerialNumber, modulesTypes, slots, ltr212bioPath);
+        openConnection(crateSerialNumber, modulesTypes, slots, bioPath);
         encodeStatuses();
     }
 
@@ -69,17 +71,7 @@ public class Process {
     }
 
     public void initialize() {
-        for (int i = 0; i < SLOTS; i++) {
-            for (int j = 0; j < 4; j++) {
-                typesOfChannels[i] = new int[4];
-                measuringRanges[i] = new int[4];
-                settingsOfModules[i] = new int[4];
-            }
-        }
-
-        ltr34ChannelsCount = 4;
-
-        initialize(typesOfChannels, measuringRanges, settingsOfModules, firPath, iirPath, ltr34ChannelsCount);
+        initialize(typesOfChannels, measuringRanges, settingsOfModules, firPath, iirPath, channelsCount);
         encodeStatuses();
     }
 
@@ -171,5 +163,72 @@ public class Process {
 
     static {
         System.loadLibrary("ProcessLibrary");
+    }
+
+    public void setModulesTypes(List<String> modulesTypes) {
+        int modulesCount = modulesTypes.size();
+        this.modulesTypes = new int[modulesCount];
+
+        for (int moduleIndex = 0; moduleIndex < modulesCount; moduleIndex++) {
+            switch (modulesTypes.get(moduleIndex)) {
+                case Crate.LTR24:
+                    this.modulesTypes[moduleIndex] = 0;
+                    break;
+                case Crate.LTR34:
+                    this.modulesTypes[moduleIndex] = 1;
+                    break;
+                case Crate.LTR212:
+                    this.modulesTypes[moduleIndex] = 2;
+                    break;
+            }
+        }
+    }
+
+    public void setSlots(List<Integer> slots) {
+        int slotsCount = slots.size();
+
+        for (int moduleIndex = 0; moduleIndex < slotsCount; moduleIndex++) {
+            this.slots[moduleIndex] = slots.get(moduleIndex);
+        }
+    }
+
+    public void setCrateSerialNumber(String serialNumber) {
+        this.crateSerialNumber = serialNumber;
+    }
+
+    public void setTypesOfChannels(List<int[]> typesOfChannels) {
+        int typesCount = typesOfChannels.size();
+
+        for (int typeIndex = 0; typeIndex < typesCount; typeIndex++) {
+            this.typesOfChannels[typeIndex] = typesOfChannels.get(typeIndex);
+        }
+    }
+
+    public void setMeasuringRanges(List<int[]> measuringRanges) {
+        int rangesCount = measuringRanges.size();
+
+        for (int rangeIndex = 0; rangeIndex < rangesCount; rangeIndex++) {
+            this.measuringRanges[rangeIndex] = measuringRanges.get(rangeIndex);
+        }
+    }
+
+    public void setSettingsOfModules(List<int[]> settingsOfModules) {
+        int settingsCount = settingsOfModules.size();
+
+        for (int settingsIndex = 0; settingsIndex < settingsCount; settingsIndex++) {
+            this.settingsOfModules[settingsIndex] = settingsOfModules.get(settingsIndex);
+        }
+    }
+
+    public void setChannelsCount(int channelsCount) {
+        this.channelsCount = channelsCount;
+    }
+
+    public void setFirPath(String firPath) {
+        this.firPath = firPath;
+    }
+
+    public void setIirPath(String iirPath) {
+        this.iirPath = iirPath;
     }
 }

@@ -13,11 +13,19 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.db.TestProgramRepository;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
+import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.Module;
+import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
+import ru.avem.posum.hardware.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class ProcessController implements BaseController {
@@ -104,6 +112,7 @@ public class ProcessController implements BaseController {
     private ControllerManager cm;
     private EventsModel eventModel = new EventsModel();
     private ExperimentModel experimentModel = new ExperimentModel();
+    private Process process = new Process();
     private ProcessModel processModel = new ProcessModel();
     private ProgramController programController;
     private TestProgram testProgram;
@@ -190,10 +199,10 @@ public class ProcessController implements BaseController {
     }
 
     private void clearPairModels() {
-       ObservableList<PairModel> pairModels = table.getItems();
-       table.getItems().removeAll(pairModels);
-       clearDescriptions();
-       statusBarLine.setStatus("Все пары успешно удалены", true);
+        ObservableList<PairModel> pairModels = table.getItems();
+        table.getItems().removeAll(pairModels);
+        clearDescriptions();
+        statusBarLine.setStatus("Все пары успешно удалены", true);
     }
 
     private void clearDescriptions() {
@@ -226,8 +235,58 @@ public class ProcessController implements BaseController {
         });
     }
 
-    public void handleInitButton() {
-        experimentModel.Init();
+    public void handleInitialize() {
+        List<Modules> modules = cm.getLinkedModules();
+
+        if (!modules.isEmpty()) {
+            List<String> modulesTypes = new ArrayList<>();
+            List<Integer> slots = new ArrayList<>();
+            String crateSerialNumber = "";
+            List<int[]> typesOfChannels = new ArrayList<>();
+            List<int[]> measuringRanges = new ArrayList<>();
+            List<int[]> settingsOfModules = new ArrayList<>();
+            List<Integer> channelsCounts = new ArrayList<>();
+            List<String> firPath = new ArrayList<>();
+            List<String> iirPath = new ArrayList<>();
+
+            for (Modules module : modules) {
+                modulesTypes.add(module.getModuleType());
+                slots.add(module.getSlot());
+                channelsCounts.add(module.getChannelsCount());
+
+                if (!module.getModuleType().equals(Crate.LTR34)) {
+                    typesOfChannels.add(Modules.getTypesOfChannels(module));
+                    measuringRanges.add(Modules.getMeasuringRanges(module));
+                    settingsOfModules.add(Modules.getSettingsOfModule(module));
+                    firPath.add(module.getFirPath());
+                    iirPath.add(module.getIirPath());
+                }
+            }
+
+            List<TestProgram> testPrograms = TestProgramRepository.getAllTestPrograms();
+
+            for (TestProgram testProgram : testPrograms) {
+                if (modules.get(0).getTestProgramId() == testProgram.getId()) {
+                    crateSerialNumber = testProgram.getCrateSerialNumber();
+                    break;
+                }
+            }
+
+            process.setModulesTypes(modulesTypes);
+            process.setSlots(slots);
+            process.setCrateSerialNumber(crateSerialNumber);
+            process.connect();
+
+            if (process.isConnected()) {
+                process.setTypesOfChannels(typesOfChannels);
+                process.setMeasuringRanges(measuringRanges);
+                process.setSettingsOfModules(settingsOfModules);
+            } else {
+                statusBarLine.setStatus("Ошибка открытия соединения с модулями", false);
+            }
+        }
+
+//        experimentModel.Init();
     }
 
     public void handleRunButton() {
@@ -271,7 +330,7 @@ public class ProcessController implements BaseController {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
             alert.setTitle("Подтвердите действие");
             alert.setHeaderText("Вернуться в главное окно?");
-            ButtonBar buttonBar = (ButtonBar)alert.getDialogPane().lookup(".button-bar");
+            ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
             buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 14px;\n" + "-fx-background-radius: 5px;\n" +
                     "\t-fx-border-radius: 5px;"));
 

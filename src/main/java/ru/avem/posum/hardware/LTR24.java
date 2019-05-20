@@ -88,12 +88,12 @@ public class LTR24 extends ADC {
     }
 
     private void initializeModuleSettings() {
-        getModuleSettings().put(Settings.FREQUENCY, 7); // частота дискретизации 9.7 кГц
+        getSettingsOfModule().put(Settings.FREQUENCY, 7); // частота дискретизации 9.7 кГц
     }
 
     private int[] getLTR24ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
-        settingsList.add(getModuleSettings().get(Settings.FREQUENCY));
+        settingsList.add(getSettingsOfModule().get(Settings.FREQUENCY));
 
         int[] settings = new int[settingsList.size()];
 
@@ -107,14 +107,14 @@ public class LTR24 extends ADC {
     @Override
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
-        settings.append(moduleSettings.get(Settings.FREQUENCY)).append(", ");
+        settings.append(settingsOfModule.get(Settings.FREQUENCY)).append(", ");
         return settings;
     }
 
     @Override
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
-        moduleSettings.put(Settings.FREQUENCY, Integer.valueOf(separatedSettings[0]));
+        settingsOfModule.put(Settings.FREQUENCY, Integer.valueOf(separatedSettings[0]));
     }
 
     @Override

@@ -16,7 +16,7 @@ public class LTR212 extends ADC {
 
     @Override
     public void openConnection() {
-        status = openConnection(crateSerialNumber, getSlot(), System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio");
+        status = openConnection(crateSerialNumber, getSlot(), getBioPath());
         setConnectionOpen(checkStatus());
     }
 
@@ -96,30 +96,30 @@ public class LTR212 extends ADC {
     }
 
     private void initializeModuleSettings() {
-        getModuleSettings().put(Settings.ADC_MODE, 0); // режим работы каналов
-        getModuleSettings().put(Settings.CALIBRATION_COEFFICIENTS, 0); // использование калибровочных коэффициентов
-        getModuleSettings().put(Settings.FACTORY_CALIBRATION_COEFFICIENTS, 0); // использование заводских калибровочных коэфффициентов
-        getModuleSettings().put(Settings.LOGIC_CHANNELS_COUNT, channelsCount); // количество логичческих каналов
-        getModuleSettings().put(Settings.IIR, 0); // использование программного фильтра
-        getModuleSettings().put(Settings.FIR, 0); // использование программного фильтра
-        getModuleSettings().put(Settings.DECIMATION, 0); // использование децимации
-        getModuleSettings().put(Settings.TAP, 0); // порядок фильтра
-        getModuleSettings().put(Settings.REFERENCE_VOLTAGE, 1); // опорное напряжение
-        getModuleSettings().put(Settings.REFERENCE_VOLTAGE_TYPE, 1); // тип опорного напряжения
+        getSettingsOfModule().put(Settings.ADC_MODE, 0); // режим работы каналов
+        getSettingsOfModule().put(Settings.CALIBRATION_COEFFICIENTS, 0); // использование калибровочных коэффициентов
+        getSettingsOfModule().put(Settings.FACTORY_CALIBRATION_COEFFICIENTS, 0); // использование заводских калибровочных коэфффициентов
+        getSettingsOfModule().put(Settings.LOGIC_CHANNELS_COUNT, channelsCount); // количество логичческих каналов
+        getSettingsOfModule().put(Settings.IIR, 0); // использование программного фильтра
+        getSettingsOfModule().put(Settings.FIR, 0); // использование программного фильтра
+        getSettingsOfModule().put(Settings.DECIMATION, 0); // использование децимации
+        getSettingsOfModule().put(Settings.TAP, 0); // порядок фильтра
+        getSettingsOfModule().put(Settings.REFERENCE_VOLTAGE, 1); // опорное напряжение
+        getSettingsOfModule().put(Settings.REFERENCE_VOLTAGE_TYPE, 1); // тип опорного напряжения
     }
 
     private int[] getLTR212ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
-        settingsList.add(getModuleSettings().get(Settings.ADC_MODE));
-        settingsList.add(getModuleSettings().get(Settings.CALIBRATION_COEFFICIENTS));
-        settingsList.add(getModuleSettings().get(Settings.FACTORY_CALIBRATION_COEFFICIENTS));
-        settingsList.add(getModuleSettings().get(Settings.LOGIC_CHANNELS_COUNT));
-        settingsList.add(getModuleSettings().get(Settings.IIR));
-        settingsList.add(getModuleSettings().get(Settings.FIR));
-        settingsList.add(getModuleSettings().get(Settings.DECIMATION));
-        settingsList.add(getModuleSettings().get(Settings.TAP));
-        settingsList.add(getModuleSettings().get(Settings.REFERENCE_VOLTAGE));
-        settingsList.add(getModuleSettings().get(Settings.REFERENCE_VOLTAGE_TYPE));
+        settingsList.add(getSettingsOfModule().get(Settings.ADC_MODE));
+        settingsList.add(getSettingsOfModule().get(Settings.CALIBRATION_COEFFICIENTS));
+        settingsList.add(getSettingsOfModule().get(Settings.FACTORY_CALIBRATION_COEFFICIENTS));
+        settingsList.add(getSettingsOfModule().get(Settings.LOGIC_CHANNELS_COUNT));
+        settingsList.add(getSettingsOfModule().get(Settings.IIR));
+        settingsList.add(getSettingsOfModule().get(Settings.FIR));
+        settingsList.add(getSettingsOfModule().get(Settings.DECIMATION));
+        settingsList.add(getSettingsOfModule().get(Settings.TAP));
+        settingsList.add(getSettingsOfModule().get(Settings.REFERENCE_VOLTAGE));
+        settingsList.add(getSettingsOfModule().get(Settings.REFERENCE_VOLTAGE_TYPE));
 
         int[] settings = new int[settingsList.size()];
 
@@ -134,16 +134,16 @@ public class LTR212 extends ADC {
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
 
-        settings.append(moduleSettings.get(Settings.ADC_MODE)).append(", ")
-                .append(moduleSettings.get(Settings.CALIBRATION_COEFFICIENTS)).append(", ")
-                .append(moduleSettings.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS)).append(", ")
-                .append(moduleSettings.get(Settings.LOGIC_CHANNELS_COUNT)).append(", ")
-                .append(moduleSettings.get(Settings.IIR)).append(", ")
-                .append(moduleSettings.get(Settings.FIR)).append(", ")
-                .append(moduleSettings.get(Settings.DECIMATION)).append(", ")
-                .append(moduleSettings.get(Settings.TAP)).append(", ")
-                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE)).append(", ")
-                .append(moduleSettings.get(Settings.REFERENCE_VOLTAGE_TYPE));
+        settings.append(settingsOfModule.get(Settings.ADC_MODE)).append(", ")
+                .append(settingsOfModule.get(Settings.CALIBRATION_COEFFICIENTS)).append(", ")
+                .append(settingsOfModule.get(Settings.FACTORY_CALIBRATION_COEFFICIENTS)).append(", ")
+                .append(settingsOfModule.get(Settings.LOGIC_CHANNELS_COUNT)).append(", ")
+                .append(settingsOfModule.get(Settings.IIR)).append(", ")
+                .append(settingsOfModule.get(Settings.FIR)).append(", ")
+                .append(settingsOfModule.get(Settings.DECIMATION)).append(", ")
+                .append(settingsOfModule.get(Settings.TAP)).append(", ")
+                .append(settingsOfModule.get(Settings.REFERENCE_VOLTAGE)).append(", ")
+                .append(settingsOfModule.get(Settings.REFERENCE_VOLTAGE_TYPE));
 
         return settings;
     }
@@ -152,16 +152,20 @@ public class LTR212 extends ADC {
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
 
-        moduleSettings.put(Settings.ADC_MODE, Integer.valueOf(separatedSettings[0]));
-        moduleSettings.put(Settings.CALIBRATION_COEFFICIENTS, Integer.valueOf(separatedSettings[1]));
-        moduleSettings.put(Settings.FACTORY_CALIBRATION_COEFFICIENTS, Integer.valueOf(separatedSettings[2]));
-        moduleSettings.put(Settings.LOGIC_CHANNELS_COUNT, Integer.valueOf(separatedSettings[3]));
-        moduleSettings.put(Settings.IIR, Integer.valueOf(separatedSettings[4]));
-        moduleSettings.put(Settings.FIR, Integer.valueOf(separatedSettings[5]));
-        moduleSettings.put(Settings.DECIMATION, Integer.valueOf(separatedSettings[6]));
-        moduleSettings.put(Settings.TAP, Integer.valueOf(separatedSettings[7]));
-        moduleSettings.put(Settings.REFERENCE_VOLTAGE, Integer.valueOf(separatedSettings[8]));
-        moduleSettings.put(Settings.REFERENCE_VOLTAGE_TYPE, Integer.valueOf(separatedSettings[9]));
+        settingsOfModule.put(Settings.ADC_MODE, Integer.valueOf(separatedSettings[0]));
+        settingsOfModule.put(Settings.CALIBRATION_COEFFICIENTS, Integer.valueOf(separatedSettings[1]));
+        settingsOfModule.put(Settings.FACTORY_CALIBRATION_COEFFICIENTS, Integer.valueOf(separatedSettings[2]));
+        settingsOfModule.put(Settings.LOGIC_CHANNELS_COUNT, Integer.valueOf(separatedSettings[3]));
+        settingsOfModule.put(Settings.IIR, Integer.valueOf(separatedSettings[4]));
+        settingsOfModule.put(Settings.FIR, Integer.valueOf(separatedSettings[5]));
+        settingsOfModule.put(Settings.DECIMATION, Integer.valueOf(separatedSettings[6]));
+        settingsOfModule.put(Settings.TAP, Integer.valueOf(separatedSettings[7]));
+        settingsOfModule.put(Settings.REFERENCE_VOLTAGE, Integer.valueOf(separatedSettings[8]));
+        settingsOfModule.put(Settings.REFERENCE_VOLTAGE_TYPE, Integer.valueOf(separatedSettings[9]));
+    }
+
+    public static String getBioPath() {
+        return System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio";
     }
 
     @Override

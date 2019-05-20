@@ -75,7 +75,7 @@ class LTR212ModuleSettings extends LTR212Settings {
     }
 
     void setSettings() {
-        HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getModuleSettings();
+        HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getSettingsOfModule();
         int adcMode = moduleSettings.get(ADC.Settings.ADC_MODE);
         int factoryCalibration = moduleSettings.get(ADC.Settings.FACTORY_CALIBRATION_COEFFICIENTS);
         int fir = moduleSettings.get(ADC.Settings.FIR);
@@ -92,7 +92,7 @@ class LTR212ModuleSettings extends LTR212Settings {
     }
 
     void saveSettings() {
-        HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getModuleSettings();
+        HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getSettingsOfModule();
         int adcMode = adcModes.getSelectionModel().getSelectedIndex();
         int fir = firCheckBox.isSelected() ? 1 : 0;
         int iir = iirCheckBox.isSelected() ? 1 : 0;

@@ -12,7 +12,7 @@ public class Test {
         process.launch();
         result = process.isLaunched();
 
-        while (true) {
+        while (result) {
             process.perform();
         }
     }

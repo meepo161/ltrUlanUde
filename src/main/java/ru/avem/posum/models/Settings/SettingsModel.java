@@ -24,6 +24,7 @@ public class SettingsModel implements BaseController {
     private double[] amplitudes;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
+    private int channelsCount;
     private String[] descriptions;
     private int[] typesOfChannels;
     private boolean[] checkedChannels;
@@ -33,7 +34,9 @@ public class SettingsModel implements BaseController {
     private Crate crate;
     private DAC dac;
     private double[] dc;
+    private String firPath;
     private int[] frequencies;
+    private String iirPath;
     private boolean isEditMode;
     private HashMap<String, Actionable> instructions = new HashMap<>();
     private int[] measuringRanges;
@@ -133,6 +136,9 @@ public class SettingsModel implements BaseController {
         amplitudes = null;
         frequencies = null;
         phases = null;
+        channelsCount = adc.getChannelsCount();
+        firPath = adc.getFirPath();
+        iirPath = adc.getIirPath();
     }
 
     private void saveModuleInstance(Module module) {
@@ -152,6 +158,7 @@ public class SettingsModel implements BaseController {
     }
 
     private void setDACSettingsFields() {
+        channelsCount = dac.getChannelsCount();
         checkedChannels = dac.getCheckedChannels();
         typesOfChannels = null;
         measuringRanges = null;
@@ -269,11 +276,14 @@ public class SettingsModel implements BaseController {
     private void updateADCFields() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == adc.getSlot()) {
+                module.setChannelsCount(adc.getChannelsCount());
                 module.setCheckedChannels(adc.getCheckedChannels());
                 module.setChannelsTypes(adc.getTypeOfChannels());
                 module.setMeasuringRanges(adc.getMeasuringRanges());
                 module.setChannelsDescription(adc.getDescriptions());
                 module.setSettings(String.valueOf(adc.moduleSettingsToString()));
+                module.setFirPath(adc.getFirPath());
+                module.setIirPath(adc.getIirPath());
 
                 updateModuleSettings(module);
             }
@@ -325,11 +335,14 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Test program id", String.valueOf(testProgramId));
         moduleSettings.put("Module type", moduleName);
         moduleSettings.put("Slot", String.valueOf(slot));
+        moduleSettings.put("Channels count", String.valueOf(adc.getChannelsCount()));
         moduleSettings.put("Checked channels", String.valueOf(checkedChannelsLine));
         moduleSettings.put("Channels types", String.valueOf(channelsTypesLine));
         moduleSettings.put("Measuring ranges", String.valueOf(measuringRangesLine));
         moduleSettings.put("Channels description", String.valueOf(channelsDescriptionsLine));
         moduleSettings.put("Module HardwareSettings", String.valueOf(adc.moduleSettingsToString()));
+        moduleSettings.put("FIR path", adc.getFirPath());
+        moduleSettings.put("IIR path", adc.getIirPath());
     }
 
     private void getDACInstance() {
@@ -343,6 +356,22 @@ public class SettingsModel implements BaseController {
             setDACSettingsFields();
             setDACSettings(moduleName);
             addNewModule();
+        }
+    }
+
+    private void updateDACFields() {
+        for (Modules module : ModulesRepository.getAllModules()) {
+            if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
+                module.setChannelsCount(dac.getChannelsCount());
+                module.setCheckedChannels(dac.getCheckedChannels());
+                module.setAmplitudes(dac.getAmplitudes());
+                module.setDc(dac.getDc());
+                module.setChannelsDescription(dac.getDescriptions());
+                module.setFrequencies(dac.getFrequencies());
+                module.setPhases(dac.getPhases());
+
+                updateModuleSettings(module);
+            }
         }
     }
 
@@ -367,27 +396,13 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Test program id", String.valueOf(testProgramId));
         moduleSettings.put("Module type", moduleName);
         moduleSettings.put("Slot", String.valueOf(slot));
+        moduleSettings.put("Channels count", String.valueOf(channelsCount));
         moduleSettings.put("Checked channels", checkedChannelsLine.toString());
         moduleSettings.put("Channels description", channelsDescriptionsLine.toString());
         moduleSettings.put("Amplitudes", amplitudesLine.toString());
         moduleSettings.put("Dc", dcLine.toString());
         moduleSettings.put("Frequencies", frequenciesLine.toString());
         moduleSettings.put("Phases", phasesLine.toString());
-    }
-
-    private void updateDACFields() {
-        for (Modules module : ModulesRepository.getAllModules()) {
-            if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
-                module.setCheckedChannels(dac.getCheckedChannels());
-                module.setAmplitudes(dac.getAmplitudes());
-                module.setDc(dac.getDc());
-                module.setChannelsDescription(dac.getDescriptions());
-                module.setFrequencies(dac.getFrequencies());
-                module.setPhases(dac.getPhases());
-
-                updateModuleSettings(module);
-            }
-        }
     }
 
     public void loadChannelsSettings(TestProgram testProgram, Crate crate, int selectedCrate) {
@@ -463,8 +478,11 @@ public class SettingsModel implements BaseController {
         String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
         String[] parsedChannelsDescriptions = module.getChannelsDescriptions().split(", ", 5);
 
+        adc.setChannelsCount(module.getChannelsCount());
         adc.setSlot(slot);
         adc.setModuleId(module.getId());
+        adc.setFirPath(module.getFirPath());
+        adc.setIirPath(module.getIirPath());
 
         for (int i = 0; i < channels; i++) {
             checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
@@ -510,6 +528,7 @@ public class SettingsModel implements BaseController {
             String[] parsedFrequencies = module.getFrequencies().split(", ", 9);
             String[] parsedPhases = module.getPhases().split(", ", 9);
 
+            dac.setChannelsCount(module.getChannelsCount());
             dac.setSlot(slot);
             dac.setModuleId(module.getId());
 

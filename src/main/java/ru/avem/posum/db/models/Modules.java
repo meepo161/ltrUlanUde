@@ -3,6 +3,7 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import javafx.util.Pair;
+import ru.avem.posum.hardware.Module;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +50,15 @@ public class Modules {
     @DatabaseField
     private String settings;
 
+    @DatabaseField
+    private String channelsCount;
+
+    @DatabaseField
+    private String firPath;
+
+    @DatabaseField
+    private String iirPath;
+
     public Modules() {
         // ORMLite and XML binder need a no-arg constructor
     }
@@ -66,6 +76,9 @@ public class Modules {
         frequencies = moduleSettings.getOrDefault("Frequencies", "");
         phases = moduleSettings.getOrDefault("Phases", "");
         settings = moduleSettings.getOrDefault("Module HardwareSettings", "");
+        channelsCount = moduleSettings.getOrDefault("Channels count", "");
+        firPath = moduleSettings.getOrDefault("FIR path", "");
+        iirPath = moduleSettings.getOrDefault("IIR path", "");
     }
 
     private String settingsToString(int[] settings) {
@@ -134,11 +147,35 @@ public class Modules {
         return channelsTypes;
     }
 
+    public static int[] getTypesOfChannels(Modules module) {
+        String[] splitTypes = module.getChannelsTypes().split(", ");
+        int typesCount = splitTypes.length;
+        int[] typesOfChannels = new int[typesCount];
+
+        for (int typeIndex = 0; typeIndex < typesCount; typeIndex++) {
+            typesOfChannels[typeIndex] = Integer.parseInt(splitTypes[typeIndex]);
+        }
+
+        return typesOfChannels;
+    }
+
     public void setChannelsTypes(int[] channelsTypes) {
         this.channelsTypes = settingsToString(channelsTypes);
     }
 
     public String getMeasuringRanges() {
+        return measuringRanges;
+    }
+
+    public static int[] getMeasuringRanges(Modules module) {
+        String[] splitRanges = module.getMeasuringRanges().split(", ");
+        int rangesCount = splitRanges.length;
+        int[] measuringRanges = new int[rangesCount];
+
+        for (int typeIndex = 0; typeIndex < rangesCount; typeIndex++) {
+            measuringRanges[typeIndex] = Integer.parseInt(splitRanges[typeIndex]);
+        }
+
         return measuringRanges;
     }
 
@@ -224,6 +261,18 @@ public class Modules {
         return settings;
     }
 
+    public static int[] getSettingsOfModule(Modules module) {
+        String[] splitSettings = module.getChannelsTypes().split(", ");
+        int settingsCount = splitSettings.length;
+        int[] settingsOfModule = new int[settingsCount];
+
+        for (int typeIndex = 0; typeIndex < settingsCount; typeIndex++) {
+            settingsOfModule[typeIndex] = Integer.parseInt(splitSettings[typeIndex]);
+        }
+
+        return settingsOfModule;
+    }
+
     public void setAmplitudes(double[] amplitudes) {
         this.amplitudes = settingsToString(amplitudes);
     }
@@ -242,5 +291,29 @@ public class Modules {
 
     public void setSettings(String settings) {
         this.settings = settings;
+    }
+
+    public int getChannelsCount() {
+        return Integer.parseInt(channelsCount);
+    }
+
+    public void setChannelsCount(int channelsCount) {
+        this.channelsCount = String.valueOf(channelsCount);
+    }
+
+    public String getFirPath() {
+        return firPath;
+    }
+
+    public void setFirPath(String firPath) {
+        this.firPath = firPath;
+    }
+
+    public String getIirPath() {
+        return iirPath;
+    }
+
+    public void setIirPath(String iirPath) {
+        this.iirPath = iirPath;
     }
 }

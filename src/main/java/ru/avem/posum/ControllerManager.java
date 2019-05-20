@@ -3,6 +3,7 @@ package ru.avem.posum;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.util.Pair;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.ExperimentModel;
@@ -23,6 +24,8 @@ public interface ControllerManager {
     int getDecimalFormatScale();
 
     ExperimentModel getExperimentModel();
+
+    List<Modules> getLinkedModules();
 
     ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions();
 

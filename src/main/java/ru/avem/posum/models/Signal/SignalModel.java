@@ -1,7 +1,6 @@
 package ru.avem.posum.models.Signal;
 
 import javafx.scene.chart.XYChart;
-import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
@@ -96,7 +95,7 @@ public class SignalModel {
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
-        int adcMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE);
+        int adcMode = ltr212.getSettingsOfModule().get(ADC.Settings.ADC_MODE);
         int SAMPLES = adcMode == 0 ? 30720 : 152;
         ltr212.setData(new double[SAMPLES]);
         ltr212.setRingBufferForCalculation(new RingBuffer(SAMPLES));

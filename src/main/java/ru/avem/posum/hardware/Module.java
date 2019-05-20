@@ -70,6 +70,10 @@ public abstract class Module {
         this.connectionOpen = connectionOpen;
     }
 
+    public void setChannelsCount(int channelsCount) {
+        this.channelsCount = channelsCount;
+    }
+
     public void setCrateSerialNumber(String crateSerialNumber) {
         this.crateSerialNumber = crateSerialNumber;
     }
