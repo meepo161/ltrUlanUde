@@ -245,9 +245,9 @@ public class ProcessController implements BaseController {
             List<int[]> typesOfChannels = new ArrayList<>();
             List<int[]> measuringRanges = new ArrayList<>();
             List<int[]> settingsOfModules = new ArrayList<>();
-            List<Integer> channelsCounts = new ArrayList<>();
             List<String> firPath = new ArrayList<>();
             List<String> iirPath = new ArrayList<>();
+            List<Integer> channelsCounts = new ArrayList<>();
 
             for (Modules module : modules) {
                 modulesTypes.add(module.getModuleType());

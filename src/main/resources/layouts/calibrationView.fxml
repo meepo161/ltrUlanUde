@@ -70,13 +70,13 @@
                   <Insets right="10.0" />
                </GridPane.margin></Label>
             <TextField fx:id="loadValueNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Label fx:id="amplitudeCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+            <Label fx:id="dcCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
             </Label>
             <ComboBox fx:id="dcMultipliersComboBox" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-            <Label fx:id="loadValueCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+            <Label fx:id="loadValueMultiplierLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin>
@@ -128,7 +128,7 @@
                   <Insets right="270.0" />
                </GridPane.margin>
             </Button>
-            <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="13" />
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" minWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.rowIndex="13" />
             <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="8" GridPane.rowIndex="13">
                <GridPane.margin>
                   <Insets left="15.0" />

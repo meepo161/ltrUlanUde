@@ -151,7 +151,7 @@ public class Process {
     public native void checkConnection();
 
     public native void initialize(int[][] channelsTypes, int[][] measuringRanges, int[][] moduleSettings,
-                                  String firFilePath, String iirFilePath, int ltr34channelsCount);
+                                  String[] firFilePath, String[] iirFilePath, int[] channelsCount);
 
     public native void start();
 
@@ -220,15 +220,15 @@ public class Process {
         }
     }
 
-    public void setChannelsCount(int channelsCount) {
-        this.channelsCount = channelsCount;
-    }
-
-    public void setFirPath(String firPath) {
+    public void setFirPath(String[] firPath) {
         this.firPath = firPath;
     }
 
-    public void setIirPath(String iirPath) {
+    public void setIirPath(String[] iirPath) {
         this.iirPath = iirPath;
+    }
+
+    public void setChannelsCount(int[] channelsCount) {
+        this.channelsCount = channelsCount;
     }
 }

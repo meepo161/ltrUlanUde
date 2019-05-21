@@ -186,6 +186,7 @@ public class LTR212Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
+            Utils.sleep(2000); // пауза для отрисовки ненулевого сигнала
             ltr212ChannelsSettings.enableValueOnChannelButtonsState();
             backButton.setDisable(false);
             statusBarLine.clearStatusBar();

@@ -24,7 +24,6 @@ import ru.avem.posum.controllers.Settings.LTR34.LTR34Settings;
 import ru.avem.posum.controllers.Settings.Settings;
 import ru.avem.posum.controllers.Signal.SignalController;
 import ru.avem.posum.db.DataBaseRepository;
-import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
@@ -211,8 +210,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void checkCalibration() {
-        Utils.sleep(500);
         signalController.checkCalibration();
+
+        new Thread(() -> {
+            Utils.sleep(2000); // пауза для отрисовки ненулевого сигнала
+            signalController.getGraphController().restartOfShow();
+        }).start();
     }
 
     @Override
@@ -303,11 +306,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public List<Modules> getLinkedModules() {
-        return linkingController.getLinkingModel().getLinkedModules();
-    }
-
-    @Override
     public ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions() {
         return linkingController.getLinkingModel().getRemovedDescriptions();
     }
@@ -355,6 +353,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadDefaultCalibrationSettings(SignalModel signalModel) {
+        signalController.getGraphController().setShowFinished(true);
         calibrationController.loadDefaultCalibrationSettings(signalModel);
     }
 

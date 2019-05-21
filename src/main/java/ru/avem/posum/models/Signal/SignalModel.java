@@ -1,6 +1,7 @@
 package ru.avem.posum.models.Signal;
 
 import javafx.scene.chart.XYChart;
+import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
@@ -95,7 +96,7 @@ public class SignalModel {
 
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
-        int adcMode = ltr212.getSettingsOfModule().get(ADC.Settings.ADC_MODE);
+        int adcMode = ltr212.getModuleSettings().get(ADC.Settings.ADC_MODE);
         int SAMPLES = adcMode == 0 ? 30720 : 152;
         ltr212.setData(new double[SAMPLES]);
         ltr212.setRingBufferForCalculation(new RingBuffer(SAMPLES));
@@ -128,7 +129,8 @@ public class SignalModel {
         for (String calibration : calibrations) {
             int channelFromCalibration = Integer.parseInt(calibration.substring(9, 10));
             if (channel == channelFromCalibration) {
-                if (CalibrationPoint.parseValueName(calibration).isEmpty() ) {
+                signalParametersModel.setShift(0);
+                if (CalibrationPoint.parseValueName(calibration).isEmpty()) {
                     signalParametersModel.setShift(CalibrationPoint.parseChannelValue(calibration));
                     break;
                 }
@@ -172,13 +174,10 @@ public class SignalModel {
 
         if (!connectionLost) {
             adc.write(data, timeMarks);
-            boolean isReceived = adc.checkStatus();
-            if (isReceived) {
-                ringBufferForCalculation.reset();
-                ringBufferForCalculation.put(data);
-                ringBufferForShow.reset();
-                ringBufferForShow.put(data);
-            }
+            ringBufferForCalculation.reset();
+            ringBufferForCalculation.put(data);
+            ringBufferForShow.reset();
+            ringBufferForShow.put(data);
         } else {
             adc.setRingBufferForCalculation(new RingBuffer(ringBufferForCalculation.capacity));
             adc.setRingBufferForShow(new RingBuffer(ringBufferForShow.capacity));

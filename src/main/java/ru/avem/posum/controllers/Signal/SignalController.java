@@ -109,10 +109,12 @@ public class SignalController implements BaseController {
     }
 
     public void setSignalParametersLabels() {
-        amplitudeLabel.setText(String.format("Амлитуда, %s:", signalModel.getValueName()));
-        loadsCounterLabel.setText("Нагружений:");
-        rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
-        zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
+        Platform.runLater(() -> {
+            amplitudeLabel.setText(String.format("Амлитуда, %s:", signalModel.getValueName()));
+            loadsCounterLabel.setText("Нагружений:");
+            rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
+            zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));
+        });
     }
 
     public void checkCalibration() {
@@ -120,9 +122,9 @@ public class SignalController implements BaseController {
         signalModel.checkCalibration();
 
         if (signalModel.isCalibrationExists()) {
+            graphController.setShowFinished(true);
             graphController.clearSeries();
             calibrationCheckBox.setSelected(true);
-            verticalScalesComboBox.setDisable(true);
             graphController.setValueNameToGraph();
             graphController.setGraphBounds();
             setSignalParametersLabels();
@@ -140,16 +142,11 @@ public class SignalController implements BaseController {
     private void receiveData() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
+                signalModel.calculateData();
                 signalModel.getData();
                 checkConnection();
             }
         }).start();
-
-        graphController.clearSeries();
-        signalModel.setAccurateFrequencyCalculation(false);
-        Utils.sleep(2500); // ожидание первого пакета данных
-        Platform.runLater(() -> horizontalScalesComboBox.getSelectionModel().select(2));
-        signalModel.setAccurateFrequencyCalculation(true);
     }
 
     private void showData() {
@@ -168,7 +165,6 @@ public class SignalController implements BaseController {
     private void printData() {
         new Thread(() -> {
             while (!cm.isClosed() && !cm.isStopped()) {
-                signalModel.calculateData();
                 showCalculatedValues();
                 Utils.sleep(1000);
             }
@@ -236,6 +232,7 @@ public class SignalController implements BaseController {
         new Thread(() -> {
             stopReceivingOfData();
             resetShowingSettings();
+            statusBarLine.clearStatusBar();
             changeScene();
         }).start();
     }
@@ -279,8 +276,12 @@ public class SignalController implements BaseController {
         return calibrationCheckBox;
     }
 
-    public LineChart<Number, Number> getGraphController() {
+    public LineChart<Number, Number> getGraph() {
         return graph;
+    }
+
+    public GraphController getGraphController() {
+        return graphController;
     }
 
     public ComboBox<String> getHorizontalScalesComboBox() {
@@ -367,5 +368,9 @@ public class SignalController implements BaseController {
 
     public Button getCalibrateButton() {
         return calibrateButton;
+    }
+
+    public StatusBarLine getStatusBarLine() {
+        return statusBarLine;
     }
 }

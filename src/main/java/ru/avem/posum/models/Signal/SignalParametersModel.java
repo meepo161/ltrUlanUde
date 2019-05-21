@@ -175,7 +175,8 @@ public class SignalParametersModel {
     }
 
     private double calculateAmplitude() {
-        return (maxSignalValue - minSignalValue) / 2 + shift;
+        double amplitude = (maxSignalValue - minSignalValue) / 2 + shift;
+        return amplitude < 0 ? 0 : amplitude;
     }
 
     private double calculateDC() {
@@ -192,10 +193,13 @@ public class SignalParametersModel {
 
     private double calculateRms() {
         double summ = 0;
+
         for (int i = channel; i < data.length; i += channels) {
             summ += (data[i] - dc) * (data[i] - dc);
         }
-        return Math.sqrt(summ / data.length * channels);
+
+        double rms = Math.sqrt(summ / data.length * channels);
+        return rms < 0 ? 0 : rms;
     }
 
     private double calculateFrequency() {
@@ -229,8 +233,6 @@ public class SignalParametersModel {
                 positivePartOfSignal = false;
             }
         }
-
-//        System.out.printf("Estimated frequency: %f\n", frequency);
 
         return frequency;
     }
@@ -325,7 +327,6 @@ public class SignalParametersModel {
         }
 
         double samplesPerPeriod = bufferedSamplesPerSemiPeriods == 0 ? 0 : bufferedSamplesPerSemiPeriods / periods;
-        System.out.printf("Frequency: %f\n", adc.getFrequency());
         return (samplesPerPeriod == 0 ? 0 : (adc.getFrequency() / samplesPerPeriod));
     }
 

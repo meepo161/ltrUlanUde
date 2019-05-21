@@ -24,7 +24,7 @@ import java.util.List;
 
 public class CalibrationController implements BaseController {
     @FXML
-    private Label amplitudeCoefficientLabel;
+    private Label dcCoefficientLabel;
     @FXML
     private ComboBox<String> dcMultipliersComboBox;
     @FXML
@@ -48,7 +48,7 @@ public class CalibrationController implements BaseController {
     @FXML
     private ComboBox<String> loadValueMultiplierComboBox;
     @FXML
-    private Label loadValueCoefficientLabel;
+    private Label loadValueMultiplierLabel;
     @FXML
     private Label loadValueLabel;
     @FXML
@@ -96,6 +96,7 @@ public class CalibrationController implements BaseController {
     }
 
     private void initTextFields() {
+        toggleUiElementsIfEmptyField(dcTextField);
         toggleUiElementsIfEmptyField(loadValueTextField);
         toggleUiElementsIfEmptyField(loadValueNameTextField);
         setDigitFilterToTextField(dcTextField);
@@ -172,8 +173,15 @@ public class CalibrationController implements BaseController {
 
     private void deleteCalibrationPoint() {
         int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
-        graphSeries.getData().remove(selectedPointIndex);
-        calibrationModel.getCalibrationPoints().remove(selectedPointIndex);
+        CalibrationPoint removedPoint = calibrationModel.getCalibrationPoints().remove(selectedPointIndex);
+        double xValue = Double.parseDouble(removedPoint.getLoadValue());
+
+        for (XYChart.Data<Number, Number> graphPoint : graphSeries.getData()) {
+            if ((double) graphPoint.getXValue() == xValue) {
+                Platform.runLater(() -> graphSeries.getData().remove(graphPoint));
+            }
+        }
+
         checkNumberOfCalibrationPoints();
     }
 
@@ -187,13 +195,13 @@ public class CalibrationController implements BaseController {
     }
 
     private void changeUiElementsState(boolean isDisable) {
-        double loadValue = Double.parseDouble(loadValueTextField.getText());
-        boolean isSetNul = (loadValue == 0);
-
-        loadValueNameLabel.setDisable(isSetNul);
-        loadValueNameTextField.setDisable(isSetNul);
-        loadValueLabel.setDisable(isSetNul);
-        loadValueTextField.setDisable(isSetNul);
+        loadValueLabel.setDisable(setNulCheckBox.isSelected());
+        loadValueTextField.setDisable(setNulCheckBox.isSelected());
+        loadValueNameLabel.setDisable(setNulCheckBox.isSelected());
+        loadValueNameTextField.setDisable(setNulCheckBox.isSelected());
+        loadValueMultiplierLabel.setDisable(setNulCheckBox.isSelected());
+        loadValueMultiplierComboBox.setDisable(setNulCheckBox.isSelected());
+        addToTableButton.setDisable(setNulCheckBox.isSelected());
         dcLabel.setDisable(isDisable);
         dcTextField.setDisable(isDisable);
         addToTableButton.setDisable(isDisable);
@@ -237,7 +245,6 @@ public class CalibrationController implements BaseController {
 
     public void showChannelValue() {
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
-        Platform.runLater(() -> dcLabel.setText(String.format("Значение, %s:", cm.getValueName())));
 
         new Thread(() -> {
             while (!stopped) {
@@ -263,7 +270,7 @@ public class CalibrationController implements BaseController {
             loadValueTextField.setDisable(setNulCheckBox.isSelected());
             loadValueNameLabel.setDisable(setNulCheckBox.isSelected());
             loadValueNameTextField.setDisable(setNulCheckBox.isSelected());
-            loadValueMultiplierComboBox.setDisable(setNulCheckBox.isSelected());
+            loadValueMultiplierLabel.setDisable(setNulCheckBox.isSelected());
             loadValueMultiplierComboBox.setDisable(setNulCheckBox.isSelected());
         });
     }
@@ -286,7 +293,7 @@ public class CalibrationController implements BaseController {
         this.stopped = false;
         this.signalModel = signalModel;
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
-        titleLabel.setText(String.format("Градуировка %d канала (%s слот %d)", signalModel.getChannel(),
+        titleLabel.setText(String.format("Градуировка %d канала (%s слот %d)", signalModel.getChannel() + 1,
                 signalModel.getModuleType(), signalModel.getSlot()));
         loadDefaultUiElementsState();
         loadCalibrationSettings();
@@ -294,12 +301,16 @@ public class CalibrationController implements BaseController {
     }
 
     private void loadDefaultUiElementsState() {
-        loadValueLabel.setDisable(false);
         dcLabel.setDisable(false);
-        loadValueNameLabel.setDisable(false);
-        loadValueTextField.setDisable(false);
         dcTextField.setDisable(false);
+        loadValueLabel.setDisable(false);
+        loadValueTextField.setDisable(false);
+        loadValueNameLabel.setDisable(false);
         loadValueNameTextField.setDisable(false);
+        dcCoefficientLabel.setDisable(false);
+        dcMultipliersComboBox.setDisable(false);
+        loadValueMultiplierLabel.setDisable(false);
+        loadValueMultiplierComboBox.setDisable(false);
         saveButton.setDisable(false);
     }
 
@@ -321,7 +332,7 @@ public class CalibrationController implements BaseController {
 
         if (isSettingOfNul & !checkSettingOfNul()) {
             statusBarLine.setStatus("Ноль уже градуирован", false);
-        } else if (checkExistingPoints()){
+        } else if (checkExistingPoints()) {
             addCalibrationPointToTableView();
             addPointToGraph();
             checkNumberOfCalibrationPoints();
@@ -449,27 +460,29 @@ public class CalibrationController implements BaseController {
         new Thread(() -> {
             stopped = true;
             cm.checkCalibration();
+            Utils.sleep(2000); // пауза для отрисовки ненулевого сигнала
+
+            backButton.setDisable(false);
+            loadDefaultUiElementsState();
+            clearCalibrationData();
             statusBarLine.clearStatusBar();
             statusBarLine.toggleProgressIndicator(true);
-            backButton.setDisable(false);
-            saveButton.setDisable(false);
-            clearCalibrationData();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();
     }
 
     private void clearCalibrationData() {
-        loadValueTextField.setText("");
-        dcTextField.setText("");
-        loadValueNameTextField.setText("");
         Platform.runLater(() -> {
+            loadValueTextField.setText("");
+            dcTextField.setText("");
+            loadValueNameTextField.setText("");
             dcMultipliersComboBox.getSelectionModel().select(5);
             loadValueMultiplierComboBox.getSelectionModel().select(5);
+            setNulCheckBox.setSelected(false);
+            setChannelValueCheckBox.setSelected(false);
+            calibrationModel.getCalibrationPoints().clear();
+            graphSeries.getData().clear();
         });
-        setChannelValueCheckBox.setSelected(false);
-        setNulCheckBox.setSelected(false);
-        calibrationModel.getCalibrationPoints().clear();
-        graphSeries.getData().clear();
     }
 
     @Override
