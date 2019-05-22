@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,7 +21,6 @@ import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
-import ru.avem.posum.hardware.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -239,54 +239,87 @@ public class ProcessController implements BaseController {
         List<Modules> modules = cm.getLinkedModules();
 
         if (!modules.isEmpty()) {
-            List<String> modulesTypes = new ArrayList<>();
-            List<Integer> slots = new ArrayList<>();
-            String crateSerialNumber = "";
-            List<int[]> typesOfChannels = new ArrayList<>();
-            List<int[]> measuringRanges = new ArrayList<>();
-            List<int[]> settingsOfModules = new ArrayList<>();
-            List<String> firPath = new ArrayList<>();
-            List<String> iirPath = new ArrayList<>();
-            List<Integer> channelsCounts = new ArrayList<>();
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Инициализация модулей");
 
-            for (Modules module : modules) {
-                modulesTypes.add(module.getModuleType());
-                slots.add(module.getSlot());
-                channelsCounts.add(module.getChannelsCount());
+            new Thread(() -> {
+                parseSettings(modules);
+                process.connect();
 
-                if (!module.getModuleType().equals(Crate.LTR34)) {
-                    typesOfChannels.add(Modules.getTypesOfChannels(module));
-                    measuringRanges.add(Modules.getMeasuringRanges(module));
-                    settingsOfModules.add(Modules.getSettingsOfModule(module));
-                    firPath.add(module.getFirPath());
-                    iirPath.add(module.getIirPath());
+                if (process.isConnected()) {
+                    process.initialize();
+                    checkInitialization();
+                } else {
+                    statusBarLine.toggleProgressIndicator(true);
+                    statusBarLine.clearStatusBar();
+                    statusBarLine.setStatus("Ошибка открытия соединения с модулями", false);
                 }
-            }
-
-            List<TestProgram> testPrograms = TestProgramRepository.getAllTestPrograms();
-
-            for (TestProgram testProgram : testPrograms) {
-                if (modules.get(0).getTestProgramId() == testProgram.getId()) {
-                    crateSerialNumber = testProgram.getCrateSerialNumber();
-                    break;
-                }
-            }
-
-            process.setModulesTypes(modulesTypes);
-            process.setSlots(slots);
-            process.setCrateSerialNumber(crateSerialNumber);
-            process.connect();
-
-            if (process.isConnected()) {
-                process.setTypesOfChannels(typesOfChannels);
-                process.setMeasuringRanges(measuringRanges);
-                process.setSettingsOfModules(settingsOfModules);
-            } else {
-                statusBarLine.setStatus("Ошибка открытия соединения с модулями", false);
-            }
+            }).start();
         }
 
 //        experimentModel.Init();
+    }
+
+    private void parseSettings(List<Modules> modules) {
+        List<String> modulesTypes = new ArrayList<>();
+        List<Integer> slots = new ArrayList<>();
+        String crateSerialNumber = "";
+        List<int[]> typesOfChannels = new ArrayList<>();
+        List<int[]> measuringRanges = new ArrayList<>();
+        List<int[]> settingsOfModules = new ArrayList<>();
+        List<String> firPath = new ArrayList<>();
+        List<String> iirPath = new ArrayList<>();
+        List<Integer> channelsCounts = new ArrayList<>();
+
+        for (Modules module : modules) {
+            modulesTypes.add(module.getModuleType());
+            slots.add(module.getSlot());
+            channelsCounts.add(module.getChannelsCount());
+
+            if (!module.getModuleType().equals(Crate.LTR34)) {
+                typesOfChannels.add(Modules.getTypesOfChannels(module));
+                measuringRanges.add(Modules.getMeasuringRanges(module));
+                settingsOfModules.add(Modules.getSettingsOfModule(module));
+                firPath.add(module.getFirPath());
+                iirPath.add(module.getIirPath());
+            } else {
+                typesOfChannels.add(new int[8]);
+                measuringRanges.add(new int[8]);
+                settingsOfModules.add(new int[8]);
+                firPath.add("");
+                iirPath.add("");
+            }
+        }
+
+        List<TestProgram> testPrograms = TestProgramRepository.getAllTestPrograms();
+
+        for (TestProgram testProgram : testPrograms) {
+            if (modules.get(0).getTestProgramId() == testProgram.getId()) {
+                crateSerialNumber = testProgram.getCrateSerialNumber();
+                break;
+            }
+        }
+
+        process.setModulesTypes(modulesTypes);
+        process.setSlots(slots);
+        process.setCrateSerialNumber(crateSerialNumber);
+        process.setTypesOfChannels(typesOfChannels);
+        process.setMeasuringRanges(measuringRanges);
+        process.setSettingsOfModules(settingsOfModules);
+        process.setFirPaths(firPath);
+        process.setIirPaths(iirPath);
+        process.setChannelsCounts(channelsCounts);
+    }
+
+    private void checkInitialization() {
+        statusBarLine.toggleProgressIndicator(true);
+        statusBarLine.clearStatusBar();
+
+        if (process.isInitialized()) {
+            statusBarLine.setStatus("Операция успешно выполнена", true);
+        } else {
+            statusBarLine.setStatus("Ошибка инициализации", false);
+        }
     }
 
     public void handleRunButton() {

@@ -3,7 +3,6 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import javafx.util.Pair;
-import ru.avem.posum.hardware.Module;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ public class Modules {
     private String checkedChannels;
 
     @DatabaseField
-    private String channelsTypes;
+    private String typesOfChannels;
 
     @DatabaseField
     private String measuringRanges;
@@ -68,7 +67,7 @@ public class Modules {
         moduleType = moduleSettings.get("Module type");
         slot = moduleSettings.get("Slot");
         checkedChannels = moduleSettings.getOrDefault("Checked channels", "");
-        channelsTypes = moduleSettings.getOrDefault("Channels types", "");
+        typesOfChannels = moduleSettings.getOrDefault("Channels types", "");
         measuringRanges = moduleSettings.getOrDefault("Measuring ranges", "");
         channelsDescription = moduleSettings.getOrDefault("Channels description", "");
         amplitudes = moduleSettings.getOrDefault("Amplitudes", "");
@@ -143,12 +142,12 @@ public class Modules {
         this.checkedChannels = String.valueOf(settingsLine);
     }
 
-    public String getChannelsTypes() {
-        return channelsTypes;
+    public String getTypesOfChannels() {
+        return typesOfChannels;
     }
 
     public static int[] getTypesOfChannels(Modules module) {
-        String[] splitTypes = module.getChannelsTypes().split(", ");
+        String[] splitTypes = module.getTypesOfChannels().split(", ");
         int typesCount = splitTypes.length;
         int[] typesOfChannels = new int[typesCount];
 
@@ -159,8 +158,8 @@ public class Modules {
         return typesOfChannels;
     }
 
-    public void setChannelsTypes(int[] channelsTypes) {
-        this.channelsTypes = settingsToString(channelsTypes);
+    public void setTypesOfChannels(int[] typesOfChannels) {
+        this.typesOfChannels = settingsToString(typesOfChannels);
     }
 
     public String getMeasuringRanges() {
@@ -262,12 +261,12 @@ public class Modules {
     }
 
     public static int[] getSettingsOfModule(Modules module) {
-        String[] splitSettings = module.getChannelsTypes().split(", ");
+        String[] splitSettings = module.getSettings().split(", ");
         int settingsCount = splitSettings.length;
         int[] settingsOfModule = new int[settingsCount];
 
-        for (int typeIndex = 0; typeIndex < settingsCount; typeIndex++) {
-            settingsOfModule[typeIndex] = Integer.parseInt(splitSettings[typeIndex]);
+        for (int settingsIndex = 0; settingsIndex < settingsCount; settingsIndex++) {
+            settingsOfModule[settingsIndex] = Integer.parseInt(splitSettings[settingsIndex]);
         }
 
         return settingsOfModule;

@@ -310,6 +310,8 @@ class LTR34ChannelsSettings extends LTR34Settings {
     }
 
     void saveSettings() {
+        int channelsCount = 0;
+
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             if (checkBoxes.get(channelIndex).isSelected()) {
                 ltr34SettingsModel.getCheckedChannels()[channelIndex] = true; // true - канал выбран
@@ -318,6 +320,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
                 ltr34SettingsModel.getDescriptions()[channelIndex] = descriptionsTextFields.get(channelIndex).getText();
                 ltr34SettingsModel.getFrequencies()[channelIndex] = parseInteger(frequenciesTextFields.get(channelIndex));
                 ltr34SettingsModel.getPhases()[channelIndex] = parseInteger(phasesTextFields.get(channelIndex));
+                channelsCount++;
             } else {
                 ltr34SettingsModel.getCheckedChannels()[channelIndex] = false; // false - канал не выбран
                 ltr34SettingsModel.getAmplitudes()[channelIndex] = 0;
@@ -327,7 +330,10 @@ class LTR34ChannelsSettings extends LTR34Settings {
                 ltr34SettingsModel.getPhases()[channelIndex] = 0;
             }
         }
-    }
+
+        channelsCount = channelsCount <= 4 ? 4 : 8;
+        ltr34SettingsModel.getLTR34Instance().setChannelsCount(channelsCount);
+     }
 
     private int parseInteger(TextField textField) {
         if (!textField.getText().isEmpty()) {

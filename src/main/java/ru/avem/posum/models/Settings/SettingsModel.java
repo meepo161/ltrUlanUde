@@ -278,7 +278,7 @@ public class SettingsModel implements BaseController {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == adc.getSlot()) {
                 module.setChannelsCount(adc.getChannelsCount());
                 module.setCheckedChannels(adc.getCheckedChannels());
-                module.setChannelsTypes(adc.getTypeOfChannels());
+                module.setTypesOfChannels(adc.getTypeOfChannels());
                 module.setMeasuringRanges(adc.getMeasuringRanges());
                 module.setChannelsDescription(adc.getDescriptions());
                 module.setSettings(String.valueOf(adc.moduleSettingsToString()));
@@ -476,7 +476,7 @@ public class SettingsModel implements BaseController {
 
     private void parseChannelsSettings(Modules module) {
         String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
-        String[] parsedChannelsTypes = module.getChannelsTypes().split(", ", 5);
+        String[] parsedChannelsTypes = module.getTypesOfChannels().split(", ", 5);
         String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
         String[] parsedChannelsDescriptions = module.getChannelsDescriptions().split(", ", 5);
 

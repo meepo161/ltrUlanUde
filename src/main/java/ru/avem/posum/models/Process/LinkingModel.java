@@ -84,11 +84,32 @@ public class LinkingModel {
         List<Modules> modules = new ArrayList<>();
 
         for (Pair<CheckBox, CheckBox> description : removedDescriptions) {
-            modules.add(modulesHashMap.get(description.getKey().getText()));
-            modules.add(modulesHashMap.get(description.getValue().getText()));
+            int dacSlot = Integer.parseInt(description.getKey().getText().split("слот ")[1].split("\\)")[0]);
+            int adcSlot = Integer.parseInt(description.getValue().getText().split("слот ")[1].split("\\)")[0]);
+
+            Modules dac = modulesHashMap.get(description.getKey().getText());
+            Modules adc = modulesHashMap.get(description.getValue().getText());
+
+            if (!isPresent(dacSlot, modules)) {
+                modules.add(dac);
+            }
+
+            if (!isPresent(adcSlot, modules)) {
+                modules.add(adc);
+            }
         }
 
         return modules;
+    }
+
+    private boolean isPresent(int slot, List<Modules> modules) {
+        for (Modules module : modules) {
+            if (module.getSlot() == slot) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public HashMap<String, List<Pair<Integer, String>>> getChannelsHashMap() {

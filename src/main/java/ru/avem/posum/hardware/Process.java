@@ -13,8 +13,8 @@ public class Process {
     private int[] channelsCount = new int[SLOTS];
     private String crateSerialNumber;
     private double[][] data = new double[SLOTS][SLOTS];
-    private String[] firPath = new String[SLOTS];
-    private String[] iirPath = new String[SLOTS];
+    private String[] firPaths = new String[SLOTS];
+    private String[] iirPaths = new String[SLOTS];
     private int[][] measuringRanges = new int[SLOTS][SLOTS];
     private int[] modulesTypes = new int[SLOTS];
     private String[] operations = new String[SLOTS];
@@ -33,8 +33,8 @@ public class Process {
         for (int stringIndex = 0; stringIndex < statuses.length; stringIndex++) {
             operations[stringIndex] = "";
             statuses[stringIndex] = "";
-            firPath[stringIndex] = "";
-            iirPath[stringIndex] = "";
+            firPaths[stringIndex] = "";
+            iirPaths[stringIndex] = "";
         }
 
         crateSerialNumber = "";
@@ -71,7 +71,7 @@ public class Process {
     }
 
     public void initialize() {
-        initialize(typesOfChannels, measuringRanges, settingsOfModules, firPath, iirPath, channelsCount);
+        initialize(typesOfChannels, measuringRanges, settingsOfModules, firPaths, iirPaths, channelsCount);
         encodeStatuses();
     }
 
@@ -87,7 +87,6 @@ public class Process {
     public boolean isLaunched() {
         return checkStatuses();
     }
-
 
     public void perform() {
         data[0] = new double[7680 * 4];
@@ -150,7 +149,7 @@ public class Process {
 
     public native void checkConnection();
 
-    public native void initialize(int[][] channelsTypes, int[][] measuringRanges, int[][] moduleSettings,
+    public native void initialize(int[][] typeOfChannels, int[][] measuringRanges, int[][] settingsOfModules,
                                   String[] firFilePath, String[] iirFilePath, int[] channelsCount);
 
     public native void start();
@@ -220,15 +219,27 @@ public class Process {
         }
     }
 
-    public void setFirPath(String[] firPath) {
-        this.firPath = firPath;
+    public void setFirPaths(List<String> firPaths) {
+        int pathCount = firPaths.size();
+
+        for (int pathIndex = 0; pathIndex < pathCount; pathIndex++) {
+            this.firPaths[pathIndex] = firPaths.get(pathIndex);
+        }
     }
 
-    public void setIirPath(String[] iirPath) {
-        this.iirPath = iirPath;
+    public void setIirPaths(List<String> iirPaths) {
+        int pathCount = iirPaths.size();
+
+        for (int pathIndex = 0; pathIndex < pathCount; pathIndex++) {
+            this.iirPaths[pathIndex] = iirPaths.get(pathIndex);
+        }
     }
 
-    public void setChannelsCount(int[] channelsCount) {
-        this.channelsCount = channelsCount;
+    public void setChannelsCounts(List<Integer> channelsCounts) {
+        int size = channelsCounts.size();
+
+        for (int i = 0; i < size; i++) {
+            this.channelsCount[i] = channelsCounts.get(i);
+        }
     }
 }
