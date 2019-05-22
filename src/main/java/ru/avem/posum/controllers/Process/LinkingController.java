@@ -3,11 +3,9 @@ package ru.avem.posum.controllers.Process;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.WindowsManager;
@@ -27,11 +25,15 @@ import java.util.Optional;
 
 public class LinkingController implements BaseController {
     @FXML
+    private Button addChannelButton;
+    @FXML
     private ListView<CheckBox> adcChannelsListView;
     @FXML
     private Label checkIcon;
     @FXML
     private ListView<CheckBox> dacChannelsListView;
+    @FXML
+    private Button linkButton;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -60,24 +62,58 @@ public class LinkingController implements BaseController {
             dacChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR34));
             adcChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24));
 
-            listen(dacChannelsListView);
-            listen(adcChannelsListView);
+            listenChannels(adcChannelsListView.getItems());
+            listenChannels(dacChannelsListView.getItems());
         });
     }
 
-    private void listen(ListView<CheckBox> listView) {
-        ObservableList<CheckBox> channels = listView.getItems();
+    private void listenChannels(ObservableList<CheckBox> checkBoxes) {
+        ObservableList<CheckBox> adcCheckBoxes = adcChannelsListView.getItems();
+        ObservableList<CheckBox> dacCheckBoxes = dacChannelsListView.getItems();
 
-        for (CheckBox checkBox : channels) {
+        for (CheckBox checkBox : checkBoxes) {
             checkBox.selectedProperty().addListener(observable -> {
-                for (CheckBox channel : channels) {
-                    if (channel != checkBox) {
-                        channel.setDisable(checkBox.isSelected());
-                    }
+                boolean isAdcChannelSelected = isChannelSelected(adcCheckBoxes);
+                boolean isDacChannelSelected = isChannelSelected(dacCheckBoxes);
+                boolean isOneAndOnlyAdcChannelSelected = isOneAndOnlyChannelSelected(adcCheckBoxes);
+                boolean isOneAndOnlyDacChannelSelected = isOneAndOnlyChannelSelected(dacCheckBoxes);
+
+                if (isAdcChannelSelected && !isDacChannelSelected) {
+                    addChannelButton.setDisable(false);
+                    linkButton.setDisable(true);
+                } else if (isOneAndOnlyAdcChannelSelected && isOneAndOnlyDacChannelSelected) {
+                    addChannelButton.setDisable(true);
+                    linkButton.setDisable(false);
+                } else {
+                    addChannelButton.setDisable(true);
+                    linkButton.setDisable(true);
                 }
             });
         }
     }
+
+    private boolean isChannelSelected(ObservableList<CheckBox> checkBoxes) {
+        for (CheckBox checkBox : checkBoxes) {
+            if (checkBox.isSelected()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isOneAndOnlyChannelSelected(ObservableList<CheckBox> checkBoxes) {
+        int selectedChannelsCount = 0;
+
+        for (CheckBox checkBox : checkBoxes) {
+            if (checkBox.isSelected()) {
+                selectedChannelsCount++;
+            }
+        }
+
+        return selectedChannelsCount == 1;
+    }
+
 
     public void handleLink() {
         Optional<CheckBox> selectedDacChannel = getSelectedCheckBox(dacChannelsListView);
@@ -171,6 +207,10 @@ public class LinkingController implements BaseController {
             statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
         }).start();
+    }
+
+    public void handleAddChannel() {
+
     }
 
     @Override

@@ -16,6 +16,7 @@ public class ProgramController implements BaseController {
     private TextField amplitudeTextField;
     private TextField calibratedAmplitudeTextField;
     private TextField calibratedDcTextField;
+    private TextField calibratedRmsTextField;
     private Slider dcSlider;
     private TextField dcTextField;
     private Slider dSlider;
@@ -25,8 +26,8 @@ public class ProgramController implements BaseController {
     private Slider iSlider;
     private TextField iTextField;
     private AnchorPane mainPanel;
-    private Slider phaseSlider;
-    private TextField phaseTextField;
+    private Slider rmsSlider;
+    private TextField rmsTextField;
     private ProgramModel programModel = new ProgramModel();
     private Slider pSlider;
     private TextField pTextField;
@@ -35,7 +36,7 @@ public class ProgramController implements BaseController {
     private WindowsManager wm;
 
     public ProgramController(Slider amplitudeSlider, TextField amplitudeTextField,
-                             TextField calibratedAmplitudeTextField, TextField calibratedDcTextField,
+                             TextField calibratedAmplitudeTextField, TextField calibratedDcTextField, TextField calibratedRmsTextField,
                              Slider dcSlider, TextField dcTextField, Slider dSlider, TextField dTextField,
                              Slider frequencySlider, TextField frequencyTextField, Slider iSlider,
                              TextField iTextField, AnchorPane mainPanel, Slider phaseSlider, TextField phaseTextField,
@@ -45,6 +46,7 @@ public class ProgramController implements BaseController {
         this.amplitudeTextField = amplitudeTextField;
         this.calibratedAmplitudeTextField = calibratedAmplitudeTextField;
         this.calibratedDcTextField = calibratedDcTextField;
+        this.calibratedRmsTextField = calibratedRmsTextField;
         this.dcSlider = dcSlider;
         this.dcTextField = dcTextField;
         this.dSlider = dSlider;
@@ -54,8 +56,8 @@ public class ProgramController implements BaseController {
         this.iSlider = iSlider;
         this.iTextField = iTextField;
         this.mainPanel = mainPanel;
-        this.phaseSlider = phaseSlider;
-        this.phaseTextField = phaseTextField;
+        this.rmsSlider = phaseSlider;
+        this.rmsTextField = phaseTextField;
         this.pSlider = pSlider;
         this.pTextField = pTextField;
         this.toolbarSettings = toolbarSettings;
@@ -81,7 +83,7 @@ public class ProgramController implements BaseController {
         init(amplitudeSlider, amplitudeTextField);
         init(dcSlider, dcTextField);
         init(frequencySlider, frequencyTextField);
-        init(phaseSlider, phaseTextField);
+        init(rmsSlider, rmsTextField);
         init(pSlider, pTextField);
         init(iSlider, iTextField);
         init(dSlider, dTextField);

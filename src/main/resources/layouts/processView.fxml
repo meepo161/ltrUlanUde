@@ -44,7 +44,7 @@
                                       <Label text="Нет данных для отображения" />
                                   </placeholder>
                                   <columns>
-                                      <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Пара, канал ЦАП - канал АЦП" />
+                                      <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />
                                       <TableColumn fx:id="responseColumn" editable="false" minWidth="70.0" prefWidth="70.0" text="Отклик" />
                                       <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
                                       <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />
@@ -230,7 +230,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="amplitudeTextField" layoutX="131.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="amplitudeTextField" layoutX="129.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
@@ -240,73 +240,83 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="calibratedAmplitudeTextField" layoutX="130.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="calibratedAmplitudeTextField" layoutX="129.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="amplitudeSlider" blockIncrement="1.0" layoutX="196.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                        <Label layoutX="220.0" text="Статика">
+                                <Slider fx:id="amplitudeSlider" blockIncrement="1.0" layoutX="195.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                        <Label layoutX="219.0" text="Статика">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <Label layoutX="220.0" layoutY="30.0" text="В">
+                        <Label layoutX="219.0" layoutY="30.0" text="В">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="dcTextField" layoutX="243.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <TextField fx:id="dcTextField" layoutX="238.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="220.0" layoutY="60.0" text="ед">
+                        <Label layoutX="219.0" layoutY="60.0" text="ед">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="calibratedDcTextField" layoutX="243.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <TextField fx:id="calibratedDcTextField" layoutX="238.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
-                        <Slider fx:id="dcSlider" blockIncrement="1.0" layoutX="308.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                                <Label layoutX="330.0" text="Частота">
+                        <Slider fx:id="dcSlider" blockIncrement="1.0" layoutX="307.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                        <Label layoutX="331.0" text="RMS">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="331.0" layoutY="30.0" text="В">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="rmsTextField" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="331.0" layoutY="60.0" text="ед">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="calibratedRmsTextField" layoutX="350.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Slider fx:id="rmsSlider" blockIncrement="1.0" layoutX="419.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                                <Label layoutX="443.0" text="Частота">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="330.0" layoutY="30.0" text="Гц">
+                                <Label layoutX="443.0" layoutY="30.0" text="Гц">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="frequencyTextField" layoutX="353.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="frequencyTextField" layoutX="462.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="418.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
-                                <Label layoutX="440.0" text="Фаза">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <Label layoutX="440.0" layoutY="30.0" text="°">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="phaseTextField" layoutX="463.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
-                                    <font>
-                                        <Font name="Arial Bold" size="12.0" />
-                                    </font>
-                                </TextField>
-                                <Slider fx:id="phaseSlider" blockIncrement="1.0" layoutX="528.0" layoutY="6.0" max="360.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="528.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
                             </children>
                         </Pane>
-                        <Pane prefHeight="97.0" prefWidth="387.0">
+                        <Pane prefHeight="97.0" prefWidth="350.0">
                             <children>
                                 <Label layoutY="10.0" text="П">
                                     <font>
@@ -341,7 +351,7 @@
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="linkDACWithADCButton" layoutX="233.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Создать пару ЦАП - АЦП" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="linkDACWithADCButton" layoutX="233.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Добавить каналы" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>

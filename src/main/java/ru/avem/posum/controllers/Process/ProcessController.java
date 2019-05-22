@@ -38,6 +38,8 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField calibratedDcTextField;
     @FXML
+    private TextField calibratedRmsTextField;
+    @FXML
     private Label checkIcon;
     @FXML
     private Slider dcSlider;
@@ -88,9 +90,9 @@ public class ProcessController implements BaseController {
     @FXML
     private TableColumn<PairModel, String> phaseRelativeResponseColumn;
     @FXML
-    private Slider phaseSlider;
+    private Slider rmsSlider;
     @FXML
-    private TextField phaseTextField;
+    private TextField rmsTextField;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -138,8 +140,8 @@ public class ProcessController implements BaseController {
         experimentModel.setProcessModel(processModel);
 
         programController = new ProgramController(amplitudeSlider, amplitudeTextField, calibratedAmplitudeTextField,
-                calibratedDcTextField, dcSlider, dcTextField, dSlider, dValueTextField, frequencySlider,
-                frequencyTextField, iSlider, iValueTextField, mainPanel, phaseSlider, phaseTextField, pSlider,
+                calibratedDcTextField, calibratedRmsTextField, dcSlider, dcTextField, dSlider, dValueTextField, frequencySlider,
+                frequencyTextField, iSlider, iValueTextField, mainPanel, rmsSlider, rmsTextField, pSlider,
                 pValueTextField, toolbarSettings, topPanel);
     }
 
@@ -225,7 +227,7 @@ public class ProcessController implements BaseController {
                     amplitudeTextField.setText(pair.getAmplitude());
                     dcTextField.setText(pair.getDc());
                     frequencyTextField.setText(pair.getFrequency());
-                    phaseTextField.setText(pair.getPhase());
+                    rmsTextField.setText(pair.getPhase()); // TODO: change this shit
                     pValueTextField.setText(pair.getpValue());
                     iValueTextField.setText(pair.getiValue());
                     dValueTextField.setText(pair.getdValue());
@@ -398,7 +400,7 @@ public class ProcessController implements BaseController {
             pair.setAmplitude(amplitudeTextField.getText());
             pair.setDc(dcTextField.getText());
             pair.setFrequency(frequencyTextField.getText());
-            pair.setPhase(phaseTextField.getText());
+            pair.setPhase(rmsTextField.getText());
             pair.setPvalue(pValueTextField.getText());
             pair.setIvalue(iValueTextField.getText());
             pair.setDvalue(dValueTextField.getText());
