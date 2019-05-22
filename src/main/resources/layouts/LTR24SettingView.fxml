@@ -63,7 +63,7 @@
                   <Insets />
                </GridPane.margin>
             </Label>
-            <CheckBox fx:id="applyForAllChannels" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="applyForAllChannels" mnemonicParsing="false" text="Применить для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <CheckBox fx:id="checkChannelN1" mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="2" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets />

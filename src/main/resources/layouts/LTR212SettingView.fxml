@@ -49,7 +49,7 @@
          <children>
             <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR212" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
-            <CheckBox fx:id="applyForAllChannels" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <CheckBox fx:id="applyForAllChannels" mnemonicParsing="false" text="Применить для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <Label text="Назначение канала:" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets />

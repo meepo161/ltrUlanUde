@@ -17,16 +17,16 @@ public class GraphController {
     private GraphModel graphModel = new GraphModel();
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
     private boolean isFFT;
-    private boolean isShowFinished;
+    private boolean showFinished;
 
     public GraphController(SignalController signalController) {
         this.signalController = signalController;
     }
 
     public void initGraph() {
-        graph = signalController.getGraphController();
-        signalController.getGraphController().getData().clear();
-        signalController.getGraphController().getData().add(graphSeries);
+        graph = signalController.getGraph();
+        signalController.getGraph().getData().clear();
+        signalController.getGraph().getData().add(graphSeries);
         clearSeries();
         toggleAutoRange(false);
     }
@@ -34,7 +34,7 @@ public class GraphController {
     private void toggleAutoRange(boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         yAxis.setAutoRanging(isAutoRangeEnabled);
-        Utils.sleep(100);
+        restartOfShow();
     }
 
     public void clearSeries() {
@@ -101,22 +101,33 @@ public class GraphController {
     }
 
     private void setScale(NumberAxis axis) {
+        Platform.runLater(() -> graphSeries.getData().clear());
         axis.setLowerBound(graphModel.getLowerBound());
         axis.setTickUnit(graphModel.getTickUnit());
         axis.setUpperBound(graphModel.getUpperBound());
+        restartOfShow();
     }
 
     private void listenScalesComboBox(ComboBox<String> comboBox) {
         comboBox.valueProperty().addListener(observable -> {
             if (!comboBox.getSelectionModel().isEmpty()) {
-                graphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
-                graphModel.calculateGraphBounds();
+                signalController.getStatusBarLine().toggleProgressIndicator(false);
+                signalController.getStatusBarLine().setStatusOfProgress("Обработка графика");
 
-                if (comboBox == signalController.getVerticalScalesComboBox()) {
-                    setScale((NumberAxis) graph.getYAxis());
-                } else {
-                    setScale((NumberAxis) graph.getXAxis());
-                }
+                new Thread(() -> {
+                    graphModel.parseGraphScale(comboBox.getSelectionModel().getSelectedItem());
+                    graphModel.calculateGraphBounds();
+
+                    if (comboBox == signalController.getVerticalScalesComboBox()) {
+                        setScale((NumberAxis) graph.getYAxis());
+                    } else {
+                        setScale((NumberAxis) graph.getXAxis());
+                    }
+
+                    Utils.sleep(200);
+                    signalController.getStatusBarLine().clearStatusBar();
+                    signalController.getStatusBarLine().toggleProgressIndicator(true);
+                }).start();
             }
         });
     }
@@ -162,15 +173,7 @@ public class GraphController {
                     break;
             }
 
-            int selectedScale = signalController.getHorizontalScalesComboBox().getSelectionModel().getSelectedIndex();
-            int lastScale = signalController.getHorizontalScalesComboBox().getItems().size() - 1;
-            if (selectedScale == lastScale) {
-                signalController.getHorizontalScalesComboBox().getSelectionModel().select(lastScale - 1);
-                signalController.getHorizontalScalesComboBox().getSelectionModel().select(lastScale);
-            } else {
-                signalController.getHorizontalScalesComboBox().getSelectionModel().select(lastScale);
-                signalController.getHorizontalScalesComboBox().getSelectionModel().select(selectedScale);
-            }
+            restartOfShow();
         });
     }
 
@@ -341,16 +344,27 @@ public class GraphController {
 
     private void listenCalibrationCheckBox() {
         signalController.getCalibrationCheckBox().selectedProperty().addListener(observable -> {
-            if (signalController.getCalibrationCheckBox().isSelected()) {
-                signalController.checkCalibration();
-            } else {
-                signalController.getSignalModel().setCalibrationExists(false);
-                signalController.getSignalModel().setDefaultValueName();
-                signalController.getVerticalScalesComboBox().setDisable(false);
-                setValueNameToGraph();
-                signalController.setSignalParametersLabels();
-                resetGraphBounds();
-            }
+            signalController.getStatusBarLine().toggleProgressIndicator(false);
+            signalController.getStatusBarLine().setStatusOfProgress("Обработка графика");
+            showFinished = true;
+
+            new Thread(() -> {
+                if (signalController.getCalibrationCheckBox().isSelected()) {
+                    signalController.checkCalibration();
+                } else {
+                    Platform.runLater(() -> graphSeries.getData().clear());
+                    signalController.getSignalModel().setCalibrationExists(false);
+                    signalController.getSignalModel().setDefaultValueName();
+                    setValueNameToGraph();
+                    signalController.setSignalParametersLabels();
+                    Platform.runLater(this::resetGraphBounds);
+                }
+
+                Utils.sleep(1900); // пауза для отрисовки ненулевого графика
+                restartOfShow();
+                signalController.getStatusBarLine().clearStatusBar();
+                signalController.getStatusBarLine().toggleProgressIndicator(true);
+            }).start();
         });
     }
 
@@ -369,14 +383,15 @@ public class GraphController {
         int rarefactionCoefficient = signalController.getSignalModel().getRarefactionCoefficient();
 
         for (int index = channel; index < data.length && !signalController.getCm().isStopped(); index += channels * rarefactionCoefficient) {
-            if (isShowFinished) {
+            if (showFinished) {
                 break;
             }
 
             XYChart.Data<Number, Number> point = signalController.getSignalModel().getPoint(index);
             Runnable addPoint = () -> {
-                if (!graphSeries.getData().contains(point))
+                if (!graphSeries.getData().contains(point)) {
                     graphSeries.getData().add(point);
+                }
             };
 
             if ((double) point.getXValue() < graphModel.getUpperBound()) {
@@ -406,7 +421,7 @@ public class GraphController {
         graphSeries.getData().add(new XYChart.Data<>(0, 0));
 
         for (int i = 0; i < (xAxis.getUpperBound() * 2); i++) {
-            if (isShowFinished) {
+            if (showFinished) {
                 break;
             }
 
@@ -427,14 +442,21 @@ public class GraphController {
         }
     }
 
-    private void restartOfShow() {
-        isShowFinished = true;
+    public void restartOfShow() {
+        showFinished = true;
         Platform.runLater(() -> graphSeries.getData().clear());
         Utils.sleep(100);
-        isShowFinished = false;
+        showFinished = false;
+
+        System.out.println("Reseted");
     }
 
     public boolean isFFT() {
         return isFFT;
+    }
+
+    public void setShowFinished(boolean showFinished) {
+        this.showFinished = showFinished;
+        Platform.runLater(() -> graphSeries.getData().clear());
     }
 }

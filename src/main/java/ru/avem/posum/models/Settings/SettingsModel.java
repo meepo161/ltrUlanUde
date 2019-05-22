@@ -456,8 +456,7 @@ public class SettingsModel implements BaseController {
 
     private void loadADCSettings() {
         adc = (ADC) modules.get(slot);
-        channels = adc.getChannelsCount();
-        setADCSettingsFields();
+        System.out.println(slot);
 
         for (Modules module : ModulesRepository.getAllModules()) {
             parseADCSettings(module);
@@ -466,6 +465,9 @@ public class SettingsModel implements BaseController {
 
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
+            System.out.println(adc.getChannelsCount());
+            channels = adc.getChannelsCount();
+            setADCSettingsFields();
             parseChannelsSettings(module);
             parseModuleSettings(module);
             loadCalibrationSettings(module);

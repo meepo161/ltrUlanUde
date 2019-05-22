@@ -24,6 +24,7 @@ import ru.avem.posum.controllers.Settings.LTR34.LTR34Settings;
 import ru.avem.posum.controllers.Settings.Settings;
 import ru.avem.posum.controllers.Signal.SignalController;
 import ru.avem.posum.db.DataBaseRepository;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
@@ -303,6 +304,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public ExperimentModel getExperimentModel() {
         return processController.getExperimentModel();
+    }
+
+    @Override
+    public List<Modules> getLinkedModules() {
+        return linkingController.getLinkingModel().getLinkedModules();
     }
 
     @Override
