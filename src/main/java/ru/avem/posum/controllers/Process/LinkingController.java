@@ -1,9 +1,7 @@
 package ru.avem.posum.controllers.Process;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Pair;
@@ -13,7 +11,6 @@ import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.Process.LinkingModel;
 import ru.avem.posum.models.Process.PairModel;
 import ru.avem.posum.models.Process.ProcessModel;
@@ -131,7 +128,7 @@ public class LinkingController implements BaseController {
 
         dacChannelsListView.getItems().remove(selectedDacChannel.get());
         adcChannelsListView.getItems().remove(selectedAdcChannel.get());
-        linkingModel.removeChannelsDescriptions(new Pair<>(selectedDacChannel.get(), selectedAdcChannel.get()));
+        linkingModel.saveLinked(new Pair<>(selectedDacChannel.get(), selectedAdcChannel.get()));
 
         PairModel newPairModel = createPair(selectedDacChannel.get(), selectedAdcChannel.get());
         processModel.getProcessData().add(newPairModel);
@@ -140,6 +137,7 @@ public class LinkingController implements BaseController {
         enableChooseOfChannels(adcChannelsListView);
 
         statusBarLine.setStatus("Операция успешно выполнена", true);
+        linkButton.setDisable(true);
     }
 
     private PairModel createPair(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {

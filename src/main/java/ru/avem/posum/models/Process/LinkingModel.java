@@ -15,8 +15,9 @@ import java.util.List;
 
 public class LinkingModel {
     private HashMap<String, List<Pair<Integer, String>>> channelsHashMap = new HashMap<>();
+    private List<CheckBox> chosenChannels = new ArrayList<>();
     private HashMap<String, Modules> modulesHashMap = new HashMap<>();
-    private ObservableList<Pair<CheckBox, CheckBox>> removedDescriptions = FXCollections.observableArrayList();
+    private ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = FXCollections.observableArrayList();
     private TestProgram testProgram;
 
     public ObservableList<CheckBox> getDescriptionsOfChannels(String... moduleTypes) {
@@ -49,7 +50,7 @@ public class LinkingModel {
     }
 
     private void checkRemoved(ObservableList<CheckBox> channels) {
-        for (Pair<CheckBox, CheckBox> descriptions : removedDescriptions) {
+        for (Pair<CheckBox, CheckBox> descriptions : linkedChannels) {
             String descriptionOfDacChannel = descriptions.getKey().getText();
             String descriptionOfAdcChannel = descriptions.getValue().getText();
 
@@ -74,16 +75,24 @@ public class LinkingModel {
         return outputList;
     }
 
-    public void removeChannelsDescriptions(Pair<CheckBox, CheckBox> descriptions) {
-        if (!removedDescriptions.contains(descriptions)) {
-            removedDescriptions.add(descriptions);
+    public void saveLinked(Pair<CheckBox, CheckBox> channels) {
+        if (!linkedChannels.contains(channels)) {
+            linkedChannels.add(channels);
+        }
+    }
+
+    public void saveChosen(List<CheckBox> channels) {
+        for (CheckBox channel : channels) {
+            if (!chosenChannels.contains(channel)) {
+                chosenChannels.add(channel);
+            }
         }
     }
 
     public List<Modules> getLinkedModules() {
         List<Modules> modules = new ArrayList<>();
 
-        for (Pair<CheckBox, CheckBox> description : removedDescriptions) {
+        for (Pair<CheckBox, CheckBox> description : linkedChannels) {
             int dacSlot = Integer.parseInt(description.getKey().getText().split("слот ")[1].split("\\)")[0]);
             int adcSlot = Integer.parseInt(description.getValue().getText().split("слот ")[1].split("\\)")[0]);
 
@@ -120,8 +129,8 @@ public class LinkingModel {
         return modulesHashMap.get(channelDescription);
     }
 
-    public ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions() {
-        return removedDescriptions;
+    public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
+        return linkedChannels;
     }
 
     public void setTestProgram(TestProgram testProgram) {

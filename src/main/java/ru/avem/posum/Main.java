@@ -313,7 +313,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions() {
-        return linkingController.getLinkingModel().getRemovedDescriptions();
+        return linkingController.getLinkingModel().getLinkedChannels();
     }
 
     @Override
