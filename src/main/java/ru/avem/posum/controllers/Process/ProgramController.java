@@ -311,14 +311,20 @@ public class ProgramController {
                 }
 
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
-                    ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
-                    toggleCheckBoxes(false);
-                    selectParameters(selectedChannel);
-                    setParameters(selectedChannel);
+                    selectParameters(tableView);
                 }
             });
+
+            row.selectedProperty().addListener(observable -> selectParameters(tableView));
             return row;
         });
+    }
+
+    private void selectParameters(TableView<ChannelModel> tableView) {
+        ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
+        toggleCheckBoxes(false);
+        selectParameters(selectedChannel);
+        setParameters(selectedChannel);
     }
 
     private void toggleCheckBoxes(boolean isDisable) {
