@@ -315,7 +315,11 @@ public class ProgramController {
                 }
             });
 
-            row.selectedProperty().addListener(observable -> selectParameters(tableView));
+            row.selectedProperty().addListener(observable -> {
+                if (!tableView.getItems().isEmpty()) {
+                    selectParameters(tableView);
+                }
+            });
             return row;
         });
     }
