@@ -53,16 +53,18 @@ public class LinkingController implements BaseController {
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
 
         listen(addChannelButton);
+        listen(linkButton);
     }
 
     private void listen(Button button) {
-        button.pressedProperty().addListener(observable -> {
-            new Thread(() -> {
-                Utils.sleep(250);
-                System.out.println("Adc channels: " + adcChannelsListView.getItems().size());
-                chooseAllButton.setDisable(adcChannelsListView.getItems().isEmpty());
-            }).start();
-        });
+        button.pressedProperty().addListener(observable -> checkItems(adcChannelsListView));
+    }
+
+    private void checkItems(ListView<CheckBox> listView) {
+        new Thread(() -> {
+            Utils.sleep(250);
+            chooseAllButton.setDisable(listView.getItems().isEmpty());
+        }).start();
     }
 
     public void initListViews() {
@@ -77,6 +79,8 @@ public class LinkingController implements BaseController {
 
             listenChannels(adcChannelsListView.getItems());
             listenChannels(dacChannelsListView.getItems());
+
+            checkItems(adcChannelsListView);
         });
     }
 
@@ -174,17 +178,12 @@ public class LinkingController implements BaseController {
     }
 
     private ChannelModel createChannel(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {
-        Modules adcModule = linkingModel.getModule(selectedAdcChannel.getText());
-        int dacChannel = getChannelNumber(Modules.getModuleName(adcModule), selectedDacChannel.getText());
-        String pairName = selectedDacChannel.getText().split(" \\(")[0] + " -> " +
-                selectedAdcChannel.getText().split(" \\(")[0];
-
+        String pairName = selectedDacChannel.getText() + " -> " +  selectedAdcChannel.getText();
         return new ChannelModel(pairName);
     }
 
     private ChannelModel createChannel(CheckBox selectedAdcChannel) {
-        String channelName = selectedAdcChannel.getText().split(" \\(")[0];
-
+        String channelName = selectedAdcChannel.getText();
         return new ChannelModel(channelName);
     }
 

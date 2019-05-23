@@ -411,8 +411,8 @@ public class ProgramController {
             String descriptionOfAdcChannel = channelModel.getName().split(" -> ")[1];
 
             for (Pair<CheckBox, CheckBox> channels : cm.getLinkedChannels()) {
-                if (channels.getKey().getText().split(" \\(")[0].equals(descriptionOfDacChannel) ||
-                        channels.getValue().getText().split(" \\(")[0].equals(descriptionOfAdcChannel)) {
+                if (channels.getKey().getText().equals(descriptionOfDacChannel) ||
+                        channels.getValue().getText().equals(descriptionOfAdcChannel)) {
                     Platform.runLater(() -> cm.getLinkedChannels().remove(channels));
                 }
             }
@@ -420,7 +420,7 @@ public class ProgramController {
             String descriptionOfChannel = channelModel.getName();
 
             for (CheckBox channel : cm.getChosenChannels()) {
-                if (channel.getText().split(" \\(")[0].equals(descriptionOfChannel)) {
+                if (channel.getText().equals(descriptionOfChannel)) {
                     Platform.runLater(() -> cm.getChosenChannels().remove(channel));
                 }
             }
