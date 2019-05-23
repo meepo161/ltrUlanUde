@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PairModel {
+public class ChannelModel {
     private final StringProperty name;
     private final StringProperty amplitudeColor;
     private final IntegerProperty amplitudeGraphNum;
@@ -37,7 +37,7 @@ public class PairModel {
 
     private List<StringProperty> properties = new ArrayList<>();
 
-    public PairModel(String name, Color amplitudeColor, Color frequencyColor, Color phaseColor, Color pColor, Color group5Color, Color group6Color) {
+    public ChannelModel(String name, Color amplitudeColor, Color frequencyColor, Color phaseColor, Color pColor, Color group5Color, Color group6Color) {
         this.name = new SimpleStringProperty(name);
         this.amplitudeColor = new SimpleStringProperty(String.format("%d, %d, %d",
                 (amplitudeColor.getRed() * 255),
@@ -79,10 +79,10 @@ public class PairModel {
                 this.relativeResponsePhase, this.pValue, this.iValue, this.dValue));
     }
 
-    public PairModel(String name) {
+    public ChannelModel(String name) {
         this(name,Color.white, Color.BLACK, Color.white, Color.white, Color.white, Color.white);
     }
-    public PairModel() {
+    public ChannelModel() {
         this(null,Color.white, Color.white, Color.white, Color.white, Color.white, Color.white);
     }
 

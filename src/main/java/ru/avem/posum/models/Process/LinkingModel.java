@@ -15,7 +15,7 @@ import java.util.List;
 
 public class LinkingModel {
     private HashMap<String, List<Pair<Integer, String>>> channelsHashMap = new HashMap<>();
-    private List<CheckBox> chosenChannels = new ArrayList<>();
+    private ObservableList<CheckBox> chosenChannels = FXCollections.observableArrayList();
     private HashMap<String, Modules> modulesHashMap = new HashMap<>();
     private ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = FXCollections.observableArrayList();
     private TestProgram testProgram;
@@ -50,12 +50,24 @@ public class LinkingModel {
     }
 
     private void checkRemoved(ObservableList<CheckBox> channels) {
+        // Удаляет из списка связанные каналы ЦАП - АЦП
         for (Pair<CheckBox, CheckBox> descriptions : linkedChannels) {
             String descriptionOfDacChannel = descriptions.getKey().getText();
             String descriptionOfAdcChannel = descriptions.getValue().getText();
 
             for (CheckBox description : channels) {
                 if (description.getText().equals(descriptionOfDacChannel) || description.getText().equals(descriptionOfAdcChannel)) {
+                    Platform.runLater(() -> channels.remove(description));
+                }
+            }
+        }
+
+        // Удаляет из списка выбранные каналы АЦП
+        for (CheckBox channel : chosenChannels) {
+            String descriptionOfChannel = channel.getText();
+
+            for (CheckBox description : channels) {
+                if (description.getText().equals(descriptionOfChannel)) {
                     Platform.runLater(() -> channels.remove(description));
                 }
             }
@@ -135,5 +147,9 @@ public class LinkingModel {
 
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
+    }
+
+    public ObservableList<CheckBox> getChosenChannels() {
+        return chosenChannels;
     }
 }

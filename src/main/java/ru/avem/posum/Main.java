@@ -287,6 +287,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public ObservableList<CheckBox> getChosenChannels() {
+        return linkingController.getLinkingModel().getChosenChannels();
+    }
+
+    @Override
     public String getCrateSerialNumber() {
         return settings.getHardwareSettings().getCrateSerialNumber();
     }
@@ -294,6 +299,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public Crate getCrateModelInstance() {
         return settings.getHardwareSettings().getCrate();
+    }
+
+    @Override
+    public double getDc() {
+        return signalController.getSignalModel().getDc();
     }
 
     @Override
@@ -307,23 +317,18 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
+        return linkingController.getLinkingModel().getLinkedChannels();
+    }
+
+    @Override
     public List<Modules> getLinkedModules() {
         return linkingController.getLinkingModel().getLinkedModules();
     }
 
     @Override
-    public ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions() {
-        return linkingController.getLinkingModel().getLinkedChannels();
-    }
-
-    @Override
     public String getValueName() {
         return signalController.getSignalModel().getValueName();
-    }
-
-    @Override
-    public double getDc() {
-        return signalController.getSignalModel().getDc();
     }
 
     @Override
@@ -463,7 +468,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setScene(processScene);
                 break;
             case LINKING_SCENE:
-                primaryStage.setTitle("Связывание каналов ЦАП и АЦП");
+                primaryStage.setTitle("Добавление каналов ЦАП и АЦП");
                 primaryStage.setScene(linkingScene);
                 break;
             case LTR24_SCENE:

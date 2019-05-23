@@ -12,10 +12,11 @@ import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.LinkingModel;
-import ru.avem.posum.models.Process.PairModel;
+import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.ProcessModel;
 import ru.avem.posum.utils.StatusBarLine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -111,6 +112,22 @@ public class LinkingController implements BaseController {
         return selectedChannelsCount == 1;
     }
 
+    public void handleAddChannel() {
+        List<CheckBox> chosenChannels = new ArrayList<>();
+        ObservableList<CheckBox> adcChannels = adcChannelsListView.getItems();
+
+        for (CheckBox channel : adcChannels) {
+            if (channel.isSelected()) {
+                chosenChannels.add(channel);
+                Platform.runLater(() -> adcChannels.remove(channel));
+
+                ChannelModel newChannelModel = createChannel(channel);
+                processModel.getProcessData().add(newChannelModel);
+            }
+        }
+
+        linkingModel.saveChosen(chosenChannels);
+    }
 
     public void handleLink() {
         Optional<CheckBox> selectedDacChannel = getSelectedCheckBox(dacChannelsListView);
@@ -130,8 +147,8 @@ public class LinkingController implements BaseController {
         adcChannelsListView.getItems().remove(selectedAdcChannel.get());
         linkingModel.saveLinked(new Pair<>(selectedDacChannel.get(), selectedAdcChannel.get()));
 
-        PairModel newPairModel = createPair(selectedDacChannel.get(), selectedAdcChannel.get());
-        processModel.getProcessData().add(newPairModel);
+        ChannelModel newChannelModel = createChannel(selectedDacChannel.get(), selectedAdcChannel.get());
+        processModel.getProcessData().add(newChannelModel);
 
         enableChooseOfChannels(dacChannelsListView);
         enableChooseOfChannels(adcChannelsListView);
@@ -140,26 +157,41 @@ public class LinkingController implements BaseController {
         linkButton.setDisable(true);
     }
 
-    private PairModel createPair(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {
+    private ChannelModel createChannel(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {
         Modules dacModule = linkingModel.getModule(selectedDacChannel.getText());
         int dacChannel = getChannelNumber(Modules.getModuleName(dacModule), selectedDacChannel.getText());
         double amplitude = Modules.getAmplitude(dacModule, dacChannel);
         double dc = Modules.getDc(dacModule, dacChannel);
         int frequency = Modules.getFrequency(dacModule, dacChannel);
         int phase = Modules.getPhase(dacModule, dacChannel);
-        String pairName = selectedDacChannel.getText().split(" \\(")[0] + " - " +
+        String pairName = selectedDacChannel.getText().split(" \\(")[0] + " -> " +
                 selectedAdcChannel.getText().split(" \\(")[0];
 
-        PairModel pairModel = new PairModel(pairName);
-        pairModel.setAmplitude(String.valueOf(amplitude));
-        pairModel.setDc(String.valueOf(dc));
-        pairModel.setFrequency(String.valueOf(frequency));
-        pairModel.setPhase(String.valueOf(phase));
-        pairModel.setPvalue("0");
-        pairModel.setIvalue("0");
-        pairModel.setDvalue("0");
+        ChannelModel channelModel = new ChannelModel(pairName);
+        channelModel.setAmplitude(String.valueOf(amplitude));
+        channelModel.setDc(String.valueOf(dc));
+        channelModel.setFrequency(String.valueOf(frequency));
+        channelModel.setPhase(String.valueOf(phase)); // TODO: change this shit
+        channelModel.setPvalue("0");
+        channelModel.setIvalue("0");
+        channelModel.setDvalue("0");
 
-        return pairModel;
+        return channelModel;
+    }
+
+    private ChannelModel createChannel(CheckBox selectedAdcChannel) {
+        String channelName = selectedAdcChannel.getText().split(" \\(")[0];
+
+        ChannelModel channelModel = new ChannelModel(channelName);
+        channelModel.setAmplitude("0");
+        channelModel.setDc("0");
+        channelModel.setFrequency("0");
+        channelModel.setPhase("0"); // TODO: change this shit
+        channelModel.setPvalue("0");
+        channelModel.setIvalue("0");
+        channelModel.setDvalue("0");
+
+        return channelModel;
     }
 
     private int getChannelNumber(String moduleName, String channelDescription) {
@@ -201,14 +233,11 @@ public class LinkingController implements BaseController {
         statusBarLine.setStatusOfProgress("Загрузка программы испытаний");
 
         new Thread(() -> {
+            addChannelButton.setDisable(true);
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
         }).start();
-    }
-
-    public void handleAddChannel() {
-
     }
 
     @Override

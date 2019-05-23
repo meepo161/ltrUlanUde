@@ -1,6 +1,5 @@
 package ru.avem.posum.controllers.Process;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,7 +17,6 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.hardware.Module;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
@@ -66,29 +64,29 @@ public class ProcessController implements BaseController {
     @FXML
     private TableColumn<Events, String> eventDescriptionColumn;
     @FXML
-    private TableView<PairModel> table;
+    private TableView<ChannelModel> table;
     @FXML
-    private TableColumn<PairModel, String> pairColumn;
+    private TableColumn<ChannelModel, String> pairColumn;
     @FXML
-    private TableColumn<PairModel, Void> responseColumn;
+    private TableColumn<ChannelModel, Void> responseColumn;
     @FXML
-    private TableColumn<PairModel, String> ampResponseColumn;
+    private TableColumn<ChannelModel, String> ampResponseColumn;
     @FXML
-    private TableColumn<PairModel, String> ampColumn;
+    private TableColumn<ChannelModel, String> ampColumn;
     @FXML
-    private TableColumn<PairModel, String> ampRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> ampRelativeResponseColumn;
     @FXML
-    private TableColumn<PairModel, String> frequencyResponseColumn;
+    private TableColumn<ChannelModel, String> frequencyResponseColumn;
     @FXML
-    private TableColumn<PairModel, String> frequencyColumn;
+    private TableColumn<ChannelModel, String> frequencyColumn;
     @FXML
-    private TableColumn<PairModel, String> frequencyRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> frequencyRelativeResponseColumn;
     @FXML
-    private TableColumn<PairModel, String> phaseResponseColumn;
+    private TableColumn<ChannelModel, String> phaseResponseColumn;
     @FXML
-    private TableColumn<PairModel, String> phaseColumn;
+    private TableColumn<ChannelModel, String> phaseColumn;
     @FXML
-    private TableColumn<PairModel, String> phaseRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> phaseRelativeResponseColumn;
     @FXML
     private Slider rmsSlider;
     @FXML
@@ -182,39 +180,54 @@ public class ProcessController implements BaseController {
     }
 
     private void deletePairModel() {
-        PairModel selectedPairModel = table.getSelectionModel().getSelectedItem();
-        table.getItems().remove(selectedPairModel);
-        deleteDescriptions(selectedPairModel);
-        statusBarLine.setStatus("Пара успешно удалена", true);
+        ChannelModel selectedChannelModel = table.getSelectionModel().getSelectedItem();
+        table.getItems().remove(selectedChannelModel);
+        deleteDescriptions(selectedChannelModel);
+        statusBarLine.setStatus("Канал успешно удален", true);
     }
 
-    private void deleteDescriptions(PairModel pairModel) {
-        String descriptionOfDacChannel = pairModel.getName().split(" - ")[0];
-        String descriptionOfAdcChannel = pairModel.getName().split(" - ")[1];
+    private void deleteDescriptions(ChannelModel channelModel) {
+        if (channelModel.getName().contains("->")) { // удаление связанных каналов
+            String descriptionOfDacChannel = channelModel.getName().split(" -> ")[0];
+            String descriptionOfAdcChannel = channelModel.getName().split(" -> ")[1];
 
-        for (Pair<CheckBox, CheckBox> descriptions : cm.getRemovedDescriptions()) {
-            if (descriptions.getKey().getText().split(" \\(")[0].equals(descriptionOfDacChannel) ||
-                    descriptions.getValue().getText().split(" \\(")[0].equals(descriptionOfAdcChannel)) {
-                Platform.runLater(() -> cm.getRemovedDescriptions().remove(descriptions));
+            for (Pair<CheckBox, CheckBox> channels : cm.getLinkedChannels()) {
+                if (channels.getKey().getText().split(" \\(")[0].equals(descriptionOfDacChannel) ||
+                        channels.getValue().getText().split(" \\(")[0].equals(descriptionOfAdcChannel)) {
+                    Platform.runLater(() -> cm.getLinkedChannels().remove(channels));
+                }
+            }
+        } else { // удаление выбранных каналов
+            String descriptionOfChannel = channelModel.getName();
+
+            for (CheckBox channel : cm.getChosenChannels()) {
+                if (channel.getText().split(" \\(")[0].equals(descriptionOfChannel)) {
+                    Platform.runLater(() -> {
+                        cm.getChosenChannels().remove(channel);
+                    });
+                }
             }
         }
     }
 
     private void clearPairModels() {
-        ObservableList<PairModel> pairModels = table.getItems();
-        table.getItems().removeAll(pairModels);
+        ObservableList<ChannelModel> channelModels = table.getItems();
+        table.getItems().removeAll(channelModels);
         clearDescriptions();
-        statusBarLine.setStatus("Все пары успешно удалены", true);
+        statusBarLine.setStatus("Все каналы успешно удалены", true);
     }
 
     private void clearDescriptions() {
-        ObservableList<Pair<CheckBox, CheckBox>> descriptions = cm.getRemovedDescriptions();
-        cm.getRemovedDescriptions().removeAll(descriptions);
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = cm.getLinkedChannels();
+        cm.getLinkedChannels().removeAll(linkedChannels); // удаление всех связанных каналов
+
+        ObservableList<CheckBox> chosenChannels = cm.getChosenChannels();
+        cm.getChosenChannels().removeAll(chosenChannels); // удаление всех выбранных каналов
     }
 
     private void listenMouse() {
         table.setRowFactory(tv -> {
-            TableRow<PairModel> row = new TableRow<>();
+            TableRow<ChannelModel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
                     contextMenu.show(table, event.getScreenX(), event.getScreenY());
@@ -223,7 +236,7 @@ public class ProcessController implements BaseController {
                 }
 
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
-                    PairModel pair = table.getSelectionModel().getSelectedItem();
+                    ChannelModel pair = table.getSelectionModel().getSelectedItem();
                     amplitudeTextField.setText(pair.getAmplitude());
                     dcTextField.setText(pair.getDc());
                     frequencyTextField.setText(pair.getFrequency());
@@ -395,7 +408,7 @@ public class ProcessController implements BaseController {
 
     public void handleSavePair() {
         if (table.getSelectionModel().getSelectedIndex() != -1) {
-            PairModel pair = table.getSelectionModel().getSelectedItem();
+            ChannelModel pair = table.getSelectionModel().getSelectedItem();
 
             pair.setAmplitude(amplitudeTextField.getText());
             pair.setDc(dcTextField.getText());

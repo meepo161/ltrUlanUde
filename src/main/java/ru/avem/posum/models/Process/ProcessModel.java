@@ -20,12 +20,12 @@ public class ProcessModel {
     private List<XYChart.Series<Number, Number>> graphSeries = new ArrayList<>();
     private Boolean[] graphSeriesEnabled = new Boolean[24];
     private LineChart<Number, Number> graph;
-    private ObservableList<PairModel> processData = FXCollections.observableArrayList();
-    private TableView<PairModel> table;
+    private ObservableList<ChannelModel> processData = FXCollections.observableArrayList();
+    private TableView<ChannelModel> table;
 
     public void loadData(long idTest) {
         int index = processData.size() + 1;
-        processData.add(new PairModel("АЦП" + index + " ЦАП" + index));
+        processData.add(new ChannelModel("АЦП" + index + " ЦАП" + index));
     }
 
     public void testData() {
@@ -66,10 +66,10 @@ public class ProcessModel {
         }
     }
 
-    public void init(TableColumn<PairModel, String> columnOfTable) {
+    public void init(TableColumn<ChannelModel, String> columnOfTable) {
         Utils.makeHeaderWrappable(columnOfTable);
 
-        columnOfTable.setCellFactory(column -> new TableCell<PairModel, String>() {
+        columnOfTable.setCellFactory(column -> new TableCell<ChannelModel, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -83,20 +83,20 @@ public class ProcessModel {
         });
     }
 
-    public void SetProcessSampleColumnColorFunction(TableColumn<PairModel, Void> columnProcessSample) {
+    public void SetProcessSampleColumnColorFunction(TableColumn<ChannelModel, Void> columnProcessSample) {
         Utils.makeHeaderWrappable(columnProcessSample);
-        Callback<TableColumn<PairModel, Void>, TableCell<PairModel, Void>> cellFactory = new Callback<TableColumn<PairModel, Void>, TableCell<PairModel, Void>>() {
+        Callback<TableColumn<ChannelModel, Void>, TableCell<ChannelModel, Void>> cellFactory = new Callback<TableColumn<ChannelModel, Void>, TableCell<ChannelModel, Void>>() {
 
             @Override
-            public TableCell<PairModel, Void> call(final TableColumn<PairModel, Void> param) {
-                final TableCell<PairModel, Void> cell = new TableCell<PairModel, Void>() {
+            public TableCell<ChannelModel, Void> call(final TableColumn<ChannelModel, Void> param) {
+                final TableCell<ChannelModel, Void> cell = new TableCell<ChannelModel, Void>() {
                     private final CheckBox chBox = new CheckBox("");
 
                     {
                         chBox.setMaxHeight(20);
                         chBox.setOnAction((ActionEvent event) -> {
                             String groupNum = this.getTableColumn().getId().substring(5, 6);
-                            PairModel row = getTableView().getItems().get(getIndex());
+                            ChannelModel row = getTableView().getItems().get(getIndex());
                             switch (Integer.parseInt(groupNum)) {
                                 case 1:
                                     row.setAmplitudeEnable(chBox.isSelected());
@@ -139,7 +139,7 @@ public class ProcessModel {
                                     (int) (colorPicker.getValue().getBlue() * 255));
 
 
-                            PairModel row = getTableView().getItems().get(getIndex());
+                            ChannelModel row = getTableView().getItems().get(getIndex());
                             System.out.println("ColorPicker: " + row + " groupNum:" + groupNum + " isColor:" + colorValue);
                             switch (Integer.parseInt(groupNum)) {
                                 case 1:
@@ -183,11 +183,11 @@ public class ProcessModel {
         columnProcessSample.setCellFactory(cellFactory);
     }
 
-    public ObservableList<PairModel> getProcessData() {
+    public ObservableList<ChannelModel> getProcessData() {
         return processData;
     }
 
-    public void initProcessSampleData(TableView<PairModel> newTableProcessSample) {
+    public void initProcessSampleData(TableView<ChannelModel> newTableProcessSample) {
         table = newTableProcessSample;
         table.setItems(this.getProcessData());
     }
@@ -300,6 +300,6 @@ public class ProcessModel {
     }
 
     public void setLineToProcessSample(String mainText) {
-        processData.add(new PairModel(mainText));
+        processData.add(new ChannelModel(mainText));
     }
 }

@@ -17,6 +17,8 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
+    ObservableList<CheckBox> getChosenChannels();
+
     String getCrateSerialNumber();
 
     Crate getCrateModelInstance();
@@ -25,9 +27,9 @@ public interface ControllerManager {
 
     ExperimentModel getExperimentModel();
 
-    List<Modules> getLinkedModules();
+    ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels();
 
-    ObservableList<Pair<CheckBox, CheckBox>> getRemovedDescriptions();
+    List<Modules> getLinkedModules();
 
     String getValueName();
 
