@@ -15,6 +15,7 @@ import ru.avem.posum.models.Process.LinkingModel;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.ProcessModel;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,8 @@ public class LinkingController implements BaseController {
     private ListView<CheckBox> adcChannelsListView;
     @FXML
     private Label checkIcon;
+    @FXML
+    private Button chooseAllButton;
     @FXML
     private ListView<CheckBox> dacChannelsListView;
     @FXML
@@ -48,6 +51,18 @@ public class LinkingController implements BaseController {
     @FXML
     private void initialize() {
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
+
+        listen(addChannelButton);
+    }
+
+    private void listen(Button button) {
+        button.pressedProperty().addListener(observable -> {
+            new Thread(() -> {
+                Utils.sleep(250);
+                System.out.println("Adc channels: " + adcChannelsListView.getItems().size());
+                chooseAllButton.setDisable(adcChannelsListView.getItems().isEmpty());
+            }).start();
+        });
     }
 
     public void initListViews() {
@@ -204,6 +219,12 @@ public class LinkingController implements BaseController {
 
         for (CheckBox checkBox : channels) {
             checkBox.setDisable(false);
+        }
+    }
+
+    public void handleChooseAll() {
+        for (CheckBox checkBox : adcChannelsListView.getItems()) {
+            checkBox.setSelected(true);
         }
     }
 
