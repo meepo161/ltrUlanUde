@@ -32,10 +32,10 @@ public class ProcessModel {
         for (int i = 0; i < processData.size(); i++) {
             processData.get(i).setAmplitudeStatus(i % 7);
             processData.get(i).setFrequencyStatus((i + 1) % 7);
-            processData.get(i).setPhaseStatus(7 + (i) % 3);
+            processData.get(i).setRmsStatus(7 + (i) % 3);
             processData.get(i).setResponseAmplitude(i + " %");
             processData.get(i).setResponseFrequency((i + 1) + " В");
-            processData.get(i).setResponsePhase((i + 2) + "234 %\n" + (i + 3) + "123 В");
+            processData.get(i).setResponseRms((i + 2) + "234 %\n" + (i + 3) + "123 В");
         }
     }
 
@@ -115,12 +115,12 @@ public class ProcessModel {
                                     toggleSeries(row.getFrequencyGraphNum(), chBox.isSelected());
                                     break;
                                 case 3:
-                                    row.setPhaseEnable(chBox.isSelected());
-                                    if (row.getPhaseGraphNum() < 0) {
-                                        row.setPhaseGraphNum(chartsAdd());
-                                        setSeriesColor(row.getPhaseGraphNum(), row.getPhaseColor());
+                                    row.setRmsEnable(chBox.isSelected());
+                                    if (row.getRmsGraphNum() < 0) {
+                                        row.setRmsGraphNum(chartsAdd());
+                                        setSeriesColor(row.getRmsGraphNum(), row.getRmsColor());
                                     }
-                                    toggleSeries(row.getPhaseGraphNum(), chBox.isSelected());
+                                    toggleSeries(row.getRmsGraphNum(), chBox.isSelected());
                                     break;
                             }
                         });
@@ -151,8 +151,8 @@ public class ProcessModel {
                                     setSeriesColor(row.getFrequencyGraphNum(), row.getFrequencyColor());
                                     break;
                                 case 3:
-                                    row.setPhaseColor(colorValue);
-                                    setSeriesColor(row.getPhaseGraphNum(), row.getPhaseColor());
+                                    row.setRmsColor(colorValue);
+                                    setSeriesColor(row.getRmsGraphNum(), row.getRmsColor());
                                     break;
                             }
                         });

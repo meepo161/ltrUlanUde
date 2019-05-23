@@ -1,14 +1,10 @@
 package ru.avem.posum.controllers.Process;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -28,33 +24,55 @@ import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
+    private CheckBox amplitudeCheckBox;
+    @FXML
     private Slider amplitudeSlider;
     @FXML
     private TextField amplitudeTextField;
+    @FXML
+    private Label amplitudeVoltLabel;
+    @FXML
+    private Label calibratedAmplitudeLabel;
     @FXML
     private TextField calibratedAmplitudeTextField;
     @FXML
     private TextField calibratedDcTextField;
     @FXML
+    private Label calibratedDcLabel;
+    @FXML
     private TextField calibratedRmsTextField;
     @FXML
+    private Label calibratedRmsLabel;
+    @FXML
     private Label checkIcon;
+    @FXML
+    private CheckBox dcCheckBox;
+    @FXML
+    private Label dLabel;
     @FXML
     private Slider dcSlider;
     @FXML
     private TextField dcTextField;
     @FXML
+    private Label dcLabel;
+    @FXML
     private Slider dSlider;
     @FXML
-    private TextField dValueTextField;
+    private TextField dTextField;
+    @FXML
+    private CheckBox frequencyCheckBox;
+    @FXML
+    private Label frequencyLabel;
     @FXML
     private Slider frequencySlider;
     @FXML
     private TextField frequencyTextField;
     @FXML
+    private Label iLabel;
+    @FXML
     private Slider iSlider;
     @FXML
-    private TextField iValueTextField;
+    private TextField iTextField;
     @FXML
     private AnchorPane mainPanel;
     @FXML
@@ -82,21 +100,27 @@ public class ProcessController implements BaseController {
     @FXML
     private TableColumn<ChannelModel, String> frequencyRelativeResponseColumn;
     @FXML
-    private TableColumn<ChannelModel, String> phaseResponseColumn;
+    private TableColumn<ChannelModel, String> rmsResponseColumn;
     @FXML
-    private TableColumn<ChannelModel, String> phaseColumn;
+    private TableColumn<ChannelModel, String> rmsColumn;
     @FXML
-    private TableColumn<ChannelModel, String> phaseRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> rmsRelativeResponseColumn;
+    @FXML
+    private CheckBox rmsCheckBox;
     @FXML
     private Slider rmsSlider;
     @FXML
     private TextField rmsTextField;
     @FXML
+    private Label rmsLabel;
+    @FXML
     private ProgressIndicator progressIndicator;
+    @FXML
+    private Label pLabel;
     @FXML
     private Slider pSlider;
     @FXML
-    private TextField pValueTextField;
+    private TextField pTextField;
     @FXML
     private StatusBar statusBar;
     @FXML
@@ -108,7 +132,6 @@ public class ProcessController implements BaseController {
     @FXML
     private Label warningIcon;
 
-    private ContextMenu contextMenu = new ContextMenu();
     private ControllerManager cm;
     private EventsModel eventModel = new EventsModel();
     private ExperimentModel experimentModel = new ExperimentModel();
@@ -127,8 +150,6 @@ public class ProcessController implements BaseController {
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
 
         initTableView();
-        initContextMenu();
-        listenMouse();
 
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
         statusBarLine.setProcessView(true);
@@ -137,10 +158,12 @@ public class ProcessController implements BaseController {
         processModel.chart(processGraph);
         experimentModel.setProcessModel(processModel);
 
-        programController = new ProgramController(amplitudeSlider, amplitudeTextField, calibratedAmplitudeTextField,
-                calibratedDcTextField, calibratedRmsTextField, dcSlider, dcTextField, dSlider, dValueTextField, frequencySlider,
-                frequencyTextField, iSlider, iValueTextField, mainPanel, rmsSlider, rmsTextField, pSlider,
-                pValueTextField, toolbarSettings, topPanel);
+        programController = new ProgramController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
+                calibratedAmplitudeLabel, calibratedAmplitudeTextField, amplitudeSlider, dcCheckBox, dcLabel,
+                dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
+                calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
+                frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
+                dLabel, dSlider, dTextField,mainPanel, toolbarSettings, topPanel, table, statusBarLine);
     }
 
     private void initTableView() {
@@ -150,104 +173,23 @@ public class ProcessController implements BaseController {
         processModel.init(ampResponseColumn);
         processModel.init(ampColumn);
         processModel.init(ampRelativeResponseColumn);
+        processModel.init(rmsResponseColumn);
+        processModel.init(rmsColumn);
+        processModel.init(rmsRelativeResponseColumn);
         processModel.init(frequencyResponseColumn);
         processModel.init(frequencyColumn);
         processModel.init(frequencyRelativeResponseColumn);
-        processModel.init(phaseResponseColumn);
-        processModel.init(phaseColumn);
-        processModel.init(phaseRelativeResponseColumn);
 
         pairColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         ampResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseAmplitudeProperty());
         ampColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
         ampRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseAmplitudeProperty());
+        rmsResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseRmsProperty());
+        rmsColumn.setCellValueFactory(cellData -> cellData.getValue().rmsProperty());
+        rmsRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseRmsProperty());
         frequencyResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseFrequencyProperty());
         frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
         frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseFrequencyProperty());
-        phaseResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responsePhaseProperty());
-        phaseColumn.setCellValueFactory(cellData -> cellData.getValue().phaseProperty());
-        phaseRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponsePhaseProperty());
-    }
-
-    private void initContextMenu() {
-        MenuItem menuItemDelete = new MenuItem("Удалить");
-        MenuItem menuItemClear = new MenuItem("Удалить все");
-
-        menuItemDelete.setOnAction(event -> deletePairModel());
-        menuItemClear.setOnAction(event -> clearPairModels());
-
-        contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
-    }
-
-    private void deletePairModel() {
-        ChannelModel selectedChannelModel = table.getSelectionModel().getSelectedItem();
-        table.getItems().remove(selectedChannelModel);
-        deleteDescriptions(selectedChannelModel);
-        statusBarLine.setStatus("Канал успешно удален", true);
-    }
-
-    private void deleteDescriptions(ChannelModel channelModel) {
-        if (channelModel.getName().contains("->")) { // удаление связанных каналов
-            String descriptionOfDacChannel = channelModel.getName().split(" -> ")[0];
-            String descriptionOfAdcChannel = channelModel.getName().split(" -> ")[1];
-
-            for (Pair<CheckBox, CheckBox> channels : cm.getLinkedChannels()) {
-                if (channels.getKey().getText().split(" \\(")[0].equals(descriptionOfDacChannel) ||
-                        channels.getValue().getText().split(" \\(")[0].equals(descriptionOfAdcChannel)) {
-                    Platform.runLater(() -> cm.getLinkedChannels().remove(channels));
-                }
-            }
-        } else { // удаление выбранных каналов
-            String descriptionOfChannel = channelModel.getName();
-
-            for (CheckBox channel : cm.getChosenChannels()) {
-                if (channel.getText().split(" \\(")[0].equals(descriptionOfChannel)) {
-                    Platform.runLater(() -> {
-                        cm.getChosenChannels().remove(channel);
-                    });
-                }
-            }
-        }
-    }
-
-    private void clearPairModels() {
-        ObservableList<ChannelModel> channelModels = table.getItems();
-        table.getItems().removeAll(channelModels);
-        clearDescriptions();
-        statusBarLine.setStatus("Все каналы успешно удалены", true);
-    }
-
-    private void clearDescriptions() {
-        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = cm.getLinkedChannels();
-        cm.getLinkedChannels().removeAll(linkedChannels); // удаление всех связанных каналов
-
-        ObservableList<CheckBox> chosenChannels = cm.getChosenChannels();
-        cm.getChosenChannels().removeAll(chosenChannels); // удаление всех выбранных каналов
-    }
-
-    private void listenMouse() {
-        table.setRowFactory(tv -> {
-            TableRow<ChannelModel> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
-                    contextMenu.show(table, event.getScreenX(), event.getScreenY());
-                } else if (event.getClickCount() == 1) {
-                    contextMenu.hide();
-                }
-
-                if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
-                    ChannelModel pair = table.getSelectionModel().getSelectedItem();
-                    amplitudeTextField.setText(pair.getAmplitude());
-                    dcTextField.setText(pair.getDc());
-                    frequencyTextField.setText(pair.getFrequency());
-                    rmsTextField.setText(pair.getPhase()); // TODO: change this shit
-                    pValueTextField.setText(pair.getpValue());
-                    iValueTextField.setText(pair.getiValue());
-                    dValueTextField.setText(pair.getdValue());
-                }
-            });
-            return row;
-        });
     }
 
     public void handleInitialize() {
@@ -413,10 +355,10 @@ public class ProcessController implements BaseController {
             pair.setAmplitude(amplitudeTextField.getText());
             pair.setDc(dcTextField.getText());
             pair.setFrequency(frequencyTextField.getText());
-            pair.setPhase(rmsTextField.getText());
-            pair.setPvalue(pValueTextField.getText());
-            pair.setIvalue(iValueTextField.getText());
-            pair.setDvalue(dValueTextField.getText());
+            pair.setRms(rmsTextField.getText());
+            pair.setPvalue(pTextField.getText());
+            pair.setIvalue(iTextField.getText());
+            pair.setDvalue(dTextField.getText());
 
             statusBarLine.setStatus("Пара успешно сохранена", true);
         } else {
@@ -430,6 +372,7 @@ public class ProcessController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
+        programController.setCm(cm);
     }
 
     @Override

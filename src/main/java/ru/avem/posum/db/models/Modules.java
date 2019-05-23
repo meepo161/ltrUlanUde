@@ -251,11 +251,6 @@ public class Modules {
         return phases;
     }
 
-    public static int getPhase(Modules module, int channel) {
-        String[] phases = module.getPhases().split(", ");
-        return Integer.parseInt(phases[channel - 1]);
-    }
-
     public String getSettings() {
         return settings;
     }

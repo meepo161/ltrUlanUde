@@ -4,6 +4,7 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressIndicator?>
@@ -49,12 +50,12 @@
                                       <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
                                       <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />
                                       <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик, %" />
-                                      <TableColumn fx:id="frequencyResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота отклик" />
-                                      <TableColumn fx:id="frequencyColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота норма" />
-                                      <TableColumn fx:id="frequencyRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="Частота отклик, %" />
-                                      <TableColumn fx:id="phaseResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Фаза отклик" />
-                                      <TableColumn fx:id="phaseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Фаза норма" />
-                                      <TableColumn fx:id="phaseRelativeResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Фаза отклик, %" />
+                                      <TableColumn fx:id="rmsResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS отклик" />
+                                      <TableColumn fx:id="rmsColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS норма" />
+                                      <TableColumn fx:id="rmsRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS отклик, %" />
+                                      <TableColumn fx:id="frequencyResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота отклик" />
+                                      <TableColumn fx:id="frequencyColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота норма" />
+                                      <TableColumn fx:id="frequencyRelativeResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота отклик, %" />
                                   </columns>
                                   <columnResizePolicy>
                                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -220,133 +221,117 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Label layoutX="110.0" text="Амплитуда">
+                        <CheckBox fx:id="amplitudeCheckBox" disable="true" layoutX="110.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Амплитуда" />
+                                <Label fx:id="amplitudeVoltLabel" disable="true" layoutX="110.0" layoutY="30.0" text="В">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="110.0" layoutY="30.0" text="В">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="amplitudeTextField" layoutX="129.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="amplitudeTextField" disable="true" layoutX="129.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Label layoutX="110.0" layoutY="60.0" text="ед">
+                                <Label fx:id="calibratedAmplitudeLabel" disable="true" layoutX="110.0" layoutY="60.0" text="ед">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="calibratedAmplitudeTextField" layoutX="129.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="calibratedAmplitudeTextField" disable="true" layoutX="129.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="amplitudeSlider" blockIncrement="1.0" layoutX="195.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                        <Label layoutX="219.0" text="Статика">
+                                <Slider fx:id="amplitudeSlider" blockIncrement="1.0" disable="true" layoutX="195.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                        <CheckBox fx:id="dcCheckBox" disable="true" layoutX="219.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Статика" />
+                        <Label fx:id="dcLabel" disable="true" layoutX="219.0" layoutY="30.0" text="В">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <Label layoutX="219.0" layoutY="30.0" text="В">
-                           <font>
-                              <Font name="Arial" size="12.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="dcTextField" layoutX="238.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <TextField fx:id="dcTextField" disable="true" layoutX="238.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="219.0" layoutY="60.0" text="ед">
+                        <Label fx:id="calibratedDcLabel" disable="true" layoutX="219.0" layoutY="60.0" text="ед">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="calibratedDcTextField" layoutX="238.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <TextField fx:id="calibratedDcTextField" disable="true" layoutX="238.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
-                        <Slider fx:id="dcSlider" blockIncrement="1.0" layoutX="307.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                        <Label layoutX="331.0" text="RMS">
+                        <Slider fx:id="dcSlider" blockIncrement="1.0" disable="true" layoutX="307.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                        <CheckBox fx:id="rmsCheckBox" disable="true" layoutX="331.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="RMS" />
+                        <Label fx:id="rmsLabel" disable="true" layoutX="331.0" layoutY="30.0" text="В">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <Label layoutX="331.0" layoutY="30.0" text="В">
-                           <font>
-                              <Font name="Arial" size="12.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="rmsTextField" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <TextField fx:id="rmsTextField" disable="true" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
-                        <Label layoutX="331.0" layoutY="60.0" text="ед">
+                        <Label fx:id="calibratedRmsLabel" disable="true" layoutX="331.0" layoutY="60.0" text="ед">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="calibratedRmsTextField" layoutX="350.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <TextField fx:id="calibratedRmsTextField" disable="true" layoutX="350.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
-                        <Slider fx:id="rmsSlider" blockIncrement="1.0" layoutX="419.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                                <Label layoutX="443.0" text="Частота">
+                        <Slider fx:id="rmsSlider" blockIncrement="1.0" disable="true" layoutX="419.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                        <CheckBox fx:id="frequencyCheckBox" disable="true" layoutX="443.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Частота" />
+                                <Label fx:id="frequencyLabel" disable="true" layoutX="443.0" layoutY="30.0" text="Гц">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <Label layoutX="443.0" layoutY="30.0" text="Гц">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Label>
-                                <TextField fx:id="frequencyTextField" layoutX="462.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="frequencyTextField" disable="true" layoutX="462.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="frequencySlider" blockIncrement="1.0" layoutX="528.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Slider fx:id="frequencySlider" blockIncrement="1.0" disable="true" layoutX="528.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
                             </children>
                         </Pane>
                         <Pane prefHeight="97.0" prefWidth="350.0">
                             <children>
-                                <Label layoutY="10.0" text="П">
+                                <Label fx:id="pLabel" disable="true" layoutY="10.0" text="П">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Label layoutY="39.0" text="И">
+                                <Label fx:id="iLabel" disable="true" layoutY="39.0" text="И">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Label layoutY="68.0" text="Д">
+                                <Label fx:id="dLabel" disable="true" layoutY="68.0" text="Д">
                                     <font>
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Slider fx:id="pSlider" blockIncrement="1.0" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
-                                <Slider fx:id="iSlider" blockIncrement="1.0" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
-                                <Slider fx:id="dSlider" blockIncrement="1.0" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
-                                <TextField fx:id="pValueTextField" layoutX="168.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <Slider fx:id="pSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
+                                <Slider fx:id="iSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
+                                <Slider fx:id="dSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
+                                <TextField fx:id="pTextField" disable="true" layoutX="168.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="iValueTextField" layoutX="168.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="iTextField" disable="true" layoutX="168.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="dValueTextField" layoutX="168.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="dTextField" disable="true" layoutX="168.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
@@ -356,7 +341,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="savePair" layoutX="343.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePair" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
+                                <Button fx:id="savePair" disable="true" layoutX="343.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePair" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -389,7 +374,7 @@
                         <Insets left="-12.0" top="5.0" />
                     </HBox.margin>
                 </Label>
-                <StatusBar fx:id="statusBar" prefWidth="1000.0" styleClass="status-bar" stylesheets="@../css/main.css" text="Ok">
+                <StatusBar fx:id="statusBar" prefWidth="1000.0" styleClass="status-bar" stylesheets="@../css/main.css" text="">
                     <HBox.margin>
                         <Insets left="5.0" />
                     </HBox.margin>

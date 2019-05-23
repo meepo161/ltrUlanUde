@@ -158,40 +158,18 @@ public class LinkingController implements BaseController {
     }
 
     private ChannelModel createChannel(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {
-        Modules dacModule = linkingModel.getModule(selectedDacChannel.getText());
-        int dacChannel = getChannelNumber(Modules.getModuleName(dacModule), selectedDacChannel.getText());
-        double amplitude = Modules.getAmplitude(dacModule, dacChannel);
-        double dc = Modules.getDc(dacModule, dacChannel);
-        int frequency = Modules.getFrequency(dacModule, dacChannel);
-        int phase = Modules.getPhase(dacModule, dacChannel);
+        Modules adcModule = linkingModel.getModule(selectedAdcChannel.getText());
+        int dacChannel = getChannelNumber(Modules.getModuleName(adcModule), selectedDacChannel.getText());
         String pairName = selectedDacChannel.getText().split(" \\(")[0] + " -> " +
                 selectedAdcChannel.getText().split(" \\(")[0];
 
-        ChannelModel channelModel = new ChannelModel(pairName);
-        channelModel.setAmplitude(String.valueOf(amplitude));
-        channelModel.setDc(String.valueOf(dc));
-        channelModel.setFrequency(String.valueOf(frequency));
-        channelModel.setPhase(String.valueOf(phase)); // TODO: change this shit
-        channelModel.setPvalue("0");
-        channelModel.setIvalue("0");
-        channelModel.setDvalue("0");
-
-        return channelModel;
+        return new ChannelModel(pairName);
     }
 
     private ChannelModel createChannel(CheckBox selectedAdcChannel) {
         String channelName = selectedAdcChannel.getText().split(" \\(")[0];
 
-        ChannelModel channelModel = new ChannelModel(channelName);
-        channelModel.setAmplitude("0");
-        channelModel.setDc("0");
-        channelModel.setFrequency("0");
-        channelModel.setPhase("0"); // TODO: change this shit
-        channelModel.setPvalue("0");
-        channelModel.setIvalue("0");
-        channelModel.setDvalue("0");
-
-        return channelModel;
+        return new ChannelModel(channelName);
     }
 
     private int getChannelNumber(String moduleName, String channelDescription) {

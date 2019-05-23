@@ -24,20 +24,20 @@ public class ChannelModel {
     private final StringProperty responseFrequency;
     private final StringProperty frequency;
     private final StringProperty relativeResponseFrequency;
-    private final StringProperty phaseColor;
-    private final IntegerProperty phaseGraphNum;
-    private final BooleanProperty phaseEnable;
-    private final IntegerProperty phaseStatus;
-    private final StringProperty responsePhase;
-    private final StringProperty phase;
-    private final StringProperty relativeResponsePhase;
+    private final StringProperty rmsColor;
+    private final IntegerProperty rmsGraphNum;
+    private final BooleanProperty rmsEnable;
+    private final IntegerProperty rmsStatus;
+    private final StringProperty responseRms;
+    private final StringProperty rms;
+    private final StringProperty relativeResponseRms;
     private final StringProperty pValue;
     private final StringProperty iValue;
     private final StringProperty dValue;
 
     private List<StringProperty> properties = new ArrayList<>();
 
-    public ChannelModel(String name, Color amplitudeColor, Color frequencyColor, Color phaseColor, Color pColor, Color group5Color, Color group6Color) {
+    public ChannelModel(String name, Color amplitudeColor, Color frequencyColor, Color rmsColor, Color pColor, Color group5Color, Color group6Color) {
         this.name = new SimpleStringProperty(name);
         this.amplitudeColor = new SimpleStringProperty(String.format("%d, %d, %d",
                 (amplitudeColor.getRed() * 255),
@@ -60,23 +60,23 @@ public class ChannelModel {
         this.responseFrequency = new SimpleStringProperty("0");
         this.frequency = new SimpleStringProperty("0");
         this.relativeResponseFrequency = new SimpleStringProperty("0");
-        this.phaseColor = new SimpleStringProperty(String.format("%d, %d, %d",
-                (phaseColor.getRed() * 255),
-                (phaseColor.getGreen() * 255),
-                (phaseColor.getBlue() * 255)));
-        this.phaseGraphNum = new SimpleIntegerProperty(-1);
-        this.phaseEnable = new SimpleBooleanProperty( false );
-        this.phaseStatus = new SimpleIntegerProperty(3);
-        this.responsePhase = new SimpleStringProperty("0");
-        this.phase = new SimpleStringProperty("0");
-        this.relativeResponsePhase = new SimpleStringProperty("0");
+        this.rmsColor = new SimpleStringProperty(String.format("%d, %d, %d",
+                (rmsColor.getRed() * 255),
+                (rmsColor.getGreen() * 255),
+                (rmsColor.getBlue() * 255)));
+        this.rmsGraphNum = new SimpleIntegerProperty(-1);
+        this.rmsEnable = new SimpleBooleanProperty( false );
+        this.rmsStatus = new SimpleIntegerProperty(3);
+        this.responseRms = new SimpleStringProperty("0");
+        this.rms = new SimpleStringProperty("0");
+        this.relativeResponseRms = new SimpleStringProperty("0");
         this.pValue = new SimpleStringProperty("0");
         this.iValue = new SimpleStringProperty("0");
         this.dValue = new SimpleStringProperty("0");
         properties.addAll(Arrays.asList(this.name, this.amplitudeColor, this.responseAmplitude, this.amplitude,
                 this.relativeResponseAmplitude, this.frequencyColor, this.responseFrequency, this.frequency,
-                this.relativeResponseFrequency, this.phaseColor, this.responsePhase, this.phase,
-                this.relativeResponsePhase, this.pValue, this.iValue, this.dValue));
+                this.relativeResponseFrequency, this.rmsColor, this.responseRms, this.rms,
+                this.relativeResponseRms, this.pValue, this.iValue, this.dValue));
     }
 
     public ChannelModel(String name) {
@@ -156,33 +156,33 @@ public class ChannelModel {
     public StringProperty relativeResponseFrequencyProperty() { return relativeResponseFrequency; }
     public void setRelativeResponseFrequency(String relativeResponseFrequency) { this.relativeResponseFrequency.set(relativeResponseFrequency); }
 
-    public String getPhaseColor() { return phaseColor.get(); }
-    public StringProperty phaseColorProperty() { return phaseColor; }
-    public void setPhaseColor(String phaseColor) { this.phaseColor.set(phaseColor); }
+    public String getRmsColor() { return rmsColor.get(); }
+    public StringProperty rmsColorProperty() { return rmsColor; }
+    public void setRmsColor(String rmsColor) { this.rmsColor.set(rmsColor); }
 
-    public Integer getPhaseGraphNum() { return phaseGraphNum.get(); }
-    public IntegerProperty phaseGraphNumProperty() { return phaseGraphNum; }
-    public void setPhaseGraphNum(Integer graphNum) { this.phaseGraphNum.set(graphNum); }
+    public Integer getRmsGraphNum() { return rmsGraphNum.get(); }
+    public IntegerProperty rmsGraphNumProperty() { return rmsGraphNum; }
+    public void setRmsGraphNum(Integer graphNum) { this.rmsGraphNum.set(graphNum); }
 
-    public Boolean getPhaseEnable() { return phaseEnable.get(); }
-    public BooleanProperty phaseEnableProperty() { return phaseEnable; }
-    public void setPhaseEnable(Boolean phaseEnable) { this.phaseEnable.set(phaseEnable); }
+    public Boolean getRmsEnable() { return rmsEnable.get(); }
+    public BooleanProperty rmsEnableProperty() { return rmsEnable; }
+    public void setRmsEnable(Boolean rmsEnable) { this.rmsEnable.set(rmsEnable); }
 
-    public Integer getPhaseStatus() { return phaseStatus.get(); }
-    public IntegerProperty phaseStatusProperty() { return phaseStatus; }
-    public void setPhaseStatus(Integer phaseStatus) { this.phaseStatus.set(phaseStatus); }
+    public Integer getRmsStatus() { return rmsStatus.get(); }
+    public IntegerProperty rmsStatusProperty() { return rmsStatus; }
+    public void setRmsStatus(Integer rmsStatus) { this.rmsStatus.set(rmsStatus); }
 
-    public String getResponsePhase() { return responsePhase.get(); }
-    public StringProperty responsePhaseProperty() { return responsePhase; }
-    public void setResponsePhase(String responsePhase) { this.responsePhase.set(responsePhase); }
+    public String getResponseRms() { return responseRms.get(); }
+    public StringProperty responseRmsProperty() { return responseRms; }
+    public void setResponseRms(String responseRms) { this.responseRms.set(responseRms); }
 
-    public String getPhase() { return phase.get(); }
-    public StringProperty phaseProperty() { return phase; }
-    public void setPhase(String phase) { this.phase.set(phase); }
+    public String getRms() { return rms.get(); }
+    public StringProperty rmsProperty() { return rms; }
+    public void setRms(String rms) { this.rms.set(rms); }
 
-    public String getRelativeResponsePhase() { return relativeResponsePhase.get(); }
-    public StringProperty relativeResponsePhaseProperty() { return relativeResponsePhase; }
-    public void setRelativeResponsePhase(String relativeResponsePhase) { this.relativeResponsePhase.set(relativeResponsePhase); }
+    public String getRelativeResponseRms() { return relativeResponseRms.get(); }
+    public StringProperty relativeResponseRmsProperty() { return relativeResponseRms; }
+    public void setRelativeResponseRms(String relativeResponseRms) { this.relativeResponseRms.set(relativeResponseRms); }
 
     public String getpValue() { return pValue.get(); }
     public StringProperty pValueProperty() { return pValue; }
