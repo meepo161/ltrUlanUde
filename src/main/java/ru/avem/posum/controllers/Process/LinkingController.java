@@ -127,6 +127,7 @@ public class LinkingController implements BaseController {
         }
 
         linkingModel.saveChosen(chosenChannels);
+        addChannelButton.setDisable(true);
     }
 
     public void handleLink() {

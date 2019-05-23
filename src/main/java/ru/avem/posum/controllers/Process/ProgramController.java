@@ -3,18 +3,19 @@ package ru.avem.posum.controllers.Process;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
-import ru.avem.posum.WindowsManager;
-import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.models.Process.ChannelModel;
-import ru.avem.posum.models.Process.ProcessModel;
 import ru.avem.posum.models.Process.ProgramModel;
 import ru.avem.posum.utils.StatusBarLine;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProgramController {
     private CheckBox amplitudeCheckBox;
@@ -53,7 +54,13 @@ public class ProgramController {
     private ToolBar toolbarSettings;
     private VBox topPanel;
     private TableView<ChannelModel> tableView;
+    private Button saveButton;
 
+    private List<CheckBox> pidParameters = new ArrayList<>();
+    private List<Node> amplitudeUiElements = new ArrayList<>();
+    private List<Node> dcUiElements = new ArrayList<>();
+    private List<Node> rmsUiElements = new ArrayList<>();
+    private List<Node> frequencyUiElements = new ArrayList<>();
     private ContextMenu contextMenu = new ContextMenu();
     private StatusBarLine statusBarLine;
     private ControllerManager cm;
@@ -68,7 +75,7 @@ public class ProgramController {
                              Slider pSlider, TextField pTextField, Label iLabel, Slider iSlider, TextField iTextField,
                              Label dLabel, Slider dSlider, TextField dTextField, AnchorPane mainPanel,
                              ToolBar toolbarSettings, VBox topPanel, TableView<ChannelModel> tableView,
-                             StatusBarLine statusBarLine) {
+                             StatusBarLine statusBarLine, Button saveButton) {
 
         this.amplitudeCheckBox = amplitudeCheckBox;
         this.amplitudeLabel = amplitudeLabel;
@@ -106,13 +113,141 @@ public class ProgramController {
         this.topPanel = topPanel;
         this.tableView = tableView;
         this.statusBarLine = statusBarLine;
+        this.saveButton = saveButton;
 
         topPanel.setPrefHeight(mainPanel.getMaxHeight());
         toolbarSettings.setVisible(false);
 
+        fillListOfPidParameters();
+        fillListOfAmplitudeUiElements();
+        fillListOfDcUiElements();
+        fillListOfRmsUiElements();
+        fillListOfFrequencyUiElements();
+
         initSliders();
         initContextMenu();
         listen(tableView);
+        listenCheckBoxes();
+    }
+
+    private void fillListOfPidParameters() {
+        pidParameters.add(amplitudeCheckBox);
+        pidParameters.add(dcCheckBox);
+        pidParameters.add(rmsCheckBox);
+        pidParameters.add(frequencyCheckBox);
+    }
+
+    private void fillListOfAmplitudeUiElements() {
+        amplitudeUiElements.add(amplitudeLabel);
+        amplitudeUiElements.add(amplitudeTextField);
+        amplitudeUiElements.add(calibratedAmplitudeLabel);
+        amplitudeUiElements.add(calibratedAmplitudeTextField);
+        amplitudeUiElements.add(amplitudeSlider);
+    }
+
+    private void fillListOfDcUiElements() {
+        dcUiElements.add(dcLabel);
+        dcUiElements.add(dcTextField);
+        dcUiElements.add(calibratedDcLabel);
+        dcUiElements.add(calibratedDcTextField);
+        dcUiElements.add(dcSlider);
+    }
+
+    private void fillListOfRmsUiElements() {
+        rmsUiElements.add(rmsLabel);
+        rmsUiElements.add(rmsTextField);
+        rmsUiElements.add(calibratedRmsLabel);
+        rmsUiElements.add(calibratedRmsTextField);
+        rmsUiElements.add(rmsSlider);
+    }
+
+    private void fillListOfFrequencyUiElements() {
+        frequencyUiElements.add(frequencyLabel);
+        frequencyUiElements.add(frequencyTextField);
+        frequencyUiElements.add(frequencySlider);
+    }
+
+    private void listenCheckBoxes() {
+        for (CheckBox checkBox : pidParameters) {
+            listen(checkBox);
+        }
+    }
+
+    private void listen(CheckBox checkBox) {
+        checkBox.selectedProperty().addListener(observable -> {
+            if (checkBox.isSelected()) {
+                unselectCheckBoxes(checkBox);
+                highlightPidParameters();
+            } else {
+                clearParameters();
+            }
+        });
+    }
+
+    private void unselectCheckBoxes(CheckBox checkBox) {
+        for (int checkBoxIndex = 0; checkBoxIndex < pidParameters.size(); checkBoxIndex++) {
+            if (checkBox != pidParameters.get(checkBoxIndex)) {
+                pidParameters.get(checkBoxIndex).setSelected(false);
+            }
+        }
+    }
+
+    private void highlightPidParameters() {
+        for (int parameterIndex = 0; parameterIndex < pidParameters.size(); parameterIndex++) {
+            if (pidParameters.get(parameterIndex).isSelected()) {
+                highlight(parameterIndex);
+            }
+        }
+    }
+
+    private void highlight(int parameterIndex) {
+        switch (parameterIndex) {
+            case 0:
+                toggleUiElements(amplitudeUiElements, false);
+                toggleUiElements(dcUiElements, true);
+                toggleUiElements(rmsUiElements, true);
+                toggleUiElements(frequencyUiElements, true);
+                break;
+            case 1:
+                toggleUiElements(amplitudeUiElements, true);
+                toggleUiElements(dcUiElements, false);
+                toggleUiElements(rmsUiElements, true);
+                toggleUiElements(frequencyUiElements, true);
+                break;
+            case 2:
+                toggleUiElements(amplitudeUiElements, true);
+                toggleUiElements(dcUiElements, true);
+                toggleUiElements(rmsUiElements, false);
+                toggleUiElements(frequencyUiElements, true);
+                break;
+            case 3:
+                toggleUiElements(amplitudeUiElements, true);
+                toggleUiElements(dcUiElements, true);
+                toggleUiElements(rmsUiElements, true);
+                toggleUiElements(frequencyUiElements, false);
+                break;
+        }
+
+        toggleUiElements(false);
+        saveButton.setDisable(false);
+    }
+
+    private void toggleUiElements(List<Node> elements, boolean isDisable) {
+        for (Node element : elements) {
+            element.setDisable(isDisable);
+        }
+    }
+
+    private void toggleUiElements(boolean isDisable) {
+        pLabel.setDisable(isDisable);
+        pSlider.setDisable(isDisable);
+        pTextField.setDisable(isDisable);
+        iLabel.setDisable(isDisable);
+        iSlider.setDisable(isDisable);
+        iTextField.setDisable(isDisable);
+        dLabel.setDisable(isDisable);
+        dSlider.setDisable(isDisable);
+        dTextField.setDisable(isDisable);
     }
 
     public void toggleSettingsPanel() {
@@ -176,40 +311,43 @@ public class ProgramController {
                 }
 
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
-                    ChannelModel pair = tableView.getSelectionModel().getSelectedItem();
+                    ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
                     toggleCheckBoxes(false);
 
-                    amplitudeTextField.setText(pair.getAmplitude());
-                    dcTextField.setText(pair.getDc());
-                    rmsTextField.setText(pair.getRms());
-                    frequencyTextField.setText(pair.getFrequency());
-                    pTextField.setText(pair.getpValue());
-                    iTextField.setText(pair.getiValue());
-                    dcTextField.setText(pair.getdValue());
+                    setParameters(selectedChannel);
                 }
             });
             return row;
         });
     }
 
+    private void setParameters(ChannelModel channelModel) {
+        amplitudeTextField.setText(channelModel.getAmplitude());
+        dcTextField.setText(channelModel.getDc());
+        rmsTextField.setText(channelModel.getRms());
+        frequencyTextField.setText(channelModel.getFrequency());
+        pTextField.setText(channelModel.getpValue());
+        iTextField.setText(channelModel.getiValue());
+        dcTextField.setText(channelModel.getdValue());
+    }
+
     private void toggleCheckBoxes(boolean isDisable) {
-        amplitudeCheckBox.setDisable(isDisable);
-        dcCheckBox.setDisable(isDisable);
-        rmsCheckBox.setDisable(isDisable);
-        frequencyCheckBox.setDisable(isDisable);
+        for (CheckBox checkBox : pidParameters) {
+            checkBox.setDisable(isDisable);
+        }
     }
 
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
 
-        menuItemDelete.setOnAction(event -> deletePairModel());
+        menuItemDelete.setOnAction(event -> deleteChannelModel());
         menuItemClear.setOnAction(event -> clearPairModels());
 
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
-    private void deletePairModel() {
+    private void deleteChannelModel() {
         ChannelModel selectedChannelModel = tableView.getSelectionModel().getSelectedItem();
         tableView.getItems().remove(selectedChannelModel);
         deleteDescriptions(selectedChannelModel);
@@ -220,7 +358,35 @@ public class ProgramController {
     private void check(TableView<ChannelModel> tableView) {
         if (tableView.getItems().isEmpty()) {
             toggleCheckBoxes(true);
+            unselectAllCheckBoxes();
+            clearParameters();
+        } else {
+            ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
+            setParameters(selectedChannel);
         }
+    }
+
+    private void unselectAllCheckBoxes() {
+        for (CheckBox checkBox : pidParameters) {
+            checkBox.setSelected(false);
+        }
+    }
+
+    private void clearParameters() {
+        amplitudeTextField.setText("0");
+        dcTextField.setText("0");
+        rmsTextField.setText("0");
+        frequencyTextField.setText("0");
+        pTextField.setText("0");
+        iTextField.setText("0");
+        dTextField.setText("0");
+
+        toggleUiElements(amplitudeUiElements, true);
+        toggleUiElements(dcUiElements, true);
+        toggleUiElements(rmsUiElements, true);
+        toggleUiElements(frequencyUiElements, true);
+        toggleUiElements(true);
+        saveButton.setDisable(true);
     }
 
     private void deleteDescriptions(ChannelModel channelModel) {

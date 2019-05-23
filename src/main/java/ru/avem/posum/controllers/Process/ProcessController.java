@@ -122,6 +122,8 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField pTextField;
     @FXML
+    private Button saveButton;
+    @FXML
     private StatusBar statusBar;
     @FXML
     private TableView<Events> tableEvent;
@@ -163,7 +165,7 @@ public class ProcessController implements BaseController {
                 dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
                 calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
-                dLabel, dSlider, dTextField,mainPanel, toolbarSettings, topPanel, table, statusBarLine);
+                dLabel, dSlider, dTextField,mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
     }
 
     private void initTableView() {
@@ -348,7 +350,7 @@ public class ProcessController implements BaseController {
     public void handleExpandEventTableButton() {
     }
 
-    public void handleSavePair() {
+    public void handleSave() {
         if (table.getSelectionModel().getSelectedIndex() != -1) {
             ChannelModel pair = table.getSelectionModel().getSelectedItem();
 
