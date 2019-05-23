@@ -180,6 +180,7 @@ public class ProgramController {
                 highlightPidParameters();
             } else {
                 clearParameters();
+                saveButton.setDisable(false);
             }
         });
     }
@@ -280,7 +281,6 @@ public class ProgramController {
     }
 
 
-
     private void setDigitFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
@@ -313,12 +313,34 @@ public class ProgramController {
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
                     ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
                     toggleCheckBoxes(false);
-
+                    selectParameters(selectedChannel);
                     setParameters(selectedChannel);
                 }
             });
             return row;
         });
+    }
+
+    private void toggleCheckBoxes(boolean isDisable) {
+        for (CheckBox checkBox : pidParameters) {
+            checkBox.setDisable(isDisable);
+        }
+    }
+
+    private void selectParameters(ChannelModel channelModel) {
+        int chosenParameterIndex = Integer.parseInt(channelModel.getChosenParameterIndex());
+
+        if (chosenParameterIndex != -1) {
+            for (int parametersIndex = 0; parametersIndex < pidParameters.size(); parametersIndex++) {
+                if (parametersIndex != chosenParameterIndex) {
+                    pidParameters.get(parametersIndex).setSelected(false);
+                }
+            }
+
+            pidParameters.get(chosenParameterIndex).setSelected(true);
+        } else {
+            unselectAllCheckBoxes();
+        }
     }
 
     private void setParameters(ChannelModel channelModel) {
@@ -328,13 +350,7 @@ public class ProgramController {
         frequencyTextField.setText(channelModel.getFrequency());
         pTextField.setText(channelModel.getpValue());
         iTextField.setText(channelModel.getiValue());
-        dcTextField.setText(channelModel.getdValue());
-    }
-
-    private void toggleCheckBoxes(boolean isDisable) {
-        for (CheckBox checkBox : pidParameters) {
-            checkBox.setDisable(isDisable);
-        }
+        dTextField.setText(channelModel.getdValue());
     }
 
     private void initContextMenu() {
@@ -433,6 +449,16 @@ public class ProgramController {
         topPanel.maxHeight(mainPanel.getMaxHeight());
         topPanel.minHeight(mainPanel.getMaxHeight());
         programModel.resetProgramClickCounter();
+    }
+
+    public int getChosenParameterIndex() {
+        for (int parameterIndex = 0; parameterIndex < pidParameters.size(); parameterIndex++) {
+            if (pidParameters.get(parameterIndex).isSelected()) {
+                return parameterIndex;
+            }
+        }
+
+        return -1;
     }
 
     public void setCm(ControllerManager cm) {

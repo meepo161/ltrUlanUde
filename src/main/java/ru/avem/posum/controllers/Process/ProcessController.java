@@ -352,19 +352,20 @@ public class ProcessController implements BaseController {
 
     public void handleSave() {
         if (table.getSelectionModel().getSelectedIndex() != -1) {
-            ChannelModel pair = table.getSelectionModel().getSelectedItem();
+            ChannelModel selectedChannel = table.getSelectionModel().getSelectedItem();
 
-            pair.setAmplitude(amplitudeTextField.getText());
-            pair.setDc(dcTextField.getText());
-            pair.setFrequency(frequencyTextField.getText());
-            pair.setRms(rmsTextField.getText());
-            pair.setPvalue(pTextField.getText());
-            pair.setIvalue(iTextField.getText());
-            pair.setDvalue(dTextField.getText());
+            selectedChannel.setAmplitude(amplitudeTextField.getText());
+            selectedChannel.setDc(dcTextField.getText());
+            selectedChannel.setRms(rmsTextField.getText());
+            selectedChannel.setFrequency(frequencyTextField.getText());
+            selectedChannel.setPvalue(pTextField.getText());
+            selectedChannel.setIvalue(iTextField.getText());
+            selectedChannel.setDvalue(dTextField.getText());
+            selectedChannel.setChosenParameterIndex(String.valueOf(programController.getChosenParameterIndex()));
 
-            statusBarLine.setStatus("Пара успешно сохранена", true);
+            statusBarLine.setStatus("Настройки успешно сохранены", true);
         } else {
-            statusBarLine.setStatus("Не выбрана пара для сохранения", false);
+            statusBarLine.setStatus("Не выбран канал для сохранения", false);
         }
     }
 

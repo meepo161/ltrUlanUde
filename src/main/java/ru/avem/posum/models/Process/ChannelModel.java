@@ -34,6 +34,7 @@ public class ChannelModel {
     private final StringProperty pValue;
     private final StringProperty iValue;
     private final StringProperty dValue;
+    private final StringProperty chosenParameterIndex;
 
     private List<StringProperty> properties = new ArrayList<>();
 
@@ -73,6 +74,7 @@ public class ChannelModel {
         this.pValue = new SimpleStringProperty("0");
         this.iValue = new SimpleStringProperty("0");
         this.dValue = new SimpleStringProperty("0");
+        this.chosenParameterIndex = new SimpleStringProperty("-1");
         properties.addAll(Arrays.asList(this.name, this.amplitudeColor, this.responseAmplitude, this.amplitude,
                 this.relativeResponseAmplitude, this.frequencyColor, this.responseFrequency, this.frequency,
                 this.relativeResponseFrequency, this.rmsColor, this.responseRms, this.rms,
@@ -195,4 +197,8 @@ public class ChannelModel {
     public String getdValue() { return dValue.get(); }
     public StringProperty dValueProperty() { return dValue; }
     public void setDvalue(String dValue) { this.dValue.set(dValue); }
+
+    public String getChosenParameterIndex() { return chosenParameterIndex.get(); }
+    public StringProperty chosenParameterIndexProperty() { return chosenParameterIndex; }
+    public void setChosenParameterIndex(String chosenParameterIndex) { this.chosenParameterIndex.set(chosenParameterIndex); }
 }
