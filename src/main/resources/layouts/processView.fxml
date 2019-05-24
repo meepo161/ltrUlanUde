@@ -46,7 +46,7 @@
                                         <Insets />
                                     </HBox.margin>
                                 </Button>
-                                <Button fx:id="startButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleRunButton" text="Запуск">
+                                <Button fx:id="startButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStart" text="Запуск">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>

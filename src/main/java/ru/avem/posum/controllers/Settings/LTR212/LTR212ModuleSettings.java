@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Settings.LTR212;
 
+import com.j256.ormlite.stmt.query.In;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
@@ -109,6 +110,21 @@ class LTR212ModuleSettings extends LTR212Settings {
 
         ltr212SettingsModel.getLTR212Instance().setFirFilePath(firPathTextField.getText().replace("\\", "/"));
         ltr212SettingsModel.getLTR212Instance().setIirFilePath(iirPathTextField.getText().replace("\\", "/"));
+
+        int dataLength = (int) ltr212SettingsModel.getLTR212Instance().getFrequency();
+
+        if (dataLength == 0) {
+            switch (adcMode) {
+                case 0:
+                    dataLength = 7680;
+                    break;
+                case 1:
+                    dataLength = 152;
+                    break;
+            }
+        }
+
+        ltr212SettingsModel.getLTR212Instance().setData(new double[dataLength * ltr212SettingsModel.getLTR212Instance().getChannelsCount()]);
     }
 
     void toggleUiElementsState(boolean isDisable) {

@@ -50,7 +50,7 @@ public class Event {
     }
 
     public String getTime() {
-        return this.date + " " + this.time;
+        return this.time + " " + this.date;
     }
 
     public long getMillis() {

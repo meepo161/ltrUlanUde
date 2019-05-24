@@ -89,6 +89,9 @@ class LTR34ModuleSettings extends LTR34Settings {
         ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.DAC_MODE.getSettingName(), dacMode);
         ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), factoryCalibration);
         ltr34SettingsModel.getLTR34Instance().getModuleSettings().put(DAC.Settings.SIGNAL_TYPE.getSettingName(), signalType);
+
+        int dataLength = 31_250; // частота дискретизации модуля, на которую он настроен
+        ltr34SettingsModel.getLTR34Instance().setData(new double[dataLength]);
     }
 
     void disableUiElementsState() {

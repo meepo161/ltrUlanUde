@@ -9,8 +9,8 @@ public class Test {
         result = process.isConnected();
         process.initialize();
         result = process.isInitialized();
-        process.launch();
-        result = process.isLaunched();
+        process.run();
+        result = process.isRan();
 
         while (result) {
             process.perform();

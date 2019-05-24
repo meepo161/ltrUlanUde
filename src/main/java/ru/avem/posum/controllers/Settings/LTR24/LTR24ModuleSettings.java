@@ -48,6 +48,63 @@ class LTR24ModuleSettings extends LTR24Settings {
     void saveSettings() {
         int frequency = frequencyComboBox.getSelectionModel().getSelectedIndex();
         ltr24SettingsModel.getLTR24Instance().getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequency);
+
+        int dataLength = (int) ltr24SettingsModel.getLTR24Instance().getFrequency();
+
+        if (dataLength == 0) {
+            switch (frequency) {
+                case 0:
+                    dataLength = 117188;
+                    break;
+                case 1:
+                    dataLength = 78126;
+                    break;
+                case 2:
+                    dataLength = 58594;
+                    break;
+                case 3:
+                    dataLength = 39063;
+                    break;
+                case 4:
+                    dataLength = 29297;
+                    break;
+                case 5:
+                    dataLength = 19532;
+                    break;
+                case 6:
+                    dataLength = 14649;
+                    break;
+                case 7:
+                    dataLength = 9766;
+                    break;
+                case 8:
+                    dataLength = 7325;
+                    break;
+                case 9:
+                    dataLength = 4883;
+                    break;
+                case 10:
+                    dataLength = 3663;
+                    break;
+                case 11:
+                    dataLength = 2442;
+                    break;
+                case 12:
+                    dataLength = 1832;
+                    break;
+                case 13:
+                    dataLength = 1221;
+                    break;
+                case 14:
+                    dataLength = 916;
+                    break;
+                case 15:
+                    dataLength = 611;
+                    break;
+            }
+        }
+
+        ltr24SettingsModel.getLTR24Instance().setData(new double[dataLength * ltr24SettingsModel.getLTR24Instance().getChannelsCount()]);
     }
 
     void toggleUiElementsState(boolean isDisable) {

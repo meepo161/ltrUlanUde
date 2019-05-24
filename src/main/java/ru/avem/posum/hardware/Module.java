@@ -4,12 +4,13 @@ import ru.avem.posum.utils.TextEncoder;
 
 public abstract class Module {
     int channelsCount;
-    String crateSerialNumber;
-    private int slot;
-    private boolean connectionOpen;
-    private long moduleId;
-    String[] descriptions;
     boolean[] checkedChannels;
+    private boolean connectionOpen;
+    String crateSerialNumber;
+    double[] data;
+    String[] descriptions;
+    private long moduleId;
+    private int slot;
     protected String status;
     private TextEncoder textEncoder = new TextEncoder();
 
@@ -38,12 +39,17 @@ public abstract class Module {
 
     public abstract void closeConnection();
 
+
     public int getChannelsCount() {
         return channelsCount;
     }
 
     public boolean[] getCheckedChannels() {
         return checkedChannels;
+    }
+
+    public double[] getData() {
+        return data;
     }
 
     public String[] getDescriptions() {
@@ -78,6 +84,10 @@ public abstract class Module {
         this.crateSerialNumber = crateSerialNumber;
     }
 
+    public void setData(double[] data) {
+        this.data = data;
+    }
+
     public void setModuleId(long moduleId) {
         this.moduleId = moduleId;
     }
@@ -89,5 +99,4 @@ public abstract class Module {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

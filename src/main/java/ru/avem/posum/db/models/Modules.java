@@ -58,6 +58,9 @@ public class Modules {
     @DatabaseField
     private String iirPath;
 
+    @DatabaseField
+    private String dataLength;
+
     public Modules() {
         // ORMLite and XML binder need a no-arg constructor
     }
@@ -78,6 +81,7 @@ public class Modules {
         channelsCount = moduleSettings.getOrDefault("Channels count", "");
         firPath = moduleSettings.getOrDefault("FIR path", "");
         iirPath = moduleSettings.getOrDefault("IIR path", "");
+        dataLength = moduleSettings.getOrDefault("Data length", "0");
     }
 
     private String settingsToString(int[] settings) {
@@ -104,16 +108,8 @@ public class Modules {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public long getTestProgramId() {
         return testProgramId;
-    }
-
-    public void setTestProgramId(long testProgramId) {
-        this.testProgramId = testProgramId;
     }
 
     public String getModuleType() {
@@ -124,22 +120,8 @@ public class Modules {
         return Integer.parseInt(slot);
     }
 
-    public void setSlot(String slot) {
-        this.slot = slot;
-    }
-
     public String getCheckedChannels() {
         return checkedChannels;
-    }
-
-    public void setCheckedChannels(boolean[] checkedChannels) {
-        StringBuffer settingsLine = new StringBuffer();
-
-        for (boolean value : checkedChannels) {
-            settingsLine.append(value).append(", ");
-        }
-
-        this.checkedChannels = String.valueOf(settingsLine);
     }
 
     public String getTypesOfChannels() {
@@ -158,10 +140,6 @@ public class Modules {
         return typesOfChannels;
     }
 
-    public void setTypesOfChannels(int[] typesOfChannels) {
-        this.typesOfChannels = settingsToString(typesOfChannels);
-    }
-
     public String getMeasuringRanges() {
         return measuringRanges;
     }
@@ -176,10 +154,6 @@ public class Modules {
         }
 
         return measuringRanges;
-    }
-
-    public void setMeasuringRanges(int[] measuringRanges) {
-        this.measuringRanges = settingsToString(measuringRanges);
     }
 
     public String getChannelsDescriptions() {
@@ -206,6 +180,45 @@ public class Modules {
         return outputList;
     }
 
+    public String getAmplitudes() {
+        return amplitudes;
+    }
+
+    public static double getAmplitude(Modules module, int channel) {
+        String[] amplitudes = module.getAmplitudes().split(", ");
+        return Double.parseDouble(amplitudes[channel - 1]);
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTestProgramId(long testProgramId) {
+        this.testProgramId = testProgramId;
+    }
+
+    public void setSlot(String slot) {
+        this.slot = slot;
+    }
+
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        StringBuffer settingsLine = new StringBuffer();
+
+        for (boolean value : checkedChannels) {
+            settingsLine.append(value).append(", ");
+        }
+
+        this.checkedChannels = String.valueOf(settingsLine);
+    }
+
+    public void setTypesOfChannels(int[] typesOfChannels) {
+        this.typesOfChannels = settingsToString(typesOfChannels);
+    }
+
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = settingsToString(measuringRanges);
+    }
+
     public void setChannelsDescription(String[] channelsDescription) {
         StringBuffer settingsLine = new StringBuffer();
 
@@ -214,15 +227,6 @@ public class Modules {
         }
 
         this.channelsDescription = String.valueOf(settingsLine);
-    }
-
-    public String getAmplitudes() {
-        return amplitudes;
-    }
-
-    public static double getAmplitude(Modules module, int channel) {
-        String[] amplitudes = module.getAmplitudes().split(", ");
-        return Double.parseDouble(amplitudes[channel - 1]);
     }
 
     public String getDc() {
@@ -267,6 +271,22 @@ public class Modules {
         return settingsOfModule;
     }
 
+    public int getChannelsCount() {
+        return Integer.parseInt(channelsCount);
+    }
+
+    public String getFirPath() {
+        return firPath;
+    }
+
+    public String getIirPath() {
+        return iirPath;
+    }
+
+    public int getDataLength() {
+        return Integer.parseInt(dataLength);
+    }
+
     public void setAmplitudes(double[] amplitudes) {
         this.amplitudes = settingsToString(amplitudes);
     }
@@ -287,27 +307,19 @@ public class Modules {
         this.settings = settings;
     }
 
-    public int getChannelsCount() {
-        return Integer.parseInt(channelsCount);
-    }
-
     public void setChannelsCount(int channelsCount) {
         this.channelsCount = String.valueOf(channelsCount);
-    }
-
-    public String getFirPath() {
-        return firPath;
     }
 
     public void setFirPath(String firPath) {
         this.firPath = firPath;
     }
 
-    public String getIirPath() {
-        return iirPath;
-    }
-
     public void setIirPath(String iirPath) {
         this.iirPath = iirPath;
+    }
+
+    public void setDataLength(String dataLength) {
+        this.dataLength = dataLength;
     }
 }

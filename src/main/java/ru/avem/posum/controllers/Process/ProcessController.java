@@ -12,7 +12,6 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.Event;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
@@ -375,8 +374,32 @@ public class ProcessController implements BaseController {
         }
     }
 
-    public void handleRunButton() {
-        experimentModel.Run();
+    public void handleStart() {
+        statusBarLine.clearStatusBar();
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Запуск программы испытаний");
+
+        new Thread(() -> {
+            process.run();
+            checkRunning();
+//            experimentModel.Run();
+        }).start();
+    }
+
+    private void checkRunning() {
+        statusBarLine.clearStatusBar();
+        statusBarLine.toggleProgressIndicator(true);
+
+        if (process.isRan()) {
+            statusBarLine.setStatus("Операция успешно выполнена", true);
+            while (true) { // TODO : change this shit
+                process.initData(cm.getChosenModules());
+                process.perform();
+            }
+        } else {
+            showErrors();
+            statusBarLine.setStatus("Ошибка запуска программы испытаний", false);
+        }
     }
 
     public void handleSmoothStopButton() {

@@ -284,6 +284,7 @@ public class SettingsModel implements BaseController {
                 module.setSettings(String.valueOf(adc.moduleSettingsToString()));
                 module.setFirPath(adc.getFirPath());
                 module.setIirPath(adc.getIirPath());
+                module.setDataLength(String.valueOf(adc.getData().length));
 
                 updateModuleSettings(module);
             }
@@ -343,6 +344,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Module HardwareSettings", String.valueOf(adc.moduleSettingsToString()));
         moduleSettings.put("FIR path", adc.getFirPath());
         moduleSettings.put("IIR path", adc.getIirPath());
+        moduleSettings.put("Data length", String.valueOf(adc.getData().length));
     }
 
     private void getDACInstance() {
@@ -369,6 +371,7 @@ public class SettingsModel implements BaseController {
                 module.setChannelsDescription(dac.getDescriptions());
                 module.setFrequencies(dac.getFrequencies());
                 module.setPhases(dac.getPhases());
+                module.setDataLength(String.valueOf(dac.getData().length));
 
                 updateModuleSettings(module);
             }
@@ -403,6 +406,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Dc", dcLine.toString());
         moduleSettings.put("Frequencies", frequenciesLine.toString());
         moduleSettings.put("Phases", phasesLine.toString());
+        moduleSettings.put("Data length", String.valueOf(dac.getData().length));
     }
 
     public void loadChannelsSettings(TestProgram testProgram, Crate crate, int selectedCrate) {
@@ -485,6 +489,7 @@ public class SettingsModel implements BaseController {
         adc.setModuleId(module.getId());
         adc.setFirPath(module.getFirPath());
         adc.setIirPath(module.getIirPath());
+        adc.setData(new double[module.getDataLength()]);
 
         for (int i = 0; i < channels; i++) {
             checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
@@ -533,6 +538,7 @@ public class SettingsModel implements BaseController {
             dac.setChannelsCount(module.getChannelsCount());
             dac.setSlot(slot);
             dac.setModuleId(module.getId());
+            dac.setData(new double[module.getDataLength()]);
 
             for (int i = 0; i < channels; i++) {
                 checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
