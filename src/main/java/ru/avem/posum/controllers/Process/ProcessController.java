@@ -1,6 +1,7 @@
 package ru.avem.posum.controllers.Process;
 
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -24,6 +25,7 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.Optional;
 
 public class ProcessController implements BaseController {
@@ -158,8 +160,6 @@ public class ProcessController implements BaseController {
     @FXML
     private Label timeLabel;
     @FXML
-    private Button timeButton;
-    @FXML
     private TextField timeTextField;
     @FXML
     private ToolBar toolbarSettings;
@@ -210,7 +210,6 @@ public class ProcessController implements BaseController {
         uiElements.add(smoothStopButton);
         uiElements.add(stopButton);
         uiElements.add(timeLabel);
-        uiElements.add(timeButton);
         uiElements.add(timeTextField);
         uiElements.add(savePointButton);
         uiElements.add(saveWaveformButton);
@@ -269,16 +268,7 @@ public class ProcessController implements BaseController {
     }
 
     public void handleInitialize() {
-        List<Modules> linkedModules = cm.getLinkedModules();
-        List<Modules> chosenModules = cm.getChosenModules();
-
-        for (Modules module : linkedModules) {
-            if (!chosenModules.contains(module)) {
-                chosenModules.add(module);
-            }
-        }
-
-        if (!chosenModules.isEmpty()) {
+        if (!getModules().isEmpty()) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
             eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
@@ -287,7 +277,7 @@ public class ProcessController implements BaseController {
             programController.clear();
 
             new Thread(() -> {
-                parseSettings(chosenModules);
+                parseSettings(getModules());
                 process.connect();
 
                 if (process.isConnected()) {
@@ -307,6 +297,19 @@ public class ProcessController implements BaseController {
             statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
         }
 //        experimentModel.Init();
+    }
+
+    private ObservableList<Modules> getModules() {
+        List<Modules> linkedModules = cm.getLinkedModules();
+        ObservableList<Modules> chosenModules = cm.getChosenModules();
+
+        for (Modules module : linkedModules) {
+            if (!chosenModules.contains(module)) {
+                chosenModules.add(module);
+            }
+        }
+
+        return chosenModules;
     }
 
     private void toggleUiElements(boolean isDisable) {
@@ -441,7 +444,7 @@ public class ProcessController implements BaseController {
 
             process.setStopped(false);
             while (!process.isStopped()) {
-                process.initData(cm.getChosenModules());
+                process.initData(getModules());
                 process.perform();
             }
         } else {
@@ -461,6 +464,7 @@ public class ProcessController implements BaseController {
         statusBarLine.clearStatusBar();
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
+        eventsController.getEventModel().addEvent("Завершение программы испытаний", EventsTypes.LOG);
 
         new Thread(() -> {
             process.setStopped(true);

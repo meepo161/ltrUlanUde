@@ -37,7 +37,7 @@ class LTR24ModuleSettings extends LTR24Settings {
         frequencies.add("610.35 Гц");
 
         frequencyComboBox.getItems().addAll(frequencies);
-        frequencyComboBox.getSelectionModel().select(7);
+        frequencyComboBox.getSelectionModel().select(0);
     }
 
     void setSettings() {
