@@ -178,7 +178,7 @@ public class LinkingController implements BaseController {
     }
 
     private ChannelModel createChannel(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {
-        String pairName = selectedDacChannel.getText() + " -> " +  selectedAdcChannel.getText();
+        String pairName = selectedDacChannel.getText() + " => " +  selectedAdcChannel.getText();
         return new ChannelModel(pairName);
     }
 

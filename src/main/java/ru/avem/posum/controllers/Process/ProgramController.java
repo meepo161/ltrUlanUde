@@ -312,6 +312,7 @@ public class ProgramController {
 
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
                     selectParameters(tableView);
+
                 }
             });
 
@@ -326,7 +327,8 @@ public class ProgramController {
 
     private void selectParameters(TableView<ChannelModel> tableView) {
         ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
-        toggleCheckBoxes(false);
+
+        toggleCheckBoxes(!selectedChannel.getName().contains("=>"));
         selectParameters(selectedChannel);
         setParameters(selectedChannel);
     }
