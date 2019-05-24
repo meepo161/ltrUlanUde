@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.TextEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -244,13 +245,16 @@ public class Process {
         }
     }
 
-    public Pair<String, String> getBadStatus() {
+    public List<Pair<String, String>> getBadStatus() {
+        List<Pair<String, String>> outputList = new ArrayList<>();
+
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            if (!statuses[moduleIndex].equals("Операция успешно выполнена")) {
-                return new Pair<>(operations[moduleIndex], statuses[moduleIndex]);
+            String status = statuses[moduleIndex];
+            if (!status.isEmpty() && !status.equals("Операция успешно выполнена")) {
+                outputList.add(new Pair<>(operations[moduleIndex], statuses[moduleIndex]));
             }
         }
 
-        return new Pair<>("", "");
+        return outputList;
     }
 }

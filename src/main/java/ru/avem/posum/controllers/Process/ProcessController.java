@@ -12,6 +12,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.TestProgramRepository;
+import ru.avem.posum.db.models.Event;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
@@ -169,7 +170,7 @@ public class ProcessController implements BaseController {
     private Label warningIcon;
 
     private ControllerManager cm;
-    private EventsModel eventModel = new EventsModel();
+    private EventsController eventsController = new EventsController();
     private ExperimentModel experimentModel = new ExperimentModel();
     private Process process = new Process();
     private ProcessModel processModel = new ProcessModel();
@@ -181,12 +182,8 @@ public class ProcessController implements BaseController {
 
     @FXML
     private void initialize() {
-        eventModel.initEventData(journalTableView);
-        eventModel.SetEventsTableFunction(journalTableView);
-        eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
-        eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-
         initTableView();
+        initEventsTableView();
 
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
@@ -252,6 +249,13 @@ public class ProcessController implements BaseController {
         frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseFrequencyProperty());
     }
 
+    private void initEventsTableView() {
+        journalTableView.setItems(eventsController.getEventModel().getEvents());
+        eventsController.setEventsColors(journalTableView);
+        eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
+        eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+    }
+
     public void handleInitialize() {
         List<Modules> linkedModules = cm.getLinkedModules();
         List<Modules> chosenModules = cm.getChosenModules();
@@ -268,6 +272,7 @@ public class ProcessController implements BaseController {
 
             toggleUiElements(true);
             programController.clear();
+            eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
 
             new Thread(() -> {
                 parseSettings(chosenModules);
@@ -277,10 +282,10 @@ public class ProcessController implements BaseController {
                     process.initialize();
                     checkInitialization();
                 } else {
-                    Pair<String, String> badStatus = process.getBadStatus();
+                    showErrors();
                     statusBarLine.toggleProgressIndicator(true);
                     statusBarLine.clearStatusBar();
-                    statusBarLine.setStatus(String.format("%s. %s", badStatus.getKey(), badStatus.getValue()), false);
+                    statusBarLine.setStatus("Ошибка открытия соединений с модулями", false);
                 }
 
                 toggleUiElements(false);
@@ -353,10 +358,20 @@ public class ProcessController implements BaseController {
         statusBarLine.clearStatusBar();
 
         if (process.isInitialized()) {
+            eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
             statusBarLine.setStatus("Операция успешно выполнена", true);
         } else {
-            Pair<String, String> badStatus = process.getBadStatus();
-            statusBarLine.setStatus(String.format("%s. %s", badStatus.getKey(), badStatus.getValue()), false);
+            showErrors();
+            statusBarLine.setStatus("Ошибка инициализации модулей", false);
+        }
+    }
+
+    private void showErrors() {
+        List<Pair<String, String>> statuses = process.getBadStatus();
+
+        for (Pair<String, String> status : statuses) {
+            String error = String.format("%s. %s.", status.getKey(), status.getValue());
+            eventsController.getEventModel().addEvent(error, EventsTypes.ERROR);
         }
     }
 
@@ -423,7 +438,7 @@ public class ProcessController implements BaseController {
         dialog.setHeaderText("Введите событие:");
         dialog.setContentText("Текст:");
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(eventText -> eventModel.setEvent(eventText));
+        result.ifPresent(eventText -> eventsController.getEventModel().setEvent(eventText));
     }
 
     public void handleExpandEventTableButton() {

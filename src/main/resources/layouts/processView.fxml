@@ -274,7 +274,7 @@
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                    <SplitPane dividerPositions="0.788">
+                    <SplitPane dividerPositions="0.8">
                         <items>
                             <GridPane>
                                 <columnConstraints>
@@ -320,7 +320,7 @@
                               </SplitPane>
                                 </children>
                             </GridPane>
-                            <SplitPane dividerPositions="0.5200892857142857" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="212.0">
+                            <SplitPane dividerPositions="0.2201" minWidth="0.0" orientation="VERTICAL" prefHeight="450.0" prefWidth="210.0">
                                 <items>
                               <GridPane>
                                 <columnConstraints>
