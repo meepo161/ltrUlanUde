@@ -40,16 +40,16 @@ public class EventsModel {
                 if (row != null) {
                     switch (row.getStatus()) {
                         case "ERROR":
-                            setStyle("-fx-background-color: red; -fx-text-background-color: black;");
+                            setStyle("-fx-background-color: #ff4500; -fx-text-background-color: black;");
                             break;
                         case "LOG":
-                            setStyle("-fx-background-color: skyblue; -fx-text-background-color: black;");
+                            setStyle("-fx-background-color: #f0f8ff; -fx-text-background-color: black;");
                             break;
                         case "OK":
-                            setStyle("-fx-background-color: green; -fx-text-background-color: black;");
+                            setStyle("-fx-background-color: #92cd74; -fx-text-background-color: black;");
                             break;
                         case "WARNING":
-                            setStyle("-fx-background-color: yellow; -fx-text-background-color: black;");
+                            setStyle("-fx-background-color: #f0e68c; -fx-text-background-color: black;");
                             break;
                         default:
                             setStyle(null);

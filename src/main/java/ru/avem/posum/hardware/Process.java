@@ -1,5 +1,6 @@
 package ru.avem.posum.hardware;
 
+import javafx.util.Pair;
 import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.TextEncoder;
 
@@ -241,5 +242,15 @@ public class Process {
         for (int i = 0; i < size; i++) {
             this.channelsCount[i] = channelsCounts.get(i);
         }
+    }
+
+    public Pair<String, String> getBadStatus() {
+        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
+            if (!statuses[moduleIndex].equals("Операция успешно выполнена")) {
+                return new Pair<>(operations[moduleIndex], statuses[moduleIndex]);
+            }
+        }
+
+        return new Pair<>("", "");
     }
 }

@@ -133,6 +133,21 @@ public class LinkingModel {
         return false;
     }
 
+    public List<Modules> getChosenModules() {
+        List<Modules> modules = new ArrayList<>();
+
+        for (CheckBox channel : chosenChannels) {
+            int adcSlot = Integer.parseInt(channel.getText().split("слот ")[1].split("\\)")[0]);
+            Modules adc = modulesHashMap.get(channel.getText());
+
+            if (!isPresent(adcSlot, modules)) {
+                modules.add(adc);
+            }
+        }
+
+        return modules;
+    }
+
     public HashMap<String, List<Pair<Integer, String>>> getChannelsHashMap() {
         return channelsHashMap;
     }

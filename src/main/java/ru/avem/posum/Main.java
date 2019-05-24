@@ -292,6 +292,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
+    public List<Modules> getChosenModules() {
+        return linkingController.getLinkingModel().getChosenModules();
+    }
+
+    @Override
     public String getCrateSerialNumber() {
         return settings.getHardwareSettings().getCrateSerialNumber();
     }

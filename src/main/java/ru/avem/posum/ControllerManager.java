@@ -19,6 +19,8 @@ public interface ControllerManager {
 
     ObservableList<CheckBox> getChosenChannels();
 
+    List<Modules> getChosenModules();
+
     String getCrateSerialNumber();
 
     Crate getCrateModelInstance();

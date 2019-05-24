@@ -1,10 +1,12 @@
 package ru.avem.posum.controllers.Process;
 
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -24,6 +26,10 @@ import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
+    private Button addCommandButton;
+    @FXML
+    private Button addEventButton;
+    @FXML
     private CheckBox amplitudeCheckBox;
     @FXML
     private Slider amplitudeSlider;
@@ -31,6 +37,8 @@ public class ProcessController implements BaseController {
     private TextField amplitudeTextField;
     @FXML
     private Label amplitudeVoltLabel;
+    @FXML
+    private Button backButton;
     @FXML
     private Label calibratedAmplitudeLabel;
     @FXML
@@ -43,6 +51,8 @@ public class ProcessController implements BaseController {
     private TextField calibratedRmsTextField;
     @FXML
     private Label calibratedRmsLabel;
+    @FXML
+    private TableView commandsTableView;
     @FXML
     private Label checkIcon;
     @FXML
@@ -70,9 +80,13 @@ public class ProcessController implements BaseController {
     @FXML
     private Label iLabel;
     @FXML
+    private Button initializeButton;
+    @FXML
     private Slider iSlider;
     @FXML
     private TextField iTextField;
+    @FXML
+    private TableView<Events> journalTableView;
     @FXML
     private AnchorPane mainPanel;
     @FXML
@@ -124,13 +138,33 @@ public class ProcessController implements BaseController {
     @FXML
     private Button saveButton;
     @FXML
+    private Button saveJournalButton;
+    @FXML
+    private Button savePointButton;
+    @FXML
+    private Button saveProtocolButton;
+    @FXML
+    private Button saveWaveformButton;
+    @FXML
+    private Button smoothStopButton;
+    @FXML
+    private Button startButton;
+    @FXML
     private StatusBar statusBar;
     @FXML
-    private TableView<Events> tableEvent;
+    private Button stopButton;
+    @FXML
+    private Label timeLabel;
+    @FXML
+    private Button timeButton;
+    @FXML
+    private TextField timeTextField;
     @FXML
     private ToolBar toolbarSettings;
     @FXML
     private VBox topPanel;
+    @FXML
+    private Button toProgramButton;
     @FXML
     private Label warningIcon;
 
@@ -140,21 +174,21 @@ public class ProcessController implements BaseController {
     private Process process = new Process();
     private ProcessModel processModel = new ProcessModel();
     private ProgramController programController;
-    private TestProgram testProgram;
+    private List<Node> uiElements = new ArrayList<>();
     private StatusBarLine statusBarLine;
+    private TestProgram testProgram;
     private WindowsManager wm;
 
     @FXML
     private void initialize() {
-        eventModel.initEventData(tableEvent);
-        eventModel.SetEventsTableFunction(tableEvent);
+        eventModel.initEventData(journalTableView);
+        eventModel.SetEventsTableFunction(journalTableView);
         eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
 
         initTableView();
 
-        statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
-        statusBarLine.setProcessView(true);
+        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
         processModel.chart(processGraph);
@@ -165,7 +199,31 @@ public class ProcessController implements BaseController {
                 dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
                 calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
-                dLabel, dSlider, dTextField,mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
+                dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
+
+        fillListOfUiElements();
+    }
+
+    private void fillListOfUiElements() {
+        uiElements.add(toProgramButton);
+        uiElements.add(initializeButton);
+        uiElements.add(startButton);
+        uiElements.add(smoothStopButton);
+        uiElements.add(stopButton);
+        uiElements.add(timeLabel);
+        uiElements.add(timeButton);
+        uiElements.add(timeTextField);
+        uiElements.add(savePointButton);
+        uiElements.add(saveWaveformButton);
+        uiElements.add(saveProtocolButton);
+        uiElements.add(backButton);
+        uiElements.add(table);
+        uiElements.add(processGraph);
+        uiElements.add(commandsTableView);
+        uiElements.add(addCommandButton);
+        uiElements.add(journalTableView);
+        uiElements.add(addEventButton);
+        uiElements.add(saveJournalButton);
     }
 
     private void initTableView() {
@@ -195,28 +253,48 @@ public class ProcessController implements BaseController {
     }
 
     public void handleInitialize() {
-        List<Modules> modules = cm.getLinkedModules();
+        List<Modules> linkedModules = cm.getLinkedModules();
+        List<Modules> chosenModules = cm.getChosenModules();
 
-        if (!modules.isEmpty()) {
+        for (Modules module : linkedModules) {
+            if (!chosenModules.contains(module)) {
+                chosenModules.add(module);
+            }
+        }
+
+        if (!chosenModules.isEmpty()) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
 
+            toggleUiElements(true);
+            programController.clear();
+
             new Thread(() -> {
-                parseSettings(modules);
+                parseSettings(chosenModules);
                 process.connect();
 
                 if (process.isConnected()) {
                     process.initialize();
                     checkInitialization();
                 } else {
+                    Pair<String, String> badStatus = process.getBadStatus();
                     statusBarLine.toggleProgressIndicator(true);
                     statusBarLine.clearStatusBar();
-                    statusBarLine.setStatus("Ошибка открытия соединения с модулями", false);
+                    statusBarLine.setStatus(String.format("%s. %s", badStatus.getKey(), badStatus.getValue()), false);
                 }
-            }).start();
-        }
 
+                toggleUiElements(false);
+            }).start();
+        } else {
+            statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
+        }
 //        experimentModel.Init();
+    }
+
+    private void toggleUiElements(boolean isDisable) {
+        for (Node element : uiElements) {
+            element.setDisable(isDisable);
+        }
     }
 
     private void parseSettings(List<Modules> modules) {
@@ -277,7 +355,8 @@ public class ProcessController implements BaseController {
         if (process.isInitialized()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
         } else {
-            statusBarLine.setStatus("Ошибка инициализации", false);
+            Pair<String, String> badStatus = process.getBadStatus();
+            statusBarLine.setStatus(String.format("%s. %s", badStatus.getKey(), badStatus.getValue()), false);
         }
     }
 

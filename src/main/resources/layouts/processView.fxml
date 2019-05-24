@@ -26,100 +26,6 @@
 <?import org.controlsfx.control.StatusBar?>
 
 <BorderPane fx:id="processViewPanel" minHeight="680.0" minWidth="1200.0" prefHeight="680.0" prefWidth="1200.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.Process.ProcessController">
-    <center>
-        <SplitPane dividerPositions="0.788">
-            <items>
-                <GridPane>
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                    <children>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
-                    <items>
-                              <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" pickOnBounds="false" styleClass="processTable">
-                                  <placeholder>
-                                      <Label text="Нет данных для отображения" />
-                                  </placeholder>
-                                  <columns>
-                                      <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />
-                                      <TableColumn fx:id="responseColumn" editable="false" minWidth="70.0" prefWidth="70.0" text="Отклик" />
-                                      <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
-                                      <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />
-                                      <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик, %" />
-                                      <TableColumn fx:id="rmsResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS отклик" />
-                                      <TableColumn fx:id="rmsColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS норма" />
-                                      <TableColumn fx:id="rmsRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS отклик, %" />
-                                      <TableColumn fx:id="frequencyResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота отклик" />
-                                      <TableColumn fx:id="frequencyColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота норма" />
-                                      <TableColumn fx:id="frequencyRelativeResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота отклик, %" />
-                                  </columns>
-                                  <columnResizePolicy>
-                                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                  </columnResizePolicy>
-                              </TableView>
-                              <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
-                                  <xAxis>
-                                      <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
-                                  </xAxis>
-                                  <yAxis>
-                                      <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />
-                                  </yAxis>
-                              </LineChart>
-                    </items>
-                  </SplitPane>
-                    </children>
-                </GridPane>
-                <SplitPane dividerPositions="0.1755" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="212.0">
-                    <items>
-                        <TableView fx:id="tableViewProgramProcess" minHeight="75.0" minWidth="0.0" styleClass="programTable">
-                            <columns>
-                                <TableColumn minWidth="110.0" prefWidth="110.0" text="Команда" />
-                                <TableColumn minWidth="110.0" prefWidth="110.0" text="Свойства" />
-                            </columns>
-                            <columnResizePolicy>
-                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                            </columnResizePolicy>
-                        </TableView>
-                        <GridPane alignment="CENTER" maxHeight="1.7976931348623157E308" minHeight="25.0">
-                            <columnConstraints>
-                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
-                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                            </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                <RowConstraints maxHeight="25.0" minHeight="10.0" vgrow="SOMETIMES" />
-                            </rowConstraints>
-                            <children>
-                                <TableView fx:id="tableEvent" minHeight="75.0" minWidth="0.0" styleClass="eventTable" GridPane.columnSpan="2">
-                                    <columns>
-                                        <TableColumn fx:id="eventDescriptionColumn" minWidth="110.0" prefWidth="110.0" text="Событие" />
-                                        <TableColumn fx:id="eventTimeColumn" minWidth="110.0" prefWidth="110.0" text="Время" />
-                                    </columns>
-                                    <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                    </columnResizePolicy>
-                                </TableView>
-                                <Button fx:id="addEvent_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Button>
-                                <Button fx:id="expandEventTable_Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExpandEventTableButton" prefWidth="110.0" text="Развернуть" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                    <font>
-                                        <Font name="Arial" size="12.0" />
-                                    </font>
-                                </Button>
-                            </children>
-                        </GridPane>
-                    </items>
-                </SplitPane>
-            </items>
-        </SplitPane>
-    </center>
     <top>
         <VBox fx:id="topPanel" maxHeight="200.0" minHeight="89.0" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
             <children>
@@ -127,12 +33,12 @@
                     <children>
                         <HBox prefWidth="1172.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <Button fx:id="toProgramm_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleToProgramButton" text="К программе">
+                                <Button fx:id="toProgramButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleToProgramButton" text="К программе">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="init_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация">
+                                <Button fx:id="initializeButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -140,34 +46,34 @@
                                         <Insets />
                                     </HBox.margin>
                                 </Button>
-                                <Button fx:id="run_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleRunButton" text="Запуск">
+                                <Button fx:id="startButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleRunButton" text="Запуск">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="smoothStop_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSmoothStopButton" text="Плавная остановка" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="smoothStopButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSmoothStopButton" text="Плавная остановка" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="stop_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStopButton" text="СТОП">
+                                <Button fx:id="stopButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStopButton" text="СТОП">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
                                 <Pane prefHeight="93.0" prefWidth="156.0">
                                     <children>
-                                        <Label layoutX="14.0" layoutY="6.0" text="Время режима">
+                                        <Label fx:id="timeLabel" layoutX="14.0" layoutY="6.0" text="Время режима">
                                             <font>
                                                 <Font name="Arial" size="12.0" />
                                             </font>
                                         </Label>
-                                        <TextField alignment="TOP_RIGHT" editable="false" layoutX="7.0" layoutY="29.0" maxHeight="16.0" prefHeight="16.0" prefWidth="146.0" text="0:00:00">
+                                        <TextField fx:id="timeTextField" alignment="TOP_RIGHT" editable="false" layoutX="7.0" layoutY="29.0" maxHeight="16.0" prefHeight="16.0" prefWidth="146.0" text="0:00:00">
                                             <font>
                                                 <Font name="Arial Black" size="16.0" />
                                             </font>
                                         </TextField>
-                                        <Button layoutX="128.0" layoutY="2.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="&gt;">
+                                        <Button fx:id="timeButton" layoutX="128.0" layoutY="2.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="&gt;">
                                             <font>
                                                 <Font name="Arial" size="12.0" />
                                             </font>
@@ -177,17 +83,17 @@
                                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                     </padding>
                                 </Pane>
-                                <Button fx:id="savePoint_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePointButton" text="Записать точку" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="savePointButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePointButton" text="Записать точку" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="saveWaveform_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveWaveformButton" prefHeight="60.0" prefWidth="105.0" text="Записать осциллограмму" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="saveWaveformButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveWaveformButton" prefHeight="60.0" prefWidth="105.0" text="Записать осциллограмму" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="saveProtocol_Button" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveProtocolButton" prefHeight="60.0" prefWidth="105.0" text="Сохранить протокол испытания" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="saveProtocolButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveProtocolButton" prefHeight="60.0" prefWidth="105.0" text="Сохранить протокол испытания" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -199,7 +105,7 @@
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="1174.0" layoutY="-3.0" prefWidth="106.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1040.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <Button fx:id="back_Button" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" styleClass="eventTable" text="Назад" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="backButton" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" styleClass="eventTable" text="Назад" textAlignment="CENTER" wrapText="true">
                                     <HBox.margin>
                                         <Insets />
                                     </HBox.margin>
@@ -356,30 +262,151 @@
             </children>
         </VBox>
     </top>
-    <bottom>
-        <HBox maxHeight="30.0" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <children>
-                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;">
-                    <HBox.margin>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                    <SplitPane dividerPositions="0.788">
+                        <items>
+                            <GridPane>
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" percentHeight="40.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                <children>
+                              <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
+                                <items>
+                                          <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" pickOnBounds="false" styleClass="processTable">
+                                              <placeholder>
+                                                  <Label text="Нет данных для отображения" />
+                                              </placeholder>
+                                              <columns>
+                                                  <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />
+                                                  <TableColumn fx:id="responseColumn" editable="false" minWidth="70.0" prefWidth="70.0" text="Отклик" />
+                                                  <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
+                                                  <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />
+                                                  <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик, %" />
+                                                  <TableColumn fx:id="rmsResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS отклик" />
+                                                  <TableColumn fx:id="rmsColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS норма" />
+                                                  <TableColumn fx:id="rmsRelativeResponseColumn" editable="false" minWidth="50.0" prefWidth="70.0" text="RMS отклик, %" />
+                                                  <TableColumn fx:id="frequencyResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота отклик" />
+                                                  <TableColumn fx:id="frequencyColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота норма" />
+                                                  <TableColumn fx:id="frequencyRelativeResponseColumn" editable="false" minWidth="45.0" prefWidth="70.0" text="Частота отклик, %" />
+                                              </columns>
+                                              <columnResizePolicy>
+                                                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                              </columnResizePolicy>
+                                          </TableView>
+                                          <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
+                                              <xAxis>
+                                                  <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
+                                              </xAxis>
+                                              <yAxis>
+                                                  <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />
+                                              </yAxis>
+                                          </LineChart>
+                                </items>
+                              </SplitPane>
+                                </children>
+                            </GridPane>
+                            <SplitPane dividerPositions="0.5200892857142857" maxWidth="500.0" minWidth="0.0" orientation="VERTICAL" prefHeight="448.0" prefWidth="212.0">
+                                <items>
+                              <GridPane>
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="25.0" minHeight="0.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                          <TableView fx:id="commandsTableView" minHeight="0.0" minWidth="0.0" styleClass="programTable">
+                                              <placeholder>
+                                                  <Label text="Нет данных для отображения" />
+                                              </placeholder>
+                                              <columns>
+                                                  <TableColumn minWidth="110.0" prefWidth="110.0" text="Команда" />
+                                                  <TableColumn minWidth="110.0" prefWidth="110.0" text="Свойства" />
+                                              </columns>
+                                              <columnResizePolicy>
+                                                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                              </columnResizePolicy>
+                                          </TableView>
+                                    <Button fx:id="addCommandButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Добавить команду" GridPane.rowIndex="1" />
+                                 </children>
+                              </GridPane>
+                                    <GridPane alignment="CENTER" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0">
+                                        <columnConstraints>
+                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" percentWidth="50.0" />
+                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" />
+                                        </columnConstraints>
+                                        <rowConstraints>
+                                            <RowConstraints minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                            <RowConstraints maxHeight="25.0" minHeight="0.0" vgrow="SOMETIMES" />
+                                        </rowConstraints>
+                                        <children>
+                                            <TableView fx:id="journalTableView" minHeight="0.0" minWidth="0.0" styleClass="eventTable" GridPane.columnSpan="2">
+                                                <placeholder>
+                                                    <Label text="Нет данных для отображения" />
+                                                </placeholder>
+                                                <columns>
+                                                    <TableColumn fx:id="eventDescriptionColumn" minWidth="110.0" prefWidth="110.0" text="Событие" />
+                                                    <TableColumn fx:id="eventTimeColumn" minWidth="110.0" prefWidth="110.0" text="Время" />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                            <Button fx:id="addEventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1">
+                                                <font>
+                                                    <Font name="Arial" size="12.0" />
+                                                </font>
+                                            </Button>
+                                            <Button fx:id="saveJournalButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleExpandEventTableButton" prefWidth="110.0" text="Сохранить" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                <font>
+                                                    <Font name="Arial" size="12.0" />
+                                                </font>
+                                            </Button>
+                                        </children>
+                                    </GridPane>
+                                </items>
+                            </SplitPane>
+                        </items>
+                    </SplitPane>
+                  <StatusBar fx:id="statusBar" styleClass="status-bar" stylesheets="@../css/main.css" text="" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="25.0" />
+                     </GridPane.margin>
+                  </StatusBar>
+                  <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;" GridPane.rowIndex="1">
+                     <GridPane.margin>
                         <Insets left="10.0" />
-                    </HBox.margin>
-                </ProgressIndicator>
-                <Label fx:id="checkIcon" style="-fx-opacity: 0;" text="✔">
-                    <HBox.margin>
-                        <Insets left="-16.0" top="5.0" />
-                    </HBox.margin>
-                </Label>
-                <Label fx:id="warningIcon" style="-fx-opacity: 0;" text="❗">
-                    <HBox.margin>
-                        <Insets left="-12.0" top="5.0" />
-                    </HBox.margin>
-                </Label>
-                <StatusBar fx:id="statusBar" prefWidth="1000.0" styleClass="status-bar" stylesheets="@../css/main.css" text="">
-                    <HBox.margin>
-                        <Insets left="5.0" />
-                    </HBox.margin>
-                </StatusBar>
-            </children>
-        </HBox>
-    </bottom>
+                     </GridPane.margin>
+                  </ProgressIndicator>
+                  <Label fx:id="warningIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="❗" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text=" ✔" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="8.0" />
+                     </GridPane.margin>
+                  </Label>
+               </children>
+            </GridPane>
+         </children>
+      </AnchorPane>
+   </center>
 </BorderPane>

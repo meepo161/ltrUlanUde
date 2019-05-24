@@ -82,9 +82,7 @@ public class StatusBarLine {
             padding = isMainView ? "-fx-padding: 0 0 0 -1.1;" : "-fx-padding: 0 0 0 -1.9;";
         }
 
-        if (!isProcessView) {
-            statusBar.setStyle(padding);
-        }
+        statusBar.setStyle(padding);
     }
 
     public void clearStatusBar() {
@@ -100,9 +98,5 @@ public class StatusBarLine {
         } else {
             Platform.runLater(() -> progressIndicator.setStyle("-fx-opacity: 1;"));
         }
-    }
-
-    public void setProcessView(boolean processView) {
-        isProcessView = processView;
     }
 }
