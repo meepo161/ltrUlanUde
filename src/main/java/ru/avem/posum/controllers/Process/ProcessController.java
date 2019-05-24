@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -15,6 +16,7 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
@@ -183,6 +185,7 @@ public class ProcessController implements BaseController {
     private void initialize() {
         initTableView();
         initEventsTableView();
+        listenTableViews();
 
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
@@ -255,6 +258,16 @@ public class ProcessController implements BaseController {
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
     }
 
+    private void listenTableViews() {
+        table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
+            initializeButton.setDisable(table.getItems().isEmpty());
+        });
+
+        journalTableView.getItems().addListener((ListChangeListener<Events>) observable -> {
+            initializeButton.setDisable(journalTableView.getItems().isEmpty());
+        });
+    }
+
     public void handleInitialize() {
         List<Modules> linkedModules = cm.getLinkedModules();
         List<Modules> chosenModules = cm.getChosenModules();
@@ -268,10 +281,10 @@ public class ProcessController implements BaseController {
         if (!chosenModules.isEmpty()) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
+            eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
             programController.clear();
-            eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
 
             new Thread(() -> {
                 parseSettings(chosenModules);
@@ -285,9 +298,10 @@ public class ProcessController implements BaseController {
                     statusBarLine.toggleProgressIndicator(true);
                     statusBarLine.clearStatusBar();
                     statusBarLine.setStatus("Ошибка открытия соединений с модулями", false);
-                }
 
-                toggleUiElements(false);
+                    toggleUiElements(false);
+                    toggleInitializationUiElements(true);
+                }
             }).start();
         } else {
             statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
@@ -299,6 +313,16 @@ public class ProcessController implements BaseController {
         for (Node element : uiElements) {
             element.setDisable(isDisable);
         }
+    }
+
+    private void toggleInitializationUiElements(boolean isDisable) {
+        startButton.setDisable(isDisable);
+        smoothStopButton.setDisable(isDisable);
+        stopButton.setDisable(isDisable);
+        savePointButton.setDisable(isDisable);
+        saveWaveformButton.setDisable(isDisable);
+        savePointButton.setDisable(isDisable);
+        saveProtocolButton.setDisable(isDisable);
     }
 
     private void parseSettings(List<Modules> modules) {
@@ -356,12 +380,24 @@ public class ProcessController implements BaseController {
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
 
+        toggleUiElements(false);
+
         if (process.isInitialized()) {
-            eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
             statusBarLine.setStatus("Операция успешно выполнена", true);
+            eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
+
+            toProgramButton.setDisable(true);
+            initializeButton.setDisable(true);
+            smoothStopButton.setDisable(true);
+            stopButton.setDisable(true);
+            savePointButton.setDisable(true);
+            saveWaveformButton.setDisable(true);
+            saveProtocolButton.setDisable(true);
         } else {
-            showErrors();
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
+            showErrors();
+
+            toggleInitializationUiElements(true);
         }
     }
 
@@ -378,11 +414,13 @@ public class ProcessController implements BaseController {
         statusBarLine.clearStatusBar();
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Запуск программы испытаний");
+        eventsController.getEventModel().addEvent("Запуск программы испытаний", EventsTypes.LOG);
+
+        toggleUiElements(true);
 
         new Thread(() -> {
             process.run();
             checkRunning();
-//            experimentModel.Run();
         }).start();
     }
 
@@ -390,24 +428,65 @@ public class ProcessController implements BaseController {
         statusBarLine.clearStatusBar();
         statusBarLine.toggleProgressIndicator(true);
 
+        toggleUiElements(false);
+
         if (process.isRan()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
-            while (true) { // TODO : change this shit
+            eventsController.getEventModel().addEvent("Успешный запуск модулей", EventsTypes.OK);
+
+            toProgramButton.setDisable(true);
+            initializeButton.setDisable(true);
+            addCommandButton.setDisable(true);
+            startButton.setDisable(true);
+
+            process.setStopped(false);
+            while (!process.isStopped()) {
                 process.initData(cm.getChosenModules());
                 process.perform();
             }
         } else {
-            showErrors();
             statusBarLine.setStatus("Ошибка запуска программы испытаний", false);
+            showErrors();
+
+            process.finish();
+            toggleInitializationUiElements(true);
         }
     }
 
     public void handleSmoothStopButton() {
-        experimentModel.SmoothStop();
+
     }
 
-    public void handleStopButton() {
-        experimentModel.Stop();
+    public void handleStop() {
+        statusBarLine.clearStatusBar();
+        statusBarLine.toggleProgressIndicator(false);
+        statusBarLine.setStatusOfProgress("Завершение программы испытаний");
+
+        new Thread(() -> {
+            process.setStopped(true);
+            process.finish();
+            checkFinish();
+        }).start();
+    }
+
+    private void checkFinish() {
+        statusBarLine.clearStatusBar();
+        statusBarLine.toggleProgressIndicator(true);
+
+        toggleUiElements(false);
+
+        if (process.isFinished()) {
+            statusBarLine.setStatus("Программа испытаний успешно завершена", true);
+            eventsController.getEventModel().addEvent("Успешное завершение программы испытаний", EventsTypes.OK);
+
+        } else {
+            statusBarLine.setStatus("Ошибка завершения программы испытаний", false);
+            showErrors();
+        }
+
+        startButton.setDisable(true);
+        smoothStopButton.setDisable(true);
+        stopButton.setDisable(true);
     }
 
     public void handleToProgramButton() {

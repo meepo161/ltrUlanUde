@@ -292,7 +292,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public List<Modules> getChosenModules() {
+    public ObservableList<Modules> getChosenModules() {
         return linkingController.getLinkingModel().getChosenModules();
     }
 

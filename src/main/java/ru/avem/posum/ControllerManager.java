@@ -19,7 +19,7 @@ public interface ControllerManager {
 
     ObservableList<CheckBox> getChosenChannels();
 
-    List<Modules> getChosenModules();
+    ObservableList<Modules> getChosenModules();
 
     String getCrateSerialNumber();
 

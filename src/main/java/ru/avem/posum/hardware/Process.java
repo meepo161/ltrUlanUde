@@ -2,12 +2,10 @@ package ru.avem.posum.hardware;
 
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
-import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Process {
     private final int SLOTS = 16; // количество слотов в крейте
@@ -24,6 +22,7 @@ public class Process {
     private int[][] settingsOfModules = new int[SLOTS][SLOTS];
     private int[] slots = new int[SLOTS];
     private String[] statuses = new String[SLOTS];
+    private boolean stopped;
     private TextEncoder textEncoder = new TextEncoder();
     private double[][] timeMarks = new double[SLOTS][SLOTS];
     private int[][] typesOfChannels = new int[SLOTS][SLOTS];
@@ -123,11 +122,16 @@ public class Process {
 
     public void finish() {
         stop();
+        disconnect();
     }
 
     public void disconnect() {
         closeConnection();
         encodeStatuses();
+    }
+
+    public boolean isFinished() {
+       return checkStatuses();
     }
 
     public native void openConnection(String crateSerialNumber, int[] modulesTypes, int[] slots, String ltr212biosPath);
@@ -147,6 +151,10 @@ public class Process {
 
     static {
         System.loadLibrary("ProcessLibrary");
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     public void setModulesTypes(List<String> modulesTypes) {
@@ -239,5 +247,9 @@ public class Process {
         }
 
         return outputList;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 }

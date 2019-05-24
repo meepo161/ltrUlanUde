@@ -133,8 +133,8 @@ public class LinkingModel {
         return false;
     }
 
-    public List<Modules> getChosenModules() {
-        List<Modules> modules = new ArrayList<>();
+    public ObservableList<Modules> getChosenModules() {
+        ObservableList<Modules> modules = FXCollections.observableArrayList();
 
         for (CheckBox channel : chosenChannels) {
             int adcSlot = Integer.parseInt(channel.getText().split("слот ")[1].split("\\)")[0]);

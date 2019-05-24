@@ -38,7 +38,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="initializeButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация">
+                                <Button fx:id="initializeButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -46,17 +46,17 @@
                                         <Insets />
                                     </HBox.margin>
                                 </Button>
-                                <Button fx:id="startButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStart" text="Запуск">
+                                <Button fx:id="startButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStart" text="Запуск">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="smoothStopButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSmoothStopButton" text="Плавная остановка" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="smoothStopButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSmoothStopButton" text="Плавная остановка" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="stopButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStopButton" text="СТОП">
+                                <Button fx:id="stopButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleStop" text="СТОП">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -83,17 +83,17 @@
                                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                                     </padding>
                                 </Pane>
-                                <Button fx:id="savePointButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePointButton" text="Записать точку" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="savePointButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSavePointButton" text="Записать точку" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="saveWaveformButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveWaveformButton" prefHeight="60.0" prefWidth="105.0" text="Записать осциллограмму" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="saveWaveformButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveWaveformButton" prefHeight="60.0" prefWidth="105.0" text="Записать осциллограмму" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="saveProtocolButton" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveProtocolButton" prefHeight="60.0" prefWidth="105.0" text="Сохранить протокол испытания" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="saveProtocolButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveProtocolButton" prefHeight="60.0" prefWidth="105.0" text="Сохранить протокол испытания" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -320,7 +320,7 @@
                               </SplitPane>
                                 </children>
                             </GridPane>
-                            <SplitPane dividerPositions="0.2201" minWidth="0.0" orientation="VERTICAL" prefHeight="450.0" prefWidth="210.0">
+                            <SplitPane dividerPositions="0.5" minWidth="0.0" orientation="VERTICAL" prefHeight="450.0" prefWidth="210.0">
                                 <items>
                               <GridPane>
                                 <columnConstraints>
@@ -373,7 +373,7 @@
                                                     <Font name="Arial" size="12.0" />
                                                 </font>
                                             </Button>
-                                            <Button fx:id="saveJournalButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleExpandEventTableButton" prefWidth="110.0" text="Сохранить" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <Button fx:id="saveJournalButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleExpandEventTableButton" prefWidth="110.0" text="Сохранить" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                 <font>
                                                     <Font name="Arial" size="12.0" />
                                                 </font>
