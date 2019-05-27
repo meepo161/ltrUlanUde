@@ -1,20 +1,16 @@
 package ru.avem.posum.controllers.Process;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
+import javafx.util.Pair;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.models.Process.ChannelModel;
-import ru.avem.posum.models.Process.GraphModel;
 import ru.avem.posum.utils.Utils;
 
-import java.sql.SQLOutput;
+import java.util.List;
 
 public class TableController {
     private TableView<ChannelModel> tableView;
@@ -30,7 +26,8 @@ public class TableController {
     private TableColumn<ChannelModel, String> rmsColumn;
     private TableColumn<ChannelModel, String> rmsRelativeResponseColumn;
 
-    private GraphModel graphModel;
+    private GraphController graphController;
+    private ProcessController processController;
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
@@ -38,7 +35,7 @@ public class TableController {
                            TableColumn<ChannelModel, String> frequencyResponseColumn, TableColumn<ChannelModel, String> frequencyColumn,
                            TableColumn<ChannelModel, String> frequencyRelativeResponseColumn, TableColumn<ChannelModel, String> rmsResponseColumn,
                            TableColumn<ChannelModel, String> rmsColumn, TableColumn<ChannelModel, String> rmsRelativeResponseColumn,
-                           GraphModel graphModel) {
+                           GraphController graphController, ProcessController processController) {
 
         this.tableView = tableView;
         this.channelsColumn = channelsColumn;
@@ -52,13 +49,14 @@ public class TableController {
         this.rmsResponseColumn = rmsResponseColumn;
         this.rmsColumn = rmsColumn;
         this.rmsRelativeResponseColumn = rmsRelativeResponseColumn;
-        this.graphModel = graphModel;
+        this.graphController = graphController;
+        this.processController = processController;
 
         initTableView();
     }
 
     private void initTableView() {
-        tableView.setItems(graphModel.getChannels());
+        tableView.setItems(graphController.getGraphModel().getChannels());
 
         Utils.makeHeaderWrappable(channelsColumn);
 
@@ -125,8 +123,8 @@ public class TableController {
         tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
 
-            for (int checkBoxIndex = 0; checkBoxIndex < checkBoxes.size(); checkBoxIndex++) {
-                listen(checkBoxes.get(checkBoxIndex));
+            for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+                listen(checkBoxes.get(channelIndex), channelIndex);
             }
         });
     }
@@ -146,14 +144,47 @@ public class TableController {
         return checkBoxes;
     }
 
-    private void listen(CheckBox checkBox) {
+    private void listen(CheckBox checkBox, int channelIndex) {
         checkBox.selectedProperty().addListener(observable -> {
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
             checkBoxes.remove(checkBox);
 
             for (CheckBox channel : checkBoxes) {
                 channel.setSelected(false);
+                graphController.getGraphModel().clear();
+            }
+
+            if (checkBox.isSelected()) {
+                ObservableList<ChannelModel> channels = tableView.getItems();
+                String channelDescription = channels.get(channelIndex).getName();
+                int slot = parseSlot(channelDescription);
+                int channel = parseChannel(channelDescription, slot);
+
+                graphController.showGraph(slot, channel);
             }
         });
+    }
+
+    private int parseSlot(String channelDescription) {
+        return Integer.parseInt(channelDescription.split("слот ")[1].split("\\)")[0]);
+    }
+
+    private int parseChannel(String channelDescription, int slot) {
+        List<Modules> modules = processController.getModules();
+        int channel = 0;
+
+        for (Modules module : modules) {
+            if (module.getSlot() == slot) {
+                List<Pair<Integer, String>> descriptions = Modules.getChannelsDescriptions(module);
+
+                for (Pair<Integer, String> description : descriptions) {
+                    if (description.getValue().equals(channelDescription)) {
+                        return description.getKey();
+                    }
+                }
+            }
+        }
+
+        return channel;
     }
 }

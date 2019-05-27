@@ -27,13 +27,9 @@ public interface ControllerManager {
 
     int getDecimalFormatScale();
 
-    ExperimentModel getExperimentModel();
-
     ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels();
 
     List<Modules> getLinkedModules();
-
-    String getValueName();
 
     double getDc();
 

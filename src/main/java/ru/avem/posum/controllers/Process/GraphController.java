@@ -1,34 +1,41 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import ru.avem.posum.models.Process.ChannelModel;
+import ru.avem.posum.hardware.Process;
+import ru.avem.posum.models.Process.GraphModel;
+import ru.avem.posum.utils.Utils;
 
 public class GraphController {
     private CheckBox autoscaleCheckBox;
-    private ChannelModel channelModel;
     private LineChart<Number, Number> graph;
+    private GraphModel graphModel = new GraphModel();
     private Label horizontalScaleLabel;
     private ComboBox<String> horizontalScaleComboBox;
+    private Process process;
     private Label verticalScaleLabel;
     private ComboBox<String> verticalScaleComboBox;
 
-    public GraphController(CheckBox autoscaleCheckBox, LineChart<Number, Number> graph,
-                           Label horizontalScaleLabel, ComboBox<String> horizontalScaleComboBox,
-                           Label verticalScaleLabel, ComboBox<String> verticalScaleComboBox) {
+    public GraphController(CheckBox autoscaleCheckBox, LineChart<Number, Number> graph, Label horizontalScaleLabel,
+                           ComboBox<String> horizontalScaleComboBox, Process process, Label verticalScaleLabel,
+                           ComboBox<String> verticalScaleComboBox) {
 
         this.autoscaleCheckBox = autoscaleCheckBox;
         this.graph = graph;
         this.horizontalScaleLabel = horizontalScaleLabel;
         this.horizontalScaleComboBox = horizontalScaleComboBox;
+        this.process = process;
         this.verticalScaleLabel = verticalScaleLabel;
         this.verticalScaleComboBox = verticalScaleComboBox;
 
+        graph.getData().add(graphModel.getGraphSeries());
         initScales();
     }
 
@@ -140,5 +147,50 @@ public class GraphController {
             yAxis.setTickUnit(tickUnit);
             yAxis.setLabel(scaleName);
         });
+    }
+
+    public void showGraph(int slot, int channel) {
+        double[] data = process.getData()[slot];
+        double[] buffer = new double[data.length];
+        System.arraycopy(data, 0, buffer, 0, data.length);
+
+        graphModel.setFields(buffer, slot, channel);
+        show(buffer, channel);
+    }
+
+    public void show(double[] data, int channel) {
+        int channels = 4; // количество каналов АЦП
+        int rarefactionCoefficient = 1;
+
+        showLoop: for (int index = channel; index < data.length && !process.isStopped(); index += channels * rarefactionCoefficient) {
+            XYChart.Data<Number, Number> point = graphModel.getPoint(index);
+            Runnable addPoint = () -> {
+                if (!graphModel.getGraphSeries().getData().contains(point)) {
+                    graphModel.getGraphSeries().getData().add(point);
+                }
+            };
+
+            if ((double) point.getXValue() < 1) { // TODO: change this shit
+                Platform.runLater(addPoint);
+                Utils.sleep(1);
+            }
+
+            if (index + (channels * rarefactionCoefficient) >= data.length) {
+                double xValue = 1;
+                double yValue = (double) graphModel.getPoint(index).getYValue();
+                XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(xValue, yValue);
+                Platform.runLater(() -> graphModel.getGraphSeries().getData().add(lastPoint));
+                Utils.sleep(1);
+            }
+//            } else if ((double) point.getXValue() >= graphModel.getGraphSeries().getUpperBound()) {
+//                Platform.runLater(addPoint);
+//                Utils.sleep(1);
+//                break;
+//            }
+        }
+    }
+
+    public GraphModel getGraphModel() {
+        return graphModel;
     }
 }

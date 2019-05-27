@@ -304,7 +304,7 @@
                                                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                               </columnResizePolicy>
                                           </TableView>
-                                          <LineChart fx:id="graph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
+                                          <LineChart fx:id="graph" animated="false" createSymbols="false" legendVisible="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
                                               <xAxis>
                                                   <NumberAxis animated="false" autoRanging="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                                               </xAxis>

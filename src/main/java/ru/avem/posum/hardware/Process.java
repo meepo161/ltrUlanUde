@@ -249,6 +249,10 @@ public class Process {
         return outputList;
     }
 
+    public double[][] getData() {
+        return data;
+    }
+
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
     }

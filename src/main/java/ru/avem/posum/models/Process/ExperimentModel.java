@@ -21,29 +21,6 @@ public class ExperimentModel extends Thread{
     }
 
     public void run(){
-        tick = 0;
-        tickGlobal = 0;
-        System.out.println("Running thread!");
-        while(true) {
-            if(keepRunning()) {
-                if(tick > range) {
-                    tick = 0;
-                    for (int j = 0; j < this.graphModel.getCurrentIndex(); j++) {
-                        this.graphModel.clearSeries(j);
-                    }
-                }
-                for (int j = 0; j < this.graphModel.getCurrentIndex(); j++) {
-                    this.graphModel.addSeriesData(j, Math.sin(tickGlobal+(j*deltaX*delta)), tick);
-                }
-                tick += deltaX;
-                tickGlobal += deltaX;
-            }
-            try {
-                Thread.sleep(delta);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public Boolean getRun() {
@@ -57,7 +34,7 @@ public class ExperimentModel extends Thread{
     public void SetTestId(long testId){
         this.DeInit();
         this.testId = testId;
-        this.graphModel.setXAxis(range);
+
     }
 
     public void DeInit(){

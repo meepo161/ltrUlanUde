@@ -16,12 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphModel {
-    private int currentIndex;
-    private List<XYChart.Series<Number, Number>> graphSeries = new ArrayList<>();
-    private Boolean[] graphSeriesEnabled = new Boolean[24];
-    private LineChart<Number, Number> graph;
+    private double[] data;
+    private int channel;
     private ObservableList<ChannelModel> channels = FXCollections.observableArrayList();
-    private TableView<ChannelModel> table;
+    private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
+    private int slot;
+
+    public void setFields(double[] data, int slot, int channel) {
+        this.data = data;
+        this.slot = slot;
+        this.channel = channel;
+    }
+
+    public XYChart.Data<Number, Number> getPoint(int index) {
+        int channels = 4; // количество каналов АЦП
+        double xValue = (double) (index - channels) / data.length;
+        double yValue = data[index];
+
+        return new XYChart.Data<>(xValue, yValue);
+    }
 
     public String setStyleByCode(int code) {
         switch (code) {
@@ -50,118 +63,15 @@ public class GraphModel {
         }
     }
 
+    public void clear() {
+        graphSeries.getData().clear();
+    }
+
     public ObservableList<ChannelModel> getChannels() {
         return channels;
     }
 
-    public void setXAxis(double xLength) {
-        if (graph != null) {
-            NumberAxis pNumAxis = (NumberAxis) graph.getXAxis();
-            pNumAxis.setAutoRanging(false);
-            pNumAxis.setUpperBound(xLength);
-            pNumAxis.setTickUnit(xLength / 10);
-        }
-    }
-
-
-    public void fillSeries(double[] data, XYChart.Series series) {
-        List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-
-        for (int i = 0; i < data.length; i++) {
-            intermediateList.add(new XYChart.Data<>((double) i / data.length, data[i]));
-        }
-
-        Platform.runLater(() -> {
-            series.getData().clear();
-            series.getData().addAll(intermediateList);
-        });
-    }
-
-    public void chart(LineChart<Number, Number> lineChart) {
-        graph = lineChart;
-        graph.setLegendVisible(false);
-        graph.setAnimated(false);
-    }
-
-    // метод для получения номера линии с графика, и инициализация ее.
-    private int chartsAdd() {
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName("channel " + currentIndex);
-
-        graphSeries.add(series);
-        graphSeriesEnabled[currentIndex] = true;
-        graph.getData().add(graphSeries.get(currentIndex));
-        currentIndex++;
-
-        return currentIndex - 1;
-    }
-
-    private void toggleSeries(int seriesIndex, Boolean status) {
-        if (!status) {
-            graphSeries.get(seriesIndex).getData().clear();
-            graphSeriesEnabled[seriesIndex] = false;
-        } else {
-            graphSeriesEnabled[seriesIndex] = true;
-        }
-    }
-
-    private void setSeriesColor(int seriesIndex, String color) {
-        if (seriesIndex >= 0) {
-            graphSeries.get(seriesIndex).getNode().setStyle("-fx-stroke: rgb(" + color + ");");
-        }
-    }
-
-    public void clearSeries(int seriesIndex) {
-        if (graphSeriesEnabled[seriesIndex]) {
-            graphSeries.get(seriesIndex).getData().clear();
-        }
-    }
-
-    public void setSeriesData(int seriesIndex, double[] array) {
-        if (graphSeriesEnabled[seriesIndex]) {
-            fillSeries(array, graphSeries.get(seriesIndex));
-        }
-    }
-
-    public void addSeriesData(int seriesIndex, double value, double time) {
-        if (graphSeriesEnabled[seriesIndex]) {
-            if (graphSeries.get(seriesIndex).getData() != null) {
-                Platform.runLater(() -> graphSeries.get(seriesIndex).getData().add(new XYChart.Data<>(time, value)));
-            } else {
-                List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
-                intermediateList.add(new XYChart.Data<>(time, value));
-                Platform.runLater(() -> {
-                    graphSeries.get(seriesIndex).getData().clear();
-                    graphSeries.get(seriesIndex).getData().addAll(intermediateList);
-                });
-            }
-        }
-    }
-
-    public void chartAdd() {
-        double[] arr1 = new double[255];
-
-        for (int j = 0; j < currentIndex; j++) {
-            for (int i = 0; i < 255; i++) {
-                arr1[i] = Math.sin((i + j) * 0.1);
-            }
-            setSeriesData(j, arr1);
-        }
-    }
-
-    public void clearLineProcessSample(int lineId) {
-        channels.clear();
-    }
-
-    public void resetData() {
-        channels.clear();
-    }
-
-    public int getCurrentIndex() {
-        return currentIndex;
-    }
-
-    public void setLineToProcessSample(String mainText) {
-        channels.add(new ChannelModel(mainText));
+    public XYChart.Series<Number, Number> getGraphSeries() {
+        return graphSeries;
     }
 }

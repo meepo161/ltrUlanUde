@@ -181,10 +181,8 @@ public class ProcessController implements BaseController {
 
     private ControllerManager cm;
     private EventsController eventsController = new EventsController();
-    private ExperimentModel experimentModel = new ExperimentModel();
     private GraphController graphController;
     private Process process = new Process();
-    private GraphModel graphModel = new GraphModel();
     private ProgramController programController;
     private List<Node> uiElements = new ArrayList<>();
     private StatusBarLine statusBarLine;
@@ -197,9 +195,6 @@ public class ProcessController implements BaseController {
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
-        graphModel.chart(graph);
-        experimentModel.setGraphModel(graphModel);
-
         programController = new ProgramController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
                 calibratedAmplitudeLabel, calibratedAmplitudeTextField, amplitudeSlider, dcCheckBox, dcLabel,
                 dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
@@ -207,12 +202,12 @@ public class ProcessController implements BaseController {
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
 
+        graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
+                process, verticalScaleLabel, verticalScaleComboBox);
+
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
-                rmsResponseColumn, rmsColumn, rmsRelativeResponseColumn, graphModel);
-
-        graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
-                verticalScaleLabel, verticalScaleComboBox);
+                rmsResponseColumn, rmsColumn, rmsRelativeResponseColumn, graphController, this);
 
         initEventsTableView();
         listenTableViews();
@@ -289,7 +284,7 @@ public class ProcessController implements BaseController {
 //        experimentModel.Init();
     }
 
-    private ObservableList<Modules> getModules() {
+    public ObservableList<Modules> getModules() {
         List<Modules> linkedModules = cm.getLinkedModules();
         ObservableList<Modules> chosenModules = cm.getChosenModules();
 
@@ -486,7 +481,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handleToProgramButton() {
-        experimentModel.ChangeParam();
         programController.toggleSettingsPanel();
     }
 
@@ -496,19 +490,19 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSavePointButton() {
-        experimentModel.SavePoint();
+
     }
 
     public void handleSaveWaveformButton() {
-        experimentModel.SaveWaveform();
+
     }
 
     public void handleSaveProtocolButton() {
-        experimentModel.SaveProtocol();
+
     }
 
     public void handleBackButton() {
-        if (experimentModel.getRun()) {
+        if (true) { // TODO: change this shit
             ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
             ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
@@ -522,7 +516,6 @@ public class ProcessController implements BaseController {
 
             if (result.isPresent()) {
                 if (result.get() == ok) {
-                    experimentModel.Terminate();
                     programController.clear();
                     wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
                 }
@@ -575,12 +568,12 @@ public class ProcessController implements BaseController {
         this.wm = wm;
     }
 
-    public ExperimentModel getExperimentModel() {
-        return experimentModel;
+    public ControllerManager getCm() {
+        return cm;
     }
 
-    public GraphModel getGraphModel() {
-        return graphModel;
+    public GraphController getGraphController() {
+        return graphController;
     }
 
     public TableController getTableController() {

@@ -317,11 +317,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public ExperimentModel getExperimentModel() {
-        return processController.getExperimentModel();
-    }
-
-    @Override
     public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
         return linkingController.getLinkingModel().getLinkedChannels();
     }
@@ -329,11 +324,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public List<Modules> getLinkedModules() {
         return linkingController.getLinkingModel().getLinkedModules();
-    }
-
-    @Override
-    public String getValueName() {
-        return signalController.getSignalModel().getValueName();
     }
 
     @Override
@@ -349,7 +339,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void initListViews() {
         linkingController.initListViews();
-        linkingController.setGraphModel(processController.getGraphModel());
+        linkingController.setGraphModel(processController.getGraphController().getGraphModel());
     }
 
     @Override
