@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
+import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.db.models.TestProgram;
@@ -45,6 +46,7 @@ public class LinkingController implements BaseController {
     private GraphModel graphModel;
     private StatusBarLine statusBarLine;
     private TestProgram testProgram;
+    private ControllerManager cm;
     private WindowsManager wm;
 
     @FXML
@@ -186,20 +188,6 @@ public class LinkingController implements BaseController {
         return new ChannelModel(channelName);
     }
 
-    private int getChannelNumber(String moduleName, String channelDescription) {
-        HashMap<String, List<Pair<Integer, String>>> channelsHashMap = linkingModel.getChannelsHashMap();
-        List<Pair<Integer, String>> descriptions = channelsHashMap.get(moduleName);
-        int channel = -1;
-
-        for (Pair<Integer, String> description : descriptions) {
-            if (description.getValue().equals(channelDescription)) {
-                channel = description.getKey();
-            }
-        }
-
-        return channel;
-    }
-
     private Optional<CheckBox> getSelectedCheckBox(ListView<CheckBox> listView) {
         ObservableList<CheckBox> checkBoxes = listView.getItems();
 
@@ -236,6 +224,11 @@ public class LinkingController implements BaseController {
             statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
         }).start();
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
     }
 
     @Override

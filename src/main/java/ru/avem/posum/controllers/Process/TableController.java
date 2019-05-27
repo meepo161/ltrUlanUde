@@ -1,6 +1,10 @@
 package ru.avem.posum.controllers.Process;
 
 import com.sun.corba.se.impl.orbutil.graph.Graph;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -9,6 +13,8 @@ import javafx.util.Callback;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.GraphModel;
 import ru.avem.posum.utils.Utils;
+
+import java.sql.SQLOutput;
 
 public class TableController {
     private TableView<ChannelModel> tableView;
@@ -78,6 +84,8 @@ public class TableController {
         frequencyResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseFrequencyProperty());
         frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
         frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseFrequencyProperty());
+
+        listen(tableView);
     }
 
     public void initResponse(TableColumn<ChannelModel, HBox> columnOfTable) {
@@ -109,6 +117,42 @@ public class TableController {
                     setText(item);
                 }
                 setGraphic(null);
+            }
+        });
+    }
+
+    private void listen(TableView<ChannelModel> tableView) {
+        tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
+            ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+
+            for (int checkBoxIndex = 0; checkBoxIndex < checkBoxes.size(); checkBoxIndex++) {
+                listen(checkBoxes.get(checkBoxIndex));
+            }
+        });
+    }
+
+    private ObservableList<CheckBox> getCheckBoxes() {
+        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
+
+        if (!channels.isEmpty()) {
+            for (ChannelModel channel : channels) {
+                if (!checkBoxes.contains(channel.getResponseCheckBox())) {
+                    checkBoxes.add(channel.getResponseCheckBox());
+                }
+            }
+        }
+
+        return checkBoxes;
+    }
+
+    private void listen(CheckBox checkBox) {
+        checkBox.selectedProperty().addListener(observable -> {
+            ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+            checkBoxes.remove(checkBox);
+
+            for (CheckBox channel : checkBoxes) {
+                channel.setSelected(false);
             }
         });
     }

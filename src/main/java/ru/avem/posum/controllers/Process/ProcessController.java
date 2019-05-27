@@ -583,6 +583,10 @@ public class ProcessController implements BaseController {
         return graphModel;
     }
 
+    public TableController getTableController() {
+        return tableController;
+    }
+
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
     }
