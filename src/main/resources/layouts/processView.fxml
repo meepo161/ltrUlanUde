@@ -258,9 +258,9 @@
         </VBox>
     </top>
    <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <AnchorPane minWidth="0.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <GridPane minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
@@ -269,9 +269,9 @@
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                    <SplitPane dividerPositions="0.8">
+                    <SplitPane dividerPositions="0.8" minWidth="0.0">
                         <items>
-                            <GridPane>
+                            <GridPane minWidth="0.0">
                                 <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
@@ -280,7 +280,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                              <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
+                              <SplitPane dividerPositions="0.5" minWidth="0.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
                                 <items>
                                           <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" pickOnBounds="false" styleClass="processTable">
                                               <placeholder>
@@ -288,7 +288,7 @@
                                               </placeholder>
                                               <columns>
                                                   <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />
-                                                  <TableColumn fx:id="responseColumn" editable="false" minWidth="70.0" prefWidth="70.0" text="Отклик" />
+                                                  <TableColumn fx:id="responseColumn" editable="false" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" text="Отклик" />
                                                   <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
                                                   <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />
                                                   <TableColumn fx:id="ampRelativeResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик, %" />

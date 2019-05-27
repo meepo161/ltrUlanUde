@@ -466,6 +466,8 @@ public class ProcessController implements BaseController {
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventModel().addEvent("Завершение программы испытаний", EventsTypes.LOG);
 
+        toggleUiElements(true);
+
         new Thread(() -> {
             process.setStopped(true);
             process.finish();
