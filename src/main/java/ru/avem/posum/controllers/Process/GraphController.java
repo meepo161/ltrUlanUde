@@ -44,9 +44,6 @@ public class GraphController {
         checkBox.selectedProperty().addListener(observable -> {
             NumberAxis yAxis = (NumberAxis) graph.getYAxis();
             yAxis.setAutoRanging(checkBox.isSelected());
-//            if (checkBox.isSelected()) {
-//
-//            }
         });
     }
 

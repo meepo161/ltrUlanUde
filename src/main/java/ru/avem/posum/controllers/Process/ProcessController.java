@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
@@ -106,9 +107,9 @@ public class ProcessController implements BaseController {
     @FXML
     private TableView<ChannelModel> table;
     @FXML
-    private TableColumn<ChannelModel, String> pairColumn;
+    private TableColumn<ChannelModel, String> channelsColumn;
     @FXML
-    private TableColumn<ChannelModel, Void> responseColumn;
+    private TableColumn<ChannelModel, HBox> responseColumn;
     @FXML
     private TableColumn<ChannelModel, String> ampResponseColumn;
     @FXML
@@ -183,24 +184,21 @@ public class ProcessController implements BaseController {
     private ExperimentModel experimentModel = new ExperimentModel();
     private GraphController graphController;
     private Process process = new Process();
-    private ProcessModel processModel = new ProcessModel();
+    private GraphModel graphModel = new GraphModel();
     private ProgramController programController;
     private List<Node> uiElements = new ArrayList<>();
     private StatusBarLine statusBarLine;
+    private TableController tableController;
     private TestProgram testProgram;
     private WindowsManager wm;
 
     @FXML
     private void initialize() {
-        initTableView();
-        initEventsTableView();
-        listenTableViews();
-
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
-        processModel.chart(graph);
-        experimentModel.setProcessModel(processModel);
+        graphModel.chart(graph);
+        experimentModel.setGraphModel(graphModel);
 
         programController = new ProgramController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
                 calibratedAmplitudeLabel, calibratedAmplitudeTextField, amplitudeSlider, dcCheckBox, dcLabel,
@@ -209,9 +207,15 @@ public class ProcessController implements BaseController {
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
 
+        tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
+                ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
+                rmsResponseColumn, rmsColumn, rmsRelativeResponseColumn, graphModel);
+
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 verticalScaleLabel, verticalScaleComboBox);
 
+        initEventsTableView();
+        listenTableViews();
         fillListOfUiElements();
     }
 
@@ -234,32 +238,6 @@ public class ProcessController implements BaseController {
         uiElements.add(journalTableView);
         uiElements.add(addEventButton);
         uiElements.add(saveJournalButton);
-    }
-
-    private void initTableView() {
-        processModel.initProcessSampleData(table);
-        processModel.SetProcessSampleColumnColorFunction(responseColumn);
-        Utils.makeHeaderWrappable(pairColumn);
-        processModel.init(ampResponseColumn);
-        processModel.init(ampColumn);
-        processModel.init(ampRelativeResponseColumn);
-        processModel.init(rmsResponseColumn);
-        processModel.init(rmsColumn);
-        processModel.init(rmsRelativeResponseColumn);
-        processModel.init(frequencyResponseColumn);
-        processModel.init(frequencyColumn);
-        processModel.init(frequencyRelativeResponseColumn);
-
-        pairColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        ampResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseAmplitudeProperty());
-        ampColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
-        ampRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseAmplitudeProperty());
-        rmsResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseRmsProperty());
-        rmsColumn.setCellValueFactory(cellData -> cellData.getValue().rmsProperty());
-        rmsRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseRmsProperty());
-        frequencyResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseFrequencyProperty());
-        frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
-        frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseFrequencyProperty());
     }
 
     private void initEventsTableView() {
@@ -601,8 +579,8 @@ public class ProcessController implements BaseController {
         return experimentModel;
     }
 
-    public ProcessModel getProcessModel() {
-        return processModel;
+    public GraphModel getGraphModel() {
+        return graphModel;
     }
 
     public void setTestProgram(TestProgram testProgram) {

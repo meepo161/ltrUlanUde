@@ -8,12 +8,11 @@ import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.LinkingModel;
 import ru.avem.posum.models.Process.ChannelModel;
-import ru.avem.posum.models.Process.ProcessModel;
+import ru.avem.posum.models.Process.GraphModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -43,7 +42,7 @@ public class LinkingController implements BaseController {
     private Label warningIcon;
 
     private LinkingModel linkingModel = new LinkingModel();
-    private ProcessModel processModel;
+    private GraphModel graphModel;
     private StatusBarLine statusBarLine;
     private TestProgram testProgram;
     private WindowsManager wm;
@@ -141,7 +140,7 @@ public class LinkingController implements BaseController {
                 Platform.runLater(() -> adcChannels.remove(channel));
 
                 ChannelModel newChannelModel = createChannel(channel);
-                processModel.getProcessData().add(newChannelModel);
+                graphModel.getChannels().add(newChannelModel);
             }
         }
 
@@ -168,7 +167,7 @@ public class LinkingController implements BaseController {
         linkingModel.saveLinked(new Pair<>(selectedDacChannel.get(), selectedAdcChannel.get()));
 
         ChannelModel newChannelModel = createChannel(selectedDacChannel.get(), selectedAdcChannel.get());
-        processModel.getProcessData().add(newChannelModel);
+        graphModel.getChannels().add(newChannelModel);
 
         enableChooseOfChannels(dacChannelsListView);
         enableChooseOfChannels(adcChannelsListView);
@@ -252,7 +251,7 @@ public class LinkingController implements BaseController {
         this.testProgram = testProgram;
     }
 
-    public void setProcessModel(ProcessModel processModel) {
-        this.processModel = processModel;
+    public void setGraphModel(GraphModel graphModel) {
+        this.graphModel = graphModel;
     }
 }

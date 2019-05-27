@@ -288,7 +288,7 @@
                                                   <Label text="Нет данных для отображения" />
                                               </placeholder>
                                               <columns>
-                                                  <TableColumn fx:id="pairColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />
+                                                  <TableColumn fx:id="channelsColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />
                                                   <TableColumn fx:id="responseColumn" editable="false" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" text="Отклик" />
                                                   <TableColumn fx:id="ampResponseColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда отклик" />
                                                   <TableColumn fx:id="ampColumn" editable="false" minWidth="55.0" prefWidth="70.0" text="Амплитуда норма" />

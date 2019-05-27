@@ -360,9 +360,9 @@ public class ProgramController {
         dcTextField.setText(channelModel.getDc());
         rmsTextField.setText(channelModel.getRms());
         frequencyTextField.setText(channelModel.getFrequency());
-        pTextField.setText(channelModel.getpValue());
-        iTextField.setText(channelModel.getiValue());
-        dTextField.setText(channelModel.getdValue());
+        pTextField.setText(channelModel.getPValue());
+        iTextField.setText(channelModel.getIValue());
+        dTextField.setText(channelModel.getDValue());
     }
 
     private void initContextMenu() {

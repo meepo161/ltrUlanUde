@@ -349,7 +349,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void initListViews() {
         linkingController.initListViews();
-        linkingController.setProcessModel(processController.getProcessModel());
+        linkingController.setGraphModel(processController.getGraphModel());
     }
 
     @Override

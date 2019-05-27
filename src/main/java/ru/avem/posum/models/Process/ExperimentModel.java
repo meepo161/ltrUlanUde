@@ -2,7 +2,7 @@ package ru.avem.posum.models.Process;
 
 public class ExperimentModel extends Thread{
     long testId = 0;
-    ProcessModel processModel;
+    GraphModel graphModel;
     private boolean doStop = false;
     private boolean bRun = false;
     double tick = 0;
@@ -28,12 +28,12 @@ public class ExperimentModel extends Thread{
             if(keepRunning()) {
                 if(tick > range) {
                     tick = 0;
-                    for (int j = 0; j < this.processModel.getCurrentIndex(); j++) {
-                        this.processModel.clearSeries(j);
+                    for (int j = 0; j < this.graphModel.getCurrentIndex(); j++) {
+                        this.graphModel.clearSeries(j);
                     }
                 }
-                for (int j = 0; j < this.processModel.getCurrentIndex(); j++) {
-                    this.processModel.addSeriesData(j, Math.sin(tickGlobal+(j*deltaX*delta)), tick);
+                for (int j = 0; j < this.graphModel.getCurrentIndex(); j++) {
+                    this.graphModel.addSeriesData(j, Math.sin(tickGlobal+(j*deltaX*delta)), tick);
                 }
                 tick += deltaX;
                 tickGlobal += deltaX;
@@ -50,14 +50,14 @@ public class ExperimentModel extends Thread{
         return !bRun;
     }
 
-    public void setProcessModel(ProcessModel processModel) {
-        this.processModel = processModel;
+    public void setGraphModel(GraphModel graphModel) {
+        this.graphModel = graphModel;
     }
 
     public void SetTestId(long testId){
         this.DeInit();
         this.testId = testId;
-        this.processModel.setXAxis(range);
+        this.graphModel.setXAxis(range);
     }
 
     public void DeInit(){
