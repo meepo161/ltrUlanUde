@@ -5,6 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressIndicator?>
@@ -269,7 +270,7 @@
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                    <SplitPane dividerPositions="0.8" minWidth="0.0">
+                    <SplitPane dividerPositions="0.785" minWidth="0.0">
                         <items>
                             <GridPane minWidth="0.0">
                                 <columnConstraints>
@@ -280,7 +281,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                              <SplitPane dividerPositions="0.5" minWidth="0.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
+                              <SplitPane dividerPositions="0.4" minWidth="0.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="2">
                                 <items>
                                           <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" pickOnBounds="false" styleClass="processTable">
                                               <placeholder>
@@ -303,19 +304,19 @@
                                                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                               </columnResizePolicy>
                                           </TableView>
-                                          <LineChart fx:id="processGraph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
+                                          <LineChart fx:id="graph" animated="false" createSymbols="false" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" styleClass="programGraph" stylesheets="@../css/processGraph.css">
                                               <xAxis>
-                                                  <NumberAxis animated="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
+                                                  <NumberAxis animated="false" autoRanging="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                                               </xAxis>
                                               <yAxis>
-                                                  <NumberAxis fx:id="yAxis" animated="false" lowerBound="1" side="LEFT" tickUnit="0.01" upperBound="0.1" />
+                                                  <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="Напряжение, В" lowerBound="-5.0" side="LEFT" tickUnit="1.0" upperBound="5.0" />
                                               </yAxis>
                                           </LineChart>
                                 </items>
                               </SplitPane>
                                 </children>
                             </GridPane>
-                            <SplitPane dividerPositions="0.5" minWidth="0.0" orientation="VERTICAL" prefHeight="450.0" prefWidth="210.0">
+                            <SplitPane dividerPositions="0.395, 0.84" minWidth="0.0" orientation="VERTICAL" prefHeight="450.0" prefWidth="210.0">
                                 <items>
                               <GridPane>
                                 <columnConstraints>
@@ -375,6 +376,34 @@
                                             </Button>
                                         </children>
                                     </GridPane>
+                              <GridPane maxHeight="80.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="2.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="0.0" prefWidth="160.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.0" minWidth="0.0" prefWidth="110.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="0.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints maxHeight="25.0" minHeight="0.0" prefHeight="25.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <CheckBox fx:id="autoscaleCheckBox" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Автомасшаб" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" />
+                                    <ComboBox fx:id="horizontalScaleComboBox" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                                    <ComboBox fx:id="verticalScaleComboBox" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                                    <Label fx:id="verticalScaleLabel" style="-fx-font-size: 12px;" text="Вертикальный машстаб:" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="2.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Label fx:id="horizontalScaleLabel" style="-fx-font-size: 12px;" text="Горизонтальный масштаб:" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="2.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                 </children>
+                              </GridPane>
                                 </items>
                             </SplitPane>
                         </items>

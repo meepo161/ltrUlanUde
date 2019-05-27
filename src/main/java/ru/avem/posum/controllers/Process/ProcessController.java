@@ -17,7 +17,6 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.hardware.Module;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
@@ -25,7 +24,6 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 import java.util.Optional;
 
 public class ProcessController implements BaseController {
@@ -41,6 +39,8 @@ public class ProcessController implements BaseController {
     private TextField amplitudeTextField;
     @FXML
     private Label amplitudeVoltLabel;
+    @FXML
+    private CheckBox autoscaleCheckBox;
     @FXML
     private Button backButton;
     @FXML
@@ -82,6 +82,10 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField frequencyTextField;
     @FXML
+    private Label horizontalScaleLabel;
+    @FXML
+    private ComboBox<String> horizontalScaleComboBox;
+    @FXML
     private Label iLabel;
     @FXML
     private Button initializeButton;
@@ -94,7 +98,7 @@ public class ProcessController implements BaseController {
     @FXML
     private AnchorPane mainPanel;
     @FXML
-    private LineChart<Number, Number> processGraph;
+    private LineChart<Number, Number> graph;
     @FXML
     private TableColumn<Events, String> eventTimeColumn;
     @FXML
@@ -168,11 +172,16 @@ public class ProcessController implements BaseController {
     @FXML
     private Button toProgramButton;
     @FXML
+    private Label verticalScaleLabel;
+    @FXML
+    private ComboBox<String> verticalScaleComboBox;
+    @FXML
     private Label warningIcon;
 
     private ControllerManager cm;
     private EventsController eventsController = new EventsController();
     private ExperimentModel experimentModel = new ExperimentModel();
+    private GraphController graphController;
     private Process process = new Process();
     private ProcessModel processModel = new ProcessModel();
     private ProgramController programController;
@@ -190,7 +199,7 @@ public class ProcessController implements BaseController {
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
-        processModel.chart(processGraph);
+        processModel.chart(graph);
         experimentModel.setProcessModel(processModel);
 
         programController = new ProgramController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
@@ -199,6 +208,9 @@ public class ProcessController implements BaseController {
                 calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
+
+        graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
+                verticalScaleLabel, verticalScaleComboBox);
 
         fillListOfUiElements();
     }
@@ -216,7 +228,7 @@ public class ProcessController implements BaseController {
         uiElements.add(saveProtocolButton);
         uiElements.add(backButton);
         uiElements.add(table);
-        uiElements.add(processGraph);
+        uiElements.add(graph);
         uiElements.add(commandsTableView);
         uiElements.add(addCommandButton);
         uiElements.add(journalTableView);
