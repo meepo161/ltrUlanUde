@@ -20,7 +20,7 @@ public class GraphModel {
     private int channel;
     private ObservableList<ChannelModel> channels = FXCollections.observableArrayList();
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private int rarefactionCoefficient;
+    private int rarefactionCoefficient = 1;
     private int slot;
 
     public void setFields(double[] data, int slot, int channel) {
@@ -65,7 +65,7 @@ public class GraphModel {
     }
 
     public void clear() {
-        graphSeries.getData().clear();
+        Platform.runLater(() -> graphSeries.getData().clear());
     }
 
     public ObservableList<ChannelModel> getChannels() {
@@ -74,6 +74,10 @@ public class GraphModel {
 
     public XYChart.Series<Number, Number> getGraphSeries() {
         return graphSeries;
+    }
+
+    public int getRarefactionCoefficient() {
+        return rarefactionCoefficient;
     }
 
     public void setRarefactionCoefficient(int rarefactionCoefficient) {

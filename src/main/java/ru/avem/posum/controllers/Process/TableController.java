@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -146,21 +147,30 @@ public class TableController {
 
     private void listen(CheckBox checkBox, int channelIndex) {
         checkBox.selectedProperty().addListener(observable -> {
-            ObservableList<CheckBox> checkBoxes = getCheckBoxes();
-            checkBoxes.remove(checkBox);
-
-            for (CheckBox channel : checkBoxes) {
-                channel.setSelected(false);
-                graphController.getGraphModel().clear();
-            }
 
             if (checkBox.isSelected()) {
+                ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+                checkBoxes.remove(checkBox);
+
+                Platform.runLater(() -> {
+                    for (CheckBox channel : checkBoxes) {
+                        channel.setSelected(false);
+                    }
+
+                    checkBox.setSelected(true);
+                });
+
                 ObservableList<ChannelModel> channels = tableView.getItems();
                 String channelDescription = channels.get(channelIndex).getName();
                 int slot = parseSlot(channelDescription);
                 int channel = parseChannel(channelDescription, slot);
 
-                graphController.showGraph(slot, channel);
+                if (graphController.isStopped()) {
+                    graphController.showGraph(slot, channel);
+                }
+            } else {
+                graphController.setStopped(true);
+//                graphController.getGraphModel().clear();
             }
         });
     }

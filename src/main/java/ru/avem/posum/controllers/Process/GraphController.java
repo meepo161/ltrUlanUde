@@ -22,6 +22,7 @@ public class GraphController {
     private Process process;
     private Label rarefactionCoefficientLabel;
     private ComboBox<String> rarefactionCoefficientComboBox;
+    private boolean stopped = true;
     private Label verticalScaleLabel;
     private ComboBox<String> verticalScaleComboBox;
 
@@ -67,6 +68,8 @@ public class GraphController {
                 setHorizontalGraphBounds();
                 setVerticalGraphBounds();
             }
+
+            restartShow();
         });
     }
 
@@ -153,6 +156,8 @@ public class GraphController {
             } else {
                 graphModel.setRarefactionCoefficient(1);
             }
+
+            restartShow();
         });
     }
 
@@ -173,6 +178,7 @@ public class GraphController {
     private void listenVerticalScales() {
         verticalScaleComboBox.valueProperty().addListener(observable -> {
             setVerticalGraphBounds();
+            restartShow();
         });
     }
 
@@ -198,6 +204,7 @@ public class GraphController {
     private void listenHorizontalScales() {
         horizontalScaleComboBox.valueProperty().addListener(observable -> {
             setHorizontalGraphBounds();
+            restartShow();
         });
     }
 
@@ -209,7 +216,8 @@ public class GraphController {
         graphModel.setFields(buffer, slot, channel);
 
         new Thread(() -> {
-            while (true) { // TODO: change this shit
+            stopped = false;
+            while (!process.isStopped()) {
                 show(buffer, channel);
             }
         }).start();
@@ -217,10 +225,15 @@ public class GraphController {
 
     public void show(double[] data, int channel) {
         int channels = 4; // количество каналов АЦП
-        int rarefactionCoefficient = 1;
+        int rarefactionCoefficient = graphModel.getRarefactionCoefficient();
+        double upperBoundOfHorizontalAxis = getUpperBoundOfHorizontalAxis();
 
-        showLoop:
         for (int index = channel; index < data.length && !process.isStopped(); index += channels * rarefactionCoefficient) {
+            if (stopped) {
+                break;
+            }
+
+
             XYChart.Data<Number, Number> point = graphModel.getPoint(index);
             Runnable addPoint = () -> {
                 if (!graphModel.getGraphSeries().getData().contains(point)) {
@@ -228,7 +241,7 @@ public class GraphController {
                 }
             };
 
-            if ((double) point.getXValue() < 1) { // TODO: change this shit
+            if ((double) point.getXValue() < upperBoundOfHorizontalAxis) {
                 Platform.runLater(addPoint);
                 Utils.sleep(1);
             }
@@ -248,7 +261,27 @@ public class GraphController {
         }
     }
 
+    private double getUpperBoundOfHorizontalAxis() {
+        String selection = horizontalScaleComboBox.getSelectionModel().getSelectedItem();
+        String digits = selection.split(" ")[0];
+        return Double.parseDouble(digits);
+    }
+
+    public void restartShow() {
+        stopped = true;
+        Utils.sleep(100);
+        stopped = false;
+    }
+
     public GraphModel getGraphModel() {
         return graphModel;
+    }
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 }
