@@ -20,11 +20,14 @@ public class GraphController {
     private Label horizontalScaleLabel;
     private ComboBox<String> horizontalScaleComboBox;
     private Process process;
+    private Label rarefactionCoefficientLabel;
+    private ComboBox<String> rarefactionCoefficientComboBox;
     private Label verticalScaleLabel;
     private ComboBox<String> verticalScaleComboBox;
 
     public GraphController(CheckBox autoscaleCheckBox, LineChart<Number, Number> graph, Label horizontalScaleLabel,
-                           ComboBox<String> horizontalScaleComboBox, Process process, Label verticalScaleLabel,
+                           ComboBox<String> horizontalScaleComboBox, Process process, Label rarefactionCoefficientLabel,
+                           ComboBox<String> rarefactionCoefficientComboBox, Label verticalScaleLabel,
                            ComboBox<String> verticalScaleComboBox) {
 
         this.autoscaleCheckBox = autoscaleCheckBox;
@@ -32,6 +35,8 @@ public class GraphController {
         this.horizontalScaleLabel = horizontalScaleLabel;
         this.horizontalScaleComboBox = horizontalScaleComboBox;
         this.process = process;
+        this.rarefactionCoefficientLabel = rarefactionCoefficientLabel;
+        this.rarefactionCoefficientComboBox = rarefactionCoefficientComboBox;
         this.verticalScaleLabel = verticalScaleLabel;
         this.verticalScaleComboBox = verticalScaleComboBox;
 
@@ -41,6 +46,8 @@ public class GraphController {
 
     private void initScales() {
         listen(autoscaleCheckBox);
+        addRarefactionCoefficients();
+        listenRarefactionCoefficients();
         addVerticalScales();
         listenVerticalScales();
         addHorizontalScales();
@@ -51,6 +58,101 @@ public class GraphController {
         checkBox.selectedProperty().addListener(observable -> {
             NumberAxis yAxis = (NumberAxis) graph.getYAxis();
             yAxis.setAutoRanging(checkBox.isSelected());
+            horizontalScaleLabel.setDisable(checkBox.isSelected());
+            horizontalScaleComboBox.setDisable(checkBox.isSelected());
+            verticalScaleLabel.setDisable(checkBox.isSelected());
+            verticalScaleComboBox.setDisable(checkBox.isSelected());
+
+            if (!checkBox.isSelected()) {
+                setHorizontalGraphBounds();
+                setVerticalGraphBounds();
+            }
+        });
+    }
+
+    private void setHorizontalGraphBounds() {
+        String selectedScale = horizontalScaleComboBox.getSelectionModel().getSelectedItem();
+        double scaleValue = Integer.parseInt(selectedScale.split(" ")[0]);
+        String scaleName = selectedScale.split(" ")[1].split("/")[0];
+
+        switch (scaleName) {
+            case "мс":
+                scaleName = "Время, секунд";
+                scaleValue *= 0.001;
+                break;
+            case "с":
+                scaleName = "Время, секунд";
+                break;
+            case "мин":
+                scaleName = "Время, минут";
+                break;
+            case "ч":
+                scaleName = "Время, часов";
+                break;
+            case "д":
+                scaleName = "Время, дней";
+                break;
+        }
+
+        int divisions = 10; // количество делений
+        double lowerBound = 0;
+        double upperBound = scaleValue * divisions;
+        double tickUnit = scaleValue;
+
+        NumberAxis yAxis = (NumberAxis) graph.getXAxis();
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+        yAxis.setLabel(scaleName);
+    }
+
+    private void setVerticalGraphBounds() {
+        String selectedScale = verticalScaleComboBox.getSelectionModel().getSelectedItem();
+        double scaleValue = Integer.parseInt(selectedScale.split(" ")[0]);
+        String scaleName = selectedScale.split(" ")[1].split("/")[0];
+
+        if (scaleName.equals("мВ")) {
+            scaleValue *= 0.001;
+        }
+
+        int divisions = 10; // количество делений
+        double lowerBound = -scaleValue * divisions / 2;
+        double upperBound = scaleValue * divisions / 2;
+        double tickUnit = scaleValue;
+
+        scaleName = "Напряжение, В";
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        yAxis.setLowerBound(lowerBound);
+        yAxis.setUpperBound(upperBound);
+        yAxis.setTickUnit(tickUnit);
+        yAxis.setLabel(scaleName);
+    }
+
+    private void addRarefactionCoefficients() {
+        ObservableList<String> coefficients = FXCollections.observableArrayList();
+
+        coefficients.add("Все");
+        coefficients.add("В 2 меньше");
+        coefficients.add("В 5 меньше");
+        coefficients.add("В 10 меньше");
+        coefficients.add("В 15 меньше");
+        coefficients.add("В 20 меньше");
+        coefficients.add("В 25 меньше");
+
+        rarefactionCoefficientComboBox.setItems(coefficients);
+        rarefactionCoefficientComboBox.getSelectionModel().select(3);
+    }
+
+    private void listenRarefactionCoefficients() {
+        rarefactionCoefficientComboBox.valueProperty().addListener(observable -> {
+            String selection = rarefactionCoefficientComboBox.getSelectionModel().getSelectedItem();
+            if (rarefactionCoefficientComboBox.getSelectionModel().getSelectedIndex() != 0) {
+                String digits = selection.split(" ")[1].split(" ")[0];
+                int coefficient = Integer.parseInt(digits);
+                graphModel.setRarefactionCoefficient(coefficient);
+            } else {
+                graphModel.setRarefactionCoefficient(1);
+            }
         });
     }
 
@@ -70,25 +172,7 @@ public class GraphController {
 
     private void listenVerticalScales() {
         verticalScaleComboBox.valueProperty().addListener(observable -> {
-            String selectedScale = verticalScaleComboBox.getSelectionModel().getSelectedItem();
-            double scaleValue = Integer.parseInt(selectedScale.split(" ")[0]);
-            String scaleName = selectedScale.split(" ")[1].split("/")[0];
-
-            if (scaleName.equals("мВ")) {
-                scaleValue *= 0.001;
-            }
-
-            int divisions = 10; // количество делений
-            double lowerBound = -scaleValue * divisions / 2;
-            double upperBound = scaleValue * divisions / 2;
-            double tickUnit = scaleValue;
-
-            scaleName = "Напряжение, В";
-            NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-            yAxis.setLowerBound(lowerBound);
-            yAxis.setUpperBound(upperBound);
-            yAxis.setTickUnit(tickUnit);
-            yAxis.setLabel(scaleName);
+            setVerticalGraphBounds();
         });
     }
 
@@ -113,39 +197,7 @@ public class GraphController {
 
     private void listenHorizontalScales() {
         horizontalScaleComboBox.valueProperty().addListener(observable -> {
-            String selectedScale = horizontalScaleComboBox.getSelectionModel().getSelectedItem();
-            double scaleValue = Integer.parseInt(selectedScale.split(" ")[0]);
-            String scaleName = selectedScale.split(" ")[1].split("/")[0];
-
-            switch (scaleName) {
-                case "мс":
-                    scaleName = "Время, секунд";
-                    scaleValue *= 0.001;
-                    break;
-                case "с":
-                    scaleName = "Время, секунд";
-                    break;
-                case "мин":
-                    scaleName = "Время, минут";
-                    break;
-                case "ч":
-                    scaleName = "Время, часов";
-                    break;
-                case "д":
-                    scaleName = "Время, дней";
-                    break;
-            }
-
-            int divisions = 10; // количество делений
-            double lowerBound = 0;
-            double upperBound = scaleValue * divisions;
-            double tickUnit = scaleValue;
-
-            NumberAxis yAxis = (NumberAxis) graph.getXAxis();
-            yAxis.setLowerBound(lowerBound);
-            yAxis.setUpperBound(upperBound);
-            yAxis.setTickUnit(tickUnit);
-            yAxis.setLabel(scaleName);
+            setHorizontalGraphBounds();
         });
     }
 
@@ -155,14 +207,20 @@ public class GraphController {
         System.arraycopy(data, 0, buffer, 0, data.length);
 
         graphModel.setFields(buffer, slot, channel);
-        show(buffer, channel);
+
+        new Thread(() -> {
+            while (true) { // TODO: change this shit
+                show(buffer, channel);
+            }
+        }).start();
     }
 
     public void show(double[] data, int channel) {
         int channels = 4; // количество каналов АЦП
         int rarefactionCoefficient = 1;
 
-        showLoop: for (int index = channel; index < data.length && !process.isStopped(); index += channels * rarefactionCoefficient) {
+        showLoop:
+        for (int index = channel; index < data.length && !process.isStopped(); index += channels * rarefactionCoefficient) {
             XYChart.Data<Number, Number> point = graphModel.getPoint(index);
             Runnable addPoint = () -> {
                 if (!graphModel.getGraphSeries().getData().contains(point)) {

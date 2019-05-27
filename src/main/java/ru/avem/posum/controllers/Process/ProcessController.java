@@ -145,6 +145,10 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField pTextField;
     @FXML
+    private Label rarefactionCoefficientLabel;
+    @FXML
+    private ComboBox<String> rarefactionCoefficientComboBox;
+    @FXML
     private Button saveButton;
     @FXML
     private Button saveJournalButton;
@@ -203,7 +207,7 @@ public class ProcessController implements BaseController {
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
 
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
-                process, verticalScaleLabel, verticalScaleComboBox);
+                process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox);
 
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
