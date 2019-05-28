@@ -230,10 +230,6 @@ public class ChannelModel {
         return responseCheckBox;
     }
 
-    public void setResponseCheckBox(CheckBox checkBox) {
-        responseCheckBox = checkBox;
-    }
-
     public ColorPicker getColorPicker() {
         return colorPicker;
     }
@@ -245,10 +241,6 @@ public class ChannelModel {
                 (int) (255 * colorPicker.getValue().getBlue()),
                 colorPicker.getValue().getOpacity()));
         return responseColor.getValue();
-    }
-
-    public void setResponseColor(StringProperty color) {
-        responseColor = color;
     }
 
     public ObservableValue<HBox> getResponse() {
