@@ -447,6 +447,7 @@ public class ProcessController implements BaseController {
             process.initData(getModules());
             while (!process.isStopped()) {
                 process.perform();
+                tableController.showParametersOfSignal();
             }
         } else {
             statusBarLine.setStatus("Ошибка запуска программы испытаний", false);
@@ -591,16 +592,16 @@ public class ProcessController implements BaseController {
         return graphController;
     }
 
+    public Process getProcess() {
+        return process;
+    }
+
     public StatusBarLine getStatusBarLine() {
         return statusBarLine;
     }
 
     public Button getStopButton() {
         return stopButton;
-    }
-
-    public TableController getTableController() {
-        return tableController;
     }
 
     public void setTestProgram(TestProgram testProgram) {

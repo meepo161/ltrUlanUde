@@ -2,6 +2,7 @@ package ru.avem.posum.models.Process;
 
 import ru.avem.posum.db.models.Modules;
 
+import javax.swing.plaf.SliderUI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
@@ -12,19 +13,19 @@ public class SignalParamtersModel {
     private final int CHANNELS = 4; // количество каналов АЦП
 
     private double[] adcFrequencies;
-    private double[][] amplitudes;
-    private int[][] bufferedSamplesPerSemiPeriods;
-    private double[][] data;
-    private double[][] dc;
-    private double[][] frequencies;
-    private double[][] loadsCounter;
-    private double[][] minSignalValues;
-    private double[][] maxSignalValues;
-    private int[][] periods;
-    private double[][] rms;
-    private double[][] samplesPerSemiPeriod;
-    private int[][] samplesPerSemiPeriods;
-    private double[][] zeroTransitionCounter;
+    private double[][] amplitudes = new double[SLOTS][];
+    private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
+    private double[][] data = new double[SLOTS][];
+    private double[][] dc = new double[SLOTS][];
+    private double[][] frequencies = new double[SLOTS][];
+    private double[][] loadsCounter = new double[SLOTS][];
+    private double[][] minSignalValues = new double[SLOTS][];
+    private double[][] maxSignalValues = new double[SLOTS][];
+    private int[][] periods = new int[SLOTS][];
+    private double[][] rms = new double[SLOTS][];
+    private double[][] samplesPerSemiPeriod = new double[SLOTS][];
+    private int[][] samplesPerSemiPeriods = new int[SLOTS][];
+    private double[][] zeroTransitionCounter = new double[SLOTS][];
 
     public void setFields(double[][] data) {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
@@ -45,7 +46,7 @@ public class SignalParamtersModel {
 
     public void setAdcFrequencies(List<Modules> modules) {
         for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
-            adcFrequencies[moduleIndex] = modules.get(moduleIndex).getFrequency(); // TODO: change this shit
+            adcFrequencies[moduleIndex] = modules.get(moduleIndex).getDataLength() / CHANNELS; // TODO: change this shit
         }
     }
 

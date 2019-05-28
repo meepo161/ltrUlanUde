@@ -1,6 +1,5 @@
 package ru.avem.posum.controllers.Process;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -10,7 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.models.Process.ChannelModel;
-import ru.avem.posum.models.Signal.SignalParametersModel;
+import ru.avem.posum.models.Process.SignalParamtersModel;
 import ru.avem.posum.utils.Utils;
 
 import java.util.List;
@@ -31,7 +30,8 @@ public class TableController {
 
     private GraphController graphController;
     private ProcessController processController;
-    private SignalParametersModel signalParametersModel = new SignalParametersModel();
+    private boolean showStopped;
+    private SignalParamtersModel signalParametersModel = new SignalParamtersModel();
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
@@ -232,6 +232,24 @@ public class TableController {
         }
 
         return channel;
+    }
+
+    public void showParametersOfSignal() {
+        new Thread(() -> {
+            while (!showStopped) {
+                signalParametersModel.setFields(processController.getProcess().getData());
+                signalParametersModel.setAdcFrequencies(processController.getModules());
+                signalParametersModel.calculateParameters();
+
+                System.out.printf("Amplitude: %f\n", signalParametersModel.getAmplitude(10, 3));
+                System.out.printf("Dc: %f\n", signalParametersModel.getDc(10, 3));
+                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(10, 3));
+                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(10, 3));
+                System.out.printf("Rms: %f\n", signalParametersModel.getRms(10, 3));
+
+                Utils.sleep(1000);
+            }
+        }).start();
     }
 
     private void listen(ColorPicker colorPicker, int channelIndex) {

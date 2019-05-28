@@ -250,6 +250,10 @@ public class Process {
         return outputList;
     }
 
+    public double[][] getData() {
+        return data;
+    }
+
     public double[] getData(int slot) {
         double[] output = new double[data[slot].length];
         System.arraycopy(data[slot], 0, output, 0, output.length);
