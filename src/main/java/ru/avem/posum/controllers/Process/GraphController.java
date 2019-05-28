@@ -259,7 +259,6 @@ public class GraphController {
                 break;
             }
 
-
             XYChart.Data<Number, Number> point = graphModel.getPoint(index);
             Runnable addPoint = () -> {
                 if (!graphModel.getGraphSeries().getData().contains(point)) {

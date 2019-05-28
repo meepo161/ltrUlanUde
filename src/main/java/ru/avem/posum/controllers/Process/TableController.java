@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.models.Process.ChannelModel;
+import ru.avem.posum.models.Signal.SignalParametersModel;
 import ru.avem.posum.utils.Utils;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class TableController {
 
     private GraphController graphController;
     private ProcessController processController;
+    private SignalParametersModel signalParametersModel = new SignalParametersModel();
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
