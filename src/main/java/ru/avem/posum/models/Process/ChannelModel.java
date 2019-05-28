@@ -1,9 +1,7 @@
 package ru.avem.posum.models.Process;
 
-import com.sun.javafx.util.Utils;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
@@ -60,19 +58,10 @@ public class ChannelModel {
     }
 
     private ColorPicker createColorPicker() {
-        ColorPicker colorPicker = new ColorPicker(Color.RED);
+        ColorPicker colorPicker = new ColorPicker(Color.DARKRED);
 
         colorPicker.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
         colorPicker.setStyle("-fx-color-label-visible: false;");
-        colorPicker.setOnAction((ActionEvent event) -> {
-            responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, 1.0);",
-                    (int) (255 * colorPicker.getValue().getRed()),
-                    (int) (255 * colorPicker.getValue().getGreen()),
-                    (int) (255 * colorPicker.getValue().getBlue())));
-
-
-            System.out.println(responseColor.getValue());
-        });
 
         return colorPicker;
     }
@@ -250,7 +239,11 @@ public class ChannelModel {
     }
 
     public String getResponseColor() {
-        return String.valueOf(responseColor.getValue());
+        responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, 1.0);",
+                (int) (255 * colorPicker.getValue().getRed()),
+                (int) (255 * colorPicker.getValue().getGreen()),
+                (int) (255 * colorPicker.getValue().getBlue())));
+        return responseColor.getValue();
     }
 
     public void setResponseColor(StringProperty color) {

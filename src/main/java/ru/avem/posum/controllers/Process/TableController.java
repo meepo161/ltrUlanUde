@@ -124,7 +124,7 @@ public class TableController {
     private void listen(TableView<ChannelModel> tableView) {
         tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
-            ObservableList<ColorPicker> colorPickers  = getColorPickers();
+            ObservableList<ColorPicker> colorPickers = getColorPickers();
 
             for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
                 listen(checkBoxes.get(channelIndex), channelIndex);
@@ -165,6 +165,7 @@ public class TableController {
 
     private void listen(CheckBox checkBox, int channelIndex) {
         checkBox.selectedProperty().addListener(observable -> {
+            setSeriesColor(channelIndex);
 
             if (checkBox.isSelected()) {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
@@ -187,8 +188,20 @@ public class TableController {
                     graphController.showGraph(slot, channel);
                 }
             } else {
-                graphController.setStopped(true);
+                ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+                int nonSelectedXheckBoxesCount = 0;
+
+                for (CheckBox channel : checkBoxes) {
+                    if (!channel.isSelected()) {
+                        nonSelectedXheckBoxesCount++;
+                    }
+                }
+
+                if (nonSelectedXheckBoxesCount == checkBoxes.size()) {
+                    graphController.setStopped(true);
+                }
                 graphController.getGraphModel().clear();
+
             }
         });
     }
@@ -217,11 +230,15 @@ public class TableController {
     }
 
     private void listen(ColorPicker colorPicker, int channelIndex) {
-        colorPicker.valueProperty().addListener(observable -> {
+        colorPicker.valueProperty().addListener(observable -> setSeriesColor(channelIndex));
+    }
+
+    private void setSeriesColor(int channelIndex) {
+        if (getCheckBoxes().get(channelIndex).isSelected()) {
             ObservableList<ChannelModel> channels = tableView.getItems();
             String selectedColor = channels.get(channelIndex).getResponseColor();
             Node line = graphController.getGraphModel().getGraphSeries().getNode();
             line.setStyle("-fx-stroke: " + selectedColor);
-        });
+        }
     }
 }
