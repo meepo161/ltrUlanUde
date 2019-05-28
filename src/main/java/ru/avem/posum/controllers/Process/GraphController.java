@@ -24,6 +24,7 @@ public class GraphController {
     private Label rarefactionCoefficientLabel;
     private ComboBox<String> rarefactionCoefficientComboBox;
     private boolean stopped = true;
+    private Thread showingThread;
     private Label verticalScaleLabel;
     private ComboBox<String> verticalScaleComboBox;
 
@@ -223,20 +224,24 @@ public class GraphController {
         stopped = false;
         System.out.println("Thread started");
 
-        new Thread(() -> {
+        showingThread = new Thread(() -> {
             while (!process.isStopped()) {
                 double[] data = process.getData(slot - 1);
                 graphModel.setFields(data, slot, channel - 1);
                 graphModel.getGraphSeries().getData().clear();
 
                 show(data, channel - 1);
+                if (stopped) {
+                    break;
+                }
                 Utils.sleep(1000);
             }
-        }).start();
+        });
+
+        showingThread.start();
     }
 
     public void show(double[] data, int channel) {
-
         int channels = 4; // количество каналов АЦП
         int rarefactionCoefficient = graphModel.getRarefactionCoefficient();
         double upperBoundOfHorizontalAxis = getUpperBoundOfHorizontalAxis();
@@ -333,6 +338,16 @@ public class GraphController {
 
     public ComboBox<String> getRarefactionCoefficientComboBox() {
         return rarefactionCoefficientComboBox;
+    }
+
+    public boolean isShowingThreadStopped() {
+        return showingThread == null;
+    }
+
+    public void stopShowingThread() {
+        stopped = true;
+        Utils.sleep(100);
+        showingThread.interrupt();
     }
 
     public Label getVerticalScaleLabel() {

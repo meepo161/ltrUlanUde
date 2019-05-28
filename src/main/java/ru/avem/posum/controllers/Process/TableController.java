@@ -166,28 +166,29 @@ public class TableController {
 
     private void listen(CheckBox checkBox, int channelIndex) {
         checkBox.selectedProperty().addListener(observable -> {
-            setSeriesColor(channelIndex);
-
             if (checkBox.isSelected()) {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
                 checkBoxes.remove(checkBox);
 
-                Platform.runLater(() -> {
-                    for (CheckBox channel : checkBoxes) {
-                        channel.setSelected(false);
-                    }
+                for (CheckBox channel : checkBoxes) {
+                    channel.setSelected(false);
+                }
 
-                    checkBox.setSelected(true);
-                });
+                checkBox.setSelected(true);
+                setSeriesColor(channelIndex);
+
+
+                if (!graphController.isShowingThreadStopped()) {
+                    graphController.stopShowingThread();
+                    graphController.restartShow();
+                }
 
                 ObservableList<ChannelModel> channels = tableView.getItems();
                 String channelDescription = channels.get(channelIndex).getName();
                 int slot = parseSlot(channelDescription);
                 int channel = parseChannel(channelDescription, slot);
 
-                if (graphController.isStopped()) {
-                    graphController.showGraph(slot, channel);
-                }
+                graphController.showGraph(slot, channel);
             } else {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
                 int nonSelectedCheckBoxesCount = 0;
