@@ -28,6 +28,9 @@ public class GraphController {
     private Label verticalScaleLabel;
     private ComboBox<String> verticalScaleComboBox;
 
+    private int channel;
+    private int slot;
+
     public GraphController(CheckBox autoscaleCheckBox, LineChart<Number, Number> graph, Label horizontalScaleLabel,
                            ComboBox<String> horizontalScaleComboBox, Process process, Label rarefactionCoefficientLabel,
                            ComboBox<String> rarefactionCoefficientComboBox, Label verticalScaleLabel,
@@ -220,17 +223,22 @@ public class GraphController {
         });
     }
 
-    public void showGraph(int slot, int channel) {
+    public void setFields(int slot, int channel) {
+        this.slot = slot - 1;
+        this.channel = channel - 1;
+    }
+
+    public void showGraph() {
         stopped = false;
         System.out.println("Thread started");
 
         showingThread = new Thread(() -> {
             while (!process.isStopped()) {
-                double[] data = process.getData(slot - 1);
-                graphModel.setFields(data, slot, channel - 1);
+                double[] data = process.getData(slot);
+                graphModel.setFields(data, slot, channel);
                 graphModel.getGraphSeries().getData().clear();
 
-                show(data, channel - 1);
+                show(data, channel);
                 if (stopped) {
                     break;
                 }
@@ -307,9 +315,11 @@ public class GraphController {
 
     public void restartShow() {
         stopped = true;
-        Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
+        showingThread.interrupt();
         Utils.sleep(100);
+        graphModel.getGraphSeries().getData().clear();
         stopped = false;
+        showGraph();
     }
 
     public LineChart<Number, Number> getGraph() {

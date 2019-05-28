@@ -188,7 +188,8 @@ public class TableController {
                 int slot = parseSlot(channelDescription);
                 int channel = parseChannel(channelDescription, slot);
 
-                graphController.showGraph(slot, channel);
+                graphController.setFields(slot, channel);
+                graphController.showGraph();
             } else {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
                 int nonSelectedCheckBoxesCount = 0;
