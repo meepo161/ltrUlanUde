@@ -1,13 +1,13 @@
 package ru.avem.posum.models.Process;
 
+import com.sun.javafx.util.Utils;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
-
-import java.awt.*;
+import javafx.scene.paint.Color;
 
 public class ChannelModel {
     private StringProperty name;
@@ -47,10 +47,10 @@ public class ChannelModel {
         chosenParameterIndex = new SimpleStringProperty("-1");
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
-        responseColor = new SimpleStringProperty(String.format("%d, %d, %d",
-                Color.BLACK.getRed() * 255,
-                Color.BLACK.getGreen() * 255,
-                Color.BLACK.getBlue() * 255));
+        responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, 1.0);",
+                (int) Color.RED.getRed() * 255,
+                (int) Color.RED.getGreen() * 255,
+                (int) Color.RED.getBlue() * 255));
     }
 
     private CheckBox createResponseCheckBox() {
@@ -60,14 +60,19 @@ public class ChannelModel {
     }
 
     private ColorPicker createColorPicker() {
-        ColorPicker colorPicker = new ColorPicker();
+        ColorPicker colorPicker = new ColorPicker(Color.RED);
 
         colorPicker.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
         colorPicker.setStyle("-fx-color-label-visible: false;");
-        colorPicker.setOnAction((ActionEvent event) -> responseColor = new SimpleStringProperty(String.format("%d, %d, %d",
-                (int) (colorPicker.getValue().getRed() * 255),
-                (int) (colorPicker.getValue().getGreen() * 255),
-                (int) (colorPicker.getValue().getBlue() * 255))));
+        colorPicker.setOnAction((ActionEvent event) -> {
+            responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, 1.0);",
+                    (int) (255 * colorPicker.getValue().getRed()),
+                    (int) (255 * colorPicker.getValue().getGreen()),
+                    (int) (255 * colorPicker.getValue().getBlue())));
+
+
+            System.out.println(responseColor.getValue());
+        });
 
         return colorPicker;
     }
@@ -245,7 +250,7 @@ public class ChannelModel {
     }
 
     public String getResponseColor() {
-        return String.valueOf(responseColor);
+        return String.valueOf(responseColor.getValue());
     }
 
     public void setResponseColor(StringProperty color) {

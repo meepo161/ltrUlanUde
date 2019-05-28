@@ -219,6 +219,7 @@ public class GraphController {
             stopped = false;
             while (!process.isStopped()) {
                 show(buffer, channel);
+                Utils.sleep(1000);
             }
         }).start();
     }
@@ -271,6 +272,10 @@ public class GraphController {
         stopped = true;
         Utils.sleep(100);
         stopped = false;
+    }
+
+    public LineChart<Number, Number> getGraph() {
+        return graph;
     }
 
     public GraphModel getGraphModel() {

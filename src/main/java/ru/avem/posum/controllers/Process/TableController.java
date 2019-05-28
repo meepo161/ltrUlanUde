@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Pair;
@@ -123,9 +124,11 @@ public class TableController {
     private void listen(TableView<ChannelModel> tableView) {
         tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+            ObservableList<ColorPicker> colorPickers  = getColorPickers();
 
             for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
                 listen(checkBoxes.get(channelIndex), channelIndex);
+                listen(colorPickers.get(channelIndex), channelIndex);
             }
         });
     }
@@ -143,6 +146,21 @@ public class TableController {
         }
 
         return checkBoxes;
+    }
+
+    private ObservableList<ColorPicker> getColorPickers() {
+        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ColorPicker> colorPickers = FXCollections.observableArrayList();
+
+        if (!channels.isEmpty()) {
+            for (ChannelModel channel : channels) {
+                if (!colorPickers.contains(channel.getColorPicker())) {
+                    colorPickers.add(channel.getColorPicker());
+                }
+            }
+        }
+
+        return colorPickers;
     }
 
     private void listen(CheckBox checkBox, int channelIndex) {
@@ -170,7 +188,7 @@ public class TableController {
                 }
             } else {
                 graphController.setStopped(true);
-//                graphController.getGraphModel().clear();
+                graphController.getGraphModel().clear();
             }
         });
     }
@@ -196,5 +214,14 @@ public class TableController {
         }
 
         return channel;
+    }
+
+    private void listen(ColorPicker colorPicker, int channelIndex) {
+        colorPicker.valueProperty().addListener(observable -> {
+            ObservableList<ChannelModel> channels = tableView.getItems();
+            String selectedColor = channels.get(channelIndex).getResponseColor();
+            Node line = graphController.getGraphModel().getGraphSeries().getNode();
+            line.setStyle("-fx-stroke: " + selectedColor);
+        });
     }
 }
