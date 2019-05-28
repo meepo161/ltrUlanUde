@@ -235,11 +235,12 @@ public class ChannelModel {
     }
 
     public String getResponseColor() {
-        responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, %f);",
+        responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, %s);",
                 (int) (255 * colorPicker.getValue().getRed()),
                 (int) (255 * colorPicker.getValue().getGreen()),
                 (int) (255 * colorPicker.getValue().getBlue()),
-                colorPicker.getValue().getOpacity()));
+                String.valueOf(colorPicker.getValue().getOpacity()).replace(",", ".")));
+
         return responseColor.getValue();
     }
 
