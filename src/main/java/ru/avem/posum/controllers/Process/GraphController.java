@@ -30,7 +30,7 @@ public class GraphController {
     public GraphController(CheckBox autoscaleCheckBox, LineChart<Number, Number> graph, Label horizontalScaleLabel,
                            ComboBox<String> horizontalScaleComboBox, Process process, Label rarefactionCoefficientLabel,
                            ComboBox<String> rarefactionCoefficientComboBox, Label verticalScaleLabel,
-                           ComboBox<String> verticalScaleComboBox) {
+                           ComboBox<String> verticalScaleComboBox, ProcessController processController) {
 
         this.autoscaleCheckBox = autoscaleCheckBox;
         this.graph = graph;
@@ -41,6 +41,7 @@ public class GraphController {
         this.rarefactionCoefficientComboBox = rarefactionCoefficientComboBox;
         this.verticalScaleLabel = verticalScaleLabel;
         this.verticalScaleComboBox = verticalScaleComboBox;
+        this.processController = processController;
 
         graph.getData().add(graphModel.getGraphSeries());
         initScales();
@@ -150,15 +151,24 @@ public class GraphController {
     private void listenRarefactionCoefficients() {
         rarefactionCoefficientComboBox.valueProperty().addListener(observable -> {
             String selection = rarefactionCoefficientComboBox.getSelectionModel().getSelectedItem();
-            if (rarefactionCoefficientComboBox.getSelectionModel().getSelectedIndex() != 0) {
-                String digits = selection.split(" ")[1].split(" ")[0];
-                int coefficient = Integer.parseInt(digits);
-                graphModel.setRarefactionCoefficient(coefficient);
-            } else {
-                graphModel.setRarefactionCoefficient(1);
-            }
+            processController.getStatusBarLine().clearStatusBar();
+            processController.getStatusBarLine().toggleProgressIndicator(false);
+            processController.getStatusBarLine().setStatusOfProgress("Обработка графика");
 
-            restartShow();
+            new Thread(() -> {
+                if (rarefactionCoefficientComboBox.getSelectionModel().getSelectedIndex() != 0) {
+                    String digits = selection.split(" ")[1].split(" ")[0];
+                    int coefficient = Integer.parseInt(digits);
+                    graphModel.setRarefactionCoefficient(coefficient);
+                } else {
+                    graphModel.setRarefactionCoefficient(1);
+                }
+
+                restartShow();
+                Utils.sleep(400); // ожидание начала отрисовки графика
+                processController.getStatusBarLine().toggleProgressIndicator(true);
+                processController.getStatusBarLine().clearStatusBar();
+            }).start();
         });
     }
 
@@ -210,13 +220,15 @@ public class GraphController {
     }
 
     public void showGraph(int slot, int channel) {
-        double[] data = process.getData(slot - 1);
-        graphModel.setFields(data, slot, channel - 1);
-
+        stopped = false;
+        System.out.println("Thread started");
 
         new Thread(() -> {
-            stopped = false;
             while (!process.isStopped()) {
+                double[] data = process.getData(slot - 1);
+                graphModel.setFields(data, slot, channel - 1);
+                graphModel.getGraphSeries().getData().clear();
+
                 show(data, channel - 1);
                 Utils.sleep(1000);
             }
@@ -253,23 +265,44 @@ public class GraphController {
                 XYChart.Data<Number, Number> lastPoint = new XYChart.Data<>(xValue, yValue);
                 Platform.runLater(() -> graphModel.getGraphSeries().getData().add(lastPoint));
                 Utils.sleep(1);
+            } else if ((double) point.getXValue() >= getUpperBoundOfHorizontalAxis()) {
+                Platform.runLater(addPoint);
+                Utils.sleep(1);
+                break;
             }
-//            } else if ((double) point.getXValue() >= graphModel.getGraphSeries().getUpperBound()) {
-//                Platform.runLater(addPoint);
-//                Utils.sleep(1);
-//                break;
-//            }
         }
     }
 
     private double getUpperBoundOfHorizontalAxis() {
         String selection = horizontalScaleComboBox.getSelectionModel().getSelectedItem();
+        String valueName = selection.split(" ")[1].split("/дел")[0];
         String digits = selection.split(" ")[0];
-        return Double.parseDouble(digits);
+        double uppedBound = Double.parseDouble(digits);
+
+        switch (valueName) {
+            case "мс":
+                uppedBound *= 0.001 * 10;
+                break;
+            case "с":
+                uppedBound *= 10;
+                break;
+            case "мин":
+                uppedBound *= 60;
+                break;
+            case "ч":
+                uppedBound *= 3600;
+                break;
+            case "д":
+                uppedBound *= 86_400;
+                break;
+        }
+
+        return uppedBound;
     }
 
     public void restartShow() {
         stopped = true;
+        Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
         Utils.sleep(100);
         stopped = false;
     }

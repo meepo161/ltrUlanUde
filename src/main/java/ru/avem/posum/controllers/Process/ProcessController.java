@@ -208,7 +208,8 @@ public class ProcessController implements BaseController {
                 process);
 
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
-                process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox);
+                process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
+                this);
 
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
@@ -588,6 +589,10 @@ public class ProcessController implements BaseController {
 
     public GraphController getGraphController() {
         return graphController;
+    }
+
+    public StatusBarLine getStatusBarLine() {
+        return statusBarLine;
     }
 
     public Button getStopButton() {

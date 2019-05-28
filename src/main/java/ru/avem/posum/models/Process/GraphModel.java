@@ -20,7 +20,7 @@ public class GraphModel {
     private int channel;
     private ObservableList<ChannelModel> channels = FXCollections.observableArrayList();
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private int rarefactionCoefficient = 1;
+    private int rarefactionCoefficient = 10;
     private int slot;
 
     public void setFields(double[] data, int slot, int channel) {
