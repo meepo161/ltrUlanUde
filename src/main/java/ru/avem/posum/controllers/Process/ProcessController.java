@@ -204,7 +204,8 @@ public class ProcessController implements BaseController {
                 dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
                 calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
-                dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton);
+                dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton,
+                process);
 
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox);
@@ -237,6 +238,13 @@ public class ProcessController implements BaseController {
         uiElements.add(journalTableView);
         uiElements.add(addEventButton);
         uiElements.add(saveJournalButton);
+        uiElements.add(autoscaleCheckBox);
+        uiElements.add(rarefactionCoefficientLabel);
+        uiElements.add(rarefactionCoefficientComboBox);
+        uiElements.add(verticalScaleLabel);
+        uiElements.add(verticalScaleComboBox);
+        uiElements.add(horizontalScaleLabel);
+        uiElements.add(horizontalScaleComboBox);
     }
 
     private void initEventsTableView() {
@@ -278,14 +286,25 @@ public class ProcessController implements BaseController {
                     statusBarLine.clearStatusBar();
                     statusBarLine.setStatus("Ошибка открытия соединений с модулями", false);
 
-                    toggleUiElements(false);
-                    toggleInitializationUiElements(true);
+                    toggleInitializationUiElements();
                 }
             }).start();
         } else {
             statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
         }
-//        experimentModel.Init();
+    }
+
+    private void toggleInitializationUiElements() {
+        toProgramButton.setDisable(false);
+        initializeButton.setDisable(false);
+        backButton.setDisable(false);
+        table.setDisable(false);
+        graph.setDisable(false);
+        commandsTableView.setDisable(false);
+        addCommandButton.setDisable(false);
+        journalTableView.setDisable(false);
+        addEventButton.setDisable(false);
+        saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
     }
 
     public ObservableList<Modules> getModules() {
@@ -305,16 +324,6 @@ public class ProcessController implements BaseController {
         for (Node element : uiElements) {
             element.setDisable(isDisable);
         }
-    }
-
-    private void toggleInitializationUiElements(boolean isDisable) {
-        startButton.setDisable(isDisable);
-        smoothStopButton.setDisable(isDisable);
-        stopButton.setDisable(isDisable);
-        savePointButton.setDisable(isDisable);
-        saveWaveformButton.setDisable(isDisable);
-        savePointButton.setDisable(isDisable);
-        saveProtocolButton.setDisable(isDisable);
     }
 
     private void parseSettings(List<Modules> modules) {
@@ -372,24 +381,26 @@ public class ProcessController implements BaseController {
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
 
-        toggleUiElements(false);
-
         if (process.isInitialized()) {
+            process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
 
-            toProgramButton.setDisable(true);
             initializeButton.setDisable(true);
-            smoothStopButton.setDisable(true);
-            stopButton.setDisable(true);
-            savePointButton.setDisable(true);
-            saveWaveformButton.setDisable(true);
-            saveProtocolButton.setDisable(true);
+            startButton.setDisable(false);
+            backButton.setDisable(false);
+            table.setDisable(false);
+            graph.setDisable(false);
+            commandsTableView.setDisable(false);
+            addCommandButton.setDisable(false);
+            journalTableView.setDisable(false);
+            addEventButton.setDisable(false);
+            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
             showErrors();
 
-            toggleInitializationUiElements(true);
+            toggleInitializationUiElements();
         }
     }
 
@@ -441,7 +452,7 @@ public class ProcessController implements BaseController {
             showErrors();
 
             process.finish();
-            toggleInitializationUiElements(true);
+            toggleInitializationUiElements();
         }
     }
 
@@ -468,8 +479,6 @@ public class ProcessController implements BaseController {
         statusBarLine.clearStatusBar();
         statusBarLine.toggleProgressIndicator(true);
 
-        toggleUiElements(false);
-
         if (process.isFinished()) {
             statusBarLine.setStatus("Программа испытаний успешно завершена", true);
             eventsController.getEventModel().addEvent("Успешное завершение программы испытаний", EventsTypes.OK);
@@ -479,6 +488,7 @@ public class ProcessController implements BaseController {
             showErrors();
         }
 
+        toggleInitializationUiElements();
         startButton.setDisable(true);
         smoothStopButton.setDisable(true);
         stopButton.setDisable(true);
@@ -578,6 +588,10 @@ public class ProcessController implements BaseController {
 
     public GraphController getGraphController() {
         return graphController;
+    }
+
+    public Button getStopButton() {
+        return stopButton;
     }
 
     public TableController getTableController() {

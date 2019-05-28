@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import ru.avem.posum.ControllerManager;
+import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.ProgramModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -62,6 +63,7 @@ public class ProgramController {
     private List<Node> rmsUiElements = new ArrayList<>();
     private List<Node> frequencyUiElements = new ArrayList<>();
     private ContextMenu contextMenu = new ContextMenu();
+    private Process process;
     private StatusBarLine statusBarLine;
     private ControllerManager cm;
 
@@ -75,7 +77,7 @@ public class ProgramController {
                              Slider pSlider, TextField pTextField, Label iLabel, Slider iSlider, TextField iTextField,
                              Label dLabel, Slider dSlider, TextField dTextField, AnchorPane mainPanel,
                              ToolBar toolbarSettings, VBox topPanel, TableView<ChannelModel> tableView,
-                             StatusBarLine statusBarLine, Button saveButton) {
+                             StatusBarLine statusBarLine, Button saveButton, Process process) {
 
         this.amplitudeCheckBox = amplitudeCheckBox;
         this.amplitudeLabel = amplitudeLabel;
@@ -114,6 +116,7 @@ public class ProgramController {
         this.tableView = tableView;
         this.statusBarLine = statusBarLine;
         this.saveButton = saveButton;
+        this.process = process;
 
         topPanel.setPrefHeight(mainPanel.getMaxHeight());
         toolbarSettings.setVisible(false);
@@ -304,7 +307,7 @@ public class ProgramController {
         tableView.setRowFactory(tv -> {
             TableRow<ChannelModel> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty() && process.isStopped())) {
                     contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
                 } else if (event.getClickCount() == 1) {
                     contextMenu.hide();

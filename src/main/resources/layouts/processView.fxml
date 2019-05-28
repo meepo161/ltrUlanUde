@@ -64,12 +64,12 @@
                                 </Button>
                                 <Pane prefHeight="93.0" prefWidth="156.0">
                                     <children>
-                                        <Label fx:id="timeLabel" layoutX="12.0" layoutY="6.0" text="Время с начала запуска">
+                                        <Label fx:id="timeLabel" disable="true" layoutX="12.0" layoutY="6.0" text="Время с начала запуска">
                                             <font>
                                                 <Font name="Arial" size="12.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="timeTextField" alignment="TOP_RIGHT" focusTraversable="false" layoutX="7.0" layoutY="29.0" maxHeight="16.0" mouseTransparent="true" prefHeight="16.0" prefWidth="146.0" text="0:00:00">
+                                        <TextField fx:id="timeTextField" alignment="TOP_RIGHT" disable="true" focusTraversable="false" layoutX="7.0" layoutY="29.0" maxHeight="16.0" mouseTransparent="true" prefHeight="16.0" prefWidth="146.0" text="0:00:00">
                                             <font>
                                                 <Font name="Arial Black" size="16.0" />
                                             </font>
@@ -390,25 +390,25 @@
                                   <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <CheckBox fx:id="autoscaleCheckBox" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Автомасшаб" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                                    <ComboBox fx:id="horizontalScaleComboBox" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                                    <ComboBox fx:id="verticalScaleComboBox" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                                    <Label fx:id="verticalScaleLabel" style="-fx-font-size: 12px;" text="Вертикальный машстаб:" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <CheckBox fx:id="autoscaleCheckBox" disable="true" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Автомасшаб" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <ComboBox fx:id="horizontalScaleComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
+                                    <ComboBox fx:id="verticalScaleComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                                    <Label fx:id="verticalScaleLabel" disable="true" style="-fx-font-size: 12px;" text="Вертикальный машстаб:" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <GridPane.margin>
                                           <Insets left="2.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="horizontalScaleLabel" style="-fx-font-size: 12px;" text="Горизонтальный масштаб:" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="horizontalScaleLabel" disable="true" style="-fx-font-size: 12px;" text="Горизонтальный масштаб:" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                        <GridPane.margin>
                                           <Insets left="2.0" />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="rarefactionCoefficientLabel" style="-fx-font-size: 12px;" text="Отображать точек:" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <Label fx:id="rarefactionCoefficientLabel" disable="true" style="-fx-font-size: 12px;" text="Отображать точек:" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <padding>
                                           <Insets left="2.0" />
                                        </padding>
                                     </Label>
-                                    <ComboBox fx:id="rarefactionCoefficientComboBox" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="rarefactionCoefficientComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                                 </items>

@@ -55,6 +55,7 @@ public class TableController {
         this.processController = processController;
 
         initTableView();
+        toggle();
     }
 
     private void initTableView() {
@@ -189,15 +190,15 @@ public class TableController {
                 }
             } else {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
-                int nonSelectedXheckBoxesCount = 0;
+                int nonSelectedCheckBoxesCount = 0;
 
                 for (CheckBox channel : checkBoxes) {
                     if (!channel.isSelected()) {
-                        nonSelectedXheckBoxesCount++;
+                        nonSelectedCheckBoxesCount++;
                     }
                 }
 
-                if (nonSelectedXheckBoxesCount == checkBoxes.size()) {
+                if (nonSelectedCheckBoxesCount == checkBoxes.size()) {
                     graphController.setStopped(true);
                 }
                 graphController.getGraphModel().clear();
@@ -240,5 +241,26 @@ public class TableController {
             Node line = graphController.getGraphModel().getGraphSeries().getNode();
             line.setStyle("-fx-stroke: " + selectedColor);
         }
+    }
+
+    private void toggle() {
+        processController.getStopButton().disableProperty().addListener(observable -> {
+            ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+            ObservableList<ColorPicker> colorPickers = getColorPickers();
+            boolean isProcessStopped = processController.getStopButton().isDisable();
+
+            for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+                checkBoxes.get(channelIndex).setDisable(isProcessStopped);
+                colorPickers.get(channelIndex).setDisable(isProcessStopped);
+            }
+
+            graphController.getAutoscaleCheckBox().setDisable(isProcessStopped);
+            graphController.getRarefactionCoefficientLabel().setDisable(isProcessStopped);
+            graphController.getRarefactionCoefficientComboBox().setDisable(isProcessStopped);
+            graphController.getVerticalScaleLabel().setDisable(isProcessStopped);
+            graphController.getVerticalScaleComboBox().setDisable(isProcessStopped);
+            graphController.getHorizontalScaleLabel().setDisable(isProcessStopped);
+            graphController.getHorizontalScaleComboBox().setDisable(isProcessStopped);
+        });
     }
 }

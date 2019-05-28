@@ -300,7 +300,7 @@ public class CalibrationController implements BaseController {
         setLoadValueTextFields();
     }
 
-    private void loadDefaultUiElementsState() {
+    public void loadDefaultUiElementsState() {
         dcLabel.setDisable(false);
         dcTextField.setDisable(false);
         loadValueLabel.setDisable(false);

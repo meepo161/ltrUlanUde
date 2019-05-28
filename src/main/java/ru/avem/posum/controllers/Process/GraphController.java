@@ -20,6 +20,7 @@ public class GraphController {
     private Label horizontalScaleLabel;
     private ComboBox<String> horizontalScaleComboBox;
     private Process process;
+    private ProcessController processController;
     private Label rarefactionCoefficientLabel;
     private ComboBox<String> rarefactionCoefficientComboBox;
     private boolean stopped = true;
@@ -216,7 +217,6 @@ public class GraphController {
         new Thread(() -> {
             stopped = false;
             while (!process.isStopped()) {
-//                System.out.printf("Data[0]: %f\n", data[0]);
                 show(data, channel - 1);
                 Utils.sleep(1000);
             }
@@ -278,8 +278,36 @@ public class GraphController {
         return graph;
     }
 
+    public CheckBox getAutoscaleCheckBox() {
+        return autoscaleCheckBox;
+    }
+
     public GraphModel getGraphModel() {
         return graphModel;
+    }
+
+    public Label getHorizontalScaleLabel() {
+        return horizontalScaleLabel;
+    }
+
+    public ComboBox<String> getHorizontalScaleComboBox() {
+        return horizontalScaleComboBox;
+    }
+
+    public Label getRarefactionCoefficientLabel() {
+        return rarefactionCoefficientLabel;
+    }
+
+    public ComboBox<String> getRarefactionCoefficientComboBox() {
+        return rarefactionCoefficientComboBox;
+    }
+
+    public Label getVerticalScaleLabel() {
+        return verticalScaleLabel;
+    }
+
+    public ComboBox<String> getVerticalScaleComboBox() {
+        return verticalScaleComboBox;
     }
 
     public boolean isStopped() {

@@ -54,6 +54,7 @@ public class ChannelModel {
     private CheckBox createResponseCheckBox() {
         CheckBox checkBox = new CheckBox();
         checkBox.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
+        checkBox.setDisable(true);
         return checkBox;
     }
 
@@ -62,6 +63,7 @@ public class ChannelModel {
 
         colorPicker.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
         colorPicker.setStyle("-fx-color-label-visible: false;");
+        colorPicker.setDisable(true);
 
         return colorPicker;
     }
