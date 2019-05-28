@@ -209,22 +209,22 @@ public class GraphController {
     }
 
     public void showGraph(int slot, int channel) {
-        double[] data = process.getData()[slot];
-        double[] buffer = new double[data.length];
-        System.arraycopy(data, 0, buffer, 0, data.length);
+        double[] data = process.getData(slot - 1);
+        graphModel.setFields(data, slot, channel - 1);
 
-        graphModel.setFields(buffer, slot, channel);
 
         new Thread(() -> {
             stopped = false;
             while (!process.isStopped()) {
-                show(buffer, channel);
+//                System.out.printf("Data[0]: %f\n", data[0]);
+                show(data, channel - 1);
                 Utils.sleep(1000);
             }
         }).start();
     }
 
     public void show(double[] data, int channel) {
+
         int channels = 4; // количество каналов АЦП
         int rarefactionCoefficient = graphModel.getRarefactionCoefficient();
         double upperBoundOfHorizontalAxis = getUpperBoundOfHorizontalAxis();

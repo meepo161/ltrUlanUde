@@ -432,8 +432,8 @@ public class ProcessController implements BaseController {
             startButton.setDisable(true);
 
             process.setStopped(false);
+            process.initData(getModules());
             while (!process.isStopped()) {
-                process.initData(getModules());
                 process.perform();
             }
         } else {
