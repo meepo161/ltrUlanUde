@@ -31,13 +31,16 @@ public class SignalParamtersModel {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
             adcFrequencies = new double[SLOTS];
             amplitudes[moduleIndex] = new double[CHANNELS];
+            bufferedSamplesPerSemiPeriods[moduleIndex] = new int[CHANNELS];
             dc[moduleIndex] = new double[CHANNELS];
             frequencies[moduleIndex] = new double[CHANNELS];
             loadsCounter[moduleIndex] = new double[CHANNELS];
             minSignalValues[moduleIndex] = new double[CHANNELS];
             maxSignalValues[moduleIndex] = new double[CHANNELS];
+            periods[moduleIndex] = new int[CHANNELS];
             rms[moduleIndex] = new double[CHANNELS];
             samplesPerSemiPeriod[moduleIndex] = new double[CHANNELS];
+            samplesPerSemiPeriods[moduleIndex] = new int[CHANNELS];
             zeroTransitionCounter[moduleIndex] = new double[CHANNELS];
         }
 
