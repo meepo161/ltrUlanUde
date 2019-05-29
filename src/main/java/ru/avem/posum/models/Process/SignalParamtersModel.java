@@ -42,6 +42,8 @@ public class SignalParamtersModel {
             samplesPerSemiPeriod[moduleIndex] = new double[CHANNELS];
             samplesPerSemiPeriods[moduleIndex] = new int[CHANNELS];
             zeroTransitionCounter[moduleIndex] = new double[CHANNELS];
+
+//            System.out.printf("Data[%d][0]: %f, Data[%d][1]: %f, Data[%d][2]: %f, Data[%d][3]: %f\n", moduleIndex, data[moduleIndex][0], moduleIndex, data[moduleIndex][1], moduleIndex, data[moduleIndex][2], moduleIndex, data[moduleIndex][3]);
         }
 
         this.data = data;
@@ -68,9 +70,9 @@ public class SignalParamtersModel {
                 double min = Integer.MAX_VALUE;
                 double max = Integer.MIN_VALUE;
 
-                for (int i = channelIndex; i < data.length; i += CHANNELS) {
+                for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
                     if (data[moduleIndex][i] > max) {
-                        max = data[channelIndex][i];
+                        max = data[moduleIndex][i];
                     }
 
                     if (data[moduleIndex][i] < min) {
