@@ -124,6 +124,17 @@ public class Modules {
         return checkedChannels;
     }
 
+    public static int[] getCheckedChannels(Modules module) {
+        int[] checkedChannels = new int[module.getChannelsCount()];
+        String[] splitChannels = module.getCheckedChannels().split(" ");
+
+        for (int channelIndex = 0; channelIndex < splitChannels.length; channelIndex++) {
+            checkedChannels[channelIndex] = Integer.parseInt(splitChannels[channelIndex]);
+        }
+
+        return checkedChannels;
+    }
+
     public String getTypesOfChannels() {
         return typesOfChannels;
     }

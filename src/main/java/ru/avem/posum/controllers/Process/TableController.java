@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
+import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.SignalParametersModel;
 import ru.avem.posum.utils.Utils;
@@ -265,15 +266,50 @@ public class TableController {
                 signalParametersModel.setAdcFrequencies(processController.getModules());
                 signalParametersModel.calculateParameters();
 
-                System.out.printf("\nAmplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
-                System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
-                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
-                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
-                System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
+                show();
+//                System.out.printf("\nAmplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
+//                System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
+//                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
+//                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
+//                System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
 
                 Utils.sleep(1000);
             }
         }).start();
+    }
+
+    private void show() {
+        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<Modules> modules = processController.getModules();
+
+        for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+            ChannelModel channel = channels.get(moduleIndex);
+            Modules module = modules.get(moduleIndex);
+            int[] checkedChannels = new int[module.getChannelsCount()];
+
+            if (!module.getModuleType().equals(Crate.LTR34)) {
+                checkedChannels = Modules.getCheckedChannels(module);
+            }
+
+            for (int channelIndex = 0; channelIndex < checkedChannels.length; channelIndex++) {
+                double amplitude = signalParametersModel.getAmplitude(moduleIndex, channelIndex);
+                double neededAmplitude = Double.parseDouble(channel.getAmplitude());
+                double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
+                double neededDc = Double.parseDouble(channel.getDc());
+                double frequency = signalParametersModel.getFrequency(moduleIndex, channelIndex);
+                double neededFrequency = Double.parseDouble(channel.getFrequency());
+                double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
+                double neededRms = Double.parseDouble(channel.getRms());
+
+                channel.setResponseAmplitude(String.valueOf(amplitude));
+                channel.setRelativeResponseAmplitude(String.valueOf(amplitude / neededAmplitude * 100.0));
+                channel.setResponseRms(String.valueOf(rms));
+                channel.setRelativeResponseRms(String.valueOf(rms / neededRms * 100.0));
+                channel.setResponseFrequency(String.valueOf(frequency));
+                channel.setRelativeResponseFrequency(String.valueOf(frequency / neededFrequency * 100.0));
+            }
+        }
+
     }
 
     private void listen(ColorPicker colorPicker, int channelIndex) {
