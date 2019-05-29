@@ -260,17 +260,21 @@ public class TableController {
     }
 
     public void showParametersOfSignal() {
-//        signalParametersModel.setFields(processController.getProcess().getData());
-//        signalParametersModel.setAdcFrequencies(processController.getModules());
-//        signalParametersModel.calculateParameters();
-//
-//        System.out.printf("Amplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
-//        System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
-//        System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
-//        System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
-//        System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
-//
-//        Utils.sleep(1000);
+        new Thread(() -> {
+            while (!showStopped) {
+                signalParametersModel.setFields(processController.getProcess().getData());
+                signalParametersModel.setAdcFrequencies(processController.getModules());
+                signalParametersModel.calculateParameters();
+
+//                System.out.printf("Amplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
+//                System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
+//                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
+//                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
+//                System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
+
+                Utils.sleep(1000);
+            }
+        }).start();
     }
 
     private void listen(ColorPicker colorPicker, int channelIndex) {

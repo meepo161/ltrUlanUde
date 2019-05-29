@@ -252,7 +252,7 @@ public class Process {
     }
 
     public double[][] getData() {
-        return data;
+        return buffer;
     }
 
     public double[] getData(int slot) {

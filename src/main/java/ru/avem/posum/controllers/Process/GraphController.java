@@ -230,7 +230,6 @@ public class GraphController {
 
     public void showGraph() {
         stopped = false;
-        System.out.println("Thread started");
 
         showingThread = new Thread(() -> {
             double[] data = process.getData(slot);

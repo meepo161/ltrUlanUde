@@ -81,6 +81,8 @@ public class SignalParamtersModel {
                 maxSignalValues[moduleIndex][channelIndex] = max;
                 minSignalValues[moduleIndex][channelIndex] = min;
 
+                System.out.printf("Slot: %d. Channel: %d. Max: %f, min: %f\n", moduleIndex + 1, channelIndex + 1, maxSignalValues[moduleIndex][channelIndex], minSignalValues[moduleIndex][channelIndex]);
+
                 if (frequencies[moduleIndex][channelIndex] > 2) {
                     calculateAverageMinAndMaxValues(moduleIndex, channelIndex);
                 }
