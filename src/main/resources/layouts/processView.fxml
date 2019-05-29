@@ -101,7 +101,7 @@
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="1174.0" layoutY="-3.0" prefWidth="106.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1040.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                                <Button fx:id="backButton" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBackButton" styleClass="eventTable" text="Назад" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="backButton" alignment="CENTER" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="90.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleBack" styleClass="eventTable" text="Назад" textAlignment="CENTER" wrapText="true">
                                     <HBox.margin>
                                         <Insets />
                                     </HBox.margin>

@@ -1,7 +1,5 @@
 package ru.avem.posum.controllers.Process;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,7 +21,6 @@ import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
-import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -193,6 +190,7 @@ public class ProcessController implements BaseController {
     private List<Node> uiElements = new ArrayList<>();
     private StatusBarLine statusBarLine;
     private TableController tableController;
+    private StopwatchController stopwatchController;
     private TestProgram testProgram;
     private WindowsManager wm;
 
@@ -216,6 +214,8 @@ public class ProcessController implements BaseController {
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
                 rmsResponseColumn, rmsColumn, rmsRelativeResponseColumn, graphController, this);
+
+        stopwatchController = new StopwatchController(this, timeLabel, timeTextField);
 
         initEventsTableView();
         listenTableViews();
@@ -470,7 +470,12 @@ public class ProcessController implements BaseController {
 
             process.setStopped(false);
             process.initData(getModules());
+
             tableController.showParametersOfSignal();
+
+            stopwatchController.start();
+            stopwatchController.showTime();
+
             while (!process.isStopped()) {
                 process.perform();
             }
@@ -545,24 +550,26 @@ public class ProcessController implements BaseController {
 
     }
 
-    public void handleBackButton() {
-        if (true) { // TODO: change this shit
-            ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
-            ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
-            alert.setTitle("Подтвердите действие");
-            alert.setHeaderText("Вернуться в главное окно?");
-            ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
-            buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 14px;\n" + "-fx-background-radius: 5px;\n" +
-                    "\t-fx-border-radius: 5px;"));
+    public void handleBack() {
+        ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
+        alert.setTitle("Подтвердите действие");
+        alert.setHeaderText("Вернуться в главное окно?");
+        ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
+        buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 14px;\n" + "-fx-background-radius: 5px;\n" +
+                "\t-fx-border-radius: 5px;"));
 
-            Optional<ButtonType> result = alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
 
-            if (result.isPresent()) {
-                if (result.get() == ok) {
-                    programController.clear();
-                    wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
+        if (result.isPresent()) {
+            if (result.get() == ok) {
+                if (!process.isStopped()) {
+                    handleStop();
                 }
+
+                programController.clear();
+                wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
             }
         }
     }

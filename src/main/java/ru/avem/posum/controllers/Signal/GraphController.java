@@ -447,8 +447,6 @@ public class GraphController {
         Platform.runLater(() -> graphSeries.getData().clear());
         Utils.sleep(100);
         showFinished = false;
-
-        System.out.println("Reseted");
     }
 
     public boolean isFFT() {
