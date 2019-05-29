@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -320,6 +321,22 @@ public class ProcessController implements BaseController {
         }
 
         return chosenModules;
+    }
+
+    public String[] getTypesOfModules() {
+        ObservableList<Modules> modules = getModules();
+        int SLOTS = 16; // количество слотов в крейте
+        String[] typesOfModules = new String[SLOTS];
+
+        for (int typeIndex = 0; typeIndex < typesOfModules.length; typeIndex++) {
+            typesOfModules[typeIndex] = "";
+        }
+
+        for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+            typesOfModules[moduleIndex] = modules.get(moduleIndex).getModuleType();
+        }
+
+        return typesOfModules;
     }
 
     private void toggleUiElements(boolean isDisable) {

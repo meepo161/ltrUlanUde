@@ -1,6 +1,7 @@
 package ru.avem.posum.models.Process;
 
 import ru.avem.posum.db.models.Modules;
+import ru.avem.posum.hardware.Crate;
 
 import javax.swing.plaf.SliderUI;
 import java.util.ArrayList;
@@ -20,8 +21,9 @@ public class SignalParametersModel {
     private double[][] dc = new double[SLOTS][];
     private double[][] frequencies = new double[SLOTS][];
     private double[][] loadsCounter = new double[SLOTS][];
-    private double[][] minSignalValues = new double[SLOTS][];
     private double[][] maxSignalValues = new double[SLOTS][];
+    private String[] typesOfModules = new String[SLOTS];
+    private double[][] minSignalValues = new double[SLOTS][];
     private int[][] periods = new int[SLOTS][];
     private double[][] rms = new double[SLOTS][];
     private double[][] samplesPerSemiPeriod = new double[SLOTS][];
@@ -198,20 +200,27 @@ public class SignalParametersModel {
                 if (!(frequency <= 5)) {
                     frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? bufferedFrequency[moduleIndex][channelIndex] : frequency;
                 }
-                frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude() ? 0 : frequency;
+                frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
                 bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
             }
         }
     }
 
-    private double getLowerLimitOfAmplitude() {
-        return 0.1;
+    private double getLowerLimitOfAmplitude(int moduleIndex) {
+        switch (typesOfModules[moduleIndex]) {
+            case Crate.LTR24:
+                return 0.1;
+            case Crate.LTR212:
+                return 0.001;
+            default:
+                return 0;
+        }
     }
 
     private double estimateFrequency(int moduleIndex, int channelIndex) {
         boolean positivePartOfSignal = false;
         double frequency = 0;
-        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
+        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude(moduleIndex);
 
         for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
             if (data[moduleIndex][i] >= dc[moduleIndex][channelIndex] + lowerLimitOfAmplitude && !positivePartOfSignal) {
@@ -230,7 +239,7 @@ public class SignalParametersModel {
         double firstValue = data[moduleIndex][channelIndex] + shift;
         boolean firstPeriod = true;
         boolean positivePartOfSignal = !(firstValue > (dc[moduleIndex][channelIndex] + shift));
-        double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude();
+        double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude(moduleIndex);
         samplesPerSemiPeriod[moduleIndex][channelIndex] = zeroTransitionCounter[moduleIndex][channelIndex] = 0;
 
         for (int index = channelIndex; index < data[moduleIndex].length; index += CHANNELS) {
@@ -280,7 +289,7 @@ public class SignalParametersModel {
         double firstValue = data[moduleIndex][0] + shift;
         boolean firstPeriod = true;
         boolean positivePartOfSignal = !(firstValue > (dc[moduleIndex][channelIndex] + shift));
-        double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude();
+        double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude(moduleIndex);
         bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] = 0;
         periods[moduleIndex][channelIndex] = 0;
         samplesPerSemiPeriods[moduleIndex][channelIndex] = 0;
@@ -363,5 +372,9 @@ public class SignalParametersModel {
 
     public double getRms(int moduleIndex, int channelIndex) {
         return rms[moduleIndex][channelIndex];
+    }
+
+    public void setTypesOfModules(String[] typesOfModules) {
+        this.typesOfModules = typesOfModules;
     }
 }

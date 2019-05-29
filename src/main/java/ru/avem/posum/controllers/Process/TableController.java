@@ -262,6 +262,8 @@ public class TableController {
 
     public void showParametersOfSignal() {
         new Thread(() -> {
+            signalParametersModel.setTypesOfModules(processController.getTypesOfModules());
+
             while (!showStopped) {
                 signalParametersModel.setData(processController.getProcess().getData());
                 signalParametersModel.setAdcFrequencies(processController.getModules());
