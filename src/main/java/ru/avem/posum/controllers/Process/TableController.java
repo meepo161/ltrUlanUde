@@ -168,6 +168,8 @@ public class TableController {
 
     private void listen(CheckBox checkBox, int channelIndex) {
         checkBox.selectedProperty().addListener(observable -> {
+            toggleGraphControls();
+
             if (checkBox.isSelected()) {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
                 checkBoxes.remove(checkBox);
@@ -232,6 +234,26 @@ public class TableController {
         }
 
         return channel;
+    }
+
+    private void toggleGraphControls() {
+        ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+        int disabledCheckBoxesCount = 0;
+
+        for (CheckBox checkBox : checkBoxes) {
+            if (!checkBox.isSelected()) {
+                disabledCheckBoxesCount++;
+            }
+        }
+
+        boolean isGraphEnable = disabledCheckBoxesCount == checkBoxes.size();
+        graphController.getAutoscaleCheckBox().setDisable(isGraphEnable);
+        graphController.getRarefactionCoefficientLabel().setDisable(isGraphEnable);
+        graphController.getRarefactionCoefficientComboBox().setDisable(isGraphEnable);
+        graphController.getHorizontalScaleLabel().setDisable(isGraphEnable);
+        graphController.getHorizontalScaleComboBox().setDisable(isGraphEnable);
+        graphController.getVerticalScaleLabel().setDisable(isGraphEnable);
+        graphController.getVerticalScaleComboBox().setDisable(isGraphEnable);
     }
 
     public void showParametersOfSignal() {

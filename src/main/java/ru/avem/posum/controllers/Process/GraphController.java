@@ -65,8 +65,6 @@ public class GraphController {
         checkBox.selectedProperty().addListener(observable -> {
             NumberAxis yAxis = (NumberAxis) graph.getYAxis();
             yAxis.setAutoRanging(checkBox.isSelected());
-            horizontalScaleLabel.setDisable(checkBox.isSelected());
-            horizontalScaleComboBox.setDisable(checkBox.isSelected());
             verticalScaleLabel.setDisable(checkBox.isSelected());
             verticalScaleComboBox.setDisable(checkBox.isSelected());
 
@@ -236,7 +234,7 @@ public class GraphController {
             while (!process.isStopped()) {
                 double[] data = process.getData(slot);
                 graphModel.setFields(data, slot, channel);
-                graphModel.getGraphSeries().getData().clear();
+                Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
 
                 show(data, channel);
                 if (stopped) {
@@ -314,9 +312,13 @@ public class GraphController {
 
     public void restartShow() {
         stopped = true;
-        showingThread.interrupt();
+
+        if (showingThread != null) {
+            showingThread.interrupt();
+        }
+
         Utils.sleep(100);
-        graphModel.getGraphSeries().getData().clear();
+        Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
         stopped = false;
         showGraph();
     }

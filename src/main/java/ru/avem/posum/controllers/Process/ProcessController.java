@@ -442,6 +442,13 @@ public class ProcessController implements BaseController {
             initializeButton.setDisable(true);
             addCommandButton.setDisable(true);
             startButton.setDisable(true);
+            autoscaleCheckBox.setDisable(true);
+            rarefactionCoefficientLabel.setDisable(true);
+            rarefactionCoefficientComboBox.setDisable(true);
+            horizontalScaleLabel.setDisable(true);
+            horizontalScaleComboBox.setDisable(true);
+            verticalScaleLabel.setDisable(true);
+            verticalScaleComboBox.setDisable(true);
 
             process.setStopped(false);
             process.initData(getModules());
