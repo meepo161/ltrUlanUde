@@ -1,17 +1,20 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.SignalParamtersModel;
 import ru.avem.posum.utils.Utils;
 
+import java.util.Collection;
 import java.util.List;
 
 public class TableController {
@@ -257,17 +260,17 @@ public class TableController {
     }
 
     public void showParametersOfSignal() {
-        signalParametersModel.setFields(processController.getProcess().getData());
-        signalParametersModel.setAdcFrequencies(processController.getModules());
-        signalParametersModel.calculateParameters();
-
-        System.out.printf("Amplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
-        System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
-        System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
-        System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
-        System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
-
-        Utils.sleep(1000);
+//        signalParametersModel.setFields(processController.getProcess().getData());
+//        signalParametersModel.setAdcFrequencies(processController.getModules());
+//        signalParametersModel.calculateParameters();
+//
+//        System.out.printf("Amplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
+//        System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
+//        System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
+//        System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
+//        System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
+//
+//        Utils.sleep(1000);
     }
 
     private void listen(ColorPicker colorPicker, int channelIndex) {
@@ -290,8 +293,14 @@ public class TableController {
             boolean isProcessStopped = processController.getStopButton().isDisable();
 
             for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-                checkBoxes.get(channelIndex).setDisable(isProcessStopped);
-                colorPickers.get(channelIndex).setDisable(isProcessStopped);
+                int finalChannelIndex = channelIndex;
+
+                Platform.runLater(() -> {
+                    checkBoxes.get(finalChannelIndex).setDisable(isProcessStopped);
+                    Utils.sleep(10); // пауза для переключения состояния
+                    colorPickers.get(finalChannelIndex).setDisable(isProcessStopped);
+                    Utils.sleep(10); // пауза для переключения состояния
+                });
             }
 
             graphController.getAutoscaleCheckBox().setDisable(isProcessStopped);
@@ -302,5 +311,26 @@ public class TableController {
             graphController.getHorizontalScaleLabel().setDisable(isProcessStopped);
             graphController.getHorizontalScaleComboBox().setDisable(isProcessStopped);
         });
+    }
+
+    public void setDefaultChannelsState() {
+        disableChannels();
+        resetColors();
+    }
+
+    private void disableChannels() {
+        ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+
+        for (CheckBox checkBox : checkBoxes) {
+            Platform.runLater(() -> checkBox.setSelected(false));
+        }
+    }
+
+    private void resetColors() {
+        ObservableList<ColorPicker> colorPickers = getColorPickers();
+
+        for (ColorPicker colorPicker : colorPickers) {
+            Platform.runLater(() -> colorPicker.setValue(Color.DARKRED));
+        }
     }
 }

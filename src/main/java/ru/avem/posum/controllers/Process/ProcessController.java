@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -475,6 +476,7 @@ public class ProcessController implements BaseController {
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventModel().addEvent("Завершение программы испытаний", EventsTypes.LOG);
 
+        graphController.getGraphModel().clear();
         toggleUiElements(true);
 
         new Thread(() -> {
@@ -491,11 +493,13 @@ public class ProcessController implements BaseController {
         if (process.isFinished()) {
             statusBarLine.setStatus("Программа испытаний успешно завершена", true);
             eventsController.getEventModel().addEvent("Успешное завершение программы испытаний", EventsTypes.OK);
-
         } else {
             statusBarLine.setStatus("Ошибка завершения программы испытаний", false);
             showErrors();
         }
+
+        tableController.setDefaultChannelsState();
+        graphController.setDefaultGraphControlsState();
 
         toggleInitializationUiElements();
         startButton.setDisable(true);

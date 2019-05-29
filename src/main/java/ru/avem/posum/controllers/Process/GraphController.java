@@ -142,9 +142,11 @@ public class GraphController {
         coefficients.add("В 2 меньше");
         coefficients.add("В 5 меньше");
         coefficients.add("В 10 меньше");
-        coefficients.add("В 15 меньше");
-        coefficients.add("В 20 меньше");
         coefficients.add("В 25 меньше");
+        coefficients.add("В 50 меньше");
+        coefficients.add("В 100 меньше");
+        coefficients.add("В 200 меньше");
+        coefficients.add("В 300 меньше");
 
         rarefactionCoefficientComboBox.setItems(coefficients);
         rarefactionCoefficientComboBox.getSelectionModel().select(3);
@@ -231,8 +233,8 @@ public class GraphController {
         System.out.println("Thread started");
 
         showingThread = new Thread(() -> {
+            double[] data = process.getData(slot);
             while (!process.isStopped()) {
-                double[] data = process.getData(slot);
                 graphModel.setFields(data, slot, channel);
                 Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
 
@@ -321,6 +323,17 @@ public class GraphController {
         Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
         stopped = false;
         showGraph();
+    }
+
+    public void setDefaultGraphControlsState() {
+        Platform.runLater(() -> {
+            autoscaleCheckBox.setSelected(false);
+            rarefactionCoefficientComboBox.getSelectionModel().select(3); // отображать точек в 10 раз меньше
+            horizontalScaleComboBox.getSelectionModel().select(2); // 100 мс в делении
+            verticalScaleComboBox.getSelectionModel().select(3); // 1 В в делении
+            verticalScaleLabel.setDisable(true);
+            verticalScaleComboBox.setDisable(true);
+        });
     }
 
     public LineChart<Number, Number> getGraph() {

@@ -100,6 +100,7 @@ public class Process {
 //        System.arraycopy(ltr34SettingsModel.getSignal(), 0, data[11], 0, ltr34SettingsModel.getSignal().length);
 
         perform(data, timeMarks);
+        System.arraycopy(data, 0, buffer, 0, data.length);
 
 //        System.out.printf("\nLTR212 slot 1. Data[0]: %f. TimeMarks[0]: %f\n", data[0][0], timeMarks[0][0]);
 //        System.out.printf("LTR212 slot 2. Data[0]: %f. TimeMarks[0]: %f\n", data[1][0], timeMarks[1][0]);
@@ -255,9 +256,10 @@ public class Process {
     }
 
     public double[] getData(int slot) {
-        double[] output = new double[data[slot].length];
-        System.arraycopy(data[slot], 0, output, 0, output.length);
-        return output;
+//        double[] output = new double[data[slot].length];
+//        System.arraycopy(data[slot], 0, output, 0, output.length);
+//        return output;
+        return buffer[slot];
     }
 
     public void setStopped(boolean stopped) {
