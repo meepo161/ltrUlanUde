@@ -2,6 +2,7 @@ package ru.avem.posum.hardware;
 
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
+import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import java.util.List;
 public class Process {
     private final int SLOTS = 16; // количество слотов в крейте
 
-    private double[][] buffer = new double[SLOTS][SLOTS];
     private String bioPath = LTR212.getBioPath();
     private int[] channelsCount = new int[SLOTS];
     private String crateSerialNumber;
@@ -100,19 +100,6 @@ public class Process {
 //        System.arraycopy(ltr34SettingsModel.getSignal(), 0, data[11], 0, ltr34SettingsModel.getSignal().length);
 
         perform(data, timeMarks);
-        System.arraycopy(data, 0, buffer, 0, data.length);
-
-//        System.out.printf("\nLTR212 slot 1. Data[0]: %f. TimeMarks[0]: %f\n", data[0][0], timeMarks[0][0]);
-//        System.out.printf("LTR212 slot 2. Data[0]: %f. TimeMarks[0]: %f\n", data[1][0], timeMarks[1][0]);
-//        System.out.printf("LTR212 slot 3. Data[0]: %f. TimeMarks[0]: %f\n", data[2][0], timeMarks[2][0]);
-//        System.out.printf("LTR212 slot 4. Data[0]: %f. TimeMarks[0]: %f\n", data[3][0], timeMarks[3][0]);
-//        System.out.printf("LTR212 slot 5. Data[0]: %f. TimeMarks[0]: %f\n", data[4][0], timeMarks[4][0]);
-//        System.out.printf("LTR212 slot 6. Data[0]: %f. TimeMarks[0]: %f\n", data[5][0], timeMarks[5][0]);
-//        System.out.printf("LTR212 slot 7. Data[0]: %f. TimeMarks[0]: %f\n", data[6][0], timeMarks[6][0]);
-//        System.out.printf("LTR24 slot 8. Data[0]: %f. TimeMarks[0]: %f\n", data[7][0], timeMarks[7][0]);
-//        System.out.printf("LTR24 slot 9. Data[0]: %f. TimeMarks[0]: %f\n", data[8][0], timeMarks[8][0]);
-//        System.out.printf("LTR24 slot 10. Data[3]: %f. TimeMarks[0]: %f\n", data[9][3], timeMarks[9][0]);
-//        System.out.printf("LTR24 slot 11. Data[0]: %f. TimeMarks[0]: %f\n", data[10][0], timeMarks[10][0]);
     }
 
     public void initData(List<Modules> modules) {
@@ -252,14 +239,13 @@ public class Process {
     }
 
     public double[][] getData() {
-        return buffer;
+        return data;
     }
 
     public double[] getData(int slot) {
-//        double[] output = new double[data[slot].length];
-//        System.arraycopy(data[slot], 0, output, 0, output.length);
-//        return output;
-        return buffer[slot];
+        double[] output = new double[data[slot].length];
+        System.arraycopy(data[slot], 0, output, 0, output.length);
+        return output;
     }
 
     public void setStopped(boolean stopped) {

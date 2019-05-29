@@ -124,12 +124,14 @@ public class Modules {
         return checkedChannels;
     }
 
-    public static int[] getCheckedChannels(Modules module) {
-        int[] checkedChannels = new int[module.getChannelsCount()];
-        String[] splitChannels = module.getCheckedChannels().split(" ");
+    public static List<Integer> getCheckedChannels(Modules module) {
+        List<Integer> checkedChannels = new ArrayList<>();
+        String[] splitChannels = module.getCheckedChannels().split(", ");
 
         for (int channelIndex = 0; channelIndex < splitChannels.length; channelIndex++) {
-            checkedChannels[channelIndex] = Integer.parseInt(splitChannels[channelIndex]);
+            if (splitChannels[channelIndex].equals("true")) {
+                checkedChannels.add(channelIndex);
+            }
         }
 
         return checkedChannels;

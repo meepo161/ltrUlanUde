@@ -255,4 +255,8 @@ public class ChannelModel {
 
         return new ReadOnlyObjectWrapper<>(hBox);
     }
+
+    public int getSlot() {
+        return Integer.parseInt(this.name.getValue().split("слот ")[1].split("\\)")[0]);
+    }
 }

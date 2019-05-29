@@ -15,6 +15,7 @@ public class SignalParametersModel {
     private double[] adcFrequencies;
     private double[][] amplitudes = new double[SLOTS][];
     private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
+    private double[][] bufferedFrequency = new double[SLOTS][];
     private double[][] data = new double[SLOTS][];
     private double[][] dc = new double[SLOTS][];
     private double[][] frequencies = new double[SLOTS][];
@@ -35,6 +36,7 @@ public class SignalParametersModel {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
             adcFrequencies = new double[SLOTS];
             amplitudes[moduleIndex] = new double[CHANNELS];
+            bufferedFrequency[moduleIndex] = new double[CHANNELS];
             bufferedSamplesPerSemiPeriods[moduleIndex] = new int[CHANNELS];
             dc[moduleIndex] = new double[CHANNELS];
             frequencies[moduleIndex] = new double[CHANNELS];
@@ -86,8 +88,6 @@ public class SignalParametersModel {
 
                 maxSignalValues[moduleIndex][channelIndex] = max;
                 minSignalValues[moduleIndex][channelIndex] = min;
-
-//                System.out.printf("Slot: %d. Channel: %d. Max: %f, min: %f\n", moduleIndex + 1, channelIndex + 1, maxSignalValues[moduleIndex][channelIndex], minSignalValues[moduleIndex][channelIndex]);
 
                 if (frequencies[moduleIndex][channelIndex] > 2) {
                     calculateAverageMinAndMaxValues(moduleIndex, channelIndex);
@@ -191,21 +191,21 @@ public class SignalParametersModel {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
             for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
                 double frequency;
-                int accuracyCoefficient = 25; // коэффициент для переключения алгоритмов
+                double estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
+                int accuracyCoefficient = 100; // коэффициент для переключения алгоритмов
 
-                if (estimateFrequency(moduleIndex, channelIndex) < accuracyCoefficient) {
-                    frequency = defineFrequencyFirstAlgorithm(moduleIndex, channelIndex);
-                } else {
-                    frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
+                frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
+                if (!(frequency <= 5)) {
+                    frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? bufferedFrequency[moduleIndex][channelIndex] : frequency;
                 }
-
                 frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude() ? 0 : frequency;
+                bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
             }
         }
     }
 
     private double getLowerLimitOfAmplitude() {
-        return 0.001;
+        return 0.1;
     }
 
     private double estimateFrequency(int moduleIndex, int channelIndex) {
@@ -319,7 +319,7 @@ public class SignalParametersModel {
             }
         }
 
-        double samplesPerPeriod = bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] == 0 ? 0 : bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] / periods[moduleIndex][channelIndex];
+        double samplesPerPeriod = bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] == 0 ? 0 : (double) bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] / periods[moduleIndex][channelIndex];
         return (samplesPerPeriod == 0 ? 0 : (adcFrequencies[moduleIndex] / samplesPerPeriod));
     }
 

@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.GraphModel;
+import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.Utils;
 
 public class GraphController {
@@ -145,8 +146,8 @@ public class GraphController {
         coefficients.add("В 25 меньше");
         coefficients.add("В 50 меньше");
         coefficients.add("В 100 меньше");
-        coefficients.add("В 200 меньше");
-        coefficients.add("В 300 меньше");
+        coefficients.add("В 250 меньше");
+        coefficients.add("В 500 меньше");
 
         rarefactionCoefficientComboBox.setItems(coefficients);
         rarefactionCoefficientComboBox.getSelectionModel().select(3);
@@ -232,8 +233,8 @@ public class GraphController {
         stopped = false;
 
         showingThread = new Thread(() -> {
-            double[] data = process.getData(slot);
             while (!process.isStopped()) {
+                double[] data = process.getData(slot);
                 graphModel.setFields(data, slot, channel);
                 Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
 

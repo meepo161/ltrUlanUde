@@ -15,6 +15,7 @@ import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.SignalParametersModel;
 import ru.avem.posum.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TableController {
@@ -267,12 +268,6 @@ public class TableController {
                 signalParametersModel.calculateParameters();
 
                 show();
-//                System.out.printf("\nAmplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
-//                System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
-//                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
-//                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
-//                System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
-
                 Utils.sleep(1000);
             }
         }).start();
@@ -283,15 +278,24 @@ public class TableController {
         ObservableList<Modules> modules = processController.getModules();
 
         for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
-            ChannelModel channel = channels.get(moduleIndex);
             Modules module = modules.get(moduleIndex);
-            int[] checkedChannels = new int[module.getChannelsCount()];
+            List<Integer> checkedChannels = new ArrayList<>();
+            int channelModelIndex = 0;
 
             if (!module.getModuleType().equals(Crate.LTR34)) {
                 checkedChannels = Modules.getCheckedChannels(module);
+
+                for (int i = 0; i < channels.size(); i++) {
+                    if (channels.get(i).getSlot() == module.getSlot()) {
+                        channelModelIndex = i;
+                        break;
+                    }
+                }
             }
 
-            for (int channelIndex = 0; channelIndex < checkedChannels.length; channelIndex++) {
+            for (int i = 0; i < checkedChannels.size(); i++) {
+                int channelIndex = checkedChannels.get(i);
+                ChannelModel channel = channels.get(channelModelIndex + i);
                 double amplitude = signalParametersModel.getAmplitude(moduleIndex, channelIndex);
                 double neededAmplitude = Double.parseDouble(channel.getAmplitude());
                 double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
@@ -301,12 +305,12 @@ public class TableController {
                 double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
                 double neededRms = Double.parseDouble(channel.getRms());
 
-                channel.setResponseAmplitude(String.valueOf(amplitude));
-                channel.setRelativeResponseAmplitude(String.valueOf(amplitude / neededAmplitude * 100.0));
-                channel.setResponseRms(String.valueOf(rms));
-                channel.setRelativeResponseRms(String.valueOf(rms / neededRms * 100.0));
-                channel.setResponseFrequency(String.valueOf(frequency));
-                channel.setRelativeResponseFrequency(String.valueOf(frequency / neededFrequency * 100.0));
+                channel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
+                channel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : amplitude / neededAmplitude * 100.0));
+                channel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
+                channel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : rms / neededRms * 100.0));
+                channel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
+                channel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : frequency / neededFrequency * 100.0));
             }
         }
 
