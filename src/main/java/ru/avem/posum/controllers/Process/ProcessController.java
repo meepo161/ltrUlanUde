@@ -453,9 +453,9 @@ public class ProcessController implements BaseController {
 
             process.setStopped(false);
             process.initData(getModules());
+            tableController.showParametersOfSignal();
             while (!process.isStopped()) {
                 process.perform();
-                tableController.showParametersOfSignal();
             }
         } else {
             statusBarLine.setStatus("Ошибка запуска программы испытаний", false);

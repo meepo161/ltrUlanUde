@@ -11,10 +11,9 @@ import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.models.Process.ChannelModel;
-import ru.avem.posum.models.Process.SignalParamtersModel;
+import ru.avem.posum.models.Process.SignalParametersModel;
 import ru.avem.posum.utils.Utils;
 
-import java.util.Collection;
 import java.util.List;
 
 public class TableController {
@@ -34,7 +33,7 @@ public class TableController {
     private GraphController graphController;
     private ProcessController processController;
     private boolean showStopped;
-    private SignalParamtersModel signalParametersModel = new SignalParamtersModel();
+    private SignalParametersModel signalParametersModel = new SignalParametersModel();
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
@@ -262,15 +261,15 @@ public class TableController {
     public void showParametersOfSignal() {
         new Thread(() -> {
             while (!showStopped) {
-                signalParametersModel.setFields(processController.getProcess().getData());
+                signalParametersModel.setData(processController.getProcess().getData());
                 signalParametersModel.setAdcFrequencies(processController.getModules());
                 signalParametersModel.calculateParameters();
 
-//                System.out.printf("Amplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
-//                System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
-//                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
-//                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
-//                System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
+                System.out.printf("\nAmplitude: %f\n", signalParametersModel.getAmplitude(9, 3));
+                System.out.printf("Dc: %f\n", signalParametersModel.getDc(9, 3));
+                System.out.printf("Frequency: %f\n", signalParametersModel.getFrequency(9, 3));
+                System.out.printf("Loads counter: %f\n", signalParametersModel.getLoadsCounter(9, 3));
+                System.out.printf("Rms: %f\n", signalParametersModel.getRms(9, 3));
 
                 Utils.sleep(1000);
             }

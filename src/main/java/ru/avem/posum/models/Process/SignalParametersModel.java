@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 
-public class SignalParamtersModel {
+public class SignalParametersModel {
     private final int SLOTS = 16; // максимальное количество слотов
     private final int CHANNELS = 4; // количество каналов АЦП
 
@@ -27,7 +27,11 @@ public class SignalParamtersModel {
     private int[][] samplesPerSemiPeriods = new int[SLOTS][];
     private double[][] zeroTransitionCounter = new double[SLOTS][];
 
-    public void setFields(double[][] data) {
+    public SignalParametersModel() {
+        initArrays();
+    }
+
+    private void initArrays() {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
             adcFrequencies = new double[SLOTS];
             amplitudes[moduleIndex] = new double[CHANNELS];
@@ -42,10 +46,10 @@ public class SignalParamtersModel {
             samplesPerSemiPeriod[moduleIndex] = new double[CHANNELS];
             samplesPerSemiPeriods[moduleIndex] = new int[CHANNELS];
             zeroTransitionCounter[moduleIndex] = new double[CHANNELS];
-
-//            System.out.printf("Data[%d][0]: %f, Data[%d][1]: %f, Data[%d][2]: %f, Data[%d][3]: %f\n", moduleIndex, data[moduleIndex][0], moduleIndex, data[moduleIndex][1], moduleIndex, data[moduleIndex][2], moduleIndex, data[moduleIndex][3]);
         }
+    }
 
+    public void setData(double[][] data) {
         this.data = data;
     }
 
@@ -83,7 +87,7 @@ public class SignalParamtersModel {
                 maxSignalValues[moduleIndex][channelIndex] = max;
                 minSignalValues[moduleIndex][channelIndex] = min;
 
-                System.out.printf("Slot: %d. Channel: %d. Max: %f, min: %f\n", moduleIndex + 1, channelIndex + 1, maxSignalValues[moduleIndex][channelIndex], minSignalValues[moduleIndex][channelIndex]);
+//                System.out.printf("Slot: %d. Channel: %d. Max: %f, min: %f\n", moduleIndex + 1, channelIndex + 1, maxSignalValues[moduleIndex][channelIndex], minSignalValues[moduleIndex][channelIndex]);
 
                 if (frequencies[moduleIndex][channelIndex] > 2) {
                     calculateAverageMinAndMaxValues(moduleIndex, channelIndex);
@@ -187,7 +191,7 @@ public class SignalParamtersModel {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
             for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
                 double frequency;
-                int accuracyCoefficient = 10; // коэффициент для переключения алгоритмов
+                int accuracyCoefficient = 25; // коэффициент для переключения алгоритмов
 
                 if (estimateFrequency(moduleIndex, channelIndex) < accuracyCoefficient) {
                     frequency = defineFrequencyFirstAlgorithm(moduleIndex, channelIndex);
@@ -229,7 +233,7 @@ public class SignalParamtersModel {
         double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude();
         samplesPerSemiPeriod[moduleIndex][channelIndex] = zeroTransitionCounter[moduleIndex][channelIndex] = 0;
 
-        for (int index = channelIndex; index < data.length; index += CHANNELS) {
+        for (int index = channelIndex; index < data[moduleIndex].length; index += CHANNELS) {
             double value = data[moduleIndex][index] + shift;
             double centerOfSignal = dc[moduleIndex][channelIndex] + shift;
 
@@ -282,7 +286,7 @@ public class SignalParamtersModel {
         samplesPerSemiPeriods[moduleIndex][channelIndex] = 0;
         zeroTransitionCounter[moduleIndex][channelIndex] = 0;
 
-        for (int index = channelIndex; index < data.length; index += CHANNELS) {
+        for (int index = channelIndex; index < data[moduleIndex].length; index += CHANNELS) {
             double value = data[moduleIndex][index] + shift;
             double centerOfSignal = dc[moduleIndex][channelIndex] + shift;
 
