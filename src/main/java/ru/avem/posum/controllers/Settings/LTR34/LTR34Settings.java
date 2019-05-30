@@ -259,7 +259,7 @@ public class LTR34Settings implements BaseController {
         new Thread(() -> {
             ltr34ChannelsSettings.saveSettings();
             ltr34ModuleSettings.saveSettings();
-//            ltr34SettingsModel.stopModule();
+            ltr34SettingsModel.stopModule();
             cm.loadItemsForMainTableView();
             cm.loadItemsForModulesTableView();
         }).start();
