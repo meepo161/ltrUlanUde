@@ -225,8 +225,8 @@ public class GraphController {
     }
 
     public void setFields(int slot, int channel) {
-        this.slot = slot - 1;
-        this.channel = channel - 1;
+        this.slot = slot;
+        this.channel = channel;
     }
 
     public void showGraph() {
@@ -234,6 +234,8 @@ public class GraphController {
 
         showingThread = new Thread(() -> {
             while (!process.isStopped()) {
+                System.out.printf("Slot: %d, channel: %d\n", slot, channel);
+
                 double[] data = process.getData(slot);
                 graphModel.setFields(data, slot, channel);
                 Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
