@@ -264,7 +264,7 @@ public class TableController {
         new Thread(() -> {
             signalParametersModel.setTypesOfModules(processController.getTypesOfModules());
 
-            while (!showStopped) {
+            while (!showStopped && !processController.getProcess().isStopped()) {
                 signalParametersModel.setData(processController.getProcess().getData());
                 signalParametersModel.setAdcFrequencies(processController.getModules());
                 signalParametersModel.calculateParameters();
@@ -281,38 +281,35 @@ public class TableController {
 
         for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
             Modules module = modules.get(moduleIndex);
-            List<Integer> checkedChannels = new ArrayList<>();
-            int channelModelIndex = 0;
+            List<Pair<Integer, String>> checkedChannels = new ArrayList<>();
 
             if (!module.getModuleType().equals(Crate.LTR34)) {
-                checkedChannels = Modules.getCheckedChannels(module);
-
-                for (int i = 0; i < channels.size(); i++) {
-                    if (channels.get(i).getSlot() == module.getSlot()) {
-                        channelModelIndex = i;
-                        break;
-                    }
-                }
+                checkedChannels = Modules.getChannelsDescriptions(module);
             }
 
-            for (int i = 0; i < checkedChannels.size(); i++) {
-                int channelIndex = checkedChannels.get(i);
-                ChannelModel channel = channels.get(channelModelIndex + i);
-                double amplitude = signalParametersModel.getAmplitude(moduleIndex, channelIndex);
-                double neededAmplitude = Double.parseDouble(channel.getAmplitude());
-                double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
-                double neededDc = Double.parseDouble(channel.getDc());
-                double frequency = signalParametersModel.getFrequency(moduleIndex, channelIndex);
-                double neededFrequency = Double.parseDouble(channel.getFrequency());
-                double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
-                double neededRms = Double.parseDouble(channel.getRms());
+            for (Pair<Integer, String> checkedChannel : checkedChannels) {
+                for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
+                    if (channels.get(channelIndex).getName().contains(checkedChannel.getValue())) {
+                        ChannelModel channel = channels.get(channelIndex);
+                        double amplitude = signalParametersModel.getAmplitude(moduleIndex, channelIndex);
+                        double neededAmplitude = Double.parseDouble(channel.getAmplitude());
+                        double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
+                        double neededDc = Double.parseDouble(channel.getDc());
+                        double frequency = signalParametersModel.getFrequency(moduleIndex, channelIndex);
+                        double neededFrequency = Double.parseDouble(channel.getFrequency());
+                        double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
+                        double neededRms = Double.parseDouble(channel.getRms());
 
-                channel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
-                channel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : amplitude / neededAmplitude * 100.0));
-                channel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
-                channel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : rms / neededRms * 100.0));
-                channel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
-                channel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : frequency / neededFrequency * 100.0));
+                        channel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
+                        channel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : amplitude / neededAmplitude * 100.0));
+                        channel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
+                        channel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : rms / neededRms * 100.0));
+                        channel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
+                        channel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : frequency / neededFrequency * 100.0));
+
+                    }
+                }
+
             }
         }
 
