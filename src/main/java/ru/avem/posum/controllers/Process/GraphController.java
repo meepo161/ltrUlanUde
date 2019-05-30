@@ -234,8 +234,6 @@ public class GraphController {
 
         showingThread = new Thread(() -> {
             while (!process.isStopped()) {
-                System.out.printf("Slot: %d, channel: %d\n", slot, channel);
-
                 double[] data = process.getData(slot);
                 graphModel.setFields(data, slot, channel);
                 Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());

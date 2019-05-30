@@ -237,7 +237,8 @@ public class TableController {
 
                     for (Pair<Integer, String> description : descriptions) {
                         if (description.getValue().equals(channelDescription)) {
-                            return new Pair<>(moduleIndex, description.getKey() - 1);                        }
+                            return new Pair<>(moduleIndex, description.getKey() - 1);
+                        }
                     }
                 }
 
@@ -340,16 +341,14 @@ public class TableController {
             ObservableList<ColorPicker> colorPickers = getColorPickers();
             boolean isProcessStopped = processController.getStopButton().isDisable();
 
-            for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-                int finalChannelIndex = channelIndex;
 
-                Platform.runLater(() -> {
-                    checkBoxes.get(finalChannelIndex).setDisable(isProcessStopped);
-                    Utils.sleep(10); // пауза для переключения состояния
-                    colorPickers.get(finalChannelIndex).setDisable(isProcessStopped);
-                    Utils.sleep(10); // пауза для переключения состояния
-                });
-            }
+            Platform.runLater(() -> {
+                for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+                    checkBoxes.get(channelIndex).setDisable(isProcessStopped);
+                    colorPickers.get(channelIndex).setDisable(isProcessStopped);
+                }
+            });
+
 
             graphController.getAutoscaleCheckBox().setDisable(isProcessStopped);
             graphController.getRarefactionCoefficientLabel().setDisable(isProcessStopped);
