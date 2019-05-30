@@ -308,11 +308,11 @@ public class TableController {
                         double neededRms = Double.parseDouble(channelModel.getRms());
 
                         channelModel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
-                        channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : amplitude / neededAmplitude * 100.0));
+                        channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 1000)));
                         channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
-                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : rms / neededRms * 100.0));
+                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 1000)));
                         channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
-                        channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : frequency / neededFrequency * 100.0));
+                        channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 1000)));
                     }
                 }
 

@@ -647,6 +647,10 @@ public class ProcessController implements BaseController {
     }
 
     private void loadTestProgram() {
+        clearView();
+    }
+
+    private void clearView() {
         Platform.runLater(() -> table.getItems().clear());
         cm.getLinkedChannels().clear();
         cm.getChosenChannels().clear();
@@ -655,5 +659,6 @@ public class ProcessController implements BaseController {
         journalTableView.getItems().clear();
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
+        programController.clear();
     }
 }

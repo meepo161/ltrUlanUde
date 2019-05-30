@@ -464,6 +464,17 @@ public class ProgramController {
         topPanel.maxHeight(mainPanel.getMaxHeight());
         topPanel.minHeight(mainPanel.getMaxHeight());
         programModel.resetProgramClickCounter();
+        amplitudeCheckBox.setSelected(false);
+        amplitudeTextField.setText("0");
+        dcCheckBox.setSelected(false);
+        dcTextField.setText("0");
+        rmsCheckBox.setSelected(false);
+        rmsTextField.setText("0");
+        frequencyCheckBox.setSelected(false);
+        frequencyTextField.setText("0");
+        pTextField.setText("0");
+        iTextField.setText("0");
+        dTextField.setText("0");
     }
 
     public int getChosenParameterIndex() {

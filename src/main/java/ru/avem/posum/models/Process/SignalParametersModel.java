@@ -64,38 +64,39 @@ public class SignalParametersModel {
     }
 
     public void calculateParameters() {
-        calculateMinAndMaxValues();
-        calculateAmplitudes();
-        calculateDC();
-        calculateRms();
-        calculateFrequencies();
-        calculateLoadsCounters();
+        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
+            if (!typesOfModules[moduleIndex].equals(Crate.LTR34)) {
+                calculateMinAndMaxValues(moduleIndex);
+                calculateAmplitudes(moduleIndex);
+                calculateDC(moduleIndex);
+                calculateRms(moduleIndex);
+                calculateFrequencies(moduleIndex);
+                calculateLoadsCounters(moduleIndex);
+            }
+        }
     }
 
-    private void calculateMinAndMaxValues() {
-        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-                double min = Integer.MAX_VALUE;
-                double max = Integer.MIN_VALUE;
+    private void calculateMinAndMaxValues(int moduleIndex) {
+        for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            double min = Integer.MAX_VALUE;
+            double max = Integer.MIN_VALUE;
 
-                for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
-                    if (data[moduleIndex][i] > max) {
-                        max = data[moduleIndex][i];
-                    }
-
-                    if (data[moduleIndex][i] < min) {
-                        min = data[moduleIndex][i];
-                    }
+            for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
+                if (data[moduleIndex][i] > max) {
+                    max = data[moduleIndex][i];
                 }
 
-                maxSignalValues[moduleIndex][channelIndex] = max;
-                minSignalValues[moduleIndex][channelIndex] = min;
-
-                if (frequencies[moduleIndex][channelIndex] > 2) {
-                    calculateAverageMinAndMaxValues(moduleIndex, channelIndex);
+                if (data[moduleIndex][i] < min) {
+                    min = data[moduleIndex][i];
                 }
             }
 
+            maxSignalValues[moduleIndex][channelIndex] = max;
+            minSignalValues[moduleIndex][channelIndex] = min;
+
+            if (frequencies[moduleIndex][channelIndex] > 2) {
+                calculateAverageMinAndMaxValues(moduleIndex, channelIndex);
+            }
         }
     }
 
@@ -156,53 +157,45 @@ public class SignalParametersModel {
         minSignalValues[moduleIndex][channelIndex] = min;
     }
 
-    private void calculateAmplitudes() {
-        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-                double amplitude = (maxSignalValues[moduleIndex][channelIndex] - minSignalValues[moduleIndex][channelIndex]) / 2;
-                amplitudes[moduleIndex][channelIndex] = amplitude < 0 ? 0 : amplitude;
-            }
+    private void calculateAmplitudes(int moduleIndex) {
+        for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            double amplitude = (maxSignalValues[moduleIndex][channelIndex] - minSignalValues[moduleIndex][channelIndex]) / 2;
+            amplitudes[moduleIndex][channelIndex] = amplitude < 0 ? 0 : amplitude;
         }
     }
 
-    private void calculateDC() {
-        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-                double dc = (maxSignalValues[moduleIndex][channelIndex] + minSignalValues[moduleIndex][channelIndex]) / 2;
-                this.dc[moduleIndex][channelIndex] = dc;
-            }
+    private void calculateDC(int moduleIndex) {
+        for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            double dc = (maxSignalValues[moduleIndex][channelIndex] + minSignalValues[moduleIndex][channelIndex]) / 2;
+            this.dc[moduleIndex][channelIndex] = dc;
         }
     }
 
-    private void calculateRms() {
-        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-                double summ = 0;
+    private void calculateRms(int moduleIndex) {
+        for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            double summ = 0;
 
-                for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
-                    summ += (data[moduleIndex][i] - dc[moduleIndex][channelIndex]) * (data[moduleIndex][i] - dc[moduleIndex][channelIndex]);
-                }
-
-                double rms = Math.sqrt(summ / data[moduleIndex].length * CHANNELS);
-                this.rms[moduleIndex][channelIndex] = rms < 0 ? 0 : rms;
+            for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
+                summ += (data[moduleIndex][i] - dc[moduleIndex][channelIndex]) * (data[moduleIndex][i] - dc[moduleIndex][channelIndex]);
             }
+
+            double rms = Math.sqrt(summ / data[moduleIndex].length * CHANNELS);
+            this.rms[moduleIndex][channelIndex] = rms < 0 ? 0 : rms;
         }
     }
 
-    private void calculateFrequencies() {
-        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-                double frequency;
-                double estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
-                int accuracyCoefficient = 100; // коэффициент для переключения алгоритмов
+    private void calculateFrequencies(int moduleIndex) {
+        for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            double frequency;
+            double estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
+            int accuracyCoefficient = 100; // коэффициент для переключения алгоритмов
 
-                frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
-                if (!(frequency <= 5)) {
-                    frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? bufferedFrequency[moduleIndex][channelIndex] : frequency;
-                }
-                frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
-                bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
+            frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
+            if (!(frequency <= 5)) {
+                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? bufferedFrequency[moduleIndex][channelIndex] : frequency;
             }
+            frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
+            bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
         }
     }
 
@@ -346,11 +339,9 @@ public class SignalParametersModel {
         }
     }
 
-    private void calculateLoadsCounters() {
-        for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
-            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-                loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];
-            }
+    private void calculateLoadsCounters(int moduleIndex) {
+        for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];
         }
     }
 
