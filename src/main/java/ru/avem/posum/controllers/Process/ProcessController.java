@@ -29,6 +29,8 @@ import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
+    private Button addChannelsButton;
+    @FXML
     private Button addCommandButton;
     @FXML
     private Button addEventButton;
@@ -186,6 +188,7 @@ public class ProcessController implements BaseController {
     private ControllerManager cm;
     private EventsController eventsController = new EventsController();
     private GraphController graphController;
+    private boolean initialized;
     private Process process = new Process();
     private ProgramController programController;
     private List<Node> uiElements = new ArrayList<>();
@@ -270,6 +273,14 @@ public class ProcessController implements BaseController {
 
     public void handleInitialize() {
         if (!getModules().isEmpty()) {
+            doInitialization();
+        } else {
+            statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
+        }
+    }
+
+    private void doInitialization() {
+        if (!initialized) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
             eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
@@ -294,21 +305,57 @@ public class ProcessController implements BaseController {
                 }
             }).start();
         } else {
-            statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Отмена инициализации модулей");
+            eventsController.getEventModel().addEvent("Отмена инициализации модулей", EventsTypes.LOG);
+
+            toggleUiElements(true);
+            programController.clear();
+
+            new Thread(() -> {
+                process.disconnect();
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.clearStatusBar();
+
+                if (!process.isConnected()) {
+                    statusBarLine.setStatus("Отмена инициализации модулей успешно выполнена", true);
+                    eventsController.getEventModel().addEvent("Отмена инициализации модулей успешно выполнена", EventsTypes.OK);
+                    initialized = false;
+                } else {
+                    statusBarLine.setStatus("Произошла ошибка при отмене инициализации модулей", false);
+                    eventsController.getEventModel().addEvent("Произошла ошибка при отмене инициализации модулей", EventsTypes.WARNING);
+                }
+
+                toggleInitializationUiElements();
+            }).start();
         }
     }
 
     private void toggleInitializationUiElements() {
-        toProgramButton.setDisable(false);
-        initializeButton.setDisable(false);
-        backButton.setDisable(false);
-        table.setDisable(false);
-        graph.setDisable(false);
-        commandsTableView.setDisable(false);
-        addCommandButton.setDisable(false);
-        journalTableView.setDisable(false);
-        addEventButton.setDisable(false);
-        saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+        if (!initialized) {
+            toProgramButton.setDisable(false);
+            initializeButton.setDisable(false);
+            backButton.setDisable(false);
+            table.setDisable(false);
+            graph.setDisable(false);
+            commandsTableView.setDisable(false);
+            addCommandButton.setDisable(false);
+            journalTableView.setDisable(false);
+            addEventButton.setDisable(false);
+            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+            Platform.runLater(() -> initializeButton.setText("Инициализация"));
+        } else {
+            startButton.setDisable(false);
+            backButton.setDisable(false);
+            table.setDisable(false);
+            graph.setDisable(false);
+            commandsTableView.setDisable(false);
+            addCommandButton.setDisable(false);
+            journalTableView.setDisable(false);
+            addEventButton.setDisable(false);
+            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+            Platform.runLater(() -> initializeButton.setText("Отменить"));
+        }
     }
 
     public ObservableList<Modules> getModules() {
@@ -405,23 +452,14 @@ public class ProcessController implements BaseController {
             process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
-
-            initializeButton.setDisable(true);
-            startButton.setDisable(false);
-            backButton.setDisable(false);
-            table.setDisable(false);
-            graph.setDisable(false);
-            commandsTableView.setDisable(false);
-            addCommandButton.setDisable(false);
-            journalTableView.setDisable(false);
-            addEventButton.setDisable(false);
-            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+            initialized = true;
+            Platform.runLater(() -> startButton.requestFocus());
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
             showErrors();
-
-            toggleInitializationUiElements();
         }
+
+        toggleInitializationUiElements();
     }
 
     private void showErrors() {
@@ -451,29 +489,30 @@ public class ProcessController implements BaseController {
         statusBarLine.clearStatusBar();
         statusBarLine.toggleProgressIndicator(true);
 
-        toggleUiElements(false);
-
         if (process.isRan()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешный запуск модулей", EventsTypes.OK);
 
-            toProgramButton.setDisable(true);
             initializeButton.setDisable(true);
-            addCommandButton.setDisable(true);
-            startButton.setDisable(true);
-            autoscaleCheckBox.setDisable(true);
-            rarefactionCoefficientLabel.setDisable(true);
-            rarefactionCoefficientComboBox.setDisable(true);
-            horizontalScaleLabel.setDisable(true);
-            horizontalScaleComboBox.setDisable(true);
-            verticalScaleLabel.setDisable(true);
-            verticalScaleComboBox.setDisable(true);
+            smoothStopButton.setDisable(false);
+            stopButton.setDisable(false);
+            timeLabel.setDisable(false);
+            timeTextField.setDisable(false);
+            savePointButton.setDisable(false);
+            saveWaveformButton.setDisable(false);
+            saveProtocolButton.setDisable(false);
+            backButton.setDisable(false);
+            table.setDisable(false);
+            graph.setDisable(false);
+            commandsTableView.setDisable(false);
+            journalTableView.setDisable(false);
+            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+            addEventButton.setDisable(false);
+            Platform.runLater(() -> stopButton.requestFocus());
 
             process.setStopped(false);
             process.initData(getModules());
-
             tableController.showParametersOfSignal();
-
             stopwatchController.startStopwatch();
 
             while (!process.isStopped()) {
@@ -482,7 +521,6 @@ public class ProcessController implements BaseController {
         } else {
             statusBarLine.setStatus("Ошибка запуска программы испытаний", false);
             showErrors();
-
             process.finish();
             toggleInitializationUiElements();
         }
@@ -524,14 +562,15 @@ public class ProcessController implements BaseController {
         tableController.setDefaultChannelsState();
         graphController.setDefaultGraphControlsState();
 
+        initialized = false;
         toggleInitializationUiElements();
-        startButton.setDisable(true);
-        smoothStopButton.setDisable(true);
-        stopButton.setDisable(true);
+        saveProtocolButton.setDisable(false);
+        Platform.runLater(() -> saveProtocolButton.requestFocus());
     }
 
     public void handleToProgramButton() {
         programController.toggleSettingsPanel();
+        Platform.runLater(() -> addChannelsButton.requestFocus());
     }
 
     public void handleLinkButton() {
