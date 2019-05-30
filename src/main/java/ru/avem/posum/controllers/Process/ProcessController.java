@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -642,5 +643,17 @@ public class ProcessController implements BaseController {
 
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
+        loadTestProgram();
+    }
+
+    private void loadTestProgram() {
+        Platform.runLater(() -> table.getItems().clear());
+        cm.getLinkedChannels().clear();
+        cm.getChosenChannels().clear();
+        cm.getChosenModules().clear();
+        commandsTableView.getItems().clear();
+        journalTableView.getItems().clear();
+        statusBarLine.toggleProgressIndicator(true);
+        statusBarLine.clearStatusBar();
     }
 }

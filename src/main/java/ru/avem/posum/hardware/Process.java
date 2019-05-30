@@ -23,7 +23,7 @@ public class Process {
     private int[][] settingsOfModules = new int[SLOTS][SLOTS];
     private int[] slots = new int[SLOTS];
     private String[] statuses = new String[SLOTS];
-    private boolean stopped;
+    private boolean stopped = true;
     private TextEncoder textEncoder = new TextEncoder();
     private double[][] timeMarks = new double[SLOTS][SLOTS];
     private int[][] typesOfChannels = new int[SLOTS][SLOTS];
