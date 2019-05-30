@@ -473,8 +473,7 @@ public class ProcessController implements BaseController {
 
             tableController.showParametersOfSignal();
 
-            stopwatchController.start();
-            stopwatchController.showTime();
+            stopwatchController.startStopwatch();
 
             while (!process.isStopped()) {
                 process.perform();
@@ -504,6 +503,7 @@ public class ProcessController implements BaseController {
         new Thread(() -> {
             process.setStopped(true);
             process.finish();
+            stopwatchController.pauseStopwatch();
             checkFinish();
         }).start();
     }
@@ -569,6 +569,7 @@ public class ProcessController implements BaseController {
                 }
 
                 programController.clear();
+                stopwatchController.stopStopwatch();
                 wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
             }
         }

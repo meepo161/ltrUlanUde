@@ -64,12 +64,12 @@
                                 </Button>
                                 <Pane prefHeight="93.0" prefWidth="156.0">
                                     <children>
-                                        <Label fx:id="timeLabel" disable="true" layoutX="12.0" layoutY="6.0" text="Время с начала запуска">
+                                        <Label fx:id="timeLabel" disable="true" layoutX="10.0" layoutY="6.0" text="Время с начала запуска">
                                             <font>
                                                 <Font name="Arial" size="12.0" />
                                             </font>
                                         </Label>
-                                        <TextField fx:id="timeTextField" alignment="TOP_RIGHT" disable="true" focusTraversable="false" layoutX="7.0" layoutY="29.0" maxHeight="16.0" mouseTransparent="true" prefHeight="16.0" prefWidth="146.0" text="0:00:00">
+                                        <TextField fx:id="timeTextField" alignment="TOP_RIGHT" disable="true" focusTraversable="false" layoutX="3.0" layoutY="29.0" maxHeight="16.0" mouseTransparent="true" prefHeight="16.0" prefWidth="150.0" text="0 00:00:00">
                                             <font>
                                                 <Font name="Arial Black" size="16.0" />
                                             </font>
@@ -285,7 +285,7 @@
                                 <items>
                                           <TableView fx:id="table" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" pickOnBounds="false" styleClass="processTable">
                                               <placeholder>
-                                                  <Label text="Нет данных для отображения" />
+                                                  <Label style="-fx-font-weight: normal;" text="Нет данных для отображения" />
                                               </placeholder>
                                               <columns>
                                                   <TableColumn fx:id="channelsColumn" editable="false" minWidth="80.0" sortable="false" text="Каналы" />

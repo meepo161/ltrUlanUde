@@ -6,50 +6,76 @@ import javafx.scene.control.TextField;
 import org.apache.commons.lang3.time.StopWatch;
 import ru.avem.posum.utils.Utils;
 
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class StopwatchController {
+    private int daysCount;
+    private boolean firstStart = true;
     private ProcessController processController;
+    private boolean stopped;
     private StopWatch stopWatch = new StopWatch();
     private Label stopwatchLabel;
     private TextField stopwatchTextField;
-    private Date time;
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
     public StopwatchController(ProcessController processController, Label stopwatchLabel, TextField stopwatchTextField) {
         this.processController = processController;
         this.stopwatchLabel = stopwatchLabel;
         this.stopwatchTextField = stopwatchTextField;
+        timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public void start() {
+    public void startStopwatch() {
+        resetStopwatch();
         stopWatch.start();
+        showTime();
     }
 
     public void showTime() {
         new Thread(() -> {
-            while (!processController.getProcess().isStopped()) {
-                time = new Date(stopWatch.getTime());
-                time.setHours(0);
-                System.out.println(time.toString());
-//                System.out.println(String.format("%d:%d:%d\n", time.getHours(), time.getMinutes(), time.getSeconds()));
-                Utils.sleep(500);
+            while (!stopped && !processController.getProcess().isStopped()) {
+                String elapsedTime = timeFormat.format(stopWatch.getTime());
+                String elapsedDays = getDays(elapsedTime);
+
+                Platform.runLater(() -> stopwatchTextField.setText(elapsedDays + elapsedTime));
+                Utils.sleep(1000);
             }
         }).start();
     }
 
-    public void stop() {
-        stopWatch.stop();
+    private String getDays(String currentTime) {
+        if (!firstStart && currentTime.substring(6, 8).equals("00")) {
+            ++daysCount;
+        }
+
+        firstStart = false;
+        return String.format("%d ", daysCount);
     }
 
-    public void pause() {
+    public void stopStopwatch() {
+        stopped = true;
+        stopWatch.stop();
+        resetStopwatch();
+        Platform.runLater(() -> stopwatchTextField.setText("0 00:00:00"));
+    }
+
+    public void pauseStopwatch() {
+        stopped = true;
         stopWatch.suspend();
     }
 
     public void resume() {
+        stopped = false;
         stopWatch.resume();
+        showTime();
     }
 
-    public void resetTimer() {
+    private void resetStopwatch() {
+        daysCount = 0;
+        firstStart = true;
         stopWatch.reset();
     }
 
