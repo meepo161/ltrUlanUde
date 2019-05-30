@@ -3,6 +3,7 @@ package ru.avem.posum.models.Signal;
 import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
+import ru.avem.posum.utils.MovingAverage;
 
 import java.util.*;
 
@@ -63,9 +64,8 @@ public class SignalParametersModel {
     }
 
     private void setFields(double[] rawData, int channel) {
-        //TODO
-//        MovingAverage ma = new MovingAverage(10);
-//        this.data = ma.exponentialMovingAverage(rawData,channel);
+        MovingAverage ma = new MovingAverage(10);
+        this.data = ma.exponentialMovingAverage(rawData,channel);
         this.data = rawData;
         this.channel = channel;
     }
@@ -203,21 +203,24 @@ public class SignalParametersModel {
     }
 
     private double calculateFrequency() {
+        double estimatedFrequency = estimateFrequency();
         double frequency;
 
-        if (estimateFrequency() < accuracyCoefficient) {
+        if (estimatedFrequency < accuracyCoefficient) {
             frequency = defineFrequencyFirstAlgorithm();
         } else {
             frequency = defineFrequencySecondAlgorithm();
         }
 
-        return amplitude < getLowerLimitOfAmplitude() ? 0 : frequency;
+        double freq = amplitude < getLowerLimitOfAmplitude() ? 0 : frequency;
+        freq = (freq < estimatedFrequency / 2 || freq > estimatedFrequency * 2) ? estimatedFrequency : freq;
+        return freq;
     }
 
 
     private double getLowerLimitOfAmplitude() {
         return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
-                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.001;
+                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
     }
 
     private double estimateFrequency() {
