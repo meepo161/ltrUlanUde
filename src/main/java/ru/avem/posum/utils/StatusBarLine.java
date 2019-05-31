@@ -28,6 +28,7 @@ public class StatusBarLine {
 
     public void setStatusOfProgress(String text) {
         clearStatusBar();
+        toggleProgressIndicator(false);
         Platform.runLater(() -> {
             hideIcons();
             statusBar.setStyle("-fx-padding: 0 0 0 3.2;");
@@ -86,6 +87,7 @@ public class StatusBarLine {
     }
 
     public void clearStatusBar() {
+        toggleProgressIndicator(true);
         Platform.runLater(() -> {
             hideIcons();
             statusBar.setText("");

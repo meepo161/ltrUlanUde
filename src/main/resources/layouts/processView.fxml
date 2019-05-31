@@ -243,7 +243,7 @@
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="saveButton" disable="true" layoutX="343.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
+                                <Button fx:id="saveButton" disable="true" layoutX="343.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveRegulatorParameters" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
@@ -364,12 +364,12 @@
                                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                                 </columnResizePolicy>
                                             </TableView>
-                                            <Button fx:id="addEventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleAddEventButton" text="Добавить событие" GridPane.rowIndex="1">
+                                            <Button fx:id="addEventButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleAddEvent" text="Добавить событие" GridPane.rowIndex="1">
                                                 <font>
                                                     <Font name="Arial" size="12.0" />
                                                 </font>
                                             </Button>
-                                            <Button fx:id="saveJournalButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleExpandEventTableButton" prefWidth="110.0" text="Сохранить" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                            <Button fx:id="saveJournalButton" disable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#handleSaveJournal" prefWidth="110.0" text="Сохранить" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                 <font>
                                                     <Font name="Arial" size="12.0" />
                                                 </font>

@@ -9,6 +9,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.LinkingModel;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-public class LinkingController implements BaseController {
+public class LinkingController implements BaseController, LinkingManager {
     @FXML
     private Button addChannelButton;
     @FXML
@@ -42,11 +43,11 @@ public class LinkingController implements BaseController {
     @FXML
     private Label warningIcon;
 
-    private LinkingModel linkingModel = new LinkingModel();
     private GraphModel graphModel;
+    private LinkingModel linkingModel = new LinkingModel();
+    private ProcessController processController;
     private StatusBarLine statusBarLine;
     private TestProgram testProgram;
-    private ControllerManager cm;
     private WindowsManager wm;
 
     @FXML
@@ -68,6 +69,27 @@ public class LinkingController implements BaseController {
         }).start();
     }
 
+    @Override
+    public ObservableList<CheckBox> getChosenChannels() {
+        return linkingModel.getChosenChannels();
+    }
+
+    @Override
+    public ObservableList<Modules> getChosenModules() {
+        return linkingModel.getChosenModules();
+    }
+
+    @Override
+    public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
+        return linkingModel.getLinkedChannels();
+    }
+
+    @Override
+    public List<Modules> getLinkedModules() {
+        return linkingModel.getLinkedModules();
+    }
+
+    @Override
     public void initListViews() {
         linkingModel.setTestProgram(testProgram);
 
@@ -83,6 +105,11 @@ public class LinkingController implements BaseController {
 
             checkItems(adcChannelsListView);
         });
+    }
+
+    @Override
+    public void setGraphModel() {
+        setGraphModel(processController.getGraphController().getGraphModel());
     }
 
     private void listenChannels(ObservableList<CheckBox> checkBoxes) {
@@ -227,11 +254,6 @@ public class LinkingController implements BaseController {
     }
 
     @Override
-    public void setControllerManager(ControllerManager cm) {
-        this.cm = cm;
-    }
-
-    @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
     }
@@ -240,11 +262,15 @@ public class LinkingController implements BaseController {
         return linkingModel;
     }
 
-    public void setTestProgram(TestProgram testProgram) {
-        this.testProgram = testProgram;
-    }
-
     public void setGraphModel(GraphModel graphModel) {
         this.graphModel = graphModel;
+    }
+
+    public void setProcessController(ProcessController processController) {
+        this.processController = processController;
+    }
+
+    public void setTestProgram(TestProgram testProgram) {
+        this.testProgram = testProgram;
     }
 }

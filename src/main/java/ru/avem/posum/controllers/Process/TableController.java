@@ -222,7 +222,7 @@ public class TableController {
     }
 
     private int parseChannel(String channelDescription, int slot) {
-        List<Modules> modules = processController.getModules();
+        List<Modules> modules = processController.getProcessModel().getModules();
         int channel = 0;
 
         for (Modules module : modules) {
@@ -262,11 +262,11 @@ public class TableController {
 
     public void showParametersOfSignal() {
         new Thread(() -> {
-            signalParametersModel.setTypesOfModules(processController.getTypesOfModules());
+            signalParametersModel.setTypesOfModules(processController.getProcessModel().getTypesOfModules());
 
             while (!showStopped && !processController.getProcess().isStopped()) {
                 signalParametersModel.setData(processController.getProcess().getData());
-                signalParametersModel.setAdcFrequencies(processController.getModules());
+                signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
                 signalParametersModel.calculateParameters();
 
                 show();
@@ -277,7 +277,7 @@ public class TableController {
 
     private void show() {
         ObservableList<ChannelModel> channels = tableView.getItems();
-        ObservableList<Modules> modules = processController.getModules();
+        ObservableList<Modules> modules = processController.getProcessModel().getModules();
 
         for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
             Modules module = modules.get(moduleIndex);

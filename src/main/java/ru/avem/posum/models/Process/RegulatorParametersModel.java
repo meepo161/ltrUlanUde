@@ -1,6 +1,6 @@
 package ru.avem.posum.models.Process;
 
-public class ProgramModel {
+public class RegulatorParametersModel {
     private int toProgramCounter = 2;
 
     public boolean checkToProgramClicksCounter() {

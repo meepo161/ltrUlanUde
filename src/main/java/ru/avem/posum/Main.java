@@ -28,7 +28,6 @@ import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
-import ru.avem.posum.models.Process.ExperimentModel;
 import ru.avem.posum.models.Signal.SignalModel;
 import ru.avem.posum.utils.Utils;
 
@@ -74,8 +73,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
         crateLoginScene();
         createMainScene();
         createSettingsScene();
-        createProcessScene();
         createLinkingScene();
+        createProcessScene();
         createLTR24Scene();
         createLTR34Scene();
         createLTR212Scene();
@@ -126,14 +125,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
         settingsScene = createScene(1280, 720);
     }
 
-    private void createProcessScene() throws IOException {
-        processController = (ProcessController) getController("/layouts/processView.fxml");
-        processScene = createScene(1280, 720);
-    }
-
     private void createLinkingScene() throws IOException {
         linkingController = (LinkingController) getController("/layouts/linkingView.fxml");
         linkingScene = createScene(1280, 720);
+    }
+
+    private void createProcessScene() throws IOException {
+        processController = (ProcessController) getController("/layouts/processView.fxml");
+        processScene = createScene(1280, 720);
     }
 
     private void createLTR24Scene() throws IOException {
@@ -287,16 +286,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public ObservableList<CheckBox> getChosenChannels() {
-        return linkingController.getLinkingModel().getChosenChannels();
-    }
-
-    @Override
-    public ObservableList<Modules> getChosenModules() {
-        return linkingController.getLinkingModel().getChosenModules();
-    }
-
-    @Override
     public String getCrateSerialNumber() {
         return settings.getHardwareSettings().getCrateSerialNumber();
     }
@@ -317,13 +306,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
-        return linkingController.getLinkingModel().getLinkedChannels();
-    }
-
-    @Override
-    public List<Modules> getLinkedModules() {
-        return linkingController.getLinkingModel().getLinkedModules();
+    public LinkingController getLinkingController() {
+        return linkingController;
     }
 
     @Override
@@ -334,12 +318,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void hideRequiredFieldsSymbols() {
         settings.hideRequiredFieldsSymbols();
-    }
-
-    @Override
-    public void initListViews() {
-        linkingController.initListViews();
-        linkingController.setGraphModel(processController.getGraphController().getGraphModel());
     }
 
     @Override

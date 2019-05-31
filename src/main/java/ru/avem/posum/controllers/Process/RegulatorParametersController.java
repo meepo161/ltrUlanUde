@@ -9,16 +9,15 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import ru.avem.posum.ControllerManager;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.ChannelModel;
-import ru.avem.posum.models.Process.ProgramModel;
+import ru.avem.posum.models.Process.RegulatorParametersModel;
 import ru.avem.posum.utils.StatusBarLine;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProgramController {
+public class RegulatorParametersController {
     private CheckBox amplitudeCheckBox;
     private Label amplitudeLabel;
     private TextField amplitudeTextField;
@@ -51,33 +50,33 @@ public class ProgramController {
     private Slider dSlider;
     private TextField dTextField;
     private AnchorPane mainPanel;
-    private ProgramModel programModel = new ProgramModel();
+    private RegulatorParametersModel regulatorParametersModel = new RegulatorParametersModel();
     private ToolBar toolbarSettings;
     private VBox topPanel;
     private TableView<ChannelModel> tableView;
     private Button saveButton;
 
-    private List<CheckBox> pidParameters = new ArrayList<>();
     private List<Node> amplitudeUiElements = new ArrayList<>();
-    private List<Node> dcUiElements = new ArrayList<>();
-    private List<Node> rmsUiElements = new ArrayList<>();
-    private List<Node> frequencyUiElements = new ArrayList<>();
     private ContextMenu contextMenu = new ContextMenu();
+    private List<Node> dcUiElements = new ArrayList<>();
+    private List<Node> frequencyUiElements = new ArrayList<>();
+    private LinkingManager lm;
+    private List<CheckBox> pidParameters = new ArrayList<>();
     private Process process;
+    private List<Node> rmsUiElements = new ArrayList<>();
     private StatusBarLine statusBarLine;
-    private ControllerManager cm;
 
-    public ProgramController(CheckBox amplitudeCheckBox, Label amplitudeLabel, TextField amplitudeTextField,
-                             Label calibratedAmplitudeLabel, TextField calibratedAmplitudeTextField,
-                             Slider amplitudeSlider, CheckBox dcCheckBox, Label dcLabel, TextField dcTextField,
-                             Label calibratedDcLabel, TextField calibratedDcTextField, Slider dcSlider,
-                             CheckBox rmsCheckBox, Label rmsLabel, TextField rmsTextField, Label calibratedRmsLabel,
-                             TextField calibratedRmsTextField, Slider rmsSlider, CheckBox frequencyCheckBox,
-                             Label frequencyLabel, TextField frequencyTextField, Slider frequencySlider, Label pLabel,
-                             Slider pSlider, TextField pTextField, Label iLabel, Slider iSlider, TextField iTextField,
-                             Label dLabel, Slider dSlider, TextField dTextField, AnchorPane mainPanel,
-                             ToolBar toolbarSettings, VBox topPanel, TableView<ChannelModel> tableView,
-                             StatusBarLine statusBarLine, Button saveButton, Process process) {
+    public RegulatorParametersController(CheckBox amplitudeCheckBox, Label amplitudeLabel, TextField amplitudeTextField,
+                                         Label calibratedAmplitudeLabel, TextField calibratedAmplitudeTextField,
+                                         Slider amplitudeSlider, CheckBox dcCheckBox, Label dcLabel, TextField dcTextField,
+                                         Label calibratedDcLabel, TextField calibratedDcTextField, Slider dcSlider,
+                                         CheckBox rmsCheckBox, Label rmsLabel, TextField rmsTextField, Label calibratedRmsLabel,
+                                         TextField calibratedRmsTextField, Slider rmsSlider, CheckBox frequencyCheckBox,
+                                         Label frequencyLabel, TextField frequencyTextField, Slider frequencySlider, Label pLabel,
+                                         Slider pSlider, TextField pTextField, Label iLabel, Slider iSlider, TextField iTextField,
+                                         Label dLabel, Slider dSlider, TextField dTextField, AnchorPane mainPanel,
+                                         ToolBar toolbarSettings, VBox topPanel, TableView<ChannelModel> tableView,
+                                         StatusBarLine statusBarLine, Button saveButton, Process process) {
 
         this.amplitudeCheckBox = amplitudeCheckBox;
         this.amplitudeLabel = amplitudeLabel;
@@ -256,7 +255,7 @@ public class ProgramController {
 
     public void toggleSettingsPanel() {
         int TOOLBAR_HEIGHT = 110;
-        boolean hide = programModel.checkToProgramClicksCounter();
+        boolean hide = regulatorParametersModel.checkToProgramClicksCounter();
         double neededHeight = hide ? mainPanel.getMaxHeight() : mainPanel.getMaxHeight() + TOOLBAR_HEIGHT;
 
         toolbarSettings.setVisible(!hide);
@@ -425,18 +424,18 @@ public class ProgramController {
             String descriptionOfDacChannel = channelModel.getName().split(" -> ")[0];
             String descriptionOfAdcChannel = channelModel.getName().split(" -> ")[1];
 
-            for (Pair<CheckBox, CheckBox> channels : cm.getLinkedChannels()) {
+            for (Pair<CheckBox, CheckBox> channels : lm.getLinkedChannels()) {
                 if (channels.getKey().getText().equals(descriptionOfDacChannel) ||
                         channels.getValue().getText().equals(descriptionOfAdcChannel)) {
-                    Platform.runLater(() -> cm.getLinkedChannels().remove(channels));
+                    Platform.runLater(() -> lm.getLinkedChannels().remove(channels));
                 }
             }
         } else { // удаление выбранных каналов
             String descriptionOfChannel = channelModel.getName();
 
-            for (CheckBox channel : cm.getChosenChannels()) {
+            for (CheckBox channel : lm.getChosenChannels()) {
                 if (channel.getText().equals(descriptionOfChannel)) {
-                    Platform.runLater(() -> cm.getChosenChannels().remove(channel));
+                    Platform.runLater(() -> lm.getChosenChannels().remove(channel));
                 }
             }
         }
@@ -451,11 +450,11 @@ public class ProgramController {
     }
 
     private void clearDescriptions() {
-        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = cm.getLinkedChannels();
-        cm.getLinkedChannels().removeAll(linkedChannels); // удаление всех связанных каналов
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = lm.getLinkedChannels();
+        lm.getLinkedChannels().removeAll(linkedChannels); // удаление всех связанных каналов
 
-        ObservableList<CheckBox> chosenChannels = cm.getChosenChannels();
-        cm.getChosenChannels().removeAll(chosenChannels); // удаление всех выбранных каналов
+        ObservableList<CheckBox> chosenChannels = lm.getChosenChannels();
+        lm.getChosenChannels().removeAll(chosenChannels); // удаление всех выбранных каналов
     }
 
     public void clear() {
@@ -463,7 +462,7 @@ public class ProgramController {
         topPanel.setPrefHeight(mainPanel.getMaxHeight());
         topPanel.maxHeight(mainPanel.getMaxHeight());
         topPanel.minHeight(mainPanel.getMaxHeight());
-        programModel.resetProgramClickCounter();
+        regulatorParametersModel.resetProgramClickCounter();
     }
 
     public int getChosenParameterIndex() {
@@ -476,7 +475,18 @@ public class ProgramController {
         return -1;
     }
 
-    public void setCm(ControllerManager cm) {
-        this.cm = cm;
+    public void save(ChannelModel selectedChannel) {
+        selectedChannel.setAmplitude(amplitudeTextField.getText());
+        selectedChannel.setDc(dcTextField.getText());
+        selectedChannel.setRms(rmsTextField.getText());
+        selectedChannel.setFrequency(frequencyTextField.getText());
+        selectedChannel.setPvalue(pTextField.getText());
+        selectedChannel.setIvalue(iTextField.getText());
+        selectedChannel.setDvalue(dTextField.getText());
+        selectedChannel.setChosenParameterIndex(String.valueOf(getChosenParameterIndex()));
+    }
+
+    public void setLm(LinkingManager lm) {
+        this.lm = lm;
     }
 }

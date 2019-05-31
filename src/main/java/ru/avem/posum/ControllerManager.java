@@ -1,12 +1,8 @@
 package ru.avem.posum;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.CheckBox;
-import javafx.util.Pair;
-import ru.avem.posum.db.models.Modules;
+import ru.avem.posum.controllers.Process.LinkingController;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.models.Process.ExperimentModel;
 import ru.avem.posum.models.Signal.SignalModel;
 
 import java.util.List;
@@ -17,19 +13,13 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
-    ObservableList<CheckBox> getChosenChannels();
-
-    ObservableList<Modules> getChosenModules();
-
     String getCrateSerialNumber();
 
     Crate getCrateModelInstance();
 
     int getDecimalFormatScale();
 
-    ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels();
-
-    List<Modules> getLinkedModules();
+    LinkingController getLinkingController();
 
     double getDc();
 
@@ -38,8 +28,6 @@ public interface ControllerManager {
     void hideRequiredFieldsSymbols();
 
     void initializeSignalGraphView();
-
-    void initListViews();
 
     boolean isClosed();
 

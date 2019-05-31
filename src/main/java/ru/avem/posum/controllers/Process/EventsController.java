@@ -1,12 +1,25 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.scene.control.Dialog;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import ru.avem.posum.models.Process.Events;
 import ru.avem.posum.models.Process.EventsModel;
 
+import java.util.Optional;
+
 public class EventsController {
     private EventsModel eventModel = new EventsModel();
+
+    public void showDialogOfEventAdding() {
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Добавление события");
+        dialog.setHeaderText("Введите событие:");
+        dialog.setContentText("Текст:");
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(eventText -> eventModel.setEvent(eventText));
+    }
 
     public void setEventsColors(TableView<Events> newTableEvent) {
         newTableEvent.setRowFactory((TableView<Events> paramP) -> new TableRow<Events>() {

@@ -2,7 +2,6 @@ package ru.avem.posum.controllers.Process;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -15,10 +14,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.db.TestProgramRepository;
-import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
@@ -186,13 +182,15 @@ public class ProcessController implements BaseController {
     private ControllerManager cm;
     private EventsController eventsController = new EventsController();
     private GraphController graphController;
+    private LinkingController linkingController;
     private Process process = new Process();
-    private ProgramController programController;
-    private List<Node> uiElements = new ArrayList<>();
+    private ProcessModel processModel = new ProcessModel();
+    private RegulatorParametersController regulatorParametersController;
     private StatusBarLine statusBarLine;
     private TableController tableController;
     private StopwatchController stopwatchController;
     private TestProgram testProgram;
+    private List<Node> uiElements = new ArrayList<>();
     private WindowsManager wm;
 
     @FXML
@@ -200,17 +198,17 @@ public class ProcessController implements BaseController {
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
-        programController = new ProgramController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
+        graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
+                process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
+                this);
+
+        regulatorParametersController = new RegulatorParametersController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
                 calibratedAmplitudeLabel, calibratedAmplitudeTextField, amplitudeSlider, dcCheckBox, dcLabel,
                 dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
                 calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton,
                 process);
-
-        graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
-                process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
-                this);
 
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
@@ -221,6 +219,23 @@ public class ProcessController implements BaseController {
         initEventsTableView();
         listenTableViews();
         fillListOfUiElements();
+    }
+
+    private void initEventsTableView() {
+        journalTableView.setItems(eventsController.getEventModel().getEvents());
+        eventsController.setEventsColors(journalTableView);
+        eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
+        eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+    }
+
+    private void listenTableViews() {
+        table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
+            initializeButton.setDisable(table.getItems().isEmpty());
+        });
+
+        journalTableView.getItems().addListener((ListChangeListener<Events>) observable -> {
+            initializeButton.setDisable(journalTableView.getItems().isEmpty());
+        });
     }
 
     private void fillListOfUiElements() {
@@ -251,45 +266,26 @@ public class ProcessController implements BaseController {
         uiElements.add(horizontalScaleComboBox);
     }
 
-    private void initEventsTableView() {
-        journalTableView.setItems(eventsController.getEventModel().getEvents());
-        eventsController.setEventsColors(journalTableView);
-        eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
-        eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-    }
-
-    private void listenTableViews() {
-        table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
-            initializeButton.setDisable(table.getItems().isEmpty());
-        });
-
-        journalTableView.getItems().addListener((ListChangeListener<Events>) observable -> {
-            initializeButton.setDisable(journalTableView.getItems().isEmpty());
-        });
-    }
-
     public void handleInitialize() {
-        if (!getModules().isEmpty()) {
-            statusBarLine.toggleProgressIndicator(false);
+        if (!processModel.getModules().isEmpty()) {
             statusBarLine.setStatusOfProgress("Инициализация модулей");
             eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
-            programController.clear();
+            regulatorParametersController.clear();
 
             new Thread(() -> {
-                parseSettings(getModules());
+                processModel.parseSettings();
+                setSettings();
+
                 process.connect();
 
                 if (process.isConnected()) {
                     process.initialize();
                     checkInitialization();
                 } else {
-                    showErrors();
-                    statusBarLine.toggleProgressIndicator(true);
-                    statusBarLine.clearStatusBar();
                     statusBarLine.setStatus("Ошибка открытия соединений с модулями", false);
-
+                    showErrors();
                     toggleInitializationUiElements();
                 }
             }).start();
@@ -311,100 +307,30 @@ public class ProcessController implements BaseController {
         saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
     }
 
-    public ObservableList<Modules> getModules() {
-        List<Modules> linkedModules = cm.getLinkedModules();
-        ObservableList<Modules> chosenModules = cm.getChosenModules();
-
-        for (Modules module : linkedModules) {
-            if (!chosenModules.contains(module)) {
-                chosenModules.add(module);
-            }
-        }
-
-        return chosenModules;
-    }
-
-    public String[] getTypesOfModules() {
-        ObservableList<Modules> modules = getModules();
-        int SLOTS = 16; // количество слотов в крейте
-        String[] typesOfModules = new String[SLOTS];
-
-        for (int typeIndex = 0; typeIndex < typesOfModules.length; typeIndex++) {
-            typesOfModules[typeIndex] = "";
-        }
-
-        for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
-            typesOfModules[moduleIndex] = modules.get(moduleIndex).getModuleType();
-        }
-
-        return typesOfModules;
-    }
-
     private void toggleUiElements(boolean isDisable) {
         for (Node element : uiElements) {
             element.setDisable(isDisable);
         }
     }
 
-    private void parseSettings(List<Modules> modules) {
-        List<String> modulesTypes = new ArrayList<>();
-        List<Integer> slots = new ArrayList<>();
-        String crateSerialNumber = "";
-        List<int[]> typesOfChannels = new ArrayList<>();
-        List<int[]> measuringRanges = new ArrayList<>();
-        List<int[]> settingsOfModules = new ArrayList<>();
-        List<String> firPath = new ArrayList<>();
-        List<String> iirPath = new ArrayList<>();
-        List<Integer> channelsCounts = new ArrayList<>();
-
-        for (Modules module : modules) {
-            modulesTypes.add(module.getModuleType());
-            slots.add(module.getSlot());
-            channelsCounts.add(module.getChannelsCount());
-
-            if (!module.getModuleType().equals(Crate.LTR34)) {
-                typesOfChannels.add(Modules.getTypesOfChannels(module));
-                measuringRanges.add(Modules.getMeasuringRanges(module));
-                settingsOfModules.add(Modules.getSettingsOfModule(module));
-                firPath.add(module.getFirPath());
-                iirPath.add(module.getIirPath());
-            } else {
-                typesOfChannels.add(new int[8]);
-                measuringRanges.add(new int[8]);
-                settingsOfModules.add(new int[8]);
-                firPath.add("");
-                iirPath.add("");
-            }
-        }
-
-        List<TestProgram> testPrograms = TestProgramRepository.getAllTestPrograms();
-
-        for (TestProgram testProgram : testPrograms) {
-            if (modules.get(0).getTestProgramId() == testProgram.getId()) {
-                crateSerialNumber = testProgram.getCrateSerialNumber();
-                break;
-            }
-        }
-
-        process.setModulesTypes(modulesTypes);
-        process.setSlots(slots);
-        process.setCrateSerialNumber(crateSerialNumber);
-        process.setTypesOfChannels(typesOfChannels);
-        process.setMeasuringRanges(measuringRanges);
-        process.setSettingsOfModules(settingsOfModules);
-        process.setFirPaths(firPath);
-        process.setIirPaths(iirPath);
-        process.setChannelsCounts(channelsCounts);
+    private void setSettings() {
+        process.setModulesTypes(processModel.getModulesTypes());
+        process.setSlots(processModel.getSlots());
+        process.setCrateSerialNumber(processModel.getCrateSerialNumber());
+        process.setTypesOfChannels(processModel.getTypesOfChannels());
+        process.setMeasuringRanges(processModel.getMeasuringRanges());
+        process.setSettingsOfModules(processModel.getSettingsOfModules());
+        process.setFirPaths(processModel.getFirPath());
+        process.setIirPaths(processModel.getIirPath());
+        process.setChannelsCounts(processModel.getChannelsCounts());
     }
 
     private void checkInitialization() {
-        statusBarLine.toggleProgressIndicator(true);
-        statusBarLine.clearStatusBar();
-
         if (process.isInitialized()) {
-            process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
+
+            process.setStopped(false);
 
             initializeButton.setDisable(true);
             startButton.setDisable(false);
@@ -419,7 +345,6 @@ public class ProcessController implements BaseController {
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
             showErrors();
-
             toggleInitializationUiElements();
         }
     }
@@ -434,8 +359,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handleStart() {
-        statusBarLine.clearStatusBar();
-        statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Запуск программы испытаний");
         eventsController.getEventModel().addEvent("Запуск программы испытаний", EventsTypes.LOG);
 
@@ -448,14 +371,18 @@ public class ProcessController implements BaseController {
     }
 
     private void checkRunning() {
-        statusBarLine.clearStatusBar();
-        statusBarLine.toggleProgressIndicator(true);
-
         toggleUiElements(false);
 
         if (process.isRan()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешный запуск модулей", EventsTypes.OK);
+
+            process.setStopped(false);
+            process.initData(processModel.getModules());
+
+            tableController.showParametersOfSignal();
+
+            stopwatchController.startStopwatch();
 
             toProgramButton.setDisable(true);
             initializeButton.setDisable(true);
@@ -469,20 +396,12 @@ public class ProcessController implements BaseController {
             verticalScaleLabel.setDisable(true);
             verticalScaleComboBox.setDisable(true);
 
-            process.setStopped(false);
-            process.initData(getModules());
-
-            tableController.showParametersOfSignal();
-
-            stopwatchController.startStopwatch();
-
             while (!process.isStopped()) {
                 process.perform();
             }
         } else {
             statusBarLine.setStatus("Ошибка запуска программы испытаний", false);
             showErrors();
-
             process.finish();
             toggleInitializationUiElements();
         }
@@ -493,8 +412,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handleStop() {
-        statusBarLine.clearStatusBar();
-        statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventModel().addEvent("Завершение программы испытаний", EventsTypes.LOG);
 
@@ -510,9 +427,6 @@ public class ProcessController implements BaseController {
     }
 
     private void checkFinish() {
-        statusBarLine.clearStatusBar();
-        statusBarLine.toggleProgressIndicator(true);
-
         if (process.isFinished()) {
             statusBarLine.setStatus("Программа испытаний успешно завершена", true);
             eventsController.getEventModel().addEvent("Успешное завершение программы испытаний", EventsTypes.OK);
@@ -531,11 +445,11 @@ public class ProcessController implements BaseController {
     }
 
     public void handleToProgramButton() {
-        programController.toggleSettingsPanel();
+        regulatorParametersController.toggleSettingsPanel();
     }
 
     public void handleLinkButton() {
-        cm.initListViews();
+        processModel.initListViews();
         wm.setScene(WindowsManager.Scenes.LINKING_SCENE);
     }
 
@@ -554,53 +468,31 @@ public class ProcessController implements BaseController {
     public void handleBack() {
         ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
-        alert.setTitle("Подтвердите действие");
-        alert.setHeaderText("Вернуться в главное окно?");
-        ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
-        buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 14px;\n" + "-fx-background-radius: 5px;\n" +
-                "\t-fx-border-radius: 5px;"));
-
+        Alert alert = processModel.createExitAlert(ok, cancel);
         Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.isPresent()) {
-            if (result.get() == ok) {
-                if (!process.isStopped()) {
-                    handleStop();
-                }
-
-                programController.clear();
-                stopwatchController.stopStopwatch();
-                wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
+        if (result.isPresent() && result.get() == ok) {
+            if (!process.isStopped()) {
+                handleStop();
             }
+
+            regulatorParametersController.clear();
+            stopwatchController.stopStopwatch();
+            wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
         }
     }
 
-    public void handleAddEventButton() {
-        TextInputDialog dialog = new TextInputDialog("");
-        dialog.setTitle("Добавление события");
-        dialog.setHeaderText("Введите событие:");
-        dialog.setContentText("Текст:");
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(eventText -> eventsController.getEventModel().setEvent(eventText));
+    public void handleAddEvent() {
+        eventsController.showDialogOfEventAdding();
     }
 
-    public void handleExpandEventTableButton() {
+    public void handleSaveJournal() {
     }
 
-    public void handleSave() {
+    public void handleSaveRegulatorParameters() {
         if (table.getSelectionModel().getSelectedIndex() != -1) {
             ChannelModel selectedChannel = table.getSelectionModel().getSelectedItem();
-
-            selectedChannel.setAmplitude(amplitudeTextField.getText());
-            selectedChannel.setDc(dcTextField.getText());
-            selectedChannel.setRms(rmsTextField.getText());
-            selectedChannel.setFrequency(frequencyTextField.getText());
-            selectedChannel.setPvalue(pTextField.getText());
-            selectedChannel.setIvalue(iTextField.getText());
-            selectedChannel.setDvalue(dTextField.getText());
-            selectedChannel.setChosenParameterIndex(String.valueOf(programController.getChosenParameterIndex()));
-
+            regulatorParametersController.save(selectedChannel);
             statusBarLine.setStatus("Настройки успешно сохранены", true);
         } else {
             statusBarLine.setStatus("Не выбран канал для сохранения", false);
@@ -608,21 +500,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handlePlugButton() {
-    }
-
-    @Override
-    public void setControllerManager(ControllerManager cm) {
-        this.cm = cm;
-        programController.setCm(cm);
-    }
-
-    @Override
-    public void setWindowManager(WindowsManager wm) {
-        this.wm = wm;
-    }
-
-    public ControllerManager getCm() {
-        return cm;
     }
 
     public GraphController getGraphController() {
@@ -633,12 +510,25 @@ public class ProcessController implements BaseController {
         return process;
     }
 
+    public ProcessModel getProcessModel() {
+        return processModel;
+    }
+
     public StatusBarLine getStatusBarLine() {
         return statusBarLine;
     }
 
     public Button getStopButton() {
         return stopButton;
+    }
+
+    @Override
+    public void setControllerManager(ControllerManager cm) {
+        this.cm = cm;
+        linkingController = cm.getLinkingController();
+        linkingController.setProcessController(this);
+        processModel.setLm(linkingController);
+        regulatorParametersController.setLm(linkingController);
     }
 
     public void setTestProgram(TestProgram testProgram) {
@@ -648,12 +538,15 @@ public class ProcessController implements BaseController {
 
     private void loadTestProgram() {
         Platform.runLater(() -> table.getItems().clear());
-        cm.getLinkedChannels().clear();
-        cm.getChosenChannels().clear();
-        cm.getChosenModules().clear();
+        processModel.clear();
         commandsTableView.getItems().clear();
         journalTableView.getItems().clear();
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
+    }
+
+    @Override
+    public void setWindowManager(WindowsManager wm) {
+        this.wm = wm;
     }
 }
