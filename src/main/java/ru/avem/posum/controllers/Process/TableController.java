@@ -188,15 +188,18 @@ public class TableController {
 
                 if (!graphController.isShowingThreadStopped()) {
                     graphController.stopShowingThread();
-                    graphController.restartShow();
                 }
 
                 ObservableList<ChannelModel> channels = tableView.getItems();
                 String channelDescription = channels.get(channelIndex).getName();
                 Pair<Integer, Integer> channel = parseChannel(channelDescription);
 
+                Utils.sleep(100); // пауза для ожидания ненулевого сигнала
                 graphController.setFields(channel.getKey(), channel.getValue());
+
                 graphController.showGraph();
+                new Thread(() -> graphController.restartShow()).start();
+
             } else {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
                 int nonSelectedCheckBoxesCount = 0;
@@ -211,7 +214,6 @@ public class TableController {
                     graphController.setStopped(true);
                 }
                 graphController.getGraphModel().clear();
-
             }
         });
     }
@@ -227,7 +229,6 @@ public class TableController {
 
     private Pair<Integer, Integer> parseChannel(String channelDescription) {
         List<Modules> modules = processController.getProcessModel().getModules();
-        int channel = 0;
         int slot = parseSlot(channelDescription);
         channelDescription = channelDescription.contains("=>") ? channelDescription.split("=> ")[1] : channelDescription;
 
@@ -289,15 +290,15 @@ public class TableController {
 
     private List<ChannelModel> getDacChannels() {
         ObservableList<ChannelModel> channels = tableView.getItems();
-        List<ChannelModel> dacModules = new ArrayList<>();
+        List<ChannelModel> dacChannels = new ArrayList<>();
 
         for (ChannelModel channel : channels) {
             if (channel.getName().contains(Crate.LTR24)) {
-                dacModules.add(channel);
+                dacChannels.add(channel);
             }
         }
 
-        return dacModules;
+        return dacChannels;
     }
 
     private void show() {

@@ -9,16 +9,21 @@ import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import java.util.List;
 
 public class RegulatorController {
+    private final int SLOTS = 16;
+
     private List<ChannelModel> channels;
     private LTR34SettingsModel ltr34SettingsModel = new LTR34SettingsModel();
     private List<Modules> modules;
-    private RegulatorModel[] regulatorModel;
-    private final int SLOTS = 16;
+    private RegulatorModel[] regulatorModel = new RegulatorModel[SLOTS];
     private String[] typesOfModules = new String[SLOTS];
 
     public void initRegulator(List<ChannelModel> channels) {
         this.channels = channels;
-        regulatorModel = new RegulatorModel[channels.size()];
+
+        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
+            regulatorModel[channelIndex] = new RegulatorModel();
+        }
+
         setRegulatorParameters();
     }
 
@@ -50,7 +55,7 @@ public class RegulatorController {
 
             double amplitude = Double.parseDouble(channel.getResponseAmplitude());
 //            double dc = Double.parseDouble(channel.getResponseDc());
-            int frequency = Integer.parseInt(channel.getResponseFrequency());
+            double frequency = Double.parseDouble(channel.getResponseFrequency());
             double rms = Double.parseDouble(channel.getResponseRms());
 
             regulatorModel[channelIndex].setResponseAmplitude(amplitude);
@@ -61,7 +66,7 @@ public class RegulatorController {
     }
 
     public int getDacIndex() {
-        int dacIndex = 0;
+        int dacIndex = -1;
 
         for (int moduleIndex = 0; moduleIndex < typesOfModules.length; moduleIndex++) {
             if (typesOfModules.equals(Crate.LTR34)) {
@@ -88,11 +93,11 @@ public class RegulatorController {
         for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
             amplitudes[channelIndex] = 10;
             dc[channelIndex] = 0;
-            frequencies[channelIndex] = 8;
+            frequencies[channelIndex] = regulatorModel[channelIndex] == null ? 8 : regulatorModel[channelIndex].getFrequency();
             phases[channelIndex] = 0;
         }
 
-        // Эмуляция управления
+        ltr34SettingsModel.setFrequencies(frequencies);
         ltr34SettingsModel.calculateSignal(signalType);
         System.arraycopy(ltr34SettingsModel.getSignal(), 0, signal, 0, ltr34SettingsModel.getSignal().length);
 

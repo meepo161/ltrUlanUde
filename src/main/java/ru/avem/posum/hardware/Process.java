@@ -105,7 +105,7 @@ public class Process {
     }
 
     public void finish() {
-        stop();
+        stop(modulesTypes, slots);
         disconnect();
     }
 
@@ -129,7 +129,7 @@ public class Process {
 
     public native void perform(double[][] data, double[][] timeMarks);
 
-    public native void stop();
+    public native void stop(int[] modulesTypes, int[] slots);
 
     public native void closeConnection();
 

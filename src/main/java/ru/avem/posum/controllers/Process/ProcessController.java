@@ -445,9 +445,13 @@ public class ProcessController implements BaseController {
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
 
             while (!process.isStopped()) {
-                double[] regulatorSignal = tableController.getRegulatorController().getSignalForDac();
                 int dacIndex = tableController.getRegulatorController().getDacIndex();
-                process.getData()[dacIndex] = regulatorSignal;
+
+                if (dacIndex != -1) {
+                    double[] regulatorSignal = tableController.getRegulatorController().getSignalForDac();
+                    process.getData()[dacIndex] = regulatorSignal;
+                }
+
                 process.perform();
             }
         } else {

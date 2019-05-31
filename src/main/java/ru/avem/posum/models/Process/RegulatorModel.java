@@ -34,10 +34,17 @@ public class RegulatorModel {
         return neededDc;
     }
 
-    public double getFrequency() {
+    public int getFrequency() {
         double regulationError = neededFrequency - responseFrequency;
-        dacFrequency = regulationError < 0 ? (dacFrequency - pValue * regulationError) : (dacFrequency + pValue * regulationError);
-        return dacFrequency;
+        regulationError = (regulationError < neededFrequency / 1.05) || (regulationError > neededFrequency * 1.05) ? regulationError : 0;
+
+        System.out.printf("Regulations error: %f\n", regulationError);
+
+        dacFrequency += pValue * regulationError;
+        System.out.printf("Dac frequency: %f\n", dacFrequency);
+
+        System.out.printf("Dac frequency: %d\n", (int) dacFrequency);
+        return (int) dacFrequency;
     }
 
     public double getRms() {
