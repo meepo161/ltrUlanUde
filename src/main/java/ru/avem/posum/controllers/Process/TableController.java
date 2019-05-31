@@ -380,4 +380,8 @@ public class TableController {
             Platform.runLater(() -> colorPicker.setValue(Color.DARKRED));
         }
     }
+
+    public SignalParametersModel getSignalParametersModel() {
+        return signalParametersModel;
+    }
 }

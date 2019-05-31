@@ -2,11 +2,13 @@ package ru.avem.posum.hardware;
 
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
+import ru.avem.posum.models.Settings.LTR34SettingsModel;
 import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Process {
     private final int SLOTS = 16; // количество слотов в крейте
@@ -92,13 +94,6 @@ public class Process {
     }
 
     public void perform() {
-        // Эмуляция управления
-//        LTR34SettingsModel ltr34SettingsModel = new LTR34SettingsModel();
-//        Random random = new Random();
-//        int randomSignalType = random.nextInt(5);
-//        ltr34SettingsModel.calculateSignal(randomSignalType);
-//        System.arraycopy(ltr34SettingsModel.getSignal(), 0, data[11], 0, ltr34SettingsModel.getSignal().length);
-
         perform(data, timeMarks);
     }
 

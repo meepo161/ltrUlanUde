@@ -46,8 +46,7 @@ public class LTR34SettingsModel {
 
     public void calculateSignal(int signalType) {
         List<double[]> channelsData = new ArrayList<>();
-        int channels = 4;
-//        int channels = (ltr34.getCheckedChannelsCounter() <= 4) ? 4 : 8;
+        int channels = (ltr34.getCheckedChannelsCounter() <= 4) ? 4 : 8;
 
         for (int channelIndex = 0; channelIndex < channels; channelIndex++) {
             switch (signalType) {
@@ -220,6 +219,22 @@ public class LTR34SettingsModel {
 
     public boolean isStopped() {
         return stopped;
+    }
+
+    public void setAmplitudes(double[] amplitudes) {
+        this.amplitudes = amplitudes;
+    }
+
+    public void setDc(double[] dc) {
+        this.dc = dc;
+    }
+
+    public void setFrequencies(int[] frequencies) {
+        this.frequencies = frequencies;
+    }
+
+    public void setPhases(int[] phases) {
+        this.phases = phases;
     }
 
     public void setModuleName(String moduleName) {
