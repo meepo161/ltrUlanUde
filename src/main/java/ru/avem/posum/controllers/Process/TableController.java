@@ -35,6 +35,7 @@ public class TableController {
     private GraphController graphController;
     private ProcessController processController;
     private boolean showStopped;
+    private RegulatorController regulatorController = new RegulatorController();
     private SignalParametersModel signalParametersModel = new SignalParametersModel();
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
@@ -271,16 +272,32 @@ public class TableController {
     public void showParametersOfSignal() {
         new Thread(() -> {
             signalParametersModel.setTypesOfModules(processController.getProcessModel().getTypesOfModules());
+            regulatorController.initRegulator(getDacChannels());
 
             while (!showStopped && !processController.getProcess().isStopped()) {
                 signalParametersModel.setData(processController.getProcess().getData());
                 signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
                 signalParametersModel.calculateParameters();
 
+                regulatorController.setResponse();
+
                 show();
                 Utils.sleep(1000);
             }
         }).start();
+    }
+
+    private List<ChannelModel> getDacChannels() {
+        ObservableList<ChannelModel> channels = tableView.getItems();
+        List<ChannelModel> dacModules = new ArrayList<>();
+
+        for (ChannelModel channel : channels) {
+            if (channel.getName().contains(Crate.LTR24)) {
+                dacModules.add(channel);
+            }
+        }
+
+        return dacModules;
     }
 
     private void show() {
@@ -381,7 +398,7 @@ public class TableController {
         }
     }
 
-    public SignalParametersModel getSignalParametersModel() {
-        return signalParametersModel;
+    public RegulatorController getRegulatorController() {
+        return regulatorController;
     }
 }

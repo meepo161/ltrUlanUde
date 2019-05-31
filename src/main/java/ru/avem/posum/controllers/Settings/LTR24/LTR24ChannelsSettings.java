@@ -7,7 +7,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import ru.avem.posum.hardware.ADC;
-import ru.avem.posum.hardware.LTR212;
 import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.Settings.LTR24SettingsModel;
 

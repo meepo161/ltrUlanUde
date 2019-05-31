@@ -20,16 +20,13 @@ public class SignalParametersModel {
     private double[][] frequencies = new double[SLOTS][];
     private double[][] loadsCounter = new double[SLOTS][];
     private double[][] maxSignalValues = new double[SLOTS][];
-    private List<Modules> modules;
-    private String[] typesOfModules = new String[SLOTS];
     private double[][] minSignalValues = new double[SLOTS][];
     private int[][] periods = new int[SLOTS][];
     private double[][] rms = new double[SLOTS][];
     private double[][] samplesPerSemiPeriod = new double[SLOTS][];
     private int[][] samplesPerSemiPeriods = new int[SLOTS][];
+    private String[] typesOfModules = new String[SLOTS];
     private double[][] zeroTransitionCounter = new double[SLOTS][];
-
-    private LTR34SettingsModel ltr34SettingsModel = new LTR34SettingsModel();
 
     public SignalParametersModel() {
         initArrays();
@@ -346,58 +343,6 @@ public class SignalParametersModel {
         }
     }
 
-    public int getDacIndex() {
-        int dacIndex = 0;
-
-        for (int moduleIndex = 0; moduleIndex < typesOfModules.length; moduleIndex++) {
-            if (typesOfModules.equals(Crate.LTR34)) {
-                dacIndex = moduleIndex;
-                break;
-            }
-        }
-
-        return dacIndex;
-    }
-
-    public double[] getSignalForDac() {
-        Modules dac = getDacModule();
-        int signalLength = dac.getDataLength();
-        double[] signal = new double[signalLength];
-        int channelsCount = dac.getChannelsCount();
-
-        int signalType = 0; // синусоидальный сигнал
-        double[] amplitudes = new double[channelsCount];
-        double[] dc = new double[channelsCount];
-        int[] frequencies = new int[channelsCount];
-        int[] phases = new int[channelsCount];
-
-        for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
-            amplitudes[channelIndex] = 10;
-            dc[channelIndex] = 0;
-            frequencies[channelIndex] = 8;
-            phases[channelIndex] = 0;
-        }
-
-        // Эмуляция управления
-        ltr34SettingsModel.calculateSignal(signalType);
-        System.arraycopy(ltr34SettingsModel.getSignal(), 0, signal, 0, ltr34SettingsModel.getSignal().length);
-
-        return signal;
-    }
-
-    private Modules getDacModule() {
-        Modules dac = new Modules();
-
-        for (Modules module : modules) {
-            if (module.getModuleType().equals(Crate.LTR34)) {
-                dac = module;
-                break;
-            }
-        }
-
-        return dac;
-    }
-
     public double getAmplitude(int moduleIndex, int channelIndex) {
         return amplitudes[moduleIndex][channelIndex];
     }
@@ -416,10 +361,6 @@ public class SignalParametersModel {
 
     public double getRms(int moduleIndex, int channelIndex) {
         return rms[moduleIndex][channelIndex];
-    }
-
-    public void setModules(List<Modules> modules) {
-        this.modules = modules;
     }
 
     public void setTypesOfModules(String[] typesOfModules) {

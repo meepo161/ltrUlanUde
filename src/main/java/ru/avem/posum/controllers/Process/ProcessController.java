@@ -441,11 +441,12 @@ public class ProcessController implements BaseController {
             process.initData(processModel.getModules());
             tableController.showParametersOfSignal();
             stopwatchController.startStopwatch();
-            tableController.getSignalParametersModel().setModules(processModel.getModules());
+            tableController.getRegulatorController().setModules(processModel.getModules());
+            tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
 
             while (!process.isStopped()) {
-                double[] regulatorSignal = tableController.getSignalParametersModel().getSignalForDac();
-                int dacIndex =tableController.getSignalParametersModel().getDacIndex();
+                double[] regulatorSignal = tableController.getRegulatorController().getSignalForDac();
+                int dacIndex = tableController.getRegulatorController().getDacIndex();
                 process.getData()[dacIndex] = regulatorSignal;
                 process.perform();
             }
