@@ -225,8 +225,8 @@ public class GraphController {
     }
 
     public void setFields(int slot, int channel) {
-        this.slot = slot - 1;
-        this.channel = channel - 1;
+        this.slot = slot;
+        this.channel = channel;
     }
 
     public void showGraph() {

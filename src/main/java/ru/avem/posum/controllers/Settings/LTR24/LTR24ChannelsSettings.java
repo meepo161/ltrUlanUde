@@ -215,7 +215,15 @@ class LTR24ChannelsSettings extends LTR24Settings {
             String description = ltr24SettingsModel.getDescriptions()[channelIndex].replace(", ", "");
 
             checkBoxes.get(channelIndex).setSelected(isCheckBoxSelected);
-            typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel);
+
+            if (typeOfChannel == 0) { // TODO: change this shit
+                typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel + 1);
+                typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel);
+            } else {
+                typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel - 1);
+                typesOfChannelComboBoxes.get(channelIndex).getSelectionModel().select(typeOfChannel);
+            }
+
             measuringRangesComboBoxes.get(channelIndex).getSelectionModel().select(measuringRange);
             descriptions.get(channelIndex).setText(description);
         }

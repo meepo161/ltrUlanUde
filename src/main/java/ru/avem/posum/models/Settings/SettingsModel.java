@@ -80,6 +80,7 @@ public class SettingsModel implements BaseController {
         adc = new LTR24();
         setModuleSettings(adc);
         setDefaultADCSettings(0, 1);
+        adc.setData(new double[117188]); // частота дискретизации по умолчанию
         saveModuleInstance(adc);
     }
 
@@ -91,6 +92,7 @@ public class SettingsModel implements BaseController {
         dac = new LTR34();
         setModuleSettings(dac);
         setDefaultDACSettings();
+        dac.setData(new double[31250]); // частота дискретизации по умолчанию
         saveModuleInstance(dac);
     }
 
@@ -98,6 +100,7 @@ public class SettingsModel implements BaseController {
         adc = new LTR212();
         setModuleSettings(adc);
         setDefaultADCSettings(0, 3);
+        adc.setData(new double[7680]); // частта дискретизации по умолчанию
         saveModuleInstance(adc);
     }
 
