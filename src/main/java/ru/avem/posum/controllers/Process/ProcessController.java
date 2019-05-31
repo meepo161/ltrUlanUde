@@ -18,6 +18,7 @@ import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.*;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -475,6 +476,7 @@ public class ProcessController implements BaseController {
 
         new Thread(() -> {
             process.setStopped(true);
+            Utils.sleep(1000);
             process.finish();
             stopwatchController.pauseStopwatch();
             checkFinish();

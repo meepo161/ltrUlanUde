@@ -32,9 +32,10 @@ public class TableController {
     private TableColumn<ChannelModel, String> rmsColumn;
     private TableColumn<ChannelModel, String> rmsRelativeResponseColumn;
 
+    private int disableCount;
     private GraphController graphController;
     private ProcessController processController;
-    private boolean showStopped;
+    private Thread showingThread;
     private RegulatorController regulatorController = new RegulatorController();
     private SignalParametersModel signalParametersModel = new SignalParametersModel();
 
@@ -176,46 +177,62 @@ public class TableController {
             toggleGraphControls();
 
             if (checkBox.isSelected()) {
-                ObservableList<CheckBox> checkBoxes = getCheckBoxes();
-                checkBoxes.remove(checkBox);
-
-                for (CheckBox channel : checkBoxes) {
-                    channel.setSelected(false);
-                }
-
-                checkBox.setSelected(true);
+                toggleCheckBoxes(checkBox);
                 setSeriesColor(channelIndex);
+                showSignal(channelIndex);
+            } else {
+                checkSelection();
+            }
+        });
+    }
+
+    private void toggleCheckBoxes(CheckBox checkBox) {
+        ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+        checkBoxes.remove(checkBox);
+
+        for (CheckBox channel : checkBoxes) {
+            channel.setSelected(false);
+        }
+
+        checkBox.setSelected(true);
+    }
+
+    private void showSignal(int channelIndex) {
+        if (showingThread == null) {
+            showingThread = new Thread(() -> {
+                System.out.println("Thread started");
 
                 if (!graphController.isShowingThreadStopped()) {
                     graphController.stopShowingThread();
                 }
 
-                ObservableList<ChannelModel> channels = tableView.getItems();
-                String channelDescription = channels.get(channelIndex).getName();
-                Pair<Integer, Integer> channel = parseChannel(channelDescription);
-
-                Utils.sleep(100); // пауза для ожидания ненулевого сигнала
-                graphController.setFields(channel.getKey(), channel.getValue());
+                parseData(channelIndex);
 
                 graphController.showGraph();
                 new Thread(() -> graphController.restartShow()).start();
+            });
 
-            } else {
-                ObservableList<CheckBox> checkBoxes = getCheckBoxes();
-                int nonSelectedCheckBoxesCount = 0;
-
-                for (CheckBox channel : checkBoxes) {
-                    if (!channel.isSelected()) {
-                        nonSelectedCheckBoxesCount++;
-                    }
-                }
-
-                if (nonSelectedCheckBoxesCount == checkBoxes.size()) {
-                    graphController.setStopped(true);
-                }
-                graphController.getGraphModel().clear();
+            showingThread.start();
+        } else {
+            if (disableCount == 0) {
+                System.out.println("Interrupted");
+                new Thread(() -> {
+                    parseData(channelIndex);
+                    graphController.restartShow();
+                    showingThread.interrupt();
+                }).start();
+                disableCount++;
             }
-        });
+        }
+    }
+
+    private void parseData(int channelIndex) {
+        ObservableList<ChannelModel> channels = tableView.getItems();
+        String channelDescription = channels.get(channelIndex).getName();
+        Pair<Integer, Integer> channel = parseChannel(channelDescription);
+
+        Utils.sleep(100); // пауза для ожидания ненулевого сигнала
+        graphController.setFields(channel.getKey(), channel.getValue());
     }
 
     private int parseSlot(String channelDescription) {
@@ -250,6 +267,24 @@ public class TableController {
         return new Pair<>(0, 0);
     }
 
+    private void checkSelection() {
+        ObservableList<CheckBox> checkBoxes = getCheckBoxes();
+        int nonSelectedCheckBoxesCount = 0;
+
+        for (CheckBox channel : checkBoxes) {
+            if (!channel.isSelected()) {
+                nonSelectedCheckBoxesCount++;
+            }
+        }
+
+        if (nonSelectedCheckBoxesCount == checkBoxes.size()) {
+            graphController.setStopped(true);
+            graphController.getGraphModel().clear();
+        } else if (nonSelectedCheckBoxesCount == checkBoxes.size() - 1) {
+            disableCount = 0;
+        }
+    }
+
     private void toggleGraphControls() {
         ObservableList<CheckBox> checkBoxes = getCheckBoxes();
         int disabledCheckBoxesCount = 0;
@@ -275,7 +310,7 @@ public class TableController {
             signalParametersModel.setTypesOfModules(processController.getProcessModel().getTypesOfModules());
             regulatorController.initRegulator(getDacChannels());
 
-            while (!showStopped && !processController.getProcess().isStopped()) {
+            while (!processController.getProcess().isStopped()) {
                 signalParametersModel.setData(processController.getProcess().getData());
                 signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
                 signalParametersModel.calculateParameters();

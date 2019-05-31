@@ -2,13 +2,10 @@ package ru.avem.posum.hardware;
 
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
-import ru.avem.posum.models.Settings.LTR34SettingsModel;
-import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Process {
     private final int SLOTS = 16; // количество слотов в крейте
@@ -106,7 +103,7 @@ public class Process {
 
     public void finish() {
         stop(modulesTypes, slots);
-        disconnect();
+//        disconnect();
     }
 
     public void disconnect() {
