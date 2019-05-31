@@ -87,7 +87,6 @@ public class StatusBarLine {
     }
 
     public void clearStatusBar() {
-        toggleProgressIndicator(true);
         Platform.runLater(() -> {
             hideIcons();
             statusBar.setText("");

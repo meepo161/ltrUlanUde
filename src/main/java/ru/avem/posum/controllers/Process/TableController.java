@@ -185,7 +185,6 @@ public class TableController {
                 checkBox.setSelected(true);
                 setSeriesColor(channelIndex);
 
-
                 if (!graphController.isShowingThreadStopped()) {
                     graphController.stopShowingThread();
                     graphController.restartShow();
@@ -193,10 +192,9 @@ public class TableController {
 
                 ObservableList<ChannelModel> channels = tableView.getItems();
                 String channelDescription = channels.get(channelIndex).getName();
-                int slot = parseSlot(channelDescription);
-                int channel = parseChannel(channelDescription, slot);
+                Pair<Integer, Integer> channel = parseChannel(channelDescription);
 
-                graphController.setFields(slot, channel);
+                graphController.setFields(channel.getKey(), channel.getValue());
                 graphController.showGraph();
             } else {
                 ObservableList<CheckBox> checkBoxes = getCheckBoxes();
@@ -218,26 +216,36 @@ public class TableController {
     }
 
     private int parseSlot(String channelDescription) {
-        return Integer.parseInt(channelDescription.split("слот ")[1].split("\\)")[0]);
+        if (!channelDescription.contains("=>")) {
+            return Integer.parseInt(channelDescription.split("слот ")[1].split("\\)")[0]);
+        } else {
+            String adcChannelDescription = channelDescription.split("=> ")[1];
+            return Integer.parseInt(adcChannelDescription.split("слот ")[1].split("\\)")[0]);
+        }
     }
 
-    private int parseChannel(String channelDescription, int slot) {
+    private Pair<Integer, Integer> parseChannel(String channelDescription) {
         List<Modules> modules = processController.getProcessModel().getModules();
         int channel = 0;
+        int slot = parseSlot(channelDescription);
+        channelDescription = channelDescription.contains("=>") ? channelDescription.split("=> ")[1] : channelDescription;
 
-        for (Modules module : modules) {
-            if (module.getSlot() == slot) {
-                List<Pair<Integer, String>> descriptions = Modules.getChannelsDescriptions(module);
+        for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+            if (!modules.get(moduleIndex).getModuleType().equals(Crate.LTR34)) {
+                if (modules.get(moduleIndex).getSlot() == slot) {
+                    List<Pair<Integer, String>> descriptions = Modules.getChannelsDescriptions(modules.get(moduleIndex));
 
-                for (Pair<Integer, String> description : descriptions) {
-                    if (description.getValue().equals(channelDescription)) {
-                        return description.getKey();
+                    for (Pair<Integer, String> description : descriptions) {
+                        if (description.getValue().equals(channelDescription)) {
+                            return new Pair<>(moduleIndex, description.getKey() - 1);
+                        }
                     }
                 }
+
             }
         }
 
-        return channel;
+        return new Pair<>(0, 0);
     }
 
     private void toggleGraphControls() {
@@ -288,25 +296,24 @@ public class TableController {
             }
 
             for (Pair<Integer, String> checkedChannel : checkedChannels) {
-                for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-                    if (channels.get(channelIndex).getName().contains(checkedChannel.getValue())) {
-                        ChannelModel channel = channels.get(channelIndex);
+                for (ChannelModel channelModel : channels) {
+                    if (channelModel.getName().contains(checkedChannel.getValue())) {
+                        int channelIndex = checkedChannel.getKey() - 1;
                         double amplitude = signalParametersModel.getAmplitude(moduleIndex, channelIndex);
-                        double neededAmplitude = Double.parseDouble(channel.getAmplitude());
+                        double neededAmplitude = Double.parseDouble(channelModel.getAmplitude());
                         double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
-                        double neededDc = Double.parseDouble(channel.getDc());
+                        double neededDc = Double.parseDouble(channelModel.getDc());
                         double frequency = signalParametersModel.getFrequency(moduleIndex, channelIndex);
-                        double neededFrequency = Double.parseDouble(channel.getFrequency());
+                        double neededFrequency = Double.parseDouble(channelModel.getFrequency());
                         double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
-                        double neededRms = Double.parseDouble(channel.getRms());
+                        double neededRms = Double.parseDouble(channelModel.getRms());
 
-                        channel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
-                        channel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : amplitude / neededAmplitude * 100.0));
-                        channel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
-                        channel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : rms / neededRms * 100.0));
-                        channel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
-                        channel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : frequency / neededFrequency * 100.0));
-
+                        channelModel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
+                        channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 1000)));
+                        channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
+                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 1000)));
+                        channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
+                        channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 1000)));
                     }
                 }
 
@@ -334,16 +341,14 @@ public class TableController {
             ObservableList<ColorPicker> colorPickers = getColorPickers();
             boolean isProcessStopped = processController.getStopButton().isDisable();
 
-            for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-                int finalChannelIndex = channelIndex;
 
-                Platform.runLater(() -> {
-                    checkBoxes.get(finalChannelIndex).setDisable(isProcessStopped);
-                    Utils.sleep(10); // пауза для переключения состояния
-                    colorPickers.get(finalChannelIndex).setDisable(isProcessStopped);
-                    Utils.sleep(10); // пауза для переключения состояния
-                });
-            }
+            Platform.runLater(() -> {
+                for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+                    checkBoxes.get(channelIndex).setDisable(isProcessStopped);
+                    colorPickers.get(channelIndex).setDisable(isProcessStopped);
+                }
+            });
+
 
             graphController.getAutoscaleCheckBox().setDisable(isProcessStopped);
             graphController.getRarefactionCoefficientLabel().setDisable(isProcessStopped);

@@ -284,6 +284,7 @@ public class ProcessController implements BaseController {
                     process.initialize();
                     checkInitialization();
                 } else {
+                    statusBarLine.toggleProgressIndicator(true);
                     statusBarLine.setStatus("Ошибка открытия соединений с модулями", false);
                     showErrors();
                     toggleInitializationUiElements();
@@ -326,6 +327,8 @@ public class ProcessController implements BaseController {
     }
 
     private void checkInitialization() {
+        statusBarLine.toggleProgressIndicator(true);
+
         if (process.isInitialized()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
@@ -372,6 +375,7 @@ public class ProcessController implements BaseController {
 
     private void checkRunning() {
         toggleUiElements(false);
+        statusBarLine.toggleProgressIndicator(true);
 
         if (process.isRan()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
@@ -427,6 +431,8 @@ public class ProcessController implements BaseController {
     }
 
     private void checkFinish() {
+        statusBarLine.toggleProgressIndicator(true);
+
         if (process.isFinished()) {
             statusBarLine.setStatus("Программа испытаний успешно завершена", true);
             eventsController.getEventModel().addEvent("Успешное завершение программы испытаний", EventsTypes.OK);

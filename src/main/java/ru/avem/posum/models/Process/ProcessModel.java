@@ -14,21 +14,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessModel {
-    private List<Integer> channelsCounts = new ArrayList<>();
-    private String crateSerialNumber = "";
-    private List<String> firPath = new ArrayList<>();
-    private List<String> iirPath = new ArrayList<>();
+    private List<Integer> channelsCounts;
+    private String crateSerialNumber;
+    private List<String> firPath;
+    private List<String> iirPath;
     private LinkingManager lm;
-    private List<int[]> measuringRanges = new ArrayList<>();
-    private List<String> modulesTypes = new ArrayList<>();
-    private List<int[]> settingsOfModules = new ArrayList<>();
-    private List<Integer> slots = new ArrayList<>();
-    private List<int[]> typesOfChannels = new ArrayList<>();
+    private List<int[]> measuringRanges;
+    private List<String> modulesTypes;
+    private List<int[]> settingsOfModules;
+    private List<Integer> slots;
+    private List<int[]> typesOfChannels;
 
     public void parseSettings() {
-        ObservableList<Modules> modules = getModules();
+        channelsCounts = new ArrayList<>();
+        crateSerialNumber = "";
+        firPath = new ArrayList<>();
+        iirPath = new ArrayList<>();
+        measuringRanges = new ArrayList<>();
+        modulesTypes = new ArrayList<>();
+        settingsOfModules = new ArrayList<>();
+        slots = new ArrayList<>();
+        typesOfChannels = new ArrayList<>();
 
-        for (Modules module : modules) {
+        for (Modules module : getModules()) {
             modulesTypes.add(module.getModuleType());
             slots.add(module.getSlot());
             channelsCounts.add(module.getChannelsCount());
@@ -51,7 +59,7 @@ public class ProcessModel {
         List<TestProgram> testPrograms = TestProgramRepository.getAllTestPrograms();
 
         for (TestProgram testProgram : testPrograms) {
-            if (modules.get(0).getTestProgramId() == testProgram.getId()) {
+            if (getModules().get(0).getTestProgramId() == testProgram.getId()) {
                 crateSerialNumber = testProgram.getCrateSerialNumber();
                 break;
             }

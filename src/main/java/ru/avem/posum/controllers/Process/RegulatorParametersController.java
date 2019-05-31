@@ -420,9 +420,9 @@ public class RegulatorParametersController {
     }
 
     private void deleteDescriptions(ChannelModel channelModel) {
-        if (channelModel.getName().contains("->")) { // удаление связанных каналов
-            String descriptionOfDacChannel = channelModel.getName().split(" -> ")[0];
-            String descriptionOfAdcChannel = channelModel.getName().split(" -> ")[1];
+        if (channelModel.getName().contains("=>")) { // удаление связанных каналов
+            String descriptionOfDacChannel = channelModel.getName().split(" => ")[0];
+            String descriptionOfAdcChannel = channelModel.getName().split(" => ")[1];
 
             for (Pair<CheckBox, CheckBox> channels : lm.getLinkedChannels()) {
                 if (channels.getKey().getText().equals(descriptionOfDacChannel) ||
