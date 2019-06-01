@@ -37,8 +37,8 @@ public class TableController {
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
-                           TableColumn<ChannelModel, String> dcResponseColumn, TableColumn<ChannelModel, String> loadsCounterColumn,
-                           TableColumn<ChannelModel, String> frequencyResponseColumn, TableColumn<ChannelModel, String> rmsResponseColumn,
+                           TableColumn<ChannelModel, String> dcResponseColumn, TableColumn<ChannelModel, String> frequencyResponseColumn,
+                           TableColumn<ChannelModel, String> loadsCounterColumn, TableColumn<ChannelModel, String> rmsResponseColumn,
                            GraphController graphController, ProcessController processController) {
 
         this.tableView = tableView;
@@ -348,7 +348,7 @@ public class TableController {
                         channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 1000)));
                         channelModel.setResponseDc(String.valueOf(Utils.roundValue(dc, 1000)));
                         channelModel.setRelativeResponseDc(String.valueOf(neededDc == 0 ? 0 : Utils.roundValue(dc / neededDc * 100.0, 1000)));
-                        channelModel.setResponseLoadsCounter(String.valueOf(Utils.roundValue(loadsCounter, 1000)));
+                        channelModel.setResponseLoadsCounter(String.valueOf((int) loadsCounter));
                         channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
                         channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 1000)));
                         channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));

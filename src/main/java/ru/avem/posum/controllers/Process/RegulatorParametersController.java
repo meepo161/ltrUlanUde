@@ -218,13 +218,13 @@ public class RegulatorParametersController {
                 toggleUiElements(rmsUiElements, true);
                 toggleUiElements(frequencyUiElements, true);
                 break;
+//            case 2:
+//                toggleUiElements(amplitudeUiElements, true);
+//                toggleUiElements(dcUiElements, true);
+//                toggleUiElements(rmsUiElements, false);
+//                toggleUiElements(frequencyUiElements, true);
+//                break;
             case 2:
-                toggleUiElements(amplitudeUiElements, true);
-                toggleUiElements(dcUiElements, true);
-                toggleUiElements(rmsUiElements, false);
-                toggleUiElements(frequencyUiElements, true);
-                break;
-            case 3:
                 toggleUiElements(amplitudeUiElements, true);
                 toggleUiElements(dcUiElements, true);
                 toggleUiElements(rmsUiElements, true);
@@ -521,8 +521,8 @@ public class RegulatorParametersController {
                 TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма");
                 TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %");
 
-                frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
-                relativeResponseFrequencyColumn.setCellValueFactory(cellData -> cellData.getValue().relativeDcProperty());
+                frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
+                relativeResponseFrequencyColumn.setCellValueFactory(cellData -> cellData.getValue().relativeFrequencyProperty());
 
                 tableView.getColumns().add(frequencyColumn);
                 tableView.getColumns().add(relativeResponseFrequencyColumn);
@@ -543,8 +543,8 @@ public class RegulatorParametersController {
     private TableColumn<ChannelModel, String> createColumn(String header) {
         TableColumn<ChannelModel, String> column = new TableColumn<>();
 
-        column.setMinWidth(100);
-        column.setPrefWidth(100);
+        column.setMinWidth(50);
+        column.setPrefWidth(80);
         column.setMaxWidth(5000);
         column.setText(header);
         Utils.makeHeaderWrappable(column);
