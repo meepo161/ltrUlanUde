@@ -23,14 +23,10 @@ public class TableController {
     private TableColumn<ChannelModel, String> channelsColumn;
     private TableColumn<ChannelModel, HBox> responseColumn;
     private TableColumn<ChannelModel, String> ampResponseColumn;
-    private TableColumn<ChannelModel, String> ampColumn;
-    private TableColumn<ChannelModel, String> ampRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> dcResponseColumn;
     private TableColumn<ChannelModel, String> frequencyResponseColumn;
-    private TableColumn<ChannelModel, String> frequencyColumn;
-    private TableColumn<ChannelModel, String> frequencyRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> loadsCounterColumn;
     private TableColumn<ChannelModel, String> rmsResponseColumn;
-    private TableColumn<ChannelModel, String> rmsColumn;
-    private TableColumn<ChannelModel, String> rmsRelativeResponseColumn;
 
     private int disableCount;
     private GraphController graphController;
@@ -41,24 +37,18 @@ public class TableController {
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
-                           TableColumn<ChannelModel, String> ampColumn, TableColumn<ChannelModel, String> ampRelativeResponseColumn,
-                           TableColumn<ChannelModel, String> frequencyResponseColumn, TableColumn<ChannelModel, String> frequencyColumn,
-                           TableColumn<ChannelModel, String> frequencyRelativeResponseColumn, TableColumn<ChannelModel, String> rmsResponseColumn,
-                           TableColumn<ChannelModel, String> rmsColumn, TableColumn<ChannelModel, String> rmsRelativeResponseColumn,
+                           TableColumn<ChannelModel, String> dcResponseColumn, TableColumn<ChannelModel, String> loadsCounterColumn,
+                           TableColumn<ChannelModel, String> frequencyResponseColumn, TableColumn<ChannelModel, String> rmsResponseColumn,
                            GraphController graphController, ProcessController processController) {
 
         this.tableView = tableView;
         this.channelsColumn = channelsColumn;
         this.responseColumn = responseColumn;
         this.ampResponseColumn = ampResponseColumn;
-        this.ampColumn = ampColumn;
-        this.ampRelativeResponseColumn = ampRelativeResponseColumn;
+        this.dcResponseColumn = dcResponseColumn;
         this.frequencyResponseColumn = frequencyResponseColumn;
-        this.frequencyColumn = frequencyColumn;
-        this.frequencyRelativeResponseColumn = frequencyRelativeResponseColumn;
+        this.loadsCounterColumn = loadsCounterColumn;
         this.rmsResponseColumn = rmsResponseColumn;
-        this.rmsColumn = rmsColumn;
-        this.rmsRelativeResponseColumn = rmsRelativeResponseColumn;
         this.graphController = graphController;
         this.processController = processController;
 
@@ -73,26 +63,18 @@ public class TableController {
 
         initResponse(responseColumn);
         init(ampResponseColumn);
-        init(ampColumn);
-        init(ampRelativeResponseColumn);
+        init(dcResponseColumn);
+        init(loadsCounterColumn);
         init(rmsResponseColumn);
-        init(rmsColumn);
-        init(rmsRelativeResponseColumn);
         init(frequencyResponseColumn);
-        init(frequencyColumn);
-        init(frequencyRelativeResponseColumn);
 
         channelsColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
         responseColumn.setCellValueFactory(cellData -> cellData.getValue().getResponse());
         ampResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseAmplitudeProperty());
-        ampColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
-        ampRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseAmplitudeProperty());
-        rmsResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseRmsProperty());
-        rmsColumn.setCellValueFactory(cellData -> cellData.getValue().rmsProperty());
-        rmsRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseRmsProperty());
+        dcResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseDcProperty());
         frequencyResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseFrequencyProperty());
-        frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
-        frequencyRelativeResponseColumn.setCellValueFactory(cellData -> cellData.getValue().relativeResponseFrequencyProperty());
+        loadsCounterColumn.setCellValueFactory(cellData -> cellData.getValue().responseLoadsCounterProperty());
+        rmsResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseRmsProperty());
 
         listen(tableView);
     }
@@ -356,6 +338,7 @@ public class TableController {
                         double neededAmplitude = Double.parseDouble(channelModel.getAmplitude());
                         double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
                         double neededDc = Double.parseDouble(channelModel.getDc());
+                        double loadsCounter = signalParametersModel.getLoadsCounter(moduleIndex, channelIndex);
                         double frequency = signalParametersModel.getFrequency(moduleIndex, channelIndex);
                         double neededFrequency = Double.parseDouble(channelModel.getFrequency());
                         double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
@@ -363,10 +346,13 @@ public class TableController {
 
                         channelModel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude, 1000)));
                         channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 1000)));
-                        channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
-                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 1000)));
+                        channelModel.setResponseDc(String.valueOf(Utils.roundValue(dc, 1000)));
+                        channelModel.setRelativeResponseDc(String.valueOf(neededDc == 0 ? 0 : Utils.roundValue(dc / neededDc * 100.0, 1000)));
+                        channelModel.setResponseLoadsCounter(String.valueOf(Utils.roundValue(loadsCounter, 1000)));
                         channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
                         channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 1000)));
+                        channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms, 1000)));
+                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 1000)));
                     }
                 }
 

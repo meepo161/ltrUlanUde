@@ -13,15 +13,20 @@ public class ChannelModel {
     private StringProperty responseAmplitude;
     private StringProperty relativeResponseAmplitude;
     private StringProperty dc;
+    private StringProperty responseDc;
+    private StringProperty relativeResponseDc;
     private StringProperty frequency;
     private StringProperty responseFrequency;
     private StringProperty relativeResponseFrequency;
+    private StringProperty loadsCounter;
+    private StringProperty responseLoadsCounter;
+    private StringProperty relativeResponseLoadsCounter;
     private StringProperty rms;
     private StringProperty responseRms;
     private StringProperty relativeResponseRms;
-    private StringProperty pValue;
-    private StringProperty iValue;
-    private StringProperty dValue;
+    private StringProperty pCoefficient;
+    private StringProperty iCoefficient;
+    private StringProperty dCoefficient;
     private StringProperty chosenParameterIndex;
     private CheckBox responseCheckBox;
     private ColorPicker colorPicker;
@@ -29,19 +34,24 @@ public class ChannelModel {
 
     public ChannelModel(String name) {
         this.name = new SimpleStringProperty(name);
-        responseAmplitude = new SimpleStringProperty("0");
         amplitude = new SimpleStringProperty("0");
+        responseAmplitude = new SimpleStringProperty("0");
         relativeResponseAmplitude = new SimpleStringProperty("0");
         dc = new SimpleStringProperty("0");
-        responseFrequency = new SimpleStringProperty("0");
+        responseDc = new SimpleStringProperty("0");
+        relativeResponseDc = new SimpleStringProperty("0");
         frequency = new SimpleStringProperty("0");
+        responseFrequency = new SimpleStringProperty("0");
         relativeResponseFrequency = new SimpleStringProperty("0");
-        responseRms = new SimpleStringProperty("0");
+        loadsCounter = new SimpleStringProperty("0");
+        responseLoadsCounter = new SimpleStringProperty("0");
+        relativeResponseLoadsCounter = new SimpleStringProperty("0");
         rms = new SimpleStringProperty("0");
+        responseRms = new SimpleStringProperty("0");
         relativeResponseRms = new SimpleStringProperty("0");
-        pValue = new SimpleStringProperty("0");
-        iValue = new SimpleStringProperty("0");
-        dValue = new SimpleStringProperty("0");
+        pCoefficient = new SimpleStringProperty("0");
+        iCoefficient = new SimpleStringProperty("0");
+        dCoefficient = new SimpleStringProperty("0");
         chosenParameterIndex = new SimpleStringProperty("-1");
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
@@ -68,172 +78,56 @@ public class ChannelModel {
         return colorPicker;
     }
 
-    public String getName() {
-        return name.get();
-    }
+    public StringProperty amplitudeProperty() { return amplitude; }
 
-    public StringProperty nameProperty() {
-        return name;
-    }
+    public StringProperty dcProperty() { return dc; }
 
-    public void setName(String description) {
-        this.name.set(description);
-    }
+    public StringProperty frequencyProperty() { return frequency; }
 
     public String getAmplitude() {
         return amplitude.get();
-    }
-
-    public StringProperty amplitudeProperty() {
-        return amplitude;
-    }
-
-    public void setAmplitude(String amplitude) {
-        this.amplitude.set(amplitude);
-    }
-
-    public String getResponseAmplitude() {
-        return responseAmplitude.get();
-    }
-
-    public StringProperty responseAmplitudeProperty() {
-        return responseAmplitude;
-    }
-
-    public void setResponseAmplitude(String responseAmplitude) {
-        this.responseAmplitude.set(responseAmplitude);
-    }
-
-    public String getRelativeResponseAmplitude() {
-        return relativeResponseAmplitude.get();
-    }
-
-    public StringProperty relativeResponseAmplitudeProperty() {
-        return relativeResponseAmplitude;
-    }
-
-    public void setRelativeResponseAmplitude(String relativeResponseAmplitude) {
-        this.relativeResponseAmplitude.set(relativeResponseAmplitude);
-    }
-
-    public String getDc() {
-        return dc.get();
-    }
-
-    public void setDc(String dc) {
-        this.dc.set(dc);
-    }
-
-    public String getFrequency() {
-        return frequency.get();
-    }
-
-    public StringProperty frequencyProperty() {
-        return frequency;
-    }
-
-    public void setFrequency(String frequency) {
-        this.frequency.set(frequency);
-    }
-
-    public String getResponseFrequency() {
-        return responseFrequency.get();
-    }
-
-    public StringProperty responseFrequencyProperty() {
-        return responseFrequency;
-    }
-
-    public void setResponseFrequency(String responseFrequency) {
-        this.responseFrequency.set(responseFrequency);
-    }
-
-    public String getRelativeResponseFrequency() {
-        return relativeResponseFrequency.get();
-    }
-
-    public StringProperty relativeResponseFrequencyProperty() {
-        return relativeResponseFrequency;
-    }
-
-    public void setRelativeResponseFrequency(String relativeResponseFrequency) {
-        this.relativeResponseFrequency.set(relativeResponseFrequency);
-    }
-
-    public String getRms() {
-        return rms.get();
-    }
-
-    public StringProperty rmsProperty() {
-        return rms;
-    }
-
-    public void setRms(String rms) {
-        this.rms.set(rms);
-    }
-
-    public String getResponseRms() {
-        return responseRms.get();
-    }
-
-    public StringProperty responseRmsProperty() {
-        return responseRms;
-    }
-
-    public void setResponseRms(String responseRms) {
-        this.responseRms.set(responseRms);
-    }
-
-    public String getRelativeResponseRms() {
-        return relativeResponseRms.get();
-    }
-
-    public StringProperty relativeResponseRmsProperty() {
-        return relativeResponseRms;
-    }
-
-    public void setRelativeResponseRms(String relativeResponseRms) {
-        this.relativeResponseRms.set(relativeResponseRms);
-    }
-
-    public String getPValue() {
-        return pValue.get();
-    }
-
-    public void setPvalue(String pValue) {
-        this.pValue.set(pValue);
-    }
-
-    public String getIValue() {
-        return iValue.get();
-    }
-
-    public void setIvalue(String iValue) {
-        this.iValue.set(iValue);
-    }
-
-    public String getDValue() {
-        return dValue.get();
-    }
-
-    public void setDvalue(String dValue) {
-        this.dValue.set(dValue);
     }
 
     public String getChosenParameterIndex() {
         return chosenParameterIndex.get();
     }
 
-    public void setChosenParameterIndex(String chosenParameterIndex) {
-        this.chosenParameterIndex.set(chosenParameterIndex);
+    public ColorPicker getColorPicker() {
+        return colorPicker;
+    }
+
+    public String getDc() {
+        return dc.get();
+    }
+
+    public String getDcoefficient() {
+        return dCoefficient.get();
+    }
+
+    public String getFrequency() {
+        return frequency.get();
+    }
+
+    public String getICoefficient() {
+        return iCoefficient.get();
+    }
+
+    public String getLoadsCounter() { return loadsCounter.get(); }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public String getPcoefficient() {
+        return pCoefficient.get();
+    }
+
+    public String getResponseAmplitude() {
+        return responseAmplitude.get();
     }
 
     public CheckBox getResponseCheckBox() {
         return responseCheckBox;
-    }
-
-    public ColorPicker getColorPicker() {
-        return colorPicker;
     }
 
     public String getResponseColor() {
@@ -246,6 +140,124 @@ public class ChannelModel {
         return responseColor.getValue();
     }
 
+    public String getResponseFrequency() {
+        return responseFrequency.get();
+    }
+
+    public String getResponseRms() {
+        return responseRms.get();
+    }
+
+    public String getRms() {
+        return rms.get();
+    }
+
+    public int getSlot() {
+        return Integer.parseInt(this.name.getValue().split("слот ")[1].split("\\)")[0]);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
+    }
+
+    public StringProperty relativeAmplitudeProperty() { return relativeResponseAmplitude; }
+
+    public StringProperty relativeDcProperty() { return relativeResponseDc; }
+
+    public StringProperty relativeFrequencyProperty() { return relativeResponseFrequency; }
+
+    public StringProperty responseAmplitudeProperty() {
+        return responseAmplitude;
+    }
+
+    public StringProperty responseDcProperty() {
+        return responseDc;
+    }
+
+    public StringProperty responseFrequencyProperty() {
+        return responseFrequency;
+    }
+
+    public StringProperty responseLoadsCounterProperty() {
+        return responseLoadsCounter;
+    }
+
+    public StringProperty responseRmsProperty() {
+        return responseRms;
+    }
+
+    public void setAmplitude(String amplitude) {
+        this.amplitude.set(amplitude);
+    }
+
+    public void setChosenParameterIndex(String chosenParameterIndex) {
+        this.chosenParameterIndex.set(chosenParameterIndex);
+    }
+
+    public void setDc(String dc) {
+        this.dc.set(dc);
+    }
+
+    public void setDcoefficient(String dValue) {
+        this.dCoefficient.set(dValue);
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency.set(frequency);
+    }
+
+    public void setIcoefficient(String iValue) {
+        this.iCoefficient.set(iValue);
+    }
+
+    public void setName(String description) {
+        this.name.set(description);
+    }
+
+    public void setPcoefficient(String pValue) {
+        this.pCoefficient.set(pValue);
+    }
+
+    public void setRelativeResponseAmplitude(String relativeResponseAmplitude) {
+        this.relativeResponseAmplitude.set(relativeResponseAmplitude);
+    }
+
+    public void setRelativeResponseDc(String relativeResponseDc) {
+        this.relativeResponseDc.set(relativeResponseDc);
+    }
+
+    public void setRelativeResponseFrequency(String relativeResponseFrequency) {
+        this.relativeResponseFrequency.set(relativeResponseFrequency);
+    }
+
+    public void setRelativeResponseRms(String relativeResponseRms) {
+        this.relativeResponseRms.set(relativeResponseRms);
+    }
+
+    public void setResponseAmplitude(String responseAmplitude) {
+        this.responseAmplitude.set(responseAmplitude);
+    }
+
+    public void setResponseDc(String responseDc) {
+        this.responseDc.set(responseDc);
+    }
+
+    public void setResponseLoadsCounter(String responseLoadsCounter) {
+        this.responseLoadsCounter.set(responseLoadsCounter);
+    }
+
+    public void setResponseFrequency(String responseFrequency) {
+        this.responseFrequency.set(responseFrequency);
+    }
+
+    public void setResponseRms(String responseRms) {
+        this.responseRms.set(responseRms);
+    }
+
+    public void setRms(String rms) {
+        this.rms.set(rms);
+    }
+
     public ObservableValue<HBox> getResponse() {
         HBox hBox = new HBox();
 
@@ -254,9 +266,5 @@ public class ChannelModel {
         hBox.setMaxHeight(22); // ограничение высоты в 22px необходимо для нормального отображения в ячейке
 
         return new ReadOnlyObjectWrapper<>(hBox);
-    }
-
-    public int getSlot() {
-        return Integer.parseInt(this.name.getValue().split("слот ")[1].split("\\)")[0]);
     }
 }

@@ -35,9 +35,9 @@ public class RegulatorController {
             double neededDc = Double.parseDouble(channel.getDc());
             int neededFrequency = Integer.parseInt(channel.getFrequency());
             double neededRms = Double.parseDouble(channel.getRms());
-            double pValue = Double.parseDouble(channel.getPValue());
-            double iValue = Double.parseDouble(channel.getIValue());
-            double dValue = Double.parseDouble(channel.getDValue());
+            double pValue = Double.parseDouble(channel.getPcoefficient());
+            double iValue = Double.parseDouble(channel.getICoefficient());
+            double dValue = Double.parseDouble(channel.getDcoefficient());
 
             regulatorModel[channelIndex].setNeededAmplitude(neededAmplitude);
             regulatorModel[channelIndex].setNeededDc(neededDc);

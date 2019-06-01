@@ -62,11 +62,11 @@ public class ProcessController implements BaseController {
     @FXML
     private Label dLabel;
     @FXML
+    private Label dcLabel;
+    @FXML
     private Slider dcSlider;
     @FXML
     private TextField dcTextField;
-    @FXML
-    private Label dcLabel;
     @FXML
     private Slider dSlider;
     @FXML
@@ -110,21 +110,13 @@ public class ProcessController implements BaseController {
     @FXML
     private TableColumn<ChannelModel, String> ampResponseColumn;
     @FXML
-    private TableColumn<ChannelModel, String> ampColumn;
-    @FXML
-    private TableColumn<ChannelModel, String> ampRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> dcResponseColumn;
     @FXML
     private TableColumn<ChannelModel, String> frequencyResponseColumn;
     @FXML
-    private TableColumn<ChannelModel, String> frequencyColumn;
-    @FXML
-    private TableColumn<ChannelModel, String> frequencyRelativeResponseColumn;
+    private TableColumn<ChannelModel, String> loadsCounterColumn;
     @FXML
     private TableColumn<ChannelModel, String> rmsResponseColumn;
-    @FXML
-    private TableColumn<ChannelModel, String> rmsColumn;
-    @FXML
-    private TableColumn<ChannelModel, String> rmsRelativeResponseColumn;
     @FXML
     private CheckBox rmsCheckBox;
     @FXML
@@ -213,8 +205,8 @@ public class ProcessController implements BaseController {
                 process);
 
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
-                ampColumn, ampRelativeResponseColumn, frequencyResponseColumn, frequencyColumn, frequencyRelativeResponseColumn,
-                rmsResponseColumn, rmsColumn, rmsRelativeResponseColumn, graphController, this);
+                dcResponseColumn, frequencyResponseColumn, loadsCounterColumn, rmsResponseColumn, graphController,
+                this);
 
         stopwatchController = new StopwatchController(this, timeLabel, timeTextField);
 

@@ -13,6 +13,7 @@ import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.RegulatorParametersModel;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,7 +136,7 @@ public class RegulatorParametersController {
     private void fillListOfPidParameters() {
         pidParameters.add(amplitudeCheckBox);
         pidParameters.add(dcCheckBox);
-        pidParameters.add(rmsCheckBox);
+//        pidParameters.add(rmsCheckBox); // TODO: add regulation of this parameter
         pidParameters.add(frequencyCheckBox);
     }
 
@@ -314,7 +315,6 @@ public class RegulatorParametersController {
 
                 if (event.getButton() == MouseButton.PRIMARY && (!row.isEmpty())) {
                     selectParameters(tableView);
-
                 }
             });
 
@@ -362,9 +362,9 @@ public class RegulatorParametersController {
         dcTextField.setText(channelModel.getDc());
         rmsTextField.setText(channelModel.getRms());
         frequencyTextField.setText(channelModel.getFrequency());
-        pTextField.setText(channelModel.getPValue());
-        iTextField.setText(channelModel.getIValue());
-        dTextField.setText(channelModel.getDValue());
+        pTextField.setText(channelModel.getPcoefficient());
+        iTextField.setText(channelModel.getICoefficient());
+        dTextField.setText(channelModel.getDcoefficient());
     }
 
     private void initContextMenu() {
@@ -480,10 +480,76 @@ public class RegulatorParametersController {
         selectedChannel.setDc(dcTextField.getText());
         selectedChannel.setRms(rmsTextField.getText());
         selectedChannel.setFrequency(frequencyTextField.getText());
-        selectedChannel.setPvalue(pTextField.getText());
-        selectedChannel.setIvalue(iTextField.getText());
-        selectedChannel.setDvalue(dTextField.getText());
+        selectedChannel.setPcoefficient(pTextField.getText());
+        selectedChannel.setIcoefficient(iTextField.getText());
+        selectedChannel.setDcoefficient(dTextField.getText());
         selectedChannel.setChosenParameterIndex(String.valueOf(getChosenParameterIndex()));
+
+        checkColumnsCount();
+        addColumns();
+    }
+
+    private void addColumns() {
+        switch (getChosenParameterIndex()) {
+            case 0:
+                TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма");
+                TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %");
+
+                amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
+                relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
+
+                tableView.getColumns().add(amplitudeColumn);
+                tableView.getColumns().add(relativeResponseAmplitudeColumn);
+                break;
+            case 1:
+                TableColumn<ChannelModel, String> dcColumn = createColumn("Статика норма");
+                TableColumn<ChannelModel, String> relativeResponseDcColumn = createColumn("Статика отклик, %");
+
+                dcColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
+                relativeResponseDcColumn.setCellValueFactory(cellData -> cellData.getValue().relativeDcProperty());
+
+                tableView.getColumns().add(dcColumn);
+                tableView.getColumns().add(relativeResponseDcColumn);
+                break;
+//            case 2:
+//                TableColumn<ChannelModel, String> rmsColumn = createColumn("Rms норма");
+//                TableColumn<ChannelModel, String> relativeResponseRmsColumn = createColumn("Rms отклик, %");
+//                tableView.getColumns().add(rmsColumn);
+//                tableView.getColumns().add(relativeResponseRmsColumn);
+//                break;
+            case 2:
+                TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма");
+                TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %");
+
+                frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
+                relativeResponseFrequencyColumn.setCellValueFactory(cellData -> cellData.getValue().relativeDcProperty());
+
+                tableView.getColumns().add(frequencyColumn);
+                tableView.getColumns().add(relativeResponseFrequencyColumn);
+                break;
+        }
+    }
+
+    private void checkColumnsCount() {
+        int columnsCount = tableView.getColumns().size();
+        int normalColumnsCount = 7;
+
+        if (columnsCount > normalColumnsCount) { // удалить две последние колонки таблицы
+            tableView.getColumns().remove(columnsCount - 1);
+            tableView.getColumns().remove(columnsCount - 2);
+        }
+    }
+
+    private TableColumn<ChannelModel, String> createColumn(String header) {
+        TableColumn<ChannelModel, String> column = new TableColumn<>();
+
+        column.setMinWidth(100);
+        column.setPrefWidth(100);
+        column.setMaxWidth(5000);
+        column.setText(header);
+        Utils.makeHeaderWrappable(column);
+
+        return column;
     }
 
     public void setLm(LinkingManager lm) {
