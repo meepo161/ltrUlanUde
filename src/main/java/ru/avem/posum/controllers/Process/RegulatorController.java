@@ -43,9 +43,9 @@ public class RegulatorController {
             regulatorModel[channelIndex].setNeededDc(neededDc);
             regulatorModel[channelIndex].setNeededFrequency(neededFrequency);
             regulatorModel[channelIndex].setNeededRms(neededRms);
-            regulatorModel[channelIndex].setPValue(pValue);
-            regulatorModel[channelIndex].setIValue(iValue);
-            regulatorModel[channelIndex].setDValue(dValue);
+            regulatorModel[channelIndex].setPCoefficient(pValue);
+            regulatorModel[channelIndex].setICoefficient(iValue);
+            regulatorModel[channelIndex].setCoefficient(dValue);
         }
     }
 
@@ -54,12 +54,12 @@ public class RegulatorController {
             ChannelModel channel = channels.get(channelIndex);
 
             double amplitude = Double.parseDouble(channel.getResponseAmplitude());
-//            double dc = Double.parseDouble(channel.getResponseDc());
+            double dc = Double.parseDouble(channel.getResponseDc());
             double frequency = Double.parseDouble(channel.getResponseFrequency());
             double rms = Double.parseDouble(channel.getResponseRms());
 
             regulatorModel[channelIndex].setResponseAmplitude(amplitude);
-//            regulatorModel[channelIndex].setResponseDc(dc);
+            regulatorModel[channelIndex].setResponseDc(dc);
             regulatorModel[channelIndex].setResponseFrequency(frequency);
             regulatorModel[channelIndex].setResponseRms(rms);
         }
@@ -87,16 +87,16 @@ public class RegulatorController {
         int signalType = 0; // синусоидальный сигнал
         double[] amplitudes = new double[channelsCount];
         double[] dc = new double[channelsCount];
-        int[] frequencies = new int[channelsCount];
-        int[] phases = new int[channelsCount];
+        double[] frequencies = new double[channelsCount];
 
         for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
-            amplitudes[channelIndex] = 10;
-            dc[channelIndex] = 0;
-            frequencies[channelIndex] = regulatorModel[channelIndex] == null ? 8 : regulatorModel[channelIndex].getFrequency();
-            phases[channelIndex] = 0;
+            amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
+            dc[channelIndex] = regulatorModel[channelIndex].getDc();
+            frequencies[channelIndex] = regulatorModel[channelIndex].getFrequency();
         }
 
+        ltr34SettingsModel.setAmplitudes(amplitudes);
+        ltr34SettingsModel.setDc(dc);
         ltr34SettingsModel.setFrequencies(frequencies);
         ltr34SettingsModel.calculateSignal(signalType);
         System.arraycopy(ltr34SettingsModel.getSignal(), 0, signal, 0, ltr34SettingsModel.getSignal().length);
@@ -156,17 +156,6 @@ public class RegulatorController {
 
         return rms;
     }
-
-    public double[] getPhases() {
-        double[] phases = new double[channels.size()];
-
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-            phases[channelIndex] = regulatorModel[channelIndex].getPhase();
-        }
-
-        return phases;
-    }
-
 
     public void setModules(List<Modules> modules) {
         this.modules = modules;

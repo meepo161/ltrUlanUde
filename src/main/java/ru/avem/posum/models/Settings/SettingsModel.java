@@ -35,7 +35,7 @@ public class SettingsModel implements BaseController {
     private DAC dac;
     private double[] dc;
     private String firPath;
-    private int[] frequencies;
+    private double[] frequencies;
     private String iirPath;
     private boolean isEditMode;
     private HashMap<String, Actionable> instructions = new HashMap<>();

@@ -308,7 +308,7 @@ public class Modules {
         this.dc = settingsToString(dc);
     }
 
-    public void setFrequencies(int[] frequencies) {
+    public void setFrequencies(double[] frequencies) {
         this.frequencies = settingsToString(frequencies);
     }
 

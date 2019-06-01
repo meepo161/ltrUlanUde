@@ -1,58 +1,56 @@
 package ru.avem.posum.models.Process;
 
-import ru.avem.posum.db.models.Modules;
-import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.models.Settings.LTR34SettingsModel;
-
-import java.util.List;
-
 public class RegulatorModel {
-    private double pValue;
-    private double iValue;
+    private double bufferedError;
+    private double bufferedIValue;
+    private int calculationCount = 1;
+    private double dCoefficient;
     private double dValue;
-    private double responseAmplitude;
-    private double responseDc;
-    private double responseFrequency;
-    private double responsePhase;
-    private double responseRms;
-    private double dacAmplitude;
-    private double dacDc;
-    private double dacFrequency;
-    private double dacPhase;
-    private double dacRms;
+    private double error;
+    private double iCoefficient;
+    private double iValue;
     private double neededAmplitude;
     private double neededDc;
     private double neededFrequency;
-    private double neededPhase;
     private double neededRms;
+    private double pCoefficient;
+    private double pValue;
+    private double responseAmplitude;
+    private double responseDc;
+    private double responseFrequency;
+    private double responseRms;
 
     public double getAmplitude() {
-        return neededAmplitude;
+        return calculateRegulator(responseAmplitude, neededAmplitude);
+    }
+
+    private double calculateRegulator(double neededParameter, double response) {
+        double error = neededParameter - response;
+        pValue = pCoefficient * error;
+        iValue = iCoefficient * error;
+
+        if (calculationCount % 2 != 0) {
+            bufferedError = error;
+            bufferedIValue = iValue;
+        } else {
+            iValue = bufferedIValue + iCoefficient * error;
+            dValue = dCoefficient * (error - bufferedError);
+            calculationCount = 1;
+        }
+
+        return neededParameter + pValue + iValue + dValue;
     }
 
     public double getDc() {
-        return neededDc;
+        return calculateRegulator(responseDc, neededDc);
     }
 
-    public int getFrequency() {
-        double regulationError = neededFrequency - responseFrequency;
-        regulationError = (regulationError < neededFrequency / 1.05) || (regulationError > neededFrequency * 1.05) ? regulationError : 0;
-
-        System.out.printf("Regulations error: %f\n", regulationError);
-
-        dacFrequency += pValue * regulationError;
-        System.out.printf("Dac frequency: %f\n", dacFrequency);
-
-        System.out.printf("Dac frequency: %d\n", (int) dacFrequency);
-        return (int) dacFrequency;
+    public double getFrequency() {
+        return calculateRegulator(responseFrequency, neededFrequency);
     }
 
     public double getRms() {
         return neededRms;
-    }
-
-    public double getPhase() {
-        return neededPhase;
     }
 
     public void setNeededAmplitude(double neededAmplitude) {
@@ -83,27 +81,19 @@ public class RegulatorModel {
         this.responseFrequency = responseFrequency;
     }
 
-    public void setResponsePhase(double responsePhase) {
-        this.responsePhase = responsePhase;
-    }
-
     public void setResponseRms(double responseRms) {
         this.responseRms = responseRms;
     }
 
-    public void setNeededPhase(double neededPhase) {
-        this.neededPhase = neededPhase;
+    public void setPCoefficient(double pValue) {
+        this.pCoefficient = pValue;
     }
 
-    public void setPValue(double pValue) {
-        this.pValue = pValue;
+    public void setICoefficient(double iValue) {
+        this.iCoefficient = iValue;
     }
 
-    public void setIValue(double iValue) {
-        this.iValue = iValue;
-    }
-
-    public void setDValue(double dValue) {
-        this.dValue = dValue;
+    public void setCoefficient(double dValue) {
+        this.dCoefficient = dValue;
     }
 }

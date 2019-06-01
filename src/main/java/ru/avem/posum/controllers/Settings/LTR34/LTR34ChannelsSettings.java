@@ -318,7 +318,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
                 ltr34SettingsModel.getAmplitudes()[channelIndex] = parseDouble(amplitudesTextFields.get(channelIndex));
                 ltr34SettingsModel.getDc()[channelIndex] = parseDouble(dcTextFields.get(channelIndex));
                 ltr34SettingsModel.getDescriptions()[channelIndex] = descriptionsTextFields.get(channelIndex).getText();
-                ltr34SettingsModel.getFrequencies()[channelIndex] = parseInteger(frequenciesTextFields.get(channelIndex));
+                ltr34SettingsModel.getFrequencies()[channelIndex] = parseDouble(frequenciesTextFields.get(channelIndex));
                 ltr34SettingsModel.getPhases()[channelIndex] = parseInteger(phasesTextFields.get(channelIndex));
                 channelsCount++;
             } else {

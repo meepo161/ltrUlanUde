@@ -21,7 +21,7 @@ public abstract class DAC extends Module {
     private double[] amplitudes;
     private int checkedChannelsCounter;
     private double[] dc;
-    private int[] frequencies;
+    private double[] frequencies;
     HashMap<String, Integer> moduleSettings;
     private int[] phases;
 
@@ -31,7 +31,7 @@ public abstract class DAC extends Module {
         checkedChannels = new boolean[channelsCount];
         dc = new double[channelsCount];
         descriptions = new String[channelsCount];
-        frequencies = new int[channelsCount];
+        frequencies = new double[channelsCount];
         moduleSettings = new HashMap<>();
         phases = new int[channelsCount];
     }
@@ -52,7 +52,7 @@ public abstract class DAC extends Module {
         return dc;
     }
 
-    public int[] getFrequencies() {
+    public double[] getFrequencies() {
         return frequencies;
     }
 

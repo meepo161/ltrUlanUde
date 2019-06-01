@@ -126,6 +126,10 @@ public class ChannelModel {
         return responseAmplitude.get();
     }
 
+    public String getResponseDc() {
+        return responseDc.get();
+    }
+
     public CheckBox getResponseCheckBox() {
         return responseCheckBox;
     }
