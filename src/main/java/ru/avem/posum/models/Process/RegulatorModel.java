@@ -6,7 +6,6 @@ public class RegulatorModel {
     private int calculationCount = 1;
     private double dCoefficient;
     private double dValue;
-    private double error;
     private double iCoefficient;
     private double iValue;
     private double neededAmplitude;
@@ -18,14 +17,14 @@ public class RegulatorModel {
     private double responseAmplitude;
     private double responseDc;
     private double responseFrequency;
-    private double responseRms;
 
     public double getAmplitude() {
-        return calculateRegulator(responseAmplitude, neededAmplitude);
+        return calculateRegulator(neededAmplitude, responseAmplitude);
     }
 
     private double calculateRegulator(double neededParameter, double response) {
         double error = neededParameter - response;
+        System.out.printf("\nNeeded: %f, response: %f. Error: %f\n", neededParameter, response, neededParameter - response);
         pValue = pCoefficient * error;
         iValue = iCoefficient * error;
 
@@ -38,15 +37,16 @@ public class RegulatorModel {
             calculationCount = 1;
         }
 
-        return neededParameter + pValue + iValue + dValue;
+        System.out.printf("Needed: %f, response: %f. New: %f\n", neededParameter, response, (response + pValue));
+        return response + pValue + iValue + dValue;
     }
 
     public double getDc() {
-        return calculateRegulator(responseDc, neededDc);
+        return calculateRegulator(neededDc, responseDc);
     }
 
     public double getFrequency() {
-        return calculateRegulator(responseFrequency, neededFrequency);
+        return calculateRegulator(neededFrequency, responseFrequency);
     }
 
     public double getRms() {
@@ -79,10 +79,6 @@ public class RegulatorModel {
 
     public void setResponseFrequency(double responseFrequency) {
         this.responseFrequency = responseFrequency;
-    }
-
-    public void setResponseRms(double responseRms) {
-        this.responseRms = responseRms;
     }
 
     public void setPCoefficient(double pValue) {

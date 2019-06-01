@@ -548,7 +548,7 @@ public class SettingsModel implements BaseController {
                 descriptions[i] = parsedChannelsDescription[i];
                 amplitudes[i] = Double.parseDouble(parsedAmplitudes[i]);
                 dc[i] = Double.parseDouble(parsedDc[i]);
-                frequencies[i] = Integer.parseInt(parsedFrequencies[i]);
+                frequencies[i] = Double.parseDouble(parsedFrequencies[i]);
                 phases[i] = Integer.parseInt(parsedPhases[i]);
             }
         }

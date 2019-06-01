@@ -228,7 +228,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
     private void setFrequencyFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^\\d]", ""));
-            if (!newValue.matches("(^[1-9]|1[0-9]|2[0-9]|3[0-9]|4[0-9]|(50)|$)")) {
+            if (!newValue.matches("^[\\d]+(\\.|,)\\d+|^[\\d]+(\\.|,)|^[\\d]+|$")) {
                 textField.setText(oldValue);
             }
         });
@@ -271,8 +271,9 @@ class LTR34ChannelsSettings extends LTR34Settings {
             frequenciesTextFields.get(channelIndex).setText(String.valueOf(ltr34SettingsModel.getFrequencies()[channelIndex]));
 
             replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getAmplitudes()[channelIndex], amplitudesTextFields.get(channelIndex));
-            replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getPhases()[channelIndex], phasesTextFields.get(channelIndex));
+            replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getFrequencies()[channelIndex], frequenciesTextFields.get(channelIndex));
             replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getDc()[channelIndex], dcTextFields.get(channelIndex));
+            replaceNul(checkBoxes.get(channelIndex), ltr34SettingsModel.getPhases()[channelIndex], phasesTextFields.get(channelIndex));
         }
     }
 

@@ -436,6 +436,7 @@ public class ProcessController implements BaseController {
             stopwatchController.startStopwatch();
             tableController.getRegulatorController().setModules(processModel.getModules());
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
+            tableController.initRegulator();
 
             while (!process.isStopped()) {
                 int dacIndex = tableController.getRegulatorController().getDacIndex();

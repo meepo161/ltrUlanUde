@@ -190,7 +190,7 @@ public class SignalParametersModel {
 
             frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
             if (!(frequency <= 5)) {
-                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? bufferedFrequency[moduleIndex][channelIndex] : frequency;
+                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? estimatedFrequency : frequency;
             }
             frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
             bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];

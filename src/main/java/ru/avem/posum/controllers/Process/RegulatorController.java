@@ -19,8 +19,10 @@ public class RegulatorController {
 
     public void initRegulator(List<ChannelModel> channels) {
         this.channels = channels;
+        Modules dac = getDacModule();
+        int channelsCount = dac.getChannelsCount();
 
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
+        for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
             regulatorModel[channelIndex] = new RegulatorModel();
         }
 
@@ -61,7 +63,6 @@ public class RegulatorController {
             regulatorModel[channelIndex].setResponseAmplitude(amplitude);
             regulatorModel[channelIndex].setResponseDc(dc);
             regulatorModel[channelIndex].setResponseFrequency(frequency);
-            regulatorModel[channelIndex].setResponseRms(rms);
         }
     }
 
@@ -69,7 +70,7 @@ public class RegulatorController {
         int dacIndex = -1;
 
         for (int moduleIndex = 0; moduleIndex < typesOfModules.length; moduleIndex++) {
-            if (typesOfModules.equals(Crate.LTR34)) {
+            if (typesOfModules[moduleIndex].equals(Crate.LTR34)) {
                 dacIndex = moduleIndex;
                 break;
             }
@@ -85,19 +86,16 @@ public class RegulatorController {
         int channelsCount = dac.getChannelsCount();
 
         int signalType = 0; // синусоидальный сигнал
-        double[] amplitudes = new double[channelsCount];
+        double[] amplitudes = ltr34SettingsModel.getAmplitudes();
         double[] dc = new double[channelsCount];
-        double[] frequencies = new double[channelsCount];
+        double[] frequencies = ltr34SettingsModel.getFrequencies();
 
         for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
-            amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
-            dc[channelIndex] = regulatorModel[channelIndex].getDc();
+//            amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
+//            dc[channelIndex] = regulatorModel[channelIndex].getDc();
             frequencies[channelIndex] = regulatorModel[channelIndex].getFrequency();
         }
 
-        ltr34SettingsModel.setAmplitudes(amplitudes);
-        ltr34SettingsModel.setDc(dc);
-        ltr34SettingsModel.setFrequencies(frequencies);
         ltr34SettingsModel.calculateSignal(signalType);
         System.arraycopy(ltr34SettingsModel.getSignal(), 0, signal, 0, ltr34SettingsModel.getSignal().length);
 
@@ -115,46 +113,6 @@ public class RegulatorController {
         }
 
         return dac;
-    }
-
-    public double[] getAmplitudes() {
-        double[] amplitudes = new double[channels.size()];
-
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-            amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
-        }
-
-        return amplitudes;
-    }
-
-    public double[] getDc() {
-        double[] dc = new double[channels.size()];
-
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-            dc[channelIndex] = regulatorModel[channelIndex].getDc();
-        }
-
-        return dc;
-    }
-
-    public double[] getFrequencies() {
-        double[] frequencies = new double[channels.size()];
-
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-            frequencies[channelIndex] = regulatorModel[channelIndex].getFrequency();
-        }
-
-        return frequencies;
-    }
-
-    public double[] getRms() {
-        double[] rms = new double[channels.size()];
-
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-            rms[channelIndex] = regulatorModel[channelIndex].getRms();
-        }
-
-        return rms;
     }
 
     public void setModules(List<Modules> modules) {

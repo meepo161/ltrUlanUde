@@ -290,8 +290,6 @@ public class TableController {
     public void showParametersOfSignal() {
         new Thread(() -> {
             signalParametersModel.setTypesOfModules(processController.getProcessModel().getTypesOfModules());
-            regulatorController.initRegulator(getDacChannels());
-
             while (!processController.getProcess().isStopped()) {
                 signalParametersModel.setData(processController.getProcess().getData());
                 signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
@@ -303,6 +301,10 @@ public class TableController {
                 Utils.sleep(1000);
             }
         }).start();
+    }
+
+    public void initRegulator() {
+        regulatorController.initRegulator(getDacChannels());
     }
 
     private List<ChannelModel> getDacChannels() {
