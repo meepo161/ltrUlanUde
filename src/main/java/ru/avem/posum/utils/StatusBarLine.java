@@ -11,7 +11,6 @@ import static java.lang.Thread.sleep;
 public class StatusBarLine {
     private Label checkIcon;
     private boolean isMainView;
-    private boolean isProcessView;
     private ProgressIndicator progressIndicator;
     private StatusBar statusBar;
     private Thread statusBarThread;

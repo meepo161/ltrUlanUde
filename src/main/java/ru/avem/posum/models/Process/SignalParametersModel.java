@@ -2,9 +2,8 @@ package ru.avem.posum.models.Process;
 
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.models.Settings.LTR34SettingsModel;
+import uk.me.berndporr.iirj.Butterworth;
 
-import javax.swing.plaf.SliderUI;
 import java.util.*;
 
 public class SignalParametersModel {
@@ -15,6 +14,7 @@ public class SignalParametersModel {
     private double[][] amplitudes = new double[SLOTS][];
     private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
     private double[][] bufferedFrequency = new double[SLOTS][];
+    private Butterworth iir = new Butterworth();
     private double[][] data = new double[SLOTS][];
     private double[][] dc = new double[SLOTS][];
     private double[][] frequencies = new double[SLOTS][];
@@ -52,6 +52,13 @@ public class SignalParametersModel {
     }
 
     public void setData(double[][] data) {
+        for (int moduleIndex = 0; moduleIndex < data.length; moduleIndex++) {
+            for (int i = 0; i < data[moduleIndex].length; i++) {
+                iir.lowPass(2, data[moduleIndex].length, 50);
+                data[moduleIndex][i] = iir.filter(data[moduleIndex][i]);
+            }
+        }
+
         this.data = data;
     }
 
@@ -230,7 +237,7 @@ public class SignalParametersModel {
         double firstValue = data[moduleIndex][channelIndex] + shift;
         boolean firstPeriod = true;
         boolean positivePartOfSignal = !(firstValue > (dc[moduleIndex][channelIndex] + shift));
-        double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude(moduleIndex);
+        double minAmplitude = getLowerLimitOfAmplitude(moduleIndex);
         samplesPerSemiPeriod[moduleIndex][channelIndex] = zeroTransitionCounter[moduleIndex][channelIndex] = 0;
 
         for (int index = channelIndex; index < data[moduleIndex].length; index += CHANNELS) {
@@ -240,26 +247,26 @@ public class SignalParametersModel {
             countSamplesFirstAlgorithm(moduleIndex, channelIndex);
 
             if (firstValue >= centerOfSignal) {
-                if (value >= centerOfSignal && firstPeriod && (index >= CHANNELS * minSamples)) {
+                if (value >= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod[moduleIndex][channelIndex] == 0)) {
                     zeroTransitionCounter[moduleIndex][channelIndex]++;
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod[moduleIndex][channelIndex] > minSamples) {
+                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && (value >= minAmplitude)) {
                     zeroTransitionCounter[moduleIndex][channelIndex]++;
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index >= CHANNELS * minSamples)) {
+                if (value <= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = false;
-                } else if ((value >= centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod[moduleIndex][channelIndex] == 0)) {
+                } else if ((value > centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod[moduleIndex][channelIndex] == 0)) {
                     zeroTransitionCounter[moduleIndex][channelIndex]++;
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod[moduleIndex][channelIndex] >= minSamples) {
+                } else if (value <= centerOfSignal && !firstPeriod && positivePartOfSignal && (value >= minAmplitude)) {
                     zeroTransitionCounter[moduleIndex][channelIndex]++;
                     positivePartOfSignal = false;
                 }
@@ -280,7 +287,7 @@ public class SignalParametersModel {
         double firstValue = data[moduleIndex][0] + shift;
         boolean firstPeriod = true;
         boolean positivePartOfSignal = !(firstValue > (dc[moduleIndex][channelIndex] + shift));
-        double minSamples = dc[moduleIndex][channelIndex] + getLowerLimitOfAmplitude(moduleIndex);
+        double minAmplitude = getLowerLimitOfAmplitude(moduleIndex);
         bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] = 0;
         periods[moduleIndex][channelIndex] = 0;
         samplesPerSemiPeriods[moduleIndex][channelIndex] = 0;
@@ -293,26 +300,26 @@ public class SignalParametersModel {
             countSamplesSecondAlgorithm(moduleIndex, channelIndex);
 
             if (firstValue >= centerOfSignal) {
-                if (value >= centerOfSignal && firstPeriod && (index >= CHANNELS * minSamples)) {
+                if (value >= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = true;
-                } else if ((value < centerOfSignal && positivePartOfSignal)) {
+                } else if ((value < centerOfSignal) && positivePartOfSignal) {
                     countPeriods(moduleIndex, channelIndex);
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriods[moduleIndex][channelIndex] >= minSamples) {
+                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal) {
                     countPeriods(moduleIndex, channelIndex);
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index > CHANNELS * minSamples)) {
+                if (value <= centerOfSignal && firstPeriod && (value >= minAmplitude)) {
                     positivePartOfSignal = false;
-                } else if ((value >= centerOfSignal && !positivePartOfSignal)) {
+                } else if ((value > centerOfSignal && !positivePartOfSignal)) {
                     countPeriods(moduleIndex, channelIndex);
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriods[moduleIndex][channelIndex] > minSamples) {
+                } else if (value <= centerOfSignal && !firstPeriod && positivePartOfSignal) {
                     countPeriods(moduleIndex, channelIndex);
                     positivePartOfSignal = false;
                 }
@@ -332,7 +339,7 @@ public class SignalParametersModel {
     private void countPeriods(int moduleIndex, int channelIndex) {
         zeroTransitionCounter[moduleIndex][channelIndex]++;
         if (zeroTransitionCounter[moduleIndex][channelIndex] % 2 != 0 && zeroTransitionCounter[moduleIndex][channelIndex] > 2) {
-            bufferedSamplesPerSemiPeriods = samplesPerSemiPeriods;
+            bufferedSamplesPerSemiPeriods[moduleIndex][channelIndex] = samplesPerSemiPeriods[moduleIndex][channelIndex];
             periods[moduleIndex][channelIndex]++;
         }
     }
