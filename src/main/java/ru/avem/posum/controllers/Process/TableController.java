@@ -32,7 +32,7 @@ public class TableController {
     private GraphController graphController;
     private ProcessController processController;
     private Thread showingThread;
-    private RegulatorController regulatorController = new RegulatorController();
+    private RegulatorController regulatorController;
     private SignalParametersModel signalParametersModel = new SignalParametersModel();
 
     public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
@@ -51,6 +51,7 @@ public class TableController {
         this.rmsResponseColumn = rmsResponseColumn;
         this.graphController = graphController;
         this.processController = processController;
+        this.regulatorController = new RegulatorController(processController);
 
         initTableView();
         toggle();

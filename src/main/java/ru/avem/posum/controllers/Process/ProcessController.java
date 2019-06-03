@@ -558,6 +558,10 @@ public class ProcessController implements BaseController {
         return graphController;
     }
 
+    public LinkingController getLinkingController() {
+        return linkingController;
+    }
+
     public Process getProcess() {
         return process;
     }

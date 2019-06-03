@@ -14,6 +14,8 @@ public class SignalParametersModel {
     private double[][] amplitudes = new double[SLOTS][];
     private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
     private double[][] bufferedFrequency = new double[SLOTS][];
+    private double[][] bufferedRms = new double[SLOTS][];
+    private int[][] frequencyCalculationCounters = new int[SLOTS][CHANNELS]; // счетчик для перезапуска расчета частоты
     private Butterworth iir = new Butterworth();
     private double[][] data = new double[SLOTS][];
     private double[][] dc = new double[SLOTS][];
@@ -37,6 +39,7 @@ public class SignalParametersModel {
             adcFrequencies = new double[SLOTS];
             amplitudes[moduleIndex] = new double[CHANNELS];
             bufferedFrequency[moduleIndex] = new double[CHANNELS];
+            bufferedRms[moduleIndex] = new double[CHANNELS];
             bufferedSamplesPerSemiPeriods[moduleIndex] = new int[CHANNELS];
             dc[moduleIndex] = new double[CHANNELS];
             frequencies[moduleIndex] = new double[CHANNELS];
@@ -52,13 +55,6 @@ public class SignalParametersModel {
     }
 
     public void setData(double[][] data) {
-        for (int moduleIndex = 0; moduleIndex < data.length; moduleIndex++) {
-            for (int i = 0; i < data[moduleIndex].length; i++) {
-                iir.lowPass(2, data[moduleIndex].length, 50);
-                data[moduleIndex][i] = iir.filter(data[moduleIndex][i]);
-            }
-        }
-
         this.data = data;
     }
 
@@ -86,6 +82,7 @@ public class SignalParametersModel {
             double min = Integer.MAX_VALUE;
             double max = Integer.MIN_VALUE;
 
+            iir.lowPass(1, data[moduleIndex].length / CHANNELS, 50);
             for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
                 if (data[moduleIndex][i] > max) {
                     max = data[moduleIndex][i];
@@ -181,24 +178,47 @@ public class SignalParametersModel {
             double summ = 0;
 
             for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
+
                 summ += (data[moduleIndex][i] - dc[moduleIndex][channelIndex]) * (data[moduleIndex][i] - dc[moduleIndex][channelIndex]);
             }
 
             double rms = Math.sqrt(summ / data[moduleIndex].length * CHANNELS);
+
+            double buffer = bufferedRms[moduleIndex][channelIndex];
+            if (!(rms - buffer > 0.05) && (rms > bufferedRms[moduleIndex][channelIndex])) {
+                rms = bufferedRms[moduleIndex][channelIndex];
+            }
+
+            bufferedRms[moduleIndex][channelIndex] = this.rms[moduleIndex][channelIndex];
             this.rms[moduleIndex][channelIndex] = rms < 0 ? 0 : rms;
         }
     }
 
     private void calculateFrequencies(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+            int estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
             double frequency;
-            double estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
-            int accuracyCoefficient = 100; // коэффициент для переключения алгоритмов
 
-            frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
-            if (!(frequency <= 5)) {
-                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? estimatedFrequency : frequency;
+            frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
+            double buffer = bufferedFrequency[moduleIndex][channelIndex];
+
+            if (!(frequency - buffer > 1) && (frequency > bufferedFrequency[moduleIndex][channelIndex])) {
+                frequency = bufferedFrequency[moduleIndex][channelIndex];
             }
+
+            if (frequencyCalculationCounters[moduleIndex][channelIndex] == 10) {
+                frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
+                frequencyCalculationCounters[moduleIndex][channelIndex] = 0;
+            }
+
+            if (channelIndex == 3 && moduleIndex == 0) {
+                System.out.println(frequencyCalculationCounters[moduleIndex][channelIndex]++);
+            }
+
+//            frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
+//            if (!(frequency <= 5)) {
+//                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? estimatedFrequency : frequency;
+//            }
             frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
             bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
         }
@@ -215,16 +235,18 @@ public class SignalParametersModel {
         }
     }
 
-    private double estimateFrequency(int moduleIndex, int channelIndex) {
+    private int estimateFrequency(int moduleIndex, int channelIndex) {
         boolean positivePartOfSignal = false;
-        double frequency = 0;
+        int frequency = 0;
         double lowerLimitOfAmplitude = getLowerLimitOfAmplitude(moduleIndex);
+        iir.lowPass(10, data[moduleIndex].length / CHANNELS, 50);
 
         for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
-            if (data[moduleIndex][i] >= dc[moduleIndex][channelIndex] + lowerLimitOfAmplitude && !positivePartOfSignal) {
+            double value = iir.filter(data[moduleIndex][i]);
+            if (value >= dc[moduleIndex][channelIndex] + lowerLimitOfAmplitude && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[moduleIndex][i] < dc[moduleIndex][channelIndex] - lowerLimitOfAmplitude && positivePartOfSignal) {
+            } else if (value < dc[moduleIndex][channelIndex] - lowerLimitOfAmplitude && positivePartOfSignal) {
                 positivePartOfSignal = false;
             }
         }
@@ -282,7 +304,7 @@ public class SignalParametersModel {
         }
     }
 
-    private double defineFrequencySecondAlgorithm(int moduleIndex, int channelIndex) {
+    private double defineFrequencySecondAlgorithm(int moduleIndex, int channelIndex, int cutoffFrequency) {
         int shift = 1_000;
         double firstValue = data[moduleIndex][0] + shift;
         boolean firstPeriod = true;
@@ -293,8 +315,9 @@ public class SignalParametersModel {
         samplesPerSemiPeriods[moduleIndex][channelIndex] = 0;
         zeroTransitionCounter[moduleIndex][channelIndex] = 0;
 
+        iir.lowPass(1, data[moduleIndex].length / CHANNELS, cutoffFrequency);
         for (int index = channelIndex; index < data[moduleIndex].length; index += CHANNELS) {
-            double value = data[moduleIndex][index] + shift;
+            double value = iir.filter(data[moduleIndex][index] + shift);
             double centerOfSignal = dc[moduleIndex][channelIndex] + shift;
 
             countSamplesSecondAlgorithm(moduleIndex, channelIndex);

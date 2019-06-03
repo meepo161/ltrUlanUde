@@ -1,12 +1,18 @@
 package ru.avem.posum.controllers.Process;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import javafx.collections.ObservableList;
+import javafx.scene.control.CheckBox;
+import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.RegulatorModel;
 import ru.avem.posum.models.Settings.LTR34SettingsModel;
 
 import java.util.List;
+import java.util.Optional;
 
 public class RegulatorController {
     private final int SLOTS = 16;
@@ -14,19 +20,27 @@ public class RegulatorController {
     private List<ChannelModel> channels;
     private LTR34SettingsModel ltr34SettingsModel = new LTR34SettingsModel();
     private List<Modules> modules;
+    private ProcessController processController;
     private RegulatorModel[] regulatorModel = new RegulatorModel[SLOTS];
     private String[] typesOfModules = new String[SLOTS];
 
+    public RegulatorController(ProcessController processController) {
+        this.processController = processController;
+    }
+
     public void initRegulator(List<ChannelModel> channels) {
         this.channels = channels;
-        Modules dac = getDacModule();
-        int channelsCount = dac.getChannelsCount();
+        Optional<Modules> dac = getDacModule();
 
-        for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
-            regulatorModel[channelIndex] = new RegulatorModel();
+        if (dac.isPresent()) {
+            int channelsCount = dac.get().getChannelsCount();
+
+            for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
+                regulatorModel[channelIndex] = new RegulatorModel();
+            }
+
+            setRegulatorParameters();
         }
-
-        setRegulatorParameters();
     }
 
     private void setRegulatorParameters() {
@@ -52,17 +66,21 @@ public class RegulatorController {
     }
 
     public void setResponse() {
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
+
+        for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
             ChannelModel channel = channels.get(channelIndex);
 
-            double amplitude = Double.parseDouble(channel.getResponseAmplitude());
-            double dc = Double.parseDouble(channel.getResponseDc());
-            double frequency = Double.parseDouble(channel.getResponseFrequency());
-            double rms = Double.parseDouble(channel.getResponseRms());
+            if (channel.getName().contains(linkedChannels.get(channelIndex).getValue().getText())) {
+                double amplitude = Double.parseDouble(channel.getResponseAmplitude());
+                double dc = Double.parseDouble(channel.getResponseDc());
+                double frequency = Double.parseDouble(channel.getResponseFrequency());
+                double rms = Double.parseDouble(channel.getResponseRms());
 
-            regulatorModel[channelIndex].setResponseAmplitude(amplitude);
-            regulatorModel[channelIndex].setResponseDc(dc);
-            regulatorModel[channelIndex].setResponseFrequency(frequency);
+                regulatorModel[channelIndex].setResponseAmplitude(amplitude);
+                regulatorModel[channelIndex].setResponseDc(dc);
+                regulatorModel[channelIndex].setResponseFrequency(frequency);
+            }
         }
     }
 
@@ -80,10 +98,10 @@ public class RegulatorController {
     }
 
     public double[] getSignalForDac() {
-        Modules dac = getDacModule();
-        int signalLength = dac.getDataLength();
+        Optional<Modules> dac = getDacModule();
+        int signalLength = dac.get().getDataLength();
         double[] signal = new double[signalLength];
-        int channelsCount = dac.getChannelsCount();
+        int channelsCount = dac.get().getChannelsCount();
 
         int signalType = 0; // синусоидальный сигнал
         double[] amplitudes = ltr34SettingsModel.getAmplitudes();
@@ -102,12 +120,12 @@ public class RegulatorController {
         return signal;
     }
 
-    private Modules getDacModule() {
-        Modules dac = new Modules();
+    private Optional<Modules> getDacModule() {
+        Optional<Modules> dac = Optional.empty();
 
         for (Modules module : modules) {
             if (module.getModuleType().equals(Crate.LTR34)) {
-                dac = module;
+                dac = Optional.of(module);
                 break;
             }
         }
