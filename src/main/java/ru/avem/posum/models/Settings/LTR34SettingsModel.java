@@ -11,15 +11,16 @@ import java.util.List;
 import java.util.Random;
 
 public class LTR34SettingsModel {
-    private double[] amplitudes = {2, 2, 2, 2, 0, 0, 0, 0};
+    private final int CHANNELS = 8; // максимальное количество каналов LTR34
+
+    private double[] amplitudes = new double[CHANNELS];
     private boolean[] checkedChannels;
-    private boolean connectionOpen = true;
-    private double[] dc = {0, 0, 0, 0, 0, 0, 0, 0};
+    private double[] dc = new double[CHANNELS];
     private String[] descriptions;
-    private double[] frequencies = {0, 0, 0, 0, 0, 0, 0, 0};
+    private double[] frequencies = new double[CHANNELS];
     private LTR34 ltr34 = new LTR34();
     private String moduleName;
-    private int[] phases = {0, 0, 0, 0, 0, 0, 0, 0};
+    private int[] phases = new int[CHANNELS];
     private Random random = new Random();
     private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
     private int slot;

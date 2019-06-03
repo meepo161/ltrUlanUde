@@ -399,10 +399,13 @@ public class ProcessController implements BaseController {
 
         toggleUiElements(true);
 
-        new Thread(() -> {
+        Thread processThread = new Thread(() -> {
             process.run();
             checkRunning();
-        }).start();
+        });
+
+        processThread.setPriority(Thread.MAX_PRIORITY);
+        processThread.start();
     }
 
     private void checkRunning() {
@@ -438,12 +441,10 @@ public class ProcessController implements BaseController {
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
             tableController.initRegulator();
 
+            int dacIndex = tableController.getRegulatorController().getDacIndex();
             while (!process.isStopped()) {
-                int dacIndex = tableController.getRegulatorController().getDacIndex();
-
                 if (dacIndex != -1) {
-                    double[] regulatorSignal = tableController.getRegulatorController().getSignalForDac();
-                    process.getData()[dacIndex] = regulatorSignal;
+                    process.getData()[dacIndex] = tableController.getRegulatorController().getSignalForDac();
                 }
 
                 process.perform();

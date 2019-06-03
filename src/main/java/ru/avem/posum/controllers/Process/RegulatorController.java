@@ -98,23 +98,24 @@ public class RegulatorController {
         double[] amplitudes = ltr34SettingsModel.getAmplitudes();
         double[] dc = ltr34SettingsModel.getDc();
         double[] frequencies = ltr34SettingsModel.getFrequencies();
-        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
 
+        Optional<Modules> dac = getDacModule();
+        double[] parsedAmplitudes = Modules.getAmplitudes(dac.get());
+        double[] parsedDc = Modules.getDc(dac.get());
+        double[] parsedFrequencies = Modules.getFrequencies(dac.get());
+
+        System.arraycopy(parsedAmplitudes, 0, amplitudes, 0, parsedAmplitudes.length);
+        System.arraycopy(parsedDc, 0, dc, 0, parsedDc.length);
+        System.arraycopy(parsedFrequencies, 0, frequencies, 0, parsedFrequencies.length);
+
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
         for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
             String adcChannelDescription = linkedChannels.get(channelIndex).getValue().getText();
             String dacChannelDescription = linkedChannels.get(channelIndex).getKey().getText();
 
+
             for (ChannelModel channel : channels) {
                 if (channel.getName().contains(adcChannelDescription)) {
-                    Optional<Modules> dac = getDacModule();
-                    double[] parsedAmplitudes = Modules.getAmplitudes(dac.get());
-                    double[] parsedDc = Modules.getDc(dac.get());
-                    double[] parsedFrequencies = Modules.getFrequencies(dac.get());
-
-                    System.arraycopy(parsedAmplitudes, 0, amplitudes, 0, parsedAmplitudes.length);
-                    System.arraycopy(parsedDc, 0, dc, 0, parsedDc.length);
-                    System.arraycopy(parsedFrequencies, 0, frequencies, 0, parsedFrequencies.length);
-
                     List<Pair<Integer, String>> dacChannels = Modules.getChannelsDescriptions(dac.get());
                     for (int i = 0; i < dacChannels.size(); i++) {
                         if (dacChannels.get(i).getValue().equals(dacChannelDescription)) {
@@ -127,7 +128,6 @@ public class RegulatorController {
             }
         }
 
-        Optional<Modules> dac = getDacModule();
         int signalLength = dac.get().getDataLength();
         double[] signal = new double[signalLength];
         ltr34SettingsModel.calculateSignal(signalType);
