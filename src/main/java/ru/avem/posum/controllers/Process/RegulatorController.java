@@ -30,56 +30,52 @@ public class RegulatorController {
 
     public void initRegulator(List<ChannelModel> channels) {
         this.channels = channels;
-        Optional<Modules> dac = getDacModule();
 
-        if (dac.isPresent()) {
-            int channelsCount = dac.get().getChannelsCount();
-
-            for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
-                regulatorModel[channelIndex] = new RegulatorModel();
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
+        for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+            for (ChannelModel channel : channels) {
+                if (channel.getName().contains(linkedChannels.get(channelIndex).getValue().getText())) {
+                    regulatorModel[channelIndex] = new RegulatorModel();
+                    setRegulatorParameters(channel, channelIndex);
+                }
             }
-
-            setRegulatorParameters();
         }
     }
 
-    private void setRegulatorParameters() {
-        for (int channelIndex = 0; channelIndex < channels.size(); channelIndex++) {
-            ChannelModel channel = channels.get(channelIndex);
+    private void setRegulatorParameters(ChannelModel channel, int channelIndex) {
+        double neededAmplitude = Double.parseDouble(channel.getAmplitude());
+        double neededDc = Double.parseDouble(channel.getDc());
+        int neededFrequency = Integer.parseInt(channel.getFrequency());
+        double neededRms = Double.parseDouble(channel.getRms());
+        double pValue = Double.parseDouble(channel.getPcoefficient());
+        double iValue = Double.parseDouble(channel.getICoefficient());
+        double dValue = Double.parseDouble(channel.getDcoefficient());
 
-            double neededAmplitude = Double.parseDouble(channel.getAmplitude());
-            double neededDc = Double.parseDouble(channel.getDc());
-            int neededFrequency = Integer.parseInt(channel.getFrequency());
-            double neededRms = Double.parseDouble(channel.getRms());
-            double pValue = Double.parseDouble(channel.getPcoefficient());
-            double iValue = Double.parseDouble(channel.getICoefficient());
-            double dValue = Double.parseDouble(channel.getDcoefficient());
-
-            regulatorModel[channelIndex].setNeededAmplitude(neededAmplitude);
-            regulatorModel[channelIndex].setNeededDc(neededDc);
-            regulatorModel[channelIndex].setNeededFrequency(neededFrequency);
-            regulatorModel[channelIndex].setNeededRms(neededRms);
-            regulatorModel[channelIndex].setPCoefficient(pValue);
-            regulatorModel[channelIndex].setICoefficient(iValue);
-            regulatorModel[channelIndex].setCoefficient(dValue);
-        }
+        regulatorModel[channelIndex].setNeededAmplitude(neededAmplitude);
+        regulatorModel[channelIndex].setNeededDc(neededDc);
+        regulatorModel[channelIndex].setNeededFrequency(neededFrequency);
+        regulatorModel[channelIndex].setNeededRms(neededRms);
+        regulatorModel[channelIndex].setPCoefficient(pValue);
+        regulatorModel[channelIndex].setICoefficient(iValue);
+        regulatorModel[channelIndex].setCoefficient(dValue);
     }
 
     public void setResponse() {
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
 
         for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
-            ChannelModel channel = channels.get(channelIndex);
+            for (ChannelModel channel : channels) {
+                if (channel.getName().contains(linkedChannels.get(channelIndex).getValue().getText())) {
+                    double amplitude = Double.parseDouble(channel.getResponseAmplitude());
+                    double dc = Double.parseDouble(channel.getResponseDc());
+                    double frequency = Double.parseDouble(channel.getResponseFrequency());
+                    double rms = Double.parseDouble(channel.getResponseRms());
 
-            if (channel.getName().contains(linkedChannels.get(channelIndex).getValue().getText())) {
-                double amplitude = Double.parseDouble(channel.getResponseAmplitude());
-                double dc = Double.parseDouble(channel.getResponseDc());
-                double frequency = Double.parseDouble(channel.getResponseFrequency());
-                double rms = Double.parseDouble(channel.getResponseRms());
+                    regulatorModel[channelIndex].setResponseAmplitude(amplitude);
+                    regulatorModel[channelIndex].setResponseDc(dc);
+                    regulatorModel[channelIndex].setResponseFrequency(frequency);
+                }
 
-                regulatorModel[channelIndex].setResponseAmplitude(amplitude);
-                regulatorModel[channelIndex].setResponseDc(dc);
-                regulatorModel[channelIndex].setResponseFrequency(frequency);
             }
         }
     }
@@ -98,22 +94,25 @@ public class RegulatorController {
     }
 
     public double[] getSignalForDac() {
+        int signalType = 0; // синусоидальный сигнал
+        double[] amplitudes = ltr34SettingsModel.getAmplitudes();
+        double[] dc = ltr34SettingsModel.getDc();
+        double[] frequencies = ltr34SettingsModel.getFrequencies();
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
+
+        for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+            for (ChannelModel channel : channels) {
+                if (channel.getName().contains(linkedChannels.get(channelIndex).getValue().getText())) {
+//                amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
+//                dc[channelIndex] = regulatorModel[channelIndex].getDc();
+                    frequencies[channelIndex] = regulatorModel[channelIndex].getFrequency();
+                }
+            }
+        }
+
         Optional<Modules> dac = getDacModule();
         int signalLength = dac.get().getDataLength();
         double[] signal = new double[signalLength];
-        int channelsCount = dac.get().getChannelsCount();
-
-        int signalType = 0; // синусоидальный сигнал
-        double[] amplitudes = ltr34SettingsModel.getAmplitudes();
-        double[] dc = new double[channelsCount];
-        double[] frequencies = ltr34SettingsModel.getFrequencies();
-
-        for (int channelIndex = 0; channelIndex < channelsCount; channelIndex++) {
-//            amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
-//            dc[channelIndex] = regulatorModel[channelIndex].getDc();
-            frequencies[channelIndex] = regulatorModel[channelIndex].getFrequency();
-        }
-
         ltr34SettingsModel.calculateSignal(signalType);
         System.arraycopy(ltr34SettingsModel.getSignal(), 0, signal, 0, ltr34SettingsModel.getSignal().length);
 

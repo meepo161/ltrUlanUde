@@ -211,10 +211,6 @@ public class SignalParametersModel {
                 frequencyCalculationCounters[moduleIndex][channelIndex] = 0;
             }
 
-            if (channelIndex == 3 && moduleIndex == 0) {
-                System.out.println(frequencyCalculationCounters[moduleIndex][channelIndex]++);
-            }
-
 //            frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
 //            if (!(frequency <= 5)) {
 //                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? estimatedFrequency : frequency;

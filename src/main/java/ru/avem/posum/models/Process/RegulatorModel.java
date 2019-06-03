@@ -24,7 +24,6 @@ public class RegulatorModel {
 
     private double calculateRegulator(double neededParameter, double response) {
         double error = neededParameter - response;
-        System.out.printf("\nNeeded: %f, response: %f. Error: %f\n", neededParameter, response, neededParameter - response);
         pValue = pCoefficient * error;
         iValue = iCoefficient * error;
 
@@ -37,6 +36,7 @@ public class RegulatorModel {
             calculationCount = 1;
         }
 
+        System.out.printf("\nNeeded: %f, response: %f. Error: %f\n", neededParameter, response, neededParameter - response);
         System.out.printf("Needed: %f, response: %f. New: %f\n", neededParameter, response, (response + pValue));
         return response + pValue + iValue + dValue;
     }
