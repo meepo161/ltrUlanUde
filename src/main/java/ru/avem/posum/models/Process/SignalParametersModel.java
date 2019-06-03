@@ -197,6 +197,7 @@ public class SignalParametersModel {
     private void calculateFrequencies(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             int estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
+            int accuracyCoefficient = 5; // коэффициент для переключения алгоритмов
             double frequency;
 
             frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
@@ -211,10 +212,10 @@ public class SignalParametersModel {
                 frequencyCalculationCounters[moduleIndex][channelIndex] = 0;
             }
 
-//            frequency = (estimatedFrequency < accuracyCoefficient) ? defineFrequencyFirstAlgorithm(moduleIndex, channelIndex) : defineFrequencySecondAlgorithm(moduleIndex, channelIndex);
-//            if (!(frequency <= 5)) {
-//                frequency = (frequency < estimatedFrequency / 1.2 || frequency > estimatedFrequency * 1.2) ? estimatedFrequency : frequency;
-//            }
+            if (frequency <= accuracyCoefficient) {
+                frequency = defineFrequencyFirstAlgorithm(moduleIndex, channelIndex);
+            }
+
             frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
             bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
         }
