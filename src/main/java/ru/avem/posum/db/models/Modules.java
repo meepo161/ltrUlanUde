@@ -197,6 +197,17 @@ public class Modules {
         return amplitudes;
     }
 
+    public static double[] getAmplitudes(Modules module) {
+        String[] splitAmplitudes = module.getAmplitudes().split(", ");
+        double[] amplitudes = new double[splitAmplitudes.length];
+
+        for (int i = 0; i < amplitudes.length; i++) {
+            amplitudes[i] = Double.parseDouble(splitAmplitudes[i]);
+        }
+
+        return amplitudes;
+    }
+
     public static double getAmplitude(Modules module, int channel) {
         String[] amplitudes = module.getAmplitudes().split(", ");
         return Double.parseDouble(amplitudes[channel - 1]);
@@ -246,12 +257,34 @@ public class Modules {
         return dc;
     }
 
+    public static double[] getDc(Modules module) {
+        String[] splitDc = module.getDc().split(", ");
+        double[] dc = new double[splitDc.length];
+
+        for (int i = 0; i < dc.length; i++) {
+            dc[i] = Double.parseDouble(splitDc[i]);
+        }
+
+        return dc;
+    }
+
     public static double getDc(Modules module, int channel) {
         String[] dc = module.getDc().split(", ");
         return Double.parseDouble(dc[channel - 1]);
     }
 
     public String getFrequencies() {
+        return frequencies;
+    }
+
+    public static double[] getFrequencies(Modules module) {
+        String[] splitFrequencies = module.getFrequencies().split(", ");
+        double[] frequencies = new double[splitFrequencies.length];
+
+        for (int i = 0; i < frequencies.length; i++) {
+            frequencies[i] = Double.parseDouble(splitFrequencies[i]);
+        }
+
         return frequencies;
     }
 

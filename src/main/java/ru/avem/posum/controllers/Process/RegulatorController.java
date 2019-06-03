@@ -101,11 +101,28 @@ public class RegulatorController {
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
 
         for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+            String adcChannelDescription = linkedChannels.get(channelIndex).getValue().getText();
+            String dacChannelDescription = linkedChannels.get(channelIndex).getKey().getText();
+
             for (ChannelModel channel : channels) {
-                if (channel.getName().contains(linkedChannels.get(channelIndex).getValue().getText())) {
+                if (channel.getName().contains(adcChannelDescription)) {
+                    Optional<Modules> dac = getDacModule();
+                    double[] parsedAmplitudes = Modules.getAmplitudes(dac.get());
+                    double[] parsedDc = Modules.getDc(dac.get());
+                    double[] parsedFrequencies = Modules.getFrequencies(dac.get());
+
+                    System.arraycopy(parsedAmplitudes, 0, amplitudes, 0, parsedAmplitudes.length);
+                    System.arraycopy(parsedDc, 0, dc, 0, parsedDc.length);
+                    System.arraycopy(parsedFrequencies, 0, frequencies, 0, parsedFrequencies.length);
+
+                    List<Pair<Integer, String>> dacChannels = Modules.getChannelsDescriptions(dac.get());
+                    for (int i = 0; i < dacChannels.size(); i++) {
+                        if (dacChannels.get(i).getValue().equals(dacChannelDescription)) {
 //                amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
 //                dc[channelIndex] = regulatorModel[channelIndex].getDc();
-                    frequencies[channelIndex] = regulatorModel[channelIndex].getFrequency();
+                            frequencies[i] = regulatorModel[channelIndex].getFrequency();
+                        }
+                    }
                 }
             }
         }
