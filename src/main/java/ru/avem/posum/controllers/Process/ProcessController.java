@@ -191,7 +191,7 @@ public class ProcessController implements BaseController {
                 dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton,
-                process);
+                process, this);
 
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 dcResponseColumn, frequencyResponseColumn, loadsCounterColumn, rmsResponseColumn, graphController,

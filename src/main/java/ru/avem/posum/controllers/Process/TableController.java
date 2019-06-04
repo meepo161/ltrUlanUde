@@ -420,6 +420,10 @@ public class TableController {
         }
     }
 
+    public ObservableList<ChannelModel> getChannels() {
+        return tableView.getItems();
+    }
+
     public RegulatorController getRegulatorController() {
         return regulatorController;
     }

@@ -58,6 +58,7 @@ public class RegulatorParametersController {
     private LinkingManager lm;
     private List<CheckBox> pidParameters = new ArrayList<>();
     private Process process;
+    private ProcessController processController;
     private List<Node> rmsUiElements = new ArrayList<>();
     private StatusBarLine statusBarLine;
 
@@ -65,12 +66,12 @@ public class RegulatorParametersController {
                                          Label calibratedAmplitudeLabel, TextField calibratedAmplitudeTextField,
                                          Slider amplitudeSlider, CheckBox dcCheckBox, Label dcLabel, TextField dcTextField,
                                          Label calibratedDcLabel, TextField calibratedDcTextField, Slider dcSlider,
-                                         CheckBox frequencyCheckBox,
-                                         Label frequencyLabel, TextField frequencyTextField, Slider frequencySlider, Label pLabel,
+                                         CheckBox frequencyCheckBox, Label frequencyLabel, TextField frequencyTextField, Slider frequencySlider, Label pLabel,
                                          Slider pSlider, TextField pTextField, Label iLabel, Slider iSlider, TextField iTextField,
                                          Label dLabel, Slider dSlider, TextField dTextField, AnchorPane mainPanel,
                                          ToolBar toolbarSettings, VBox topPanel, TableView<ChannelModel> tableView,
-                                         StatusBarLine statusBarLine, Button saveButton, Process process) {
+                                         StatusBarLine statusBarLine, Button saveButton, Process process,
+                                         ProcessController processController) {
 
         this.amplitudeCheckBox = amplitudeCheckBox;
         this.amplitudeLabel = amplitudeLabel;
@@ -104,6 +105,7 @@ public class RegulatorParametersController {
         this.statusBarLine = statusBarLine;
         this.saveButton = saveButton;
         this.process = process;
+        this.processController = processController;
 
         topPanel.setPrefHeight(mainPanel.getMaxHeight());
         toolbarSettings.setVisible(false);
@@ -452,53 +454,79 @@ public class RegulatorParametersController {
         selectedChannel.setDcoefficient(dTextField.getText());
         selectedChannel.setChosenParameterIndex(String.valueOf(getChosenParameterIndex()));
 
-        checkColumnsCount();
-        addColumns();
+        removeColumns();
+        addColumns(getChosenIndexesOfParameters());
     }
 
-    private void addColumns() {
-        switch (getChosenParameterIndex()) {
-            case 0:
-                TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма");
-                TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %");
+    private void removeColumns() {
+        int normalCountOfColumns = 7; // количество колонок в таблице, если регулировка отсутвует
+        int realCountOfColumns = tableView.getColumns().size();
 
-                amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
-                relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
-
-                tableView.getColumns().add(amplitudeColumn);
-                tableView.getColumns().add(relativeResponseAmplitudeColumn);
-                break;
-            case 1:
-                TableColumn<ChannelModel, String> dcColumn = createColumn("Статика норма");
-                TableColumn<ChannelModel, String> relativeResponseDcColumn = createColumn("Статика отклик, %");
-
-                dcColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
-                relativeResponseDcColumn.setCellValueFactory(cellData -> cellData.getValue().relativeDcProperty());
-
-                tableView.getColumns().add(dcColumn);
-                tableView.getColumns().add(relativeResponseDcColumn);
-                break;
-            case 2:
-                TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма");
-                TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %");
-
-                frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
-                relativeResponseFrequencyColumn.setCellValueFactory(cellData -> cellData.getValue().relativeFrequencyProperty());
-
-                tableView.getColumns().add(frequencyColumn);
-                tableView.getColumns().add(relativeResponseFrequencyColumn);
-                break;
+        while (realCountOfColumns > normalCountOfColumns) {
+            tableView.getColumns().remove(tableView.getColumns().size() - 1);
+            realCountOfColumns = tableView.getColumns().size();
         }
     }
 
-    private void checkColumnsCount() {
-        int columnsCount = tableView.getColumns().size();
-        int normalColumnsCount = 7;
+    private void addColumns(List<Integer> chosenIndexesOfParamters) {
+        for (int value : chosenIndexesOfParamters) {
+            switch (value) {
+                case 0:
+                    TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма");
+                    TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %");
 
-        if (columnsCount > normalColumnsCount) { // удалить две последние колонки таблицы
-            tableView.getColumns().remove(columnsCount - 1);
-            tableView.getColumns().remove(columnsCount - 2);
+                    amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
+                    relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
+
+                    tableView.getColumns().add(amplitudeColumn);
+                    tableView.getColumns().add(relativeResponseAmplitudeColumn);
+                    break;
+                case 1:
+                    TableColumn<ChannelModel, String> dcColumn = createColumn("Статика норма");
+                    TableColumn<ChannelModel, String> relativeResponseDcColumn = createColumn("Статика отклик, %");
+
+                    dcColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
+                    relativeResponseDcColumn.setCellValueFactory(cellData -> cellData.getValue().relativeDcProperty());
+
+                    tableView.getColumns().add(dcColumn);
+                    tableView.getColumns().add(relativeResponseDcColumn);
+                    break;
+                case 2:
+                    TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма");
+                    TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %");
+
+                    frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
+                    relativeResponseFrequencyColumn.setCellValueFactory(cellData -> cellData.getValue().relativeFrequencyProperty());
+
+                    tableView.getColumns().add(frequencyColumn);
+                    tableView.getColumns().add(relativeResponseFrequencyColumn);
+                    break;
+            }
         }
+    }
+
+    private List<Integer> getChosenIndexesOfParameters() {
+        List<Integer> chosenParameters = new ArrayList<>();
+
+        ObservableList<ChannelModel> channels = processController.getTableController().getChannels();
+        for (ChannelModel channel : channels) {
+            int chosenParameterIndex = Integer.parseInt(channel.getChosenParameterIndex());
+            if (chosenParameterIndex != -1 && !isChosenParameterAdded(chosenParameterIndex, chosenParameters)) {
+                chosenParameters.add(chosenParameterIndex);
+            }
+        }
+
+        return chosenParameters;
+    }
+
+    private boolean isChosenParameterAdded(int chosenParameter, List<Integer> chosenParameters) {
+        for (int value : chosenParameters) {
+            if (value == chosenParameter) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private TableColumn<ChannelModel, String> createColumn(String header) {
