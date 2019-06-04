@@ -162,6 +162,7 @@ public class ProcessController implements BaseController {
     @FXML
     private Label warningIcon;
 
+    private CalibrationModel calibrationModel = new CalibrationModel();
     private ControllerManager cm;
     private EventsController eventsController = new EventsController();
     private GraphController graphController;
@@ -436,6 +437,7 @@ public class ProcessController implements BaseController {
             tableController.getRegulatorController().setModules(processModel.getModules());
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
             tableController.initRegulator();
+            calibrationModel.loadCalibrations(table.getItems(), processModel.getModules());
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
             while (!process.isStopped()) {
@@ -444,6 +446,7 @@ public class ProcessController implements BaseController {
                 }
 
                 process.perform();
+                calibrationModel.calibrate(process.getData());
             }
         } else {
             statusBarLine.setStatus("Ошибка запуска программы испытаний", false);
@@ -551,6 +554,10 @@ public class ProcessController implements BaseController {
     }
 
     public void handlePlugButton() {
+    }
+
+    public CalibrationModel getCalibrationModel() {
+        return calibrationModel;
     }
 
     public GraphController getGraphController() {

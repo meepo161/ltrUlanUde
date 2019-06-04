@@ -6,8 +6,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.util.Pair;
 import ru.avem.posum.controllers.Process.RegulatorParameters;
 
 import java.util.Optional;
@@ -133,7 +131,6 @@ public class ChannelModel {
     public String getPcoefficient() {
         return pCoefficient.get();
     }
-
 
     public Optional<RegulatorParameters> isRegulatorEnabled() {
         return regulatorEnabled;

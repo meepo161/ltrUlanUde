@@ -3,6 +3,7 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import javafx.util.Pair;
+import ru.avem.posum.db.CalibrationsRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -241,6 +242,16 @@ public class Modules {
 
     public void setMeasuringRanges(int[] measuringRanges) {
         this.measuringRanges = settingsToString(measuringRanges);
+    }
+
+    public static List<String> getCalibrations(Modules module, int channel) {
+        List<Calibration> calibrations = CalibrationsRepository.getAllCalibrations();
+        for (Calibration calibration : calibrations) {
+            if (calibration.getModuleId() == module.getId()) {
+                return calibration.getCalibrationSettings().get(channel);
+            }
+        }
+        return new ArrayList<>();
     }
 
     public void setChannelsDescription(String[] channelsDescription) {

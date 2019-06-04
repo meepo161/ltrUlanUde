@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.models.Process.CalibrationModel;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.SignalParametersModel;
 import ru.avem.posum.utils.Utils;
@@ -288,7 +289,7 @@ public class TableController {
         new Thread(() -> {
             signalParametersModel.setTypesOfModules(processController.getProcessModel().getTypesOfModules());
             while (!processController.getProcess().isStopped()) {
-                signalParametersModel.setData(processController.getProcess().getData());
+                signalParametersModel.setData(processController.getCalibrationModel().getCalibratedData());
                 signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
                 signalParametersModel.calculateParameters();
 
