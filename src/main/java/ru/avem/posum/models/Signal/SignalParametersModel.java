@@ -4,11 +4,11 @@ import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
 import ru.avem.posum.utils.MovingAverage;
+import uk.me.berndporr.iirj.Butterworth;
 
 import java.util.*;
 
 public class SignalParametersModel {
-    private double accuracyCoefficient;
     private boolean accurateFrequencyCalculation = true;
     private ADC adc;
     private int averageIterator;
@@ -28,8 +28,8 @@ public class SignalParametersModel {
     private double calibratedValue;
     private double firstLoadValue;
     private double firstChannelValue;
-    private double secondLoadValue;
-    private double secondChannelValue;
+    private int frequencyCalculationCounter;
+    private Butterworth iir = new Butterworth();
     private String calibratedValueName;
     private int channel;
     private int channels;
@@ -44,6 +44,10 @@ public class SignalParametersModel {
     private int periods;
     private int samplesPerSemiPeriods;
     private int samplesPerSemiPeriod;
+    private double savedFrequency;
+    private double savedRms;
+    private double secondLoadValue;
+    private double secondChannelValue;
     private double shift;
     private double signalFrequency;
     private double tickUnit;
@@ -199,21 +203,36 @@ public class SignalParametersModel {
         }
 
         double rms = Math.sqrt(summ / data.length * channels);
+        if (!(rms - savedRms > 0.05) && (rms > savedRms)) {
+            rms = savedRms;
+        }
+
+        savedRms = rms;
         return rms < 0 ? 0 : rms;
     }
 
     private double calculateFrequency() {
-        double estimatedFrequency = estimateFrequency();
+        int estimatedFrequency = estimateFrequency();
+        double accuracyCoefficient = 5; // коэффициент для переключения алгоритмов
         double frequency;
 
-        if (estimatedFrequency < accuracyCoefficient) {
+        frequency = defineFrequencySecondAlgorithm(estimatedFrequency * 2);
+
+        if (!(frequency - savedFrequency > 1) && (frequency > savedFrequency)) {
+            frequency = savedFrequency;
+        }
+
+        if (frequencyCalculationCounter == 10) {
+            frequency = defineFrequencySecondAlgorithm(estimatedFrequency * 2);
+            frequencyCalculationCounter = 0;
+        }
+
+        if (frequency <= accuracyCoefficient) {
             frequency = defineFrequencyFirstAlgorithm();
-        } else {
-            frequency = defineFrequencySecondAlgorithm();
         }
 
         double freq = amplitude < getLowerLimitOfAmplitude() ? 0 : frequency;
-        freq = (freq < estimatedFrequency / 2 || freq > estimatedFrequency * 2) ? estimatedFrequency : freq;
+        savedFrequency = freq;
         return freq;
     }
 
@@ -223,16 +242,18 @@ public class SignalParametersModel {
                 Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
     }
 
-    private double estimateFrequency() {
+    private int estimateFrequency() {
         boolean positivePartOfSignal = false;
-        double frequency = 0;
+        int frequency = 0;
         double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
 
+        iir.lowPass(10, data.length / channels, 50);
         for (int i = channel; i < data.length; i += channels) {
-            if (data[i] >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
+            double value = iir.filter(data[i]);
+            if (value >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[i] < dc - lowerLimitOfAmplitude && positivePartOfSignal) {
+            } else if (value < dc - lowerLimitOfAmplitude && positivePartOfSignal) {
                 positivePartOfSignal = false;
             }
         }
@@ -244,6 +265,7 @@ public class SignalParametersModel {
         int shift = 1_000;
         double firstValue = data[channel] + shift;
         boolean firstPeriod = true;
+        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
         boolean positivePartOfSignal = !(firstValue > (dc + shift));
         samplesPerSemiPeriod = zeroTransitionCounter = 0;
 
@@ -254,26 +276,26 @@ public class SignalParametersModel {
             countSamplesFirstAlgorithm();
 
             if (firstValue >= centerOfSignal) {
-                if (value >= centerOfSignal && firstPeriod && (index >= channels * minSamples)) {
+                if (value >= centerOfSignal && firstPeriod && (value >= lowerLimitOfAmplitude)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod > minSamples) {
+                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && (value >= lowerLimitOfAmplitude)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index >= channels * minSamples)) {
+                if (value < centerOfSignal && firstPeriod && (value >= lowerLimitOfAmplitude)) {
                     positivePartOfSignal = false;
                 } else if ((value >= centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod >= minSamples) {
+                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && value >= lowerLimitOfAmplitude) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = false;
                 }
@@ -289,40 +311,42 @@ public class SignalParametersModel {
         }
     }
 
-    private double defineFrequencySecondAlgorithm() {
+    private double defineFrequencySecondAlgorithm(int cutoffFrequency) {
         int shift = 1_000;
         double firstValue = data[0] + shift;
         boolean firstPeriod = true;
+        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
         boolean positivePartOfSignal = !(firstValue > (dc + shift));
         bufferedSamplesPerSemiPeriods = periods = samplesPerSemiPeriods = zeroTransitionCounter = 0;
 
+        iir.lowPass(1, data.length / channels, cutoffFrequency);
         for (int index = channel; index < data.length; index += channels) {
-            double value = data[index] + shift;
+            double value = iir.filter(data[index] + shift);
             double centerOfSignal = dc + shift;
 
             countSamplesSecondAlgorithm();
 
             if (firstValue >= centerOfSignal) {
-                if (value >= centerOfSignal && firstPeriod && (index >= channels * minSamples)) {
+                if (value >= centerOfSignal && firstPeriod && (value >= lowerLimitOfAmplitude)) {
                     positivePartOfSignal = true;
-                } else if ((value < centerOfSignal && positivePartOfSignal)) {
+                } else if (value < centerOfSignal && positivePartOfSignal) {
                     countPeriods();
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriods >= minSamples) {
+                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && value >= lowerLimitOfAmplitude) {
                     countPeriods();
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (index > channels * minSamples)) {
+                if (value < centerOfSignal && firstPeriod && (value >= lowerLimitOfAmplitude)) {
                     positivePartOfSignal = false;
-                } else if ((value >= centerOfSignal && !positivePartOfSignal)) {
+                } else if (value >= centerOfSignal && !positivePartOfSignal) {
                     countPeriods();
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriods > minSamples) {
+                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && value >= lowerLimitOfAmplitude) {
                     countPeriods();
                     positivePartOfSignal = false;
                 }
@@ -521,10 +545,6 @@ public class SignalParametersModel {
 
     public double getTickUnit() {
         return tickUnit;
-    }
-
-    public void setAccuracyCoefficient(double accuracyCoefficient) {
-        this.accuracyCoefficient = accuracyCoefficient;
     }
 
     public void setAccurateFrequencyCalculation(boolean accurateFrequencyCalculation) {

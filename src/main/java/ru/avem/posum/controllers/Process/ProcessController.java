@@ -324,28 +324,32 @@ public class ProcessController implements BaseController {
 
     private void toggleInitializationUiElements() {
         if (!initialized) {
-            toProgramButton.setDisable(false);
-            initializeButton.setDisable(false);
-            backButton.setDisable(false);
-            table.setDisable(false);
-            graph.setDisable(false);
-            commandsTableView.setDisable(false);
-            addCommandButton.setDisable(false);
-            journalTableView.setDisable(false);
-            addEventButton.setDisable(false);
-            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
-            Platform.runLater(() -> initializeButton.setText("Инициализация"));
+            Platform.runLater(() -> {
+                toProgramButton.setDisable(false);
+                initializeButton.setDisable(false);
+                backButton.setDisable(false);
+                table.setDisable(false);
+                graph.setDisable(false);
+                commandsTableView.setDisable(false);
+                addCommandButton.setDisable(false);
+                journalTableView.setDisable(false);
+                addEventButton.setDisable(false);
+                saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+                initializeButton.setText("Инициализация");
+            });
         } else {
-            startButton.setDisable(false);
-            backButton.setDisable(false);
-            table.setDisable(false);
-            graph.setDisable(false);
-            commandsTableView.setDisable(false);
-            addCommandButton.setDisable(false);
-            journalTableView.setDisable(false);
-            addEventButton.setDisable(false);
-            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
-            Platform.runLater(() -> initializeButton.setText("Отменить"));
+            Platform.runLater(() -> {
+                startButton.setDisable(false);
+                backButton.setDisable(false);
+                table.setDisable(false);
+                graph.setDisable(false);
+                commandsTableView.setDisable(false);
+                addCommandButton.setDisable(false);
+                journalTableView.setDisable(false);
+                addEventButton.setDisable(false);
+                saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+                initializeButton.setText("Отменить");
+            });
         }
     }
 
@@ -416,22 +420,25 @@ public class ProcessController implements BaseController {
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешный запуск модулей", EventsTypes.OK);
 
-            initializeButton.setDisable(true);
-            smoothStopButton.setDisable(false);
-            stopButton.setDisable(false);
-            timeLabel.setDisable(false);
-            timeTextField.setDisable(false);
-            savePointButton.setDisable(false);
-            saveWaveformButton.setDisable(false);
-            saveProtocolButton.setDisable(false);
-            backButton.setDisable(false);
-            table.setDisable(false);
-            graph.setDisable(false);
-            commandsTableView.setDisable(false);
-            journalTableView.setDisable(false);
-            saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
-            addEventButton.setDisable(false);
-            Platform.runLater(() -> stopButton.requestFocus());
+            Platform.runLater(() -> {
+                tableController.toggleResponseUiElements(false);
+                initializeButton.setDisable(true);
+                smoothStopButton.setDisable(false);
+                stopButton.setDisable(false);
+                timeLabel.setDisable(false);
+                timeTextField.setDisable(false);
+                savePointButton.setDisable(false);
+                saveWaveformButton.setDisable(false);
+                saveProtocolButton.setDisable(false);
+                backButton.setDisable(false);
+                table.setDisable(false);
+                graph.setDisable(false);
+                commandsTableView.setDisable(false);
+                journalTableView.setDisable(false);
+                saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+                addEventButton.setDisable(false);
+                stopButton.requestFocus();
+            });
 
             process.setStopped(false);
             process.initData(processModel.getModules());
@@ -466,6 +473,7 @@ public class ProcessController implements BaseController {
         eventsController.getEventModel().addEvent("Завершение программы испытаний", EventsTypes.LOG);
 
         graphController.getGraphModel().clear();
+        tableController.toggleResponseUiElements(true);
         toggleUiElements(true);
 
         new Thread(() -> {
@@ -577,6 +585,10 @@ public class ProcessController implements BaseController {
 
     public Button getStopButton() {
         return stopButton;
+    }
+
+    public TableController getTableController() {
+        return tableController;
     }
 
     @Override

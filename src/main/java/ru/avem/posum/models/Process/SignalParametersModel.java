@@ -12,14 +12,14 @@ public class SignalParametersModel {
 
     private double[] adcFrequencies;
     private double[][] amplitudes = new double[SLOTS][];
-    private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
     private double[][] bufferedFrequency = new double[SLOTS][];
     private double[][] bufferedRms = new double[SLOTS][];
+    private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
     private int[][] frequencyCalculationCounters = new int[SLOTS][CHANNELS]; // счетчик для перезапуска расчета частоты
-    private Butterworth iir = new Butterworth();
     private double[][] data = new double[SLOTS][];
     private double[][] dc = new double[SLOTS][];
     private double[][] frequencies = new double[SLOTS][];
+    private Butterworth iir = new Butterworth();
     private double[][] loadsCounter = new double[SLOTS][];
     private double[][] maxSignalValues = new double[SLOTS][];
     private double[][] minSignalValues = new double[SLOTS][];
@@ -178,15 +178,14 @@ public class SignalParametersModel {
             double summ = 0;
 
             for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
-
                 summ += (data[moduleIndex][i] - dc[moduleIndex][channelIndex]) * (data[moduleIndex][i] - dc[moduleIndex][channelIndex]);
             }
 
             double rms = Math.sqrt(summ / data[moduleIndex].length * CHANNELS);
 
             double buffer = bufferedRms[moduleIndex][channelIndex];
-            if (!(rms - buffer > 0.05) && (rms > bufferedRms[moduleIndex][channelIndex])) {
-                rms = bufferedRms[moduleIndex][channelIndex];
+            if (!(rms - buffer > 0.05) && (rms > buffer)) {
+                rms = buffer;
             }
 
             bufferedRms[moduleIndex][channelIndex] = this.rms[moduleIndex][channelIndex];
