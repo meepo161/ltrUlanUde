@@ -69,7 +69,7 @@ public class SignalParametersModel {
 
     private void setFields(double[] rawData, int channel) {
         MovingAverage ma = new MovingAverage(10);
-        this.data = ma.exponentialMovingAverage(rawData,channel);
+        this.data = ma.exponentialMovingAverage(rawData, channel);
         this.data = rawData;
         this.channel = channel;
     }
@@ -203,11 +203,6 @@ public class SignalParametersModel {
         }
 
         double rms = Math.sqrt(summ / data.length * channels);
-        if (!(rms - savedRms > 0.05) && (rms > savedRms)) {
-            rms = savedRms;
-        }
-
-        savedRms = rms;
         return rms < 0 ? 0 : rms;
     }
 
@@ -220,6 +215,7 @@ public class SignalParametersModel {
 
         if (!(frequency - savedFrequency > 1) && (frequency > savedFrequency)) {
             frequency = savedFrequency;
+            frequencyCalculationCounter++;
         }
 
         if (frequencyCalculationCounter == 10) {
@@ -239,7 +235,7 @@ public class SignalParametersModel {
 
     private double getLowerLimitOfAmplitude() {
         return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
-                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
+                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.001;
     }
 
     private int estimateFrequency() {

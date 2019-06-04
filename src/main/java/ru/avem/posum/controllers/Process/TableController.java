@@ -183,8 +183,6 @@ public class TableController {
     private void showSignal(int channelIndex) {
         if (showingThread == null) {
             showingThread = new Thread(() -> {
-                System.out.println("Thread started");
-
                 if (!graphController.isShowingThreadStopped()) {
                     graphController.stopShowingThread();
                 }
@@ -198,7 +196,6 @@ public class TableController {
             showingThread.start();
         } else {
             if (disableCount == 0) {
-                System.out.println("Interrupted");
                 new Thread(() -> {
                     parseData(channelIndex);
                     graphController.restartShow();
@@ -402,8 +399,10 @@ public class TableController {
 
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setDisable(isDisable);
-            colorPickers.get(channelIndex).setDisable(isDisable);
-            Utils.sleep(100);
+        }
+
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            colorPickers.get(channelIndex).setDisable(isDisable); // в отдельном цикле, по-другому багует
         }
     }
 

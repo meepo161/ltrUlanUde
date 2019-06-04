@@ -153,7 +153,7 @@ public class GraphController {
         signalController.getRarefactionCoefficientComboBox().valueProperty().addListener(observable -> {
             if (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex() == 0) {
                 signalController.getSignalModel().setRarefactionCoefficient(1);
-            } else {
+            } else if (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex() != -1){
                 String selection = signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedItem();
                 int coefficient = Integer.parseInt(selection.split(" ")[1]);
                 signalController.getSignalModel().setRarefactionCoefficient(coefficient);
