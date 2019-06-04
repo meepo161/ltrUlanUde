@@ -258,9 +258,11 @@ public class RegulatorParametersController {
 
     private void setDigitFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
-            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$")) {
-                textField.setText(oldValue);
+            if (!textField.getText().isEmpty()) {
+                textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
+                if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$")) {
+                    textField.setText(oldValue);
+                }
             }
         });
     }
