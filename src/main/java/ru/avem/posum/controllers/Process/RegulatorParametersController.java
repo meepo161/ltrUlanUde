@@ -474,8 +474,8 @@ public class RegulatorParametersController {
         for (int value : chosenIndexesOfParamters) {
             switch (value) {
                 case 0:
-                    TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма");
-                    TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %");
+                    TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма", 90);
+                    TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %", 90);
 
                     amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
                     relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
@@ -484,8 +484,8 @@ public class RegulatorParametersController {
                     tableView.getColumns().add(relativeResponseAmplitudeColumn);
                     break;
                 case 1:
-                    TableColumn<ChannelModel, String> dcColumn = createColumn("Статика норма");
-                    TableColumn<ChannelModel, String> relativeResponseDcColumn = createColumn("Статика отклик, %");
+                    TableColumn<ChannelModel, String> dcColumn = createColumn("Статика норма", 70);
+                    TableColumn<ChannelModel, String> relativeResponseDcColumn = createColumn("Статика отклик, %", 80);
 
                     dcColumn.setCellValueFactory(cellData -> cellData.getValue().dcProperty());
                     relativeResponseDcColumn.setCellValueFactory(cellData -> cellData.getValue().relativeDcProperty());
@@ -494,8 +494,8 @@ public class RegulatorParametersController {
                     tableView.getColumns().add(relativeResponseDcColumn);
                     break;
                 case 2:
-                    TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма");
-                    TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %");
+                    TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма", 70);
+                    TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %", 80);
 
                     frequencyColumn.setCellValueFactory(cellData -> cellData.getValue().frequencyProperty());
                     relativeResponseFrequencyColumn.setCellValueFactory(cellData -> cellData.getValue().relativeFrequencyProperty());
@@ -531,12 +531,12 @@ public class RegulatorParametersController {
         return false;
     }
 
-    private TableColumn<ChannelModel, String> createColumn(String header) {
+    private TableColumn<ChannelModel, String> createColumn(String header, int width) {
         TableColumn<ChannelModel, String> column = new TableColumn<>();
 
-        column.setMinWidth(50);
-        column.setPrefWidth(80);
-        column.setMaxWidth(5000);
+        column.setMinWidth(width);
+        column.setPrefWidth(width);
+        column.setMaxWidth(width);
         column.setText(header);
         Utils.makeHeaderWrappable(column);
 
