@@ -115,7 +115,7 @@
                 </AnchorPane>
                 <ToolBar fx:id="toolbarSettings" maxHeight="110.0" minHeight="110.0" prefHeight="110.0">
                     <items>
-                        <Pane prefHeight="90.0" prefWidth="580.0">
+                        <Pane prefHeight="90.0" prefWidth="550.0">
                             <children>
                                 <ListView fx:id="plug_ListView" prefHeight="97.0" prefWidth="54.0" style="-fx-background-radius: 5px;" />
                                 <Button fx:id="plug_Button" layoutX="53.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран">
@@ -167,40 +167,18 @@
                            </font>
                         </TextField>
                         <Slider fx:id="dcSlider" blockIncrement="1.0" disable="true" layoutX="307.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                        <CheckBox fx:id="rmsCheckBox" disable="true" layoutX="331.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="RMS" />
-                        <Label fx:id="rmsLabel" disable="true" layoutX="331.0" layoutY="30.0" text="В">
-                           <font>
-                              <Font name="Arial" size="12.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="rmsTextField" disable="true" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
-                           <font>
-                              <Font name="Arial Bold" size="12.0" />
-                           </font>
-                        </TextField>
-                        <Label fx:id="calibratedRmsLabel" disable="true" layoutX="331.0" layoutY="60.0" text="ед">
-                           <font>
-                              <Font name="Arial" size="12.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="calibratedRmsTextField" disable="true" layoutX="350.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
-                           <font>
-                              <Font name="Arial Bold" size="12.0" />
-                           </font>
-                        </TextField>
-                        <Slider fx:id="rmsSlider" blockIncrement="1.0" disable="true" layoutX="419.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                        <CheckBox fx:id="frequencyCheckBox" disable="true" layoutX="443.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Частота" />
-                                <Label fx:id="frequencyLabel" disable="true" layoutX="443.0" layoutY="30.0" text="Гц">
+                        <CheckBox fx:id="frequencyCheckBox" disable="true" layoutX="331.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Частота" />
+                                <Label fx:id="frequencyLabel" disable="true" layoutX="331.0" layoutY="30.0" text="Гц">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="frequencyTextField" disable="true" layoutX="462.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="frequencyTextField" disable="true" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="frequencySlider" blockIncrement="1.0" disable="true" layoutX="528.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                                <Slider fx:id="frequencySlider" blockIncrement="1.0" disable="true" layoutX="419.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
                             </children>
                         </Pane>
                         <Pane prefHeight="97.0" prefWidth="350.0">
@@ -220,30 +198,30 @@
                                         <Font name="Arial" size="14.0" />
                                     </font>
                                 </Label>
-                                <Slider fx:id="pSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
-                                <Slider fx:id="iSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
-                                <Slider fx:id="dSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="140.0" />
-                                <TextField fx:id="pTextField" disable="true" layoutX="168.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <Slider fx:id="pSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="10.0" max="10.0" prefHeight="14.0" prefWidth="170.0" />
+                                <Slider fx:id="iSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="39.0" max="10.0" prefHeight="14.0" prefWidth="170.0" />
+                                <Slider fx:id="dSlider" blockIncrement="1.0" disable="true" layoutX="18.0" layoutY="68.0" max="10.0" prefHeight="14.0" prefWidth="170.0" />
+                                <TextField fx:id="pTextField" disable="true" layoutX="198.0" layoutY="4.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="iTextField" disable="true" layoutX="168.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="iTextField" disable="true" layoutX="198.0" layoutY="34.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <TextField fx:id="dTextField" disable="true" layoutX="168.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="dTextField" disable="true" layoutX="198.0" layoutY="64.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Button fx:id="addChannelsButton" layoutX="233.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Добавить каналы" textAlignment="CENTER" wrapText="true">
+                                <Button fx:id="addChannelsButton" layoutX="263.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleLinkButton" prefHeight="85.0" prefWidth="105.0" text="Добавить каналы" textAlignment="CENTER" wrapText="true">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <Button fx:id="saveButton" disable="true" layoutX="343.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveRegulatorParameters" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
+                                <Button fx:id="saveButton" disable="true" layoutX="373.0" layoutY="4.0" minWidth="105.0" mnemonicParsing="false" onAction="#handleSaveRegulatorParameters" prefHeight="85.0" prefWidth="105.0" text="Сохранить">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>

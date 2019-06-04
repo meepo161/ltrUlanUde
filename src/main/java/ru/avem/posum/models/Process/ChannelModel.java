@@ -64,7 +64,6 @@ public class ChannelModel {
     private CheckBox createResponseCheckBox() {
         CheckBox checkBox = new CheckBox();
         checkBox.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
-        checkBox.setDisable(true);
         return checkBox;
     }
 
@@ -73,16 +72,21 @@ public class ChannelModel {
 
         colorPicker.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
         colorPicker.setStyle("-fx-color-label-visible: false;");
-        colorPicker.setDisable(true);
 
         return colorPicker;
     }
 
-    public StringProperty amplitudeProperty() { return amplitude; }
+    public StringProperty amplitudeProperty() {
+        return amplitude;
+    }
 
-    public StringProperty dcProperty() { return dc; }
+    public StringProperty dcProperty() {
+        return dc;
+    }
 
-    public StringProperty frequencyProperty() { return frequency; }
+    public StringProperty frequencyProperty() {
+        return frequency;
+    }
 
     public String getAmplitude() {
         return amplitude.get();
@@ -112,7 +116,9 @@ public class ChannelModel {
         return iCoefficient.get();
     }
 
-    public String getLoadsCounter() { return loadsCounter.get(); }
+    public String getLoadsCounter() {
+        return loadsCounter.get();
+    }
 
     public String getName() {
         return name.get();
@@ -164,11 +170,17 @@ public class ChannelModel {
         return name;
     }
 
-    public StringProperty relativeAmplitudeProperty() { return relativeResponseAmplitude; }
+    public StringProperty relativeAmplitudeProperty() {
+        return relativeResponseAmplitude;
+    }
 
-    public StringProperty relativeDcProperty() { return relativeResponseDc; }
+    public StringProperty relativeDcProperty() {
+        return relativeResponseDc;
+    }
 
-    public StringProperty relativeFrequencyProperty() { return relativeResponseFrequency; }
+    public StringProperty relativeFrequencyProperty() {
+        return relativeResponseFrequency;
+    }
 
     public StringProperty responseAmplitudeProperty() {
         return responseAmplitude;

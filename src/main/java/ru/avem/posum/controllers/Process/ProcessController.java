@@ -26,6 +26,8 @@ import java.util.Optional;
 
 public class ProcessController implements BaseController {
     @FXML
+    private Button addChannelsButton;
+    @FXML
     private Button addCommandButton;
     @FXML
     private Button addEventButton;
@@ -49,10 +51,6 @@ public class ProcessController implements BaseController {
     private TextField calibratedDcTextField;
     @FXML
     private Label calibratedDcLabel;
-    @FXML
-    private TextField calibratedRmsTextField;
-    @FXML
-    private Label calibratedRmsLabel;
     @FXML
     private TableView commandsTableView;
     @FXML
@@ -117,14 +115,6 @@ public class ProcessController implements BaseController {
     private TableColumn<ChannelModel, String> loadsCounterColumn;
     @FXML
     private TableColumn<ChannelModel, String> rmsResponseColumn;
-    @FXML
-    private CheckBox rmsCheckBox;
-    @FXML
-    private Slider rmsSlider;
-    @FXML
-    private TextField rmsTextField;
-    @FXML
-    private Label rmsLabel;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -198,8 +188,7 @@ public class ProcessController implements BaseController {
 
         regulatorParametersController = new RegulatorParametersController(amplitudeCheckBox, amplitudeVoltLabel, amplitudeTextField,
                 calibratedAmplitudeLabel, calibratedAmplitudeTextField, amplitudeSlider, dcCheckBox, dcLabel,
-                dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, rmsCheckBox, rmsLabel, rmsTextField,
-                calibratedRmsLabel, calibratedRmsTextField, rmsSlider, frequencyCheckBox, frequencyLabel,
+                dcTextField, calibratedDcLabel, calibratedDcTextField, dcSlider, frequencyCheckBox, frequencyLabel,
                 frequencyTextField, frequencySlider, pLabel, pSlider, pTextField, iLabel, iSlider, iTextField,
                 dLabel, dSlider, dTextField, mainPanel, toolbarSettings, topPanel, table, statusBarLine, saveButton,
                 process);
@@ -379,13 +368,13 @@ public class ProcessController implements BaseController {
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
             initialized = true;
-            Platform.runLater(() -> startButton.requestFocus());
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
             showErrors();
         }
 
         toggleInitializationUiElements();
+        Platform.runLater(() -> startButton.requestFocus());
     }
 
     private void showErrors() {
@@ -506,7 +495,8 @@ public class ProcessController implements BaseController {
     }
 
     public void handleToProgramButton() {
-        regulatorParametersController.toggleSettingsPanel();
+        regulatorParametersController.showRegulationPanel();
+        Platform.runLater(() -> addChannelsButton.requestFocus());
     }
 
     public void handleLinkButton() {

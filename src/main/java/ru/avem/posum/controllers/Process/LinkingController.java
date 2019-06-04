@@ -247,6 +247,7 @@ public class LinkingController implements BaseController, LinkingManager {
 
         new Thread(() -> {
             addChannelButton.setDisable(true);
+            processController.getTableController().toggleResponseUiElements(true);
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clearStatusBar();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));

@@ -146,9 +146,7 @@ public class TableController {
 
         if (!channels.isEmpty()) {
             for (ChannelModel channel : channels) {
-                if (!colorPickers.contains(channel.getColorPicker())) {
-                    colorPickers.add(channel.getColorPicker());
-                }
+                colorPickers.add(channel.getColorPicker());
             }
         }
 
@@ -160,6 +158,7 @@ public class TableController {
             toggleGraphControls();
 
             if (checkBox.isSelected()) {
+                graphController.restartShow();
                 toggleCheckBoxes(checkBox);
                 setSeriesColor(channelIndex);
                 showSignal(channelIndex);
@@ -358,7 +357,6 @@ public class TableController {
 
             }
         }
-
     }
 
     private void listen(ColorPicker colorPicker, int channelIndex) {
@@ -394,15 +392,10 @@ public class TableController {
     }
 
     public void toggleResponseUiElements(boolean isDisable) {
-        ObservableList<CheckBox> checkBoxes = getCheckBoxes();
-        ObservableList<ColorPicker> colorPickers = getColorPickers();
+        ObservableList<ChannelModel> channels = tableView.getItems();
 
-        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            checkBoxes.get(channelIndex).setDisable(isDisable);
-        }
-
-        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            colorPickers.get(channelIndex).setDisable(isDisable); // в отдельном цикле, по-другому багует
+        for (ChannelModel channel : channels) {
+            channel.getResponseCheckBox().setDisable(isDisable);
         }
     }
 

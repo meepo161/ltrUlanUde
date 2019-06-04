@@ -31,12 +31,6 @@ public class RegulatorParametersController {
     private Label calibratedDcLabel;
     private TextField calibratedDcTextField;
     private Slider dcSlider;
-    private CheckBox rmsCheckBox;
-    private Label rmsLabel;
-    private TextField rmsTextField;
-    private Label calibratedRmsLabel;
-    private TextField calibratedRmsTextField;
-    private Slider rmsSlider;
     private CheckBox frequencyCheckBox;
     private Label frequencyLabel;
     private TextField frequencyTextField;
@@ -71,8 +65,7 @@ public class RegulatorParametersController {
                                          Label calibratedAmplitudeLabel, TextField calibratedAmplitudeTextField,
                                          Slider amplitudeSlider, CheckBox dcCheckBox, Label dcLabel, TextField dcTextField,
                                          Label calibratedDcLabel, TextField calibratedDcTextField, Slider dcSlider,
-                                         CheckBox rmsCheckBox, Label rmsLabel, TextField rmsTextField, Label calibratedRmsLabel,
-                                         TextField calibratedRmsTextField, Slider rmsSlider, CheckBox frequencyCheckBox,
+                                         CheckBox frequencyCheckBox,
                                          Label frequencyLabel, TextField frequencyTextField, Slider frequencySlider, Label pLabel,
                                          Slider pSlider, TextField pTextField, Label iLabel, Slider iSlider, TextField iTextField,
                                          Label dLabel, Slider dSlider, TextField dTextField, AnchorPane mainPanel,
@@ -91,12 +84,6 @@ public class RegulatorParametersController {
         this.calibratedDcLabel = calibratedDcLabel;
         this.calibratedDcTextField = calibratedDcTextField;
         this.dcSlider = dcSlider;
-        this.rmsCheckBox = rmsCheckBox;
-        this.rmsLabel = rmsLabel;
-        this.rmsTextField = rmsTextField;
-        this.calibratedRmsLabel = calibratedRmsLabel;
-        this.calibratedRmsTextField = calibratedRmsTextField;
-        this.rmsSlider = rmsSlider;
         this.frequencyCheckBox = frequencyCheckBox;
         this.frequencyLabel = frequencyLabel;
         this.frequencyTextField = frequencyTextField;
@@ -124,7 +111,6 @@ public class RegulatorParametersController {
         fillListOfPidParameters();
         fillListOfAmplitudeUiElements();
         fillListOfDcUiElements();
-        fillListOfRmsUiElements();
         fillListOfFrequencyUiElements();
 
         initSliders();
@@ -136,7 +122,6 @@ public class RegulatorParametersController {
     private void fillListOfPidParameters() {
         pidParameters.add(amplitudeCheckBox);
         pidParameters.add(dcCheckBox);
-//        pidParameters.add(rmsCheckBox); // TODO: add regulation of this parameter
         pidParameters.add(frequencyCheckBox);
     }
 
@@ -154,14 +139,6 @@ public class RegulatorParametersController {
         dcUiElements.add(calibratedDcLabel);
         dcUiElements.add(calibratedDcTextField);
         dcUiElements.add(dcSlider);
-    }
-
-    private void fillListOfRmsUiElements() {
-        rmsUiElements.add(rmsLabel);
-        rmsUiElements.add(rmsTextField);
-        rmsUiElements.add(calibratedRmsLabel);
-        rmsUiElements.add(calibratedRmsTextField);
-        rmsUiElements.add(rmsSlider);
     }
 
     private void fillListOfFrequencyUiElements() {
@@ -218,12 +195,6 @@ public class RegulatorParametersController {
                 toggleUiElements(rmsUiElements, true);
                 toggleUiElements(frequencyUiElements, true);
                 break;
-//            case 2:
-//                toggleUiElements(amplitudeUiElements, true);
-//                toggleUiElements(dcUiElements, true);
-//                toggleUiElements(rmsUiElements, false);
-//                toggleUiElements(frequencyUiElements, true);
-//                break;
             case 2:
                 toggleUiElements(amplitudeUiElements, true);
                 toggleUiElements(dcUiElements, true);
@@ -254,7 +225,7 @@ public class RegulatorParametersController {
         dTextField.setDisable(isDisable);
     }
 
-    public void toggleSettingsPanel() {
+    public void showRegulationPanel() {
         int TOOLBAR_HEIGHT = 110;
         boolean hide = regulatorParametersModel.checkToProgramClicksCounter();
         double neededHeight = hide ? mainPanel.getMaxHeight() : mainPanel.getMaxHeight() + TOOLBAR_HEIGHT;
@@ -269,7 +240,6 @@ public class RegulatorParametersController {
         init(amplitudeSlider, amplitudeTextField);
         init(dcSlider, dcTextField);
         init(frequencySlider, frequencyTextField);
-        init(rmsSlider, rmsTextField);
         init(pSlider, pTextField);
         init(iSlider, iTextField);
         init(dSlider, dTextField);
@@ -360,7 +330,6 @@ public class RegulatorParametersController {
     private void setParameters(ChannelModel channelModel) {
         amplitudeTextField.setText(channelModel.getAmplitude());
         dcTextField.setText(channelModel.getDc());
-        rmsTextField.setText(channelModel.getRms());
         frequencyTextField.setText(channelModel.getFrequency());
         pTextField.setText(channelModel.getPcoefficient());
         iTextField.setText(channelModel.getICoefficient());
@@ -405,7 +374,6 @@ public class RegulatorParametersController {
     private void clearParameters() {
         amplitudeTextField.setText("0");
         dcTextField.setText("0");
-        rmsTextField.setText("0");
         frequencyTextField.setText("0");
         pTextField.setText("0");
         iTextField.setText("0");
@@ -478,7 +446,6 @@ public class RegulatorParametersController {
     public void save(ChannelModel selectedChannel) {
         selectedChannel.setAmplitude(amplitudeTextField.getText());
         selectedChannel.setDc(dcTextField.getText());
-        selectedChannel.setRms(rmsTextField.getText());
         selectedChannel.setFrequency(frequencyTextField.getText());
         selectedChannel.setPcoefficient(pTextField.getText());
         selectedChannel.setIcoefficient(iTextField.getText());
@@ -511,12 +478,6 @@ public class RegulatorParametersController {
                 tableView.getColumns().add(dcColumn);
                 tableView.getColumns().add(relativeResponseDcColumn);
                 break;
-//            case 2:
-//                TableColumn<ChannelModel, String> rmsColumn = createColumn("Rms норма");
-//                TableColumn<ChannelModel, String> relativeResponseRmsColumn = createColumn("Rms отклик, %");
-//                tableView.getColumns().add(rmsColumn);
-//                tableView.getColumns().add(relativeResponseRmsColumn);
-//                break;
             case 2:
                 TableColumn<ChannelModel, String> frequencyColumn = createColumn("Частота норма");
                 TableColumn<ChannelModel, String> relativeResponseFrequencyColumn = createColumn("Частота отклик, %");
