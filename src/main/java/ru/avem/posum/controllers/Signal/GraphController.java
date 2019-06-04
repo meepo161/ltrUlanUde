@@ -139,9 +139,11 @@ public class GraphController {
         coefficients.add("В 2 меньше");
         coefficients.add("В 5 меньше");
         coefficients.add("В 10 меньше");
-        coefficients.add("В 15 меньше");
-        coefficients.add("В 20 меньше");
         coefficients.add("В 25 меньше");
+        coefficients.add("В 50 меньше");
+        coefficients.add("В 100 меньше");
+        coefficients.add("В 250 меньше");
+        coefficients.add("В 500 меньше");
 
         signalController.getRarefactionCoefficientComboBox().setItems(coefficients);
         signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(3);
@@ -149,28 +151,12 @@ public class GraphController {
 
     private void listenRarefactionComboBox() {
         signalController.getRarefactionCoefficientComboBox().valueProperty().addListener(observable -> {
-            switch (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex()) {
-                case 0:
-                    signalController.getSignalModel().setRarefactionCoefficient(1);
-                    break;
-                case 1:
-                    signalController.getSignalModel().setRarefactionCoefficient(2);
-                    break;
-                case 2:
-                    signalController.getSignalModel().setRarefactionCoefficient(5);
-                    break;
-                case 3:
-                    signalController.getSignalModel().setRarefactionCoefficient(10);
-                    break;
-                case 4:
-                    signalController.getSignalModel().setRarefactionCoefficient(15);
-                    break;
-                case 5:
-                    signalController.getSignalModel().setRarefactionCoefficient(20);
-                    break;
-                case 6:
-                    signalController.getSignalModel().setRarefactionCoefficient(25);
-                    break;
+            if (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex() == 0) {
+                signalController.getSignalModel().setRarefactionCoefficient(1);
+            } else {
+                String selection = signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedItem();
+                int coefficient = Integer.parseInt(selection.split(" ")[1]);
+                signalController.getSignalModel().setRarefactionCoefficient(coefficient);
             }
 
             restartOfShow();
