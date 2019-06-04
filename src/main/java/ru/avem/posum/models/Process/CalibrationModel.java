@@ -1,5 +1,6 @@
 package ru.avem.posum.models.Process;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
@@ -12,7 +13,7 @@ public class CalibrationModel {
     private int CHANNELS = 4; // количество каналов АЦП
     private int SLOTS = 16; // количество слотов в крейте
 
-    private double[][] calibratedData = new double[SLOTS][];
+    private double[][] calibratedData = new double[SLOTS][CHANNELS];
     private double[][] calibratedLowerBound = new double[SLOTS][CHANNELS];
     private double[][] calibratedUpperBound = new double[SLOTS][CHANNELS];
     private double[][] firstPointChannelValue = new double[SLOTS][CHANNELS];
@@ -42,13 +43,15 @@ public class CalibrationModel {
 
                 for (Pair<Integer, String> description : channelsDescriptions) {
                     if (description.getValue().equals(channelDescription)) {
-                        int channelIndex = description.getKey();
+                        int channelIndex = description.getKey() - 1;
                         List<String> calibrationSettings = Modules.getCalibrations(module, channelIndex);
                         isCalibrationsExists[moduleIndex][channelIndex] = calibrationSettings.size() > 1;
 
-                        parseValueName(calibrationSettings.get(channelIndex), moduleIndex, channelIndex);
-                        parse(calibrationSettings, moduleIndex, channelIndex);
-                        break;
+                        if (isCalibrationsExists[moduleIndex][channelIndex]) {
+                            parseValueName(calibrationSettings.get(channelIndex), moduleIndex, channelIndex);
+                            parse(calibrationSettings, moduleIndex, channelIndex);
+                            break;
+                        }
                     }
                 }
             }
@@ -135,9 +138,9 @@ public class CalibrationModel {
             for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
                 for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
                     if (isCalibrationsExists[moduleIndex][channelIndex]) {
-                        calibratedData[moduleIndex][channelIndex] = calibrate(data[moduleIndex][channelIndex], moduleIndex, channelIndex);
+                        calibratedData[moduleIndex][i] = calibrate(data[moduleIndex][i], moduleIndex, channelIndex);
                     } else {
-                        calibratedData[moduleIndex][channelIndex] = data[moduleIndex][channelIndex];
+                        calibratedData[moduleIndex][i] = data[moduleIndex][i];
                     }
                 }
             }
@@ -163,6 +166,8 @@ public class CalibrationModel {
     }
 
     public double[][] getCalibratedData() {
+
+
         return calibratedData;
     }
 }

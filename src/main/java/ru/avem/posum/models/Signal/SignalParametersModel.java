@@ -461,6 +461,7 @@ public class SignalParametersModel {
     }
 
     public void defineCalibratedBounds(ADC adc) {
+        this.adc = adc;
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         if (!calibrationSettings.isEmpty()) {
             double minLoadValue = Double.MAX_VALUE;

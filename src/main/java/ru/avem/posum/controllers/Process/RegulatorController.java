@@ -69,7 +69,6 @@ public class RegulatorController {
                     double amplitude = Double.parseDouble(channel.getResponseAmplitude());
                     double dc = Double.parseDouble(channel.getResponseDc());
                     double frequency = Double.parseDouble(channel.getResponseFrequency());
-                    double rms = Double.parseDouble(channel.getResponseRms());
 
                     regulatorModel[channelIndex].setResponseAmplitude(amplitude);
                     regulatorModel[channelIndex].setResponseDc(dc);
@@ -119,9 +118,17 @@ public class RegulatorController {
                     List<Pair<Integer, String>> dacChannels = Modules.getChannelsDescriptions(dac.get());
                     for (int i = 0; i < dacChannels.size(); i++) {
                         if (dacChannels.get(i).getValue().equals(dacChannelDescription)) {
-//                amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
-//                dc[channelIndex] = regulatorModel[channelIndex].getDc();
-                            frequencies[i] = regulatorModel[channelIndex].getFrequency();
+                            switch (Integer.parseInt(channel.getChosenParameterIndex())) {
+                                case 0:
+                                    amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
+                                    break;
+                                case 1:
+                                    dc[channelIndex] = regulatorModel[channelIndex].getDc();
+                                    break;
+                                case 2:
+                                    frequencies[i] = regulatorModel[channelIndex].getFrequency();
+                                    break;
+                            }
                         }
                     }
                 }
