@@ -1,12 +1,10 @@
 package ru.avem.posum.controllers.Process;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.RegulatorModel;
 import ru.avem.posum.models.Settings.LTR34SettingsModel;

@@ -93,7 +93,7 @@ public class ChannelModel {
     }
 
     public String getAmplitude() {
-        return amplitude.get();
+        return amplitude.get().isEmpty() ? "0" : amplitude.get();
     }
 
     public String getChosenParameterIndex() {
@@ -105,19 +105,19 @@ public class ChannelModel {
     }
 
     public String getDc() {
-        return dc.get();
+        return dc.get().isEmpty() ? "0" : dc.get();
     }
 
     public String getDcoefficient() {
-        return dCoefficient.get();
+        return dCoefficient.get().isEmpty() ? "0" : dCoefficient.get();
     }
 
     public String getFrequency() {
-        return frequency.get();
+        return frequency.get().isEmpty() ? "0" : frequency.get();
     }
 
     public String getICoefficient() {
-        return iCoefficient.get();
+        return iCoefficient.get().isEmpty() ? "0" : iCoefficient.get();
     }
 
     public String getLoadsCounter() {
@@ -129,7 +129,7 @@ public class ChannelModel {
     }
 
     public String getPcoefficient() {
-        return pCoefficient.get();
+        return pCoefficient.get().isEmpty() ? "0" : pCoefficient.get();
     }
 
     public Optional<RegulatorParameters> isRegulatorEnabled() {
@@ -167,7 +167,7 @@ public class ChannelModel {
     }
 
     public String getRms() {
-        return rms.get();
+        return rms.get().isEmpty() ? "0" : rms.get();
     }
 
     public int getSlot() {

@@ -198,6 +198,7 @@ public class SignalParametersModel {
             int estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
             int accuracyCoefficient = 5; // коэффициент для переключения алгоритмов
             double frequency;
+            int upperLimitOfFrequency = 1000;
 
             frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
             double buffer = bufferedFrequency[moduleIndex][channelIndex];
@@ -216,6 +217,7 @@ public class SignalParametersModel {
             }
 
             frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
+            frequencies[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex] > upperLimitOfFrequency ? bufferedFrequency[moduleIndex][channelIndex] : frequencies[moduleIndex][channelIndex];
             bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
         }
     }
