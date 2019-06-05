@@ -265,7 +265,7 @@ public class ProcessController implements BaseController {
             eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
-            regulatorParametersController.clear();
+            regulatorParametersController.hideToolBar();
 
             new Thread(() -> {
                 processModel.parseSettings();
@@ -291,7 +291,7 @@ public class ProcessController implements BaseController {
             eventsController.getEventModel().addEvent("Отмена инициализации модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
-            regulatorParametersController.clear();
+            regulatorParametersController.hideToolBar();
 
             new Thread(() -> {
                 process.disconnect();
@@ -533,6 +533,7 @@ public class ProcessController implements BaseController {
             }
 
             regulatorParametersController.clear();
+            regulatorParametersController.hideToolBar();
             stopwatchController.stopStopwatch();
             wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
         }

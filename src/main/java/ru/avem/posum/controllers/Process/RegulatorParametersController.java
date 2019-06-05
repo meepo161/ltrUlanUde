@@ -313,7 +313,7 @@ public class RegulatorParametersController {
 
     private void toggleCheckBoxes(boolean isDisable) {
         for (CheckBox checkBox : pidParameters) {
-            checkBox.setDisable(isDisable);
+            Platform.runLater(() -> checkBox.setDisable(isDisable));
         }
     }
 
@@ -460,7 +460,7 @@ public class RegulatorParametersController {
         lm.getChosenChannels().removeAll(chosenChannels); // удаление всех выбранных каналов
     }
 
-    public void clear() {
+    public void hideToolBar() {
         toolbarSettings.setVisible(false);
         topPanel.setPrefHeight(mainPanel.getMaxHeight());
         topPanel.maxHeight(mainPanel.getMaxHeight());
@@ -501,8 +501,8 @@ public class RegulatorParametersController {
         }
     }
 
-    private void addColumns(List<Integer> chosenIndexesOfParamters) {
-        for (int value : chosenIndexesOfParamters) {
+    private void addColumns(List<Integer> chosenIndexesOfParameters) {
+        for (int value : chosenIndexesOfParameters) {
             switch (value) {
                 case 0:
                     TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма", 90);
@@ -572,6 +572,14 @@ public class RegulatorParametersController {
         Utils.makeHeaderWrappable(column);
 
         return column;
+    }
+
+    public void clear() {
+        unselectAllCheckBoxes();
+        removeColumns();
+        pTextField.setText("0");
+        iTextField.setText("0");
+        dTextField.setText("0");
     }
 
     public void setLm(LinkingManager lm) {
