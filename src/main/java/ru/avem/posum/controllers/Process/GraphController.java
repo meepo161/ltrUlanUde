@@ -233,8 +233,9 @@ public class GraphController {
 
         showingThread = new Thread(() -> {
             while (!process.isStopped()) {
-                double[] data = process.getData(slot);
+                double[] data = processController.getCalibrationModel().getCalibratedData(slot);
                 graphModel.setFields(data, slot, channel);
+                setGraphAxis();
                 Platform.runLater(() -> graphModel.getGraphSeries().getData().clear());
 
                 show(data, channel);
@@ -246,6 +247,16 @@ public class GraphController {
         });
 
         showingThread.start();
+    }
+
+    private void setGraphAxis() {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        Platform.runLater(() -> {
+            yAxis.setLowerBound(processController.getCalibrationModel().getLowerBound(slot, channel));
+            yAxis.setUpperBound(processController.getCalibrationModel().getUpperBound(slot, channel));
+            yAxis.setTickUnit(processController.getCalibrationModel().getTickUnit(slot, channel));
+            yAxis.setLabel(processController.getCalibrationModel().getvalueName(slot, channel));
+        });
     }
 
     public void show(double[] data, int channel) {
@@ -332,6 +343,16 @@ public class GraphController {
             verticalScaleComboBox.getSelectionModel().select(3); // 1 В в делении
             verticalScaleLabel.setDisable(true);
             verticalScaleComboBox.setDisable(true);
+        });
+    }
+
+    public void setDefaultGraphState() {
+        NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        Platform.runLater(() -> {
+            yAxis.setLowerBound(-5); // TODO: change this shit
+            yAxis.setUpperBound(5); // TODO: change this shit
+            yAxis.setTickUnit(1); // TODO: change this shit
+            yAxis.setLabel("Напряжение, В");
         });
     }
 

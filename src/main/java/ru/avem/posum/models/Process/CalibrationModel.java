@@ -170,4 +170,42 @@ public class CalibrationModel {
 
         return calibratedData;
     }
+
+    public double[] getCalibratedData(int slot) {
+        double[] output = new double[calibratedData[slot].length];
+        System.arraycopy(calibratedData[slot], 0, output, 0, output.length);
+        return output;
+    }
+
+    public double getLowerBound(int slot, int channel) {
+        if (isCalibrationsExists[slot][channel]) {
+            return calibratedLowerBound[slot][channel];
+        } else {
+            return -5; // TODO: change this shit
+        }
+    }
+
+    public double getUpperBound(int slot, int channel) {
+        if (isCalibrationsExists[slot][channel]) {
+            return calibratedUpperBound[slot][channel];
+        } else {
+            return 5; // TODO: change this shit
+        }
+    }
+
+    public double getTickUnit(int slot, int channel) {
+        if (isCalibrationsExists[slot][channel]) {
+            return tickUnit[slot][channel];
+        } else {
+            return 1; // TODO: change this shit
+        }
+    }
+
+    public String getvalueName(int slot, int channel) {
+        if (isCalibrationsExists[slot][channel]) {
+            return String.format("Значение, %s", valueName[slot][channel]);
+        } else {
+            return "Напряжение, В";
+        }
+    }
 }

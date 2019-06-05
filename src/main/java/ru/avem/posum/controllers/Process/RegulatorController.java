@@ -18,6 +18,7 @@ public class RegulatorController {
     private final int SLOTS = 16;
 
     private List<ChannelModel> channels;
+    private boolean firstStart;
     private LTR34SettingsModel ltr34SettingsModel = new LTR34SettingsModel();
     private List<Modules> modules;
     private ProcessController processController;
@@ -94,18 +95,9 @@ public class RegulatorController {
 
     public double[] getSignalForDac() {
         int signalType = 0; // синусоидальный сигнал
-        double[] amplitudes = ltr34SettingsModel.getAmplitudes();
-        double[] dc = ltr34SettingsModel.getDc();
-        double[] frequencies = ltr34SettingsModel.getFrequencies();
 
         Optional<Modules> dac = getDacModule();
-        double[] parsedAmplitudes = Modules.getAmplitudes(dac.get());
-        double[] parsedDc = Modules.getDc(dac.get());
-        double[] parsedFrequencies = Modules.getFrequencies(dac.get());
-
-        System.arraycopy(parsedAmplitudes, 0, amplitudes, 0, parsedAmplitudes.length);
-        System.arraycopy(parsedDc, 0, dc, 0, parsedDc.length);
-        System.arraycopy(parsedFrequencies, 0, frequencies, 0, parsedFrequencies.length);
+        parseDacSettings(dac.get());
 
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
         for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
@@ -120,13 +112,13 @@ public class RegulatorController {
                         if (dacChannels.get(i).getValue().equals(dacChannelDescription)) {
                             switch (Integer.parseInt(channel.getChosenParameterIndex())) {
                                 case 0:
-                                    amplitudes[channelIndex] = regulatorModel[channelIndex].getAmplitude();
+                                    ltr34SettingsModel.getAmplitudes()[channelIndex] += regulatorModel[channelIndex].getAmplitude();
                                     break;
                                 case 1:
-                                    dc[channelIndex] = regulatorModel[channelIndex].getDc();
+                                    ltr34SettingsModel.getDc()[channelIndex] += regulatorModel[channelIndex].getDc();
                                     break;
                                 case 2:
-                                    frequencies[i] = regulatorModel[channelIndex].getFrequency();
+                                    ltr34SettingsModel.getFrequencies()[i] += regulatorModel[channelIndex].getFrequency();
                                     break;
                             }
                         }
@@ -143,6 +135,24 @@ public class RegulatorController {
         return signal;
     }
 
+    private void parseDacSettings(Modules dac) {
+        if (firstStart) {
+            double[] amplitudes = ltr34SettingsModel.getAmplitudes();
+            double[] dc = ltr34SettingsModel.getDc();
+            double[] frequencies = ltr34SettingsModel.getFrequencies();
+
+            double[] parsedAmplitudes = Modules.getAmplitudes(dac);
+            double[] parsedDc = Modules.getDc(dac);
+            double[] parsedFrequencies = Modules.getFrequencies(dac);
+
+            System.arraycopy(parsedAmplitudes, 0, amplitudes, 0, parsedAmplitudes.length);
+            System.arraycopy(parsedDc, 0, dc, 0, parsedDc.length);
+            System.arraycopy(parsedFrequencies, 0, frequencies, 0, parsedFrequencies.length);
+        }
+
+        firstStart = false;
+    }
+
     private Optional<Modules> getDacModule() {
         Optional<Modules> dac = Optional.empty();
 
@@ -154,6 +164,10 @@ public class RegulatorController {
         }
 
         return dac;
+    }
+
+    public void setFirstStart(boolean firstStart) {
+        this.firstStart = firstStart;
     }
 
     public void setModules(List<Modules> modules) {

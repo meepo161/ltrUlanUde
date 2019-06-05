@@ -434,6 +434,7 @@ public class ProcessController implements BaseController {
             process.initData(processModel.getModules());
             tableController.showParametersOfSignal();
             stopwatchController.startStopwatch();
+            tableController.getRegulatorController().setFirstStart(true);
             tableController.getRegulatorController().setModules(processModel.getModules());
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
             tableController.initRegulator();
@@ -472,6 +473,7 @@ public class ProcessController implements BaseController {
             process.setStopped(true);
             Utils.sleep(1000);
             process.finish();
+            tableController.getRegulatorController().setFirstStart(false);
             stopwatchController.pauseStopwatch();
             checkFinish();
         }).start();
