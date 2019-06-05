@@ -235,7 +235,7 @@ public class SignalParametersModel {
 
     private double getLowerLimitOfAmplitude() {
         return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
-                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.001;
+                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
     }
 
     private int estimateFrequency() {

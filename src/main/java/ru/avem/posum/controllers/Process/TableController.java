@@ -115,6 +115,8 @@ public class TableController {
 
     private void listen(TableView<ChannelModel> tableView) {
         tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
+
+
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
             ObservableList<ColorPicker> colorPickers = getColorPickers();
 

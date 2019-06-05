@@ -342,30 +342,31 @@ public class RegulatorParametersController {
         double calibratedAmplitude = processController.getCalibrationModel().calibrate(amplitude, slot, channel);
         double dc = Double.parseDouble(channelModel.getDc());
         double calibratedDc = processController.getCalibrationModel().calibrate(dc, slot, channel);
-        String valueName = processController.getCalibrationModel().getValueName(slot, channel);
-        valueName = valueName.equals("В") ? "ед" : valueName;
 
-        amplitudeTextField.setText(channelModel.getAmplitude());
-        calibratedAmplitudeLabel.setText(valueName);
-        calibratedAmplitudeTextField.setText(String.valueOf(calibratedAmplitude));
-        dcTextField.setText(channelModel.getDc());
-        calibratedDcLabel.setText(valueName);
-        calibratedDcTextField.setText(String.valueOf(calibratedDc));
-        frequencyTextField.setText(channelModel.getFrequency());
-        pTextField.setText(channelModel.getPcoefficient());
-        iTextField.setText(channelModel.getICoefficient());
-        dTextField.setText(channelModel.getDcoefficient());
+        Platform.runLater(() -> {
+            amplitudeTextField.setText(channelModel.getAmplitude());
+            calibratedAmplitudeTextField.setText(String.valueOf(calibratedAmplitude));
+            dcTextField.setText(channelModel.getDc());
+            calibratedDcTextField.setText(String.valueOf(calibratedDc));
+            frequencyTextField.setText(channelModel.getFrequency());
+            pTextField.setText(channelModel.getPcoefficient());
+            iTextField.setText(channelModel.getICoefficient());
+            dTextField.setText(channelModel.getDcoefficient());
+        });
     }
 
     private void listen(TextField textField, TextField calibratedTextField) {
         textField.textProperty().addListener(observable -> {
-            ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
-            Pair<Integer, Integer> slotAndChannel = processController.getTableController().parseSlotAndChannel(selectedChannel.getName());
-            int slot = slotAndChannel.getKey();
-            int channel = slotAndChannel.getValue();
-            double value = (textField.getText().isEmpty() || textField.getText().equals("-")) ? 0 : Double.parseDouble(textField.getText());
-            double calibratedValue = processController.getCalibrationModel().calibrate(value, slot, channel);
-            calibratedTextField.setText(String.valueOf(calibratedValue));
+            int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+            if (selectedIndex != -1) {
+                ChannelModel selectedChannel = tableView.getSelectionModel().getSelectedItem();
+                Pair<Integer, Integer> slotAndChannel = processController.getTableController().parseSlotAndChannel(selectedChannel.getName());
+                int slot = slotAndChannel.getKey();
+                int channel = slotAndChannel.getValue();
+                double value = (textField.getText().isEmpty() || textField.getText().equals("-")) ? 0 : Double.parseDouble(textField.getText());
+                double calibratedValue = processController.getCalibrationModel().calibrate(value, slot, channel);
+                calibratedTextField.setText(String.valueOf(calibratedValue));
+            }
         });
 
     }
