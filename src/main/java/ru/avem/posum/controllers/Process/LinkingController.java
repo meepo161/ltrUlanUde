@@ -104,6 +104,8 @@ public class LinkingController implements BaseController, LinkingManager {
             listenChannels(dacChannelsListView.getItems());
 
             checkItems(adcChannelsListView);
+
+            processController.getCalibrationModel().loadCalibrations(processController.getTableController().getChannels(), processController.getProcessModel().getModules());
         });
     }
 

@@ -11,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.models.Process.CalibrationModel;
 import ru.avem.posum.models.Process.ChannelModel;
 import ru.avem.posum.models.Process.SignalParametersModel;
 import ru.avem.posum.utils.Utils;
@@ -209,22 +208,13 @@ public class TableController {
     private void parseData(int channelIndex) {
         ObservableList<ChannelModel> channels = tableView.getItems();
         String channelDescription = channels.get(channelIndex).getName();
-        Pair<Integer, Integer> channel = parseChannel(channelDescription);
+        Pair<Integer, Integer> channel = parseSlotAndChannel(channelDescription);
 
         Utils.sleep(100); // пауза для ожидания ненулевого сигнала
         graphController.setFields(channel.getKey(), channel.getValue());
     }
 
-    private int parseSlot(String channelDescription) {
-        if (!channelDescription.contains("=>")) {
-            return Integer.parseInt(channelDescription.split("слот ")[1].split("\\)")[0]);
-        } else {
-            String adcChannelDescription = channelDescription.split("=> ")[1];
-            return Integer.parseInt(adcChannelDescription.split("слот ")[1].split("\\)")[0]);
-        }
-    }
-
-    private Pair<Integer, Integer> parseChannel(String channelDescription) {
+    public Pair<Integer, Integer> parseSlotAndChannel(String channelDescription) {
         List<Modules> modules = processController.getProcessModel().getModules();
         int slot = parseSlot(channelDescription);
         channelDescription = channelDescription.contains("=>") ? channelDescription.split("=> ")[1] : channelDescription;
@@ -245,6 +235,15 @@ public class TableController {
         }
 
         return new Pair<>(0, 0);
+    }
+
+    private int parseSlot(String channelDescription) {
+        if (!channelDescription.contains("=>")) {
+            return Integer.parseInt(channelDescription.split("слот ")[1].split("\\)")[0]);
+        } else {
+            String adcChannelDescription = channelDescription.split("=> ")[1];
+            return Integer.parseInt(adcChannelDescription.split("слот ")[1].split("\\)")[0]);
+        }
     }
 
     private void checkSelection() {

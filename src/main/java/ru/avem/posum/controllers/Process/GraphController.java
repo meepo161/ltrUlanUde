@@ -11,7 +11,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.Process.GraphModel;
-import ru.avem.posum.utils.RingBuffer;
 import ru.avem.posum.utils.Utils;
 
 public class GraphController {
@@ -251,11 +250,14 @@ public class GraphController {
 
     private void setGraphAxis() {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
+        String valueName = processController.getCalibrationModel().getValueName(slot, channel);
+        String label = valueName.equals("В") ? "Напряжение, В" : String.format("Значение, %s", valueName) ;
+
         Platform.runLater(() -> {
             yAxis.setLowerBound(processController.getCalibrationModel().getLowerBound(slot, channel));
             yAxis.setUpperBound(processController.getCalibrationModel().getUpperBound(slot, channel));
             yAxis.setTickUnit(processController.getCalibrationModel().getTickUnit(slot, channel));
-            yAxis.setLabel(processController.getCalibrationModel().getvalueName(slot, channel));
+            yAxis.setLabel(label);
         });
     }
 

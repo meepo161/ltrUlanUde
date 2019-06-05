@@ -1,13 +1,11 @@
 package ru.avem.posum.models.Process;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import javafx.util.Pair;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Calibration.CalibrationPoint;
 
 import java.util.List;
-import java.util.Optional;
 
 public class CalibrationModel {
     private int CHANNELS = 4; // количество каналов АЦП
@@ -147,7 +145,7 @@ public class CalibrationModel {
         }
     }
 
-    private double calibrate(double value, int moduleIndex, int channelIndex) {
+    public double calibrate(double value, int moduleIndex, int channelIndex) {
         double calibratedValue;
         double accuracyCoefficient = 1.2;
 
@@ -157,9 +155,9 @@ public class CalibrationModel {
             double b = firstPointLoadValue[moduleIndex][channelIndex] - k * firstPointChannelValue[moduleIndex][channelIndex];
             calibratedValue = k * value + b;
         } else if (value <= lowerBound[moduleIndex][channelIndex] / accuracyCoefficient) {
-            calibratedValue = lowerBound[moduleIndex][channelIndex];
+            calibratedValue = calibratedLowerBound[moduleIndex][channelIndex];
         } else {
-            calibratedValue = upperBound[moduleIndex][channelIndex];
+            calibratedValue = calibratedUpperBound[moduleIndex][channelIndex];
         }
 
         return calibratedValue;
@@ -201,11 +199,11 @@ public class CalibrationModel {
         }
     }
 
-    public String getvalueName(int slot, int channel) {
+    public String getValueName(int slot, int channel) {
         if (isCalibrationsExists[slot][channel]) {
-            return String.format("Значение, %s", valueName[slot][channel]);
+            return valueName[slot][channel];
         } else {
-            return "Напряжение, В";
+            return "В";
         }
     }
 }
