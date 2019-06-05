@@ -21,6 +21,7 @@ public class RegulatorController {
     private List<Modules> modules;
     private ProcessController processController;
     private RegulatorModel[] regulatorModel = new RegulatorModel[SLOTS];
+    private boolean stopped;
     private String[] typesOfModules = new String[SLOTS];
 
     public RegulatorController(ProcessController processController) {
@@ -109,23 +110,36 @@ public class RegulatorController {
             for (ChannelModel channel : channels) {
                 if (channel.getName().contains(adcChannelDescription)) {
                     List<Pair<Integer, String>> dacChannels = Modules.getChannelsDescriptions(dac.get());
-                    for (int i = 0; i < dacChannels.size(); i++) {
-                        if (dacChannels.get(i).getValue().equals(dacChannelDescription)) {
+                    for (Pair<Integer, String> dacChannel : dacChannels) {
+                        if (dacChannel.getValue().equals(dacChannelDescription)) {
                             switch (Integer.parseInt(channel.getChosenParameterIndex())) {
                                 case 0:
                                     double newAmplitude = regulatorModel[channelIndex].getAmplitude();
-                                    if (newAmplitude + dc[channelIndex] < 10) { // ограничение максимального напряжения, подаваемого с ЦАП
-                                        amplitudes[channelIndex] += newAmplitude;
+                                    if ((newAmplitude + amplitudes[channelIndex] + dc[channelIndex]) < 10) { // ограничение максимального напряжения, подаваемого с ЦАП
+                                        if (newAmplitude + amplitudes[channelIndex] < 0) {
+                                            amplitudes[channelIndex] = 0;
+                                        } else {
+                                            amplitudes[channelIndex] += newAmplitude;
+                                        }
                                     }
                                     break;
                                 case 1:
                                     double newDc = regulatorModel[channelIndex].getAmplitude();
-                                    if (newDc + amplitudes[channelIndex] < 10) {  // ограничение максимального напряжения, подаваемого с ЦАП
-                                        ltr34SettingsModel.getDc()[channelIndex] += regulatorModel[channelIndex].getDc();
+                                    if ((newDc + dc[channelIndex] + amplitudes[channelIndex]) < 10) {  // ограничение максимального напряжения, подаваемого с ЦАП
+                                        if (newDc + dc[channelIndex] < 0) {
+                                            dc[channelIndex] = 0;
+                                        } else {
+                                            dc[channelIndex] += newDc;
+                                        }
                                     }
                                     break;
                                 case 2:
-                                    ltr34SettingsModel.getFrequencies()[i] += regulatorModel[channelIndex].getFrequency();
+                                    double newFrequency = regulatorModel[channelIndex].getFrequency();
+                                    if (newFrequency + frequencies[channelIndex] < 0) {
+                                        frequencies[channelIndex] = 0;
+                                    } else {
+                                        frequencies[channelIndex] += newFrequency;
+                                    }
                                     break;
                             }
                         }
@@ -161,12 +175,27 @@ public class RegulatorController {
     }
 
     public void doSmoothStop() {
-        for (RegulatorModel regulator : regulatorModel) {
-            regulator.setNeededAmplitude(0);
-            regulator.setNeededDc(0);
-            regulator.setNeededFrequency(0);
-            regulator.setPCoefficient(0.3);
+        for (ChannelModel channel : channels) {
+            channel.setChosenParameterIndex("0"); // регулировка по амплитуде
         }
+
+        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
+        for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+            RegulatorModel regulator = regulatorModel[channelIndex];
+            regulator.setNeededAmplitude(0);
+            regulator.setPCoefficient(1);
+        }
+
+        new Thread(() -> {
+            while (!stopped) {
+                stopped = true;
+                for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+                    if (ltr34SettingsModel.getAmplitudes()[channelIndex] != 0) {
+                        stopped = false;
+                    }
+                }
+            }
+        }).start();
     }
 
     private Optional<Modules> getDacModule() {
@@ -180,6 +209,10 @@ public class RegulatorController {
         }
 
         return dac;
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     public void setFirstStart(boolean firstStart) {

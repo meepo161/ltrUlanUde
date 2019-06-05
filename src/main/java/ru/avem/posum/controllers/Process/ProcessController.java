@@ -458,7 +458,20 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSmoothStopButton() {
+        statusBarLine.setStatusOfProgress("Плавная остановка запущена");
+        eventsController.getEventModel().addEvent("Запущена плавная остановка", EventsTypes.LOG);
         tableController.getRegulatorController().doSmoothStop();
+
+        new Thread(() -> {
+
+            while (!tableController.getRegulatorController().isStopped()) {
+                if (tableController.getRegulatorController().isStopped()) {
+                    handleStop();
+                    statusBarLine.setStatus("Плавная остановка успешно выполнена", true);
+                    eventsController.getEventModel().addEvent("Плавная остановка успешно выполнена", EventsTypes.OK);
+                }
+            }
+        }).start();
     }
 
     public void handleStop() {
