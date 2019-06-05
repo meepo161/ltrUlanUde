@@ -458,7 +458,7 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSmoothStopButton() {
-
+        tableController.getRegulatorController().doSmoothStop();
     }
 
     public void handleStop() {

@@ -93,6 +93,9 @@ public class RegulatorController {
 
     public double[] getSignalForDac() {
         int signalType = 0; // синусоидальный сигнал
+        double[] amplitudes = ltr34SettingsModel.getAmplitudes();
+        double[] dc = ltr34SettingsModel.getDc();
+        double[] frequencies = ltr34SettingsModel.getFrequencies();
 
         Optional<Modules> dac = getDacModule();
         parseDacSettings(dac.get());
@@ -110,10 +113,16 @@ public class RegulatorController {
                         if (dacChannels.get(i).getValue().equals(dacChannelDescription)) {
                             switch (Integer.parseInt(channel.getChosenParameterIndex())) {
                                 case 0:
-                                    ltr34SettingsModel.getAmplitudes()[channelIndex] += regulatorModel[channelIndex].getAmplitude();
+                                    double newAmplitude = regulatorModel[channelIndex].getAmplitude();
+                                    if (newAmplitude + dc[channelIndex] < 10) { // ограничение максимального напряжения, подаваемого с ЦАП
+                                        amplitudes[channelIndex] += newAmplitude;
+                                    }
                                     break;
                                 case 1:
-                                    ltr34SettingsModel.getDc()[channelIndex] += regulatorModel[channelIndex].getDc();
+                                    double newDc = regulatorModel[channelIndex].getAmplitude();
+                                    if (newDc + amplitudes[channelIndex] < 10) {  // ограничение максимального напряжения, подаваемого с ЦАП
+                                        ltr34SettingsModel.getDc()[channelIndex] += regulatorModel[channelIndex].getDc();
+                                    }
                                     break;
                                 case 2:
                                     ltr34SettingsModel.getFrequencies()[i] += regulatorModel[channelIndex].getFrequency();
@@ -149,6 +158,15 @@ public class RegulatorController {
         }
 
         firstStart = false;
+    }
+
+    public void doSmoothStop() {
+        for (RegulatorModel regulator : regulatorModel) {
+            regulator.setNeededAmplitude(0);
+            regulator.setNeededDc(0);
+            regulator.setNeededFrequency(0);
+            regulator.setPCoefficient(0.3);
+        }
     }
 
     private Optional<Modules> getDacModule() {
