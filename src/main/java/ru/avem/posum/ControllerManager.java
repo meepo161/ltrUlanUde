@@ -13,6 +13,8 @@ public interface ControllerManager {
 
     void createListModulesControllers(List<String> modulesNames);
 
+    double getDc();
+
     String getCrateSerialNumber();
 
     Crate getCrateModelInstance();
@@ -21,7 +23,7 @@ public interface ControllerManager {
 
     LinkingController getLinkingController();
 
-    double getDc();
+    String getStyleSheet();
 
     void giveChannelInfo(int channel, String moduleType, int slot);
 

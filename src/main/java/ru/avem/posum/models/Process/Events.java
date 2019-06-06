@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Events {
-
     private final StringProperty time;
     private final StringProperty description;
     private final StringProperty status;

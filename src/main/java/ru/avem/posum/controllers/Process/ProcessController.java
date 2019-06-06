@@ -52,7 +52,11 @@ public class ProcessController implements BaseController {
     @FXML
     private Label calibratedDcLabel;
     @FXML
-    private TableView commandsTableView;
+    private TableView<Command> commandsTableView;
+    @FXML
+    private TableColumn<Command, String> commandsTypesColumn;
+    @FXML
+    private TableColumn<Command, String> commandsDescriptionsColumn;
     @FXML
     private Label checkIcon;
     @FXML
@@ -163,6 +167,7 @@ public class ProcessController implements BaseController {
     private Label warningIcon;
 
     private CalibrationModel calibrationModel = new CalibrationModel();
+    private CommandsController commandsController;
     private ControllerManager cm;
     private EventsController eventsController = new EventsController();
     private GraphController graphController;
@@ -183,6 +188,8 @@ public class ProcessController implements BaseController {
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
+        commandsController = new CommandsController(this, commandsTableView);
+
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
                 this);
@@ -200,9 +207,16 @@ public class ProcessController implements BaseController {
 
         stopwatchController = new StopwatchController(this, timeLabel, timeTextField);
 
+        initCommandsTableView();
         initEventsTableView();
         listenTableViews();
         fillListOfUiElements();
+    }
+
+    private void initCommandsTableView() {
+        commandsTableView.setItems(commandsController.getCommands());
+        commandsTypesColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+        commandsDescriptionsColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
     }
 
     private void initEventsTableView() {
@@ -539,6 +553,11 @@ public class ProcessController implements BaseController {
         }
     }
 
+    public void handleAddCommand() {
+//        commandsController.addCommand();
+        commandsController.showDialogOfCommandAdding();
+    }
+
     public void handleAddEvent() {
         eventsController.showDialogOfEventAdding();
     }
@@ -590,6 +609,8 @@ public class ProcessController implements BaseController {
     public TableController getTableController() {
         return tableController;
     }
+
+    public long getTestProgramId() { return testProgram.getId(); }
 
     @Override
     public void setControllerManager(ControllerManager cm) {

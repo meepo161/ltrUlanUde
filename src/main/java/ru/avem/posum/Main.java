@@ -31,6 +31,7 @@ import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.Signal.SignalModel;
 import ru.avem.posum.utils.Utils;
 
+import javax.swing.text.html.StyleSheet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -308,6 +309,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public LinkingController getLinkingController() {
         return linkingController;
+    }
+
+    @Override
+    public String getStyleSheet() {
+        return settingsScene.getStylesheets().get(0);
     }
 
     @Override

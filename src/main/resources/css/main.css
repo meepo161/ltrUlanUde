@@ -146,3 +146,8 @@
 .menu-bar {
     -fx-padding: 0 0 0 0;
 }
+
+.my-combo-box {
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+}

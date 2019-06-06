@@ -1,9 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
-import javafx.scene.control.Dialog;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import ru.avem.posum.models.Process.Events;
 import ru.avem.posum.models.Process.EventsModel;
 
@@ -13,10 +10,26 @@ public class EventsController {
     private EventsModel eventModel = new EventsModel();
 
     public void showDialogOfEventAdding() {
+        // Create the text dialog.
         TextInputDialog dialog = new TextInputDialog("");
         dialog.setTitle("Добавление события");
-        dialog.setHeaderText("Введите событие:");
-        dialog.setContentText("Текст:");
+        dialog.setHeaderText("Введите описание:");
+        dialog.setContentText("Описание:");
+        dialog.getDialogPane().setMinWidth(300);
+
+        // Set the custom button types.
+        dialog.getDialogPane().getButtonTypes().clear();
+        ButtonType add = new ButtonType("Добавить", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(add, cancel);
+
+        // Set the style.
+        ButtonBar buttonBar = (ButtonBar) dialog.getDialogPane().lookup(".button-bar");
+        buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 13px;\n" + "-fx-background-radius: 5px;\n" +
+                "\t-fx-border-radius: 5px;"));
+        dialog.getDialogPane().getContent().setStyle("-fx-font-size: 13px;");
+
+
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(eventText -> eventModel.setEvent(eventText));
     }
