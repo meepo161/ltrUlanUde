@@ -10,9 +10,12 @@ import ru.avem.posum.models.Process.Command;
 import ru.avem.posum.models.Process.CommandsModel;
 import ru.avem.posum.models.Process.CommandsTypes;
 
+import java.util.Optional;
+
 public class CommandsController {
     private CommandsModel commandsModel = new CommandsModel();
     private boolean didBackSpacePressed;
+    private boolean isAddPressed;
     private ProcessController processController;
     private TableView<Command> table;
 
@@ -62,21 +65,26 @@ public class CommandsController {
 
         // Add listeners.
         listen(commands, description);
-        dialog.setOnCloseRequest(event -> {
-            if (!validate(description)) {
-                event.consume();
-            }
-        });
+
 
         // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == add && validate(description)) {
-                String commandType = commands.getSelectionModel().getSelectedItem();
-                String newDescription = createDescription(commandType, description.getText());
-                addCommand(commandType, newDescription);
-                return null;
+            dialog.setOnCloseRequest(event -> {
+                if (dialogButton == add) {
+                    if (!validate(description)) {
+                        event.consume();
+                    } else {
+                        String commandType = commands.getSelectionModel().getSelectedItem();
+                        String newDescription = createDescription(commandType, description.getText());
+                        addCommand(commandType, newDescription);
+                    }
+                }
+            });
+
+            if (dialogButton == add) {
+                return add;
             } else {
-                return null;
+                return cancel;
             }
         });
 
