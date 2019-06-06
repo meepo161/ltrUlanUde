@@ -10,9 +10,7 @@ public class Event {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
-    private long idTest;
-    @DatabaseField
-    private long millis = System.currentTimeMillis();
+    private long testProgramId;
     @DatabaseField
     private String date;
     @DatabaseField
@@ -26,15 +24,11 @@ public class Event {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public Event(long idTest, String description, String status, long millis) {
-        this.idTest = idTest;
-        this.setMillis(millis);
+    public Event(long testProgramId, String description, String status, long millis) {
+        this.testProgramId = testProgramId;
+        this.setTime(millis);
         this.description = description;
         this.status = status;
-    }
-
-    public Event(long idTest, String description) {
-        this(idTest, description, "LOG", System.currentTimeMillis());
     }
 
     public long getId() {
@@ -45,12 +39,15 @@ public class Event {
         this.id = id;
     }
 
+    public long getTestProgramId() {
+        return testProgramId;
+    }
+
     public String getTime() {
         return this.time + " " + this.date;
     }
 
-    public void setMillis(long millis) {
-        this.millis = millis;
+    public void setTime(long millis) {
         this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
         this.time = new SimpleDateFormat("HH:mm:ss").format(millis);
     }

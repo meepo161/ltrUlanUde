@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-public class EventRepository extends DataBaseRepository {
+public class EventsRepository extends DataBaseRepository {
     public static void createTable(Class dataClass) {
         try (ConnectionSource connectionSource = new JdbcConnectionSource(DATABASE_URL)) {
             TableUtils.dropTable(connectionSource, dataClass, true);

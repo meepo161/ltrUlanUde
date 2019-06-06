@@ -28,6 +28,10 @@ public class Command {
         return id;
     }
 
+    public long getTestProgramId() {
+        return testProgramId;
+    }
+
     public void setId(long id) {
         this.id = id;
     }

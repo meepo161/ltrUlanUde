@@ -94,15 +94,15 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField iTextField;
     @FXML
-    private TableView<Events> journalTableView;
+    private TableView<Event> eventsTableView;
     @FXML
     private AnchorPane mainPanel;
     @FXML
     private LineChart<Number, Number> graph;
     @FXML
-    private TableColumn<Events, String> eventTimeColumn;
+    private TableColumn<Event, String> eventTimeColumn;
     @FXML
-    private TableColumn<Events, String> eventDescriptionColumn;
+    private TableColumn<Event, String> eventDescriptionColumn;
     @FXML
     private TableView<ChannelModel> table;
     @FXML
@@ -169,7 +169,7 @@ public class ProcessController implements BaseController {
     private CalibrationModel calibrationModel = new CalibrationModel();
     private CommandsController commandsController;
     private ControllerManager cm;
-    private EventsController eventsController = new EventsController();
+    private EventsController eventsController;
     private GraphController graphController;
     private boolean initialized;
     private LinkingController linkingController;
@@ -189,6 +189,8 @@ public class ProcessController implements BaseController {
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
         commandsController = new CommandsController(this, commandsTableView);
+
+        eventsController = new EventsController(this, eventsTableView);
 
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
@@ -220,8 +222,8 @@ public class ProcessController implements BaseController {
     }
 
     private void initEventsTableView() {
-        journalTableView.setItems(eventsController.getEventModel().getEvents());
-        eventsController.setEventsColors(journalTableView);
+        eventsTableView.setItems(eventsController.getEventsModel().getEvents());
+        eventsController.setEventsColors(eventsTableView);
         eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
     }
@@ -231,8 +233,8 @@ public class ProcessController implements BaseController {
             initializeButton.setDisable(table.getItems().isEmpty());
         });
 
-        journalTableView.getItems().addListener((ListChangeListener<Events>) observable -> {
-            initializeButton.setDisable(journalTableView.getItems().isEmpty());
+        eventsTableView.getItems().addListener((ListChangeListener<Event>) observable -> {
+            initializeButton.setDisable(eventsTableView.getItems().isEmpty());
         });
     }
 
@@ -252,7 +254,7 @@ public class ProcessController implements BaseController {
         uiElements.add(graph);
         uiElements.add(commandsTableView);
         uiElements.add(addCommandButton);
-        uiElements.add(journalTableView);
+        uiElements.add(eventsTableView);
         uiElements.add(addEventButton);
         uiElements.add(saveJournalButton);
         uiElements.add(autoscaleCheckBox);
@@ -276,7 +278,7 @@ public class ProcessController implements BaseController {
         if (!initialized) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
-            eventsController.getEventModel().addEvent("Инициализация модулей", EventsTypes.LOG);
+            eventsController.getEventsModel().addEvent(testProgram.getId(),"Инициализация модулей", EventsTypes.LOG, System.currentTimeMillis());
 
             toggleUiElements(true);
             regulatorParametersController.hideToolBar();
@@ -302,7 +304,7 @@ public class ProcessController implements BaseController {
         } else {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Отмена инициализации модулей");
-            eventsController.getEventModel().addEvent("Отмена инициализации модулей", EventsTypes.LOG);
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Отмена инициализации модулей", EventsTypes.LOG, System.currentTimeMillis());
 
             toggleUiElements(true);
             regulatorParametersController.hideToolBar();
@@ -314,11 +316,11 @@ public class ProcessController implements BaseController {
 
                 if (!process.isConnected()) {
                     statusBarLine.setStatus("Отмена инициализации модулей успешно выполнена", true);
-                    eventsController.getEventModel().addEvent("Отмена инициализации модулей успешно выполнена", EventsTypes.OK);
+                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Отмена инициализации модулей успешно выполнена", EventsTypes.OK, System.currentTimeMillis());
                     initialized = false;
                 } else {
                     statusBarLine.setStatus("Произошла ошибка при отмене инициализации модулей", false);
-                    eventsController.getEventModel().addEvent("Произошла ошибка при отмене инициализации модулей", EventsTypes.WARNING);
+                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Произошла ошибка при отмене инициализации модулей", EventsTypes.WARNING, System.currentTimeMillis());
                 }
 
                 toggleInitializationUiElements();
@@ -336,9 +338,9 @@ public class ProcessController implements BaseController {
                 graph.setDisable(false);
                 commandsTableView.setDisable(false);
                 addCommandButton.setDisable(false);
-                journalTableView.setDisable(false);
+                eventsTableView.setDisable(false);
                 addEventButton.setDisable(false);
-                saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+                saveJournalButton.setDisable(eventsTableView.getItems().isEmpty());
                 initializeButton.setText("Инициализация");
             });
         } else {
@@ -349,9 +351,9 @@ public class ProcessController implements BaseController {
                 graph.setDisable(false);
                 commandsTableView.setDisable(false);
                 addCommandButton.setDisable(false);
-                journalTableView.setDisable(false);
+                eventsTableView.setDisable(false);
                 addEventButton.setDisable(false);
-                saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+                saveJournalButton.setDisable(eventsTableView.getItems().isEmpty());
                 initializeButton.setText("Отменить");
             });
         }
@@ -381,7 +383,7 @@ public class ProcessController implements BaseController {
         if (process.isInitialized()) {
             process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
-            eventsController.getEventModel().addEvent("Успешная инициализация модулей", EventsTypes.OK);
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешная инициализация модулей", EventsTypes.OK, System.currentTimeMillis());
             initialized = true;
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
@@ -397,13 +399,13 @@ public class ProcessController implements BaseController {
 
         for (Pair<String, String> status : statuses) {
             String error = String.format("%s. %s.", status.getKey(), status.getValue());
-            eventsController.getEventModel().addEvent(error, EventsTypes.ERROR);
+            eventsController.getEventsModel().addEvent(testProgram.getId(), error, EventsTypes.ERROR, System.currentTimeMillis());
         }
     }
 
     public void handleStart() {
         statusBarLine.setStatusOfProgress("Запуск программы испытаний");
-        eventsController.getEventModel().addEvent("Запуск программы испытаний", EventsTypes.LOG);
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Запуск программы испытаний", EventsTypes.LOG, System.currentTimeMillis());
 
         toggleUiElements(true);
 
@@ -422,7 +424,7 @@ public class ProcessController implements BaseController {
 
         if (process.isRan()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
-            eventsController.getEventModel().addEvent("Успешный запуск модулей", EventsTypes.OK);
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешный запуск модулей", EventsTypes.OK, System.currentTimeMillis());
 
             Platform.runLater(() -> {
                 tableController.toggleResponseUiElements(false);
@@ -438,8 +440,8 @@ public class ProcessController implements BaseController {
                 table.setDisable(false);
                 graph.setDisable(false);
                 commandsTableView.setDisable(false);
-                journalTableView.setDisable(false);
-                saveJournalButton.setDisable(journalTableView.getItems().isEmpty());
+                eventsTableView.setDisable(false);
+                saveJournalButton.setDisable(eventsTableView.getItems().isEmpty());
                 addEventButton.setDisable(false);
                 stopButton.requestFocus();
             });
@@ -473,7 +475,7 @@ public class ProcessController implements BaseController {
 
     public void handleSmoothStopButton() {
         statusBarLine.setStatusOfProgress("Плавная остановка запущена");
-        eventsController.getEventModel().addEvent("Запущена плавная остановка", EventsTypes.LOG);
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Запущена плавная остановка", EventsTypes.LOG, System.currentTimeMillis());
         tableController.getRegulatorController().doSmoothStop();
 
         new Thread(() -> {
@@ -482,7 +484,7 @@ public class ProcessController implements BaseController {
                 if (tableController.getRegulatorController().isStopped()) {
                     handleStop();
                     statusBarLine.setStatus("Плавная остановка успешно выполнена", true);
-                    eventsController.getEventModel().addEvent("Плавная остановка успешно выполнена", EventsTypes.OK);
+                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Плавная остановка успешно выполнена", EventsTypes.OK, System.currentTimeMillis());
                 }
             }
         }).start();
@@ -490,7 +492,7 @@ public class ProcessController implements BaseController {
 
     public void handleStop() {
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
-        eventsController.getEventModel().addEvent("Завершение программы испытаний", EventsTypes.LOG);
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG, System.currentTimeMillis());
 
         graphController.getGraphModel().clear();
         tableController.toggleResponseUiElements(true);
@@ -511,7 +513,7 @@ public class ProcessController implements BaseController {
 
         if (process.isFinished()) {
             statusBarLine.setStatus("Программа испытаний успешно завершена", true);
-            eventsController.getEventModel().addEvent("Успешное завершение программы испытаний", EventsTypes.OK);
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешное завершение программы испытаний", EventsTypes.OK, System.currentTimeMillis());
         } else {
             statusBarLine.setStatus("Ошибка завершения программы испытаний", false);
             showErrors();
@@ -643,7 +645,8 @@ public class ProcessController implements BaseController {
         processModel.clear();
         commandsTableView.getItems().clear();
         commandsController.loadCommands(testProgram.getId());
-        journalTableView.getItems().clear();
+        eventsTableView.getItems().clear();
+        eventsController.loadEvents(testProgram.getId());
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
     }

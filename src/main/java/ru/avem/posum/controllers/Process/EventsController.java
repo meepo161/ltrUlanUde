@@ -1,13 +1,82 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
-import ru.avem.posum.models.Process.Events;
+import javafx.scene.input.MouseButton;
+import ru.avem.posum.db.EventsRepository;
+import ru.avem.posum.models.Process.Command;
+import ru.avem.posum.models.Process.Event;
 import ru.avem.posum.models.Process.EventsModel;
 
+import java.util.List;
 import java.util.Optional;
 
 public class EventsController {
-    private EventsModel eventModel = new EventsModel();
+    private ContextMenu contextMenu = new ContextMenu();
+    private EventsModel eventsModel = new EventsModel();
+    private ProcessController processController;
+    private TableView<Event> table;
+
+    public EventsController(ProcessController processController, TableView<Event> table) {
+        this.processController = processController;
+        this.table = table;
+
+        initContextMenu();
+        listen(table);
+    }
+
+    private void initContextMenu() {
+        MenuItem menuItemDelete = new MenuItem("Удалить");
+        MenuItem menuItemClear = new MenuItem("Удалить все");
+
+        menuItemDelete.setOnAction(event -> deleteCommand());
+        menuItemClear.setOnAction(event -> clearCommands());
+
+        contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
+    }
+
+    private void deleteCommand() {
+        Event selectedEvent = table.getSelectionModel().getSelectedItem();
+        table.getItems().remove(selectedEvent);
+        eventsModel.deleteEvent(selectedEvent);
+        processController.getStatusBarLine().setStatus("Событие успешно удалено", true);
+    }
+
+    private void clearCommands() {
+        ObservableList<Event> events = table.getItems();
+
+        for (Event event : events) {
+            eventsModel.deleteEvent(event);
+        }
+
+        events.clear();
+        processController.getStatusBarLine().setStatus("События успешно удалены", true);
+    }
+
+    private void listen(TableView<Event> tableView) {
+        tableView.setRowFactory(tv -> {
+            TableRow<Event> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                    contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
+                } else if (event.getClickCount() == 1) {
+                    contextMenu.hide();
+                }
+            });
+
+            return row;
+        });
+    }
+
+    public void loadEvents(long testProgramId) {
+        List<ru.avem.posum.db.models.Event> events = EventsRepository.getAllEvents();
+
+        for (ru.avem.posum.db.models.Event event : events) {
+            if (event.getTestProgramId() == testProgramId) {
+                eventsModel.loadEvent(event);
+            }
+        }
+    }
 
     public void showDialogOfEventAdding() {
         // Create the text dialog.
@@ -31,13 +100,13 @@ public class EventsController {
 
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(eventText -> eventModel.setEvent(eventText));
+        result.ifPresent(eventText -> eventsModel.setEvent(processController.getTestProgramId(), eventText));
     }
 
-    public void setEventsColors(TableView<Events> newTableEvent) {
-        newTableEvent.setRowFactory((TableView<Events> paramP) -> new TableRow<Events>() {
+    public void setEventsColors(TableView<Event> newTableEvent) {
+        newTableEvent.setRowFactory((TableView<Event> paramP) -> new TableRow<Event>() {
             @Override
-            protected void updateItem(Events row, boolean paramBoolean) {
+            protected void updateItem(Event row, boolean paramBoolean) {
                 if (row != null) {
                     switch (row.getStatus()) {
                         case "ERROR":
@@ -63,7 +132,7 @@ public class EventsController {
         });
     }
 
-    public EventsModel getEventModel() {
-        return eventModel;
+    public EventsModel getEventsModel() {
+        return eventsModel;
     }
 }

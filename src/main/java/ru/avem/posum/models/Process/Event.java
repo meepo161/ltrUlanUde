@@ -7,29 +7,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Events {
-    private final StringProperty time;
+public class Event {
+    private long id;
     private final StringProperty description;
     private final StringProperty status;
-    private List<StringProperty> properties = new ArrayList<>();
+    private final StringProperty time;
 
-    public Events(String time, String description, String status) {
+    public Event(long id, String description, String status, String time) {
+        this.id = id;
         this.time = new SimpleStringProperty(time);
         this.description = new SimpleStringProperty(description);
         this.status = new SimpleStringProperty(status);
-        properties.addAll(Arrays.asList(this.time, this.description, this.status));
-    }
-
-    public Events(String time, String description, EventsTypes status) {
-        this(time, description, status.toString());
-    }
-
-    public Events(String time, String description) {
-        this(time, description, EventsTypes.LOG);
-    }
-
-    public Events() {
-        this(null, null, EventsTypes.LOG);
     }
 
     public String getDescription() {
@@ -42,6 +30,10 @@ public class Events {
 
     public void setDescription(String description) {
         this.description.set(description);
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getTime() {
@@ -60,16 +52,7 @@ public class Events {
         return status.get();
     }
 
-    public StringProperty statusProperty() {
-        return status;
-    }
-
     public void setStatus(String status) {
         this.status.set(status);
     }
-
-    public void clearProperties() {
-        properties.forEach(stringProperty -> stringProperty.set(""));
-    }
-
 }

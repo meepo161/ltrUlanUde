@@ -6,7 +6,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
-import ru.avem.posum.db.CommandsRepository;
 import ru.avem.posum.models.Process.Command;
 import ru.avem.posum.models.Process.CommandsModel;
 import ru.avem.posum.models.Process.CommandsTypes;
@@ -20,7 +19,6 @@ public class CommandsController {
     private CommandsModel commandsModel = new CommandsModel();
     private ContextMenu contextMenu = new ContextMenu();
     private boolean didBackSpacePressed;
-    private boolean isAddPressed;
     private ProcessController processController;
     private TableView<Command> table;
 
@@ -52,7 +50,7 @@ public class CommandsController {
     private void clearCommands() {
         ObservableList<Command> commands = table.getItems();
 
-        for (Command command: commands) {
+        for (Command command : commands) {
             commandsModel.deleteCommand(command);
         }
 
@@ -78,8 +76,10 @@ public class CommandsController {
     public void loadCommands(long testProgramId) {
         List<ru.avem.posum.db.models.Command> commands = getAllCommands();
 
-        for (ru.avem.posum.db.models.Command command: commands) {
-            commandsModel.loadCommand(command);
+        for (ru.avem.posum.db.models.Command command : commands) {
+            if (command.getTestProgramId() == testProgramId) {
+                commandsModel.loadCommand(command);
+            }
         }
     }
 

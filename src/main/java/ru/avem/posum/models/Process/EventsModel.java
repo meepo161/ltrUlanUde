@@ -2,32 +2,35 @@ package ru.avem.posum.models.Process;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import ru.avem.posum.db.EventRepository;
-import ru.avem.posum.db.models.Event;
-
-import java.util.List;
+import ru.avem.posum.db.CommandsRepository;
+import ru.avem.posum.db.EventsRepository;
 
 public class EventsModel {
-    private ObservableList<Events> events = FXCollections.observableArrayList();
-    private long testId;
+    private ObservableList<Event> events = FXCollections.observableArrayList();
 
-    public void addEvent(String description, EventsTypes status) {
-        this.setEvent(description, status, System.currentTimeMillis());
+    public void addEvent(long testProgramId, String description, EventsTypes status, long mills) {
+        ru.avem.posum.db.models.Event event = new ru.avem.posum.db.models.Event(testProgramId, description, status.toString(), mills);
+        EventsRepository.insertEvent(event);
+        events.add(new Event(event.getId(), event.getDescription(), event.getStatus(), event.getTime()));
     }
 
-    public ObservableList<Events> getEvents() {
+    public void deleteEvent(Event event) {
+        for (ru.avem.posum.db.models.Event dbEvent : EventsRepository.getAllEvents()) {
+            if (dbEvent.getId() == event.getId()) {
+                EventsRepository.deleteEvent(dbEvent);
+            }
+        }
+    }
+
+    public void loadEvent(ru.avem.posum.db.models.Event event) {
+        events.add(new Event(event.getId(), event.getDescription(), event.getStatus(), event.getTime()));
+    }
+
+    public ObservableList<Event> getEvents() {
         return events;
     }
 
-    public void setEvent(String description, EventsTypes status, long millis) {
-        Event event = new Event(testId, description, status.toString(), millis);
-        EventRepository.insertEvent(event);
-        events.add(new Events(event.getTime(), event.getDescription(), event.getStatus()));
-    }
-
-    public void setEvent(String description) {
-        this.setEvent(description, EventsTypes.LOG, System.currentTimeMillis());
+    public void setEvent(long testProgramId, String description) {
+        this.addEvent(testProgramId, description, EventsTypes.LOG, System.currentTimeMillis());
     }
 }

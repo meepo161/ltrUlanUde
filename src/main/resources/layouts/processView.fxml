@@ -326,7 +326,7 @@
                                             <RowConstraints maxHeight="25.0" minHeight="0.0" vgrow="SOMETIMES" />
                                         </rowConstraints>
                                         <children>
-                                            <TableView fx:id="journalTableView" minHeight="0.0" minWidth="0.0" styleClass="eventTable" GridPane.columnSpan="2">
+                                            <TableView fx:id="eventsTableView" minHeight="0.0" minWidth="0.0" styleClass="eventTable" GridPane.columnSpan="2">
                                                 <placeholder>
                                                     <Label text="Нет данных для отображения" />
                                                 </placeholder>
