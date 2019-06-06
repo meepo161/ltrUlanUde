@@ -567,7 +567,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handleAddCommand() {
-//        commandsController.addCommand();
         commandsController.showDialogOfCommandAdding();
     }
 
@@ -643,6 +642,7 @@ public class ProcessController implements BaseController {
         Platform.runLater(() -> table.getItems().clear());
         processModel.clear();
         commandsTableView.getItems().clear();
+        commandsController.loadCommands(testProgram.getId());
         journalTableView.getItems().clear();
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();

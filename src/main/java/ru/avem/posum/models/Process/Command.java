@@ -4,12 +4,22 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Command {
+    private long id;
     private final StringProperty description;
     private StringProperty type;
 
-    public Command(String type, String description) {
+    public Command(long id, String type, String description) {
+        this.id = id;
         this.type = new SimpleStringProperty(type);
         this.description = new SimpleStringProperty(description);
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getType() {

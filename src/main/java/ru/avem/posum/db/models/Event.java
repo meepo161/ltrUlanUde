@@ -33,10 +33,6 @@ public class Event {
         this.status = status;
     }
 
-    public Event(long idTest, String description, String status) {
-        this(idTest, description, status, System.currentTimeMillis());
-    }
-
     public Event(long idTest, String description) {
         this(idTest, description, "LOG", System.currentTimeMillis());
     }
@@ -51,10 +47,6 @@ public class Event {
 
     public String getTime() {
         return this.time + " " + this.date;
-    }
-
-    public long getMillis() {
-        return millis;
     }
 
     public void setMillis(long millis) {

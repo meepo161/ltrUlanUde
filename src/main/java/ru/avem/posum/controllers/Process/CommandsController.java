@@ -4,16 +4,21 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
-import javafx.util.Pair;
+import ru.avem.posum.db.CommandsRepository;
 import ru.avem.posum.models.Process.Command;
 import ru.avem.posum.models.Process.CommandsModel;
 import ru.avem.posum.models.Process.CommandsTypes;
 
-import java.util.Optional;
+import java.util.List;
+
+import static ru.avem.posum.db.CommandsRepository.getAllCommands;
+
 
 public class CommandsController {
     private CommandsModel commandsModel = new CommandsModel();
+    private ContextMenu contextMenu = new ContextMenu();
     private boolean didBackSpacePressed;
     private boolean isAddPressed;
     private ProcessController processController;
@@ -22,6 +27,60 @@ public class CommandsController {
     public CommandsController(ProcessController processController, TableView<Command> table) {
         this.processController = processController;
         this.table = table;
+
+        initContextMenu();
+        listen(table);
+    }
+
+    private void initContextMenu() {
+        MenuItem menuItemDelete = new MenuItem("Удалить");
+        MenuItem menuItemClear = new MenuItem("Удалить все");
+
+        menuItemDelete.setOnAction(event -> deleteCommand());
+        menuItemClear.setOnAction(event -> clearCommands());
+
+        contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
+    }
+
+    private void deleteCommand() {
+        Command selectedCommand = table.getSelectionModel().getSelectedItem();
+        table.getItems().remove(selectedCommand);
+        commandsModel.deleteCommand(selectedCommand);
+        processController.getStatusBarLine().setStatus("Команда успешно удалена", true);
+    }
+
+    private void clearCommands() {
+        ObservableList<Command> commands = table.getItems();
+
+        for (Command command: commands) {
+            commandsModel.deleteCommand(command);
+        }
+
+        commands.clear();
+        processController.getStatusBarLine().setStatus("Команды успешно удалены", true);
+    }
+
+    private void listen(TableView<Command> tableView) {
+        tableView.setRowFactory(tv -> {
+            TableRow<Command> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                    contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
+                } else if (event.getClickCount() == 1) {
+                    contextMenu.hide();
+                }
+            });
+
+            return row;
+        });
+    }
+
+    public void loadCommands(long testProgramId) {
+        List<ru.avem.posum.db.models.Command> commands = getAllCommands();
+
+        for (ru.avem.posum.db.models.Command command: commands) {
+            commandsModel.loadCommand(command);
+        }
     }
 
     public void showDialogOfCommandAdding() {
