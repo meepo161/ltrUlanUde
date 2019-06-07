@@ -94,7 +94,9 @@ public class Process {
     }
 
     public void perform() {
-        perform(data, timeMarks);
+        if (!paused) {
+            perform(data, timeMarks);
+        }
     }
 
     public void finish() {
@@ -234,11 +236,7 @@ public class Process {
     }
 
     public double[][] getData() {
-        if (paused) {
-            return new double[SLOTS][];
-        } else {
-            return data;
-        }
+        return data;
     }
 
 //    public double[] getData(int slot) {

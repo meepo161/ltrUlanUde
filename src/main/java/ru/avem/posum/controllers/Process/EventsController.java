@@ -28,20 +28,20 @@ public class EventsController {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
 
-        menuItemDelete.setOnAction(event -> deleteCommand());
-        menuItemClear.setOnAction(event -> clearCommands());
+        menuItemDelete.setOnAction(event -> deleteEvent());
+        menuItemClear.setOnAction(event -> clearEvents());
 
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
-    private void deleteCommand() {
+    private void deleteEvent() {
         Event selectedEvent = table.getSelectionModel().getSelectedItem();
         table.getItems().remove(selectedEvent);
         eventsModel.deleteEvent(selectedEvent);
         processController.getStatusBarLine().setStatus("Событие успешно удалено", true);
     }
 
-    private void clearCommands() {
+    private void clearEvents() {
         ObservableList<Event> events = table.getItems();
 
         for (Event event : events) {

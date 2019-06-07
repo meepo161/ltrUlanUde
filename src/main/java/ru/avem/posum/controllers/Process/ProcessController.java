@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
+import org.apache.commons.lang3.time.StopWatch;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -279,7 +280,7 @@ public class ProcessController implements BaseController {
         if (!initialized) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
-            eventsController.getEventsModel().addEvent(testProgram.getId(),"Инициализация модулей", EventsTypes.LOG);
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Инициализация модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
             regulatorParametersController.hideToolBar();
@@ -492,20 +493,28 @@ public class ProcessController implements BaseController {
         }).start();
     }
 
-    public void handlePause() {
-        statusBarLine.setStatusOfProgress("Программа испытаний поставлена на паузу");
+    public void handlePause(long delay) {
+        statusBarLine.setStatusOfProgress("Программа испытаний приостановлена");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Пауза программы испытаний", EventsTypes.LOG);
 
-        new Thread(() -> {
-            stopwatchController.pauseStopwatch();
-            process.setPaused(true);
-
-            while (process.isStopped() && process.isPaused()) {
-                Utils.sleep(100);
+        TimerController timerController = new TimerController();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                process.setPaused(false);
+                initializeButton.setDisable(true); // TODO: change this shit
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.setStatus("Программа испытаний возобновлена", true);
+                eventsController.getEventsModel().addEvent(testProgram.getId(), "Программа испытаний возобновлена", EventsTypes.LOG);
             }
+        };
+        timerController.createTimer(timerTask, delay);
+        initializeButton.setDisable(true); // TODO: change this shit
 
-            process.setPaused(false);
-        }).start();
+        process.setPaused(true);
+        Utils.sleep(1000);
+        process.initData(processModel.getModules());
+        timerController.startTimers();
     }
 
     public void handleStop() {
@@ -642,7 +651,9 @@ public class ProcessController implements BaseController {
         return tableController;
     }
 
-    public long getTestProgramId() { return testProgram.getId(); }
+    public long getTestProgramId() {
+        return testProgram.getId();
+    }
 
     @Override
     public void setControllerManager(ControllerManager cm) {

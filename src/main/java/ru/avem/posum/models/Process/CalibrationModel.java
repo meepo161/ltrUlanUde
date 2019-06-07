@@ -164,8 +164,6 @@ public class CalibrationModel {
     }
 
     public double[][] getCalibratedData() {
-
-
         return calibratedData;
     }
 

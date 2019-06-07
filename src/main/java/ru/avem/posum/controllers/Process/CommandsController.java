@@ -278,12 +278,11 @@ public class CommandsController {
             boolean isStop = command.getType().equals(CommandsTypes.STOP.getTypeName());
             long time = command.getTime();
 
-
             TimerTask timerTask = new TimerTask() {
                 @Override
                 public void run() {
                     if (isPause) {
-                        processController.handlePause();
+                        processController.handlePause(command.getDelay());
                     } else if (isStop) {
                         processController.handleStop();
                     }

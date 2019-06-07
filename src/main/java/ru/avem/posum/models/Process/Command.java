@@ -27,17 +27,39 @@ public class Command {
         this.id = id;
     }
 
+    public long getDelay() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date mills = new Date();
+        String pauseTime = description.get().split("На ")[1].split(" ")[0];
+        try {
+            mills = simpleDateFormat.parse(pauseTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return mills.getTime();
+    }
+
     public long getTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String time = description.get().split("Через ")[1].split("с начала запуска")[0];
+        boolean isPause = type.get().equals(CommandsTypes.PAUSE.getTypeName());
+        boolean isStop = type.get().equals(CommandsTypes.STOP.getTypeName());
+        String time = "";
         Date mills = new Date();
+
+        if (isPause) {
+            time = description.get().split("через ")[1].split("с начала запуска")[0];
+        } else if (isStop) {
+            time = description.get().split("Через ")[1].split("с начала запуска")[0];
+        }
+
         try {
             mills = simpleDateFormat.parse(time);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
 
         return mills.getTime();
     }
