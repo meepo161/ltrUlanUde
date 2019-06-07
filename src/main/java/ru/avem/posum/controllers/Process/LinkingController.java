@@ -171,7 +171,7 @@ public class LinkingController implements BaseController, LinkingManager {
                 Platform.runLater(() -> adcChannels.remove(channel));
 
                 ChannelModel newChannelModel = createChannel(channel);
-                graphModel.getChannels().add(newChannelModel);
+                graphModel.add(processController.getTestProgramId(), newChannelModel);
             }
         }
 
@@ -198,7 +198,7 @@ public class LinkingController implements BaseController, LinkingManager {
         linkingModel.saveLinked(new Pair<>(selectedDacChannel.get(), selectedAdcChannel.get()));
 
         ChannelModel newChannelModel = createChannel(selectedDacChannel.get(), selectedAdcChannel.get());
-        graphModel.getChannels().add(newChannelModel);
+        graphModel.add(processController.getTestProgramId(), newChannelModel);
 
         enableChooseOfChannels(dacChannelsListView);
         enableChooseOfChannels(adcChannelsListView);

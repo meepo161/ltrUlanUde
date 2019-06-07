@@ -10,6 +10,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import ru.avem.posum.db.ChannelsRepository;
+import ru.avem.posum.db.models.Channels;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.Actionable;
@@ -56,6 +58,17 @@ public class GraphModel {
 
     public void clear() {
         Platform.runLater(() -> graphSeries.getData().clear());
+    }
+
+    public void add(long testProgramId, ChannelModel channelModel) {
+        Channels dbChannel = new Channels(testProgramId, channelModel.getName(),
+                channelModel.getPCoefficient(), channelModel.getICoefficient(), channelModel.getDCoefficient(),
+                channelModel.getChosenParameterIndex(), channelModel.getResponseColor());
+
+        ChannelsRepository.insertChannel(dbChannel);
+
+        channelModel.setId(dbChannel.getId());
+        channels.add(channelModel);
     }
 
     public ObservableList<ChannelModel> getChannels() {

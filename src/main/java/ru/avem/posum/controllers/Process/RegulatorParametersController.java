@@ -349,9 +349,9 @@ public class RegulatorParametersController {
             dcTextField.setText(channelModel.getDc());
             calibratedDcTextField.setText(String.valueOf(calibratedDc));
             frequencyTextField.setText(channelModel.getFrequency());
-            pTextField.setText(channelModel.getPcoefficient());
+            pTextField.setText(channelModel.getPCoefficient());
             iTextField.setText(channelModel.getICoefficient());
-            dTextField.setText(channelModel.getDcoefficient());
+            dTextField.setText(channelModel.getDCoefficient());
         });
     }
 
@@ -482,9 +482,9 @@ public class RegulatorParametersController {
         selectedChannel.setAmplitude(amplitudeTextField.getText());
         selectedChannel.setDc(dcTextField.getText());
         selectedChannel.setFrequency(frequencyTextField.getText());
-        selectedChannel.setPcoefficient(pTextField.getText());
-        selectedChannel.setIcoefficient(iTextField.getText());
-        selectedChannel.setDcoefficient(dTextField.getText());
+        selectedChannel.setPCoefficient(pTextField.getText());
+        selectedChannel.setICoefficient(iTextField.getText());
+        selectedChannel.setDCoefficient(dTextField.getText());
         selectedChannel.setChosenParameterIndex(String.valueOf(getChosenParameterIndex()));
 
         removeColumns();

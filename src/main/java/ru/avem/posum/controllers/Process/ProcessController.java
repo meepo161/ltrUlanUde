@@ -592,6 +592,7 @@ public class ProcessController implements BaseController {
             regulatorParametersController.clear();
             regulatorParametersController.hideToolBar();
             stopwatchController.stopStopwatch();
+            tableController.saveChannels();
             wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
         }
     }
@@ -673,6 +674,7 @@ public class ProcessController implements BaseController {
     private void loadTestProgram() {
         Platform.runLater(() -> table.getItems().clear());
         processModel.clear();
+        tableController.loadChannels();
         commandsTableView.getItems().clear();
         commandsController.loadCommands(testProgram.getId());
         eventsTableView.getItems().clear();

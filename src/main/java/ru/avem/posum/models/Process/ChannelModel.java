@@ -6,11 +6,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import ru.avem.posum.controllers.Process.RegulatorParameters;
-
-import java.util.Optional;
+import sun.plugin.com.Utils;
 
 public class ChannelModel {
+    private long id;
     private StringProperty name;
     private StringProperty amplitude;
     private StringProperty responseAmplitude;
@@ -23,7 +22,6 @@ public class ChannelModel {
     private StringProperty relativeResponseFrequency;
     private StringProperty loadsCounter;
     private StringProperty responseLoadsCounter;
-    private StringProperty relativeResponseLoadsCounter;
     private StringProperty rms;
     private StringProperty responseRms;
     private StringProperty relativeResponseRms;
@@ -34,7 +32,6 @@ public class ChannelModel {
     private CheckBox responseCheckBox;
     private ColorPicker colorPicker;
     private StringProperty responseColor;
-    private Optional<RegulatorParameters> regulatorEnabled;
 
     public ChannelModel(String name) {
         this.name = new SimpleStringProperty(name);
@@ -49,7 +46,6 @@ public class ChannelModel {
         relativeResponseFrequency = new SimpleStringProperty("0");
         loadsCounter = new SimpleStringProperty("0");
         responseLoadsCounter = new SimpleStringProperty("0");
-        relativeResponseLoadsCounter = new SimpleStringProperty("0");
         rms = new SimpleStringProperty("0");
         responseRms = new SimpleStringProperty("0");
         relativeResponseRms = new SimpleStringProperty("0");
@@ -65,14 +61,48 @@ public class ChannelModel {
                 (int) Color.RED.getBlue() * 255));
     }
 
+    public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
+                        String chosenParameterIndex, String responseColor) {
+
+        this.id = id;
+        this.name = new SimpleStringProperty(name);
+        this.pCoefficient = new SimpleStringProperty(pCoefficient);
+        this.iCoefficient = new SimpleStringProperty(iCoefficient);
+        this.dCoefficient = new SimpleStringProperty(dCoefficient);
+        this.chosenParameterIndex = new SimpleStringProperty(chosenParameterIndex);
+        this.responseColor = new SimpleStringProperty(responseColor);
+        amplitude = new SimpleStringProperty("0");
+        responseAmplitude = new SimpleStringProperty("0");
+        relativeResponseAmplitude = new SimpleStringProperty("0");
+        dc = new SimpleStringProperty("0");
+        responseDc = new SimpleStringProperty("0");
+        relativeResponseDc = new SimpleStringProperty("0");
+        frequency = new SimpleStringProperty("0");
+        responseFrequency = new SimpleStringProperty("0");
+        relativeResponseFrequency = new SimpleStringProperty("0");
+        loadsCounter = new SimpleStringProperty("0");
+        responseLoadsCounter = new SimpleStringProperty("0");
+        rms = new SimpleStringProperty("0");
+        responseRms = new SimpleStringProperty("0");
+        relativeResponseRms = new SimpleStringProperty("0");
+        responseCheckBox = createResponseCheckBox();
+        colorPicker = createColorPicker();
+    }
+
     private CheckBox createResponseCheckBox() {
         CheckBox checkBox = new CheckBox();
         checkBox.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
+        checkBox.setDisable(true);
         return checkBox;
     }
 
     private ColorPicker createColorPicker() {
-        ColorPicker colorPicker = new ColorPicker(Color.DARKRED);
+        double red = Double.parseDouble(responseColor.get().split("rgba\\(")[1].split(", ")[0]);
+        double green = Double.parseDouble(responseColor.get().split(", ")[1].split(", ")[0]);
+        double blue = Double.parseDouble(responseColor.get().split(", ")[2].split(", ")[0]);
+        double opacity = Double.parseDouble(responseColor.get().split(", ")[3].split("\\);")[0]);
+        Color color = Color.color(red / 255.0, green / 255.0, blue / 255.0, opacity);
+        ColorPicker colorPicker = new ColorPicker(color);
 
         colorPicker.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
         colorPicker.setStyle("-fx-color-label-visible: false;");
@@ -108,7 +138,7 @@ public class ChannelModel {
         return dc.get().isEmpty() ? "0" : dc.get();
     }
 
-    public String getDcoefficient() {
+    public String getDCoefficient() {
         return dCoefficient.get().isEmpty() ? "0" : dCoefficient.get();
     }
 
@@ -120,6 +150,10 @@ public class ChannelModel {
         return iCoefficient.get().isEmpty() ? "0" : iCoefficient.get();
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getLoadsCounter() {
         return loadsCounter.get();
     }
@@ -128,12 +162,20 @@ public class ChannelModel {
         return name.get();
     }
 
-    public String getPcoefficient() {
+    public String getPCoefficient() {
         return pCoefficient.get().isEmpty() ? "0" : pCoefficient.get();
     }
 
-    public Optional<RegulatorParameters> isRegulatorEnabled() {
-        return regulatorEnabled;
+    public String getRelativeResponseAmplitude() {
+        return relativeResponseAmplitude.get();
+    }
+
+    public String getRelativeResponseDc() {
+        return relativeResponseDc.get();
+    }
+
+    public String getRelativeResponseFrequency() {
+        return relativeResponseFrequency.get();
     }
 
     public String getResponseAmplitude() {
@@ -142,6 +184,10 @@ public class ChannelModel {
 
     public String getResponseDc() {
         return responseDc.get();
+    }
+
+    public String getResponseLoadsCounter() {
+        return responseLoadsCounter.get();
     }
 
     public CheckBox getResponseCheckBox() {
@@ -222,7 +268,7 @@ public class ChannelModel {
         this.dc.set(dc);
     }
 
-    public void setDcoefficient(String dValue) {
+    public void setDCoefficient(String dValue) {
         this.dCoefficient.set(dValue);
     }
 
@@ -230,20 +276,20 @@ public class ChannelModel {
         this.frequency.set(frequency);
     }
 
-    public void setIcoefficient(String iValue) {
+    public void setICoefficient(String iValue) {
         this.iCoefficient.set(iValue);
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setName(String description) {
         this.name.set(description);
     }
 
-    public void setPcoefficient(String pValue) {
+    public void setPCoefficient(String pValue) {
         this.pCoefficient.set(pValue);
-    }
-
-    public void setRegulatorEnabled(Optional<RegulatorParameters> regulatorEnabled) {
-        this.regulatorEnabled = regulatorEnabled;
     }
 
     public void setRelativeResponseAmplitude(String relativeResponseAmplitude) {
@@ -264,6 +310,10 @@ public class ChannelModel {
 
     public void setResponseAmplitude(String responseAmplitude) {
         this.responseAmplitude.set(responseAmplitude);
+    }
+
+    public void setResponseColor(String responseColor) {
+        this.responseColor.set(responseColor);
     }
 
     public void setResponseDc(String responseDc) {

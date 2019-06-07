@@ -9,6 +9,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import ru.avem.posum.db.ChannelsRepository;
+import ru.avem.posum.db.models.Channels;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.Process.ChannelModel;
@@ -419,6 +421,41 @@ public class TableController {
 
         for (ColorPicker colorPicker : colorPickers) {
             Platform.runLater(() -> colorPicker.setValue(Color.DARKRED));
+        }
+    }
+
+    public void saveChannels() {
+        ObservableList<ChannelModel> channels = tableView.getItems();
+        List<Channels> dbChannels = ChannelsRepository.getAllChannels();
+
+        for (ChannelModel channelModel : channels) {
+            for (Channels dbChannel : dbChannels) {
+                if (channelModel.getId() == dbChannel.getId()) {
+                    dbChannel.setName(channelModel.getName());
+                    dbChannel.setChosenParameterIndex(channelModel.getChosenParameterIndex());
+                    dbChannel.setPCoefficient(channelModel.getPCoefficient());
+                    dbChannel.setICoefficient(channelModel.getICoefficient());
+                    dbChannel.setDCoefficient(channelModel.getDCoefficient());
+                    dbChannel.setResponseColor(channelModel.getResponseColor());
+
+                    ChannelsRepository.updateChannel(dbChannel);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void loadChannels() {
+        List<Channels> channels = ChannelsRepository.getAllChannels();
+
+        for (Channels channel : channels) {
+            if (channel.getTestProgramId() == processController.getTestProgramId()) {
+                ChannelModel channelModel = new ChannelModel(channel.getId(), channel.getName(),
+                        channel.getPCoefficient(), channel.getICoefficient(), channel.getDCoefficient(),
+                        channel.getChosenParameterIndex(), channel.getResponseColor());
+
+                tableView.getItems().add(channelModel);
+            }
         }
     }
 
