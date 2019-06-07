@@ -53,12 +53,9 @@ public class ChannelModel {
         iCoefficient = new SimpleStringProperty("0");
         dCoefficient = new SimpleStringProperty("0");
         chosenParameterIndex = new SimpleStringProperty("-1");
+        responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, %d);", 139, 0, 0, 1));
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
-        responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, 1.0);",
-                (int) Color.RED.getRed() * 255,
-                (int) Color.RED.getGreen() * 255,
-                (int) Color.RED.getBlue() * 255));
     }
 
     public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
