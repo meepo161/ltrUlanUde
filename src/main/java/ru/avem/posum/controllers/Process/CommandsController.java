@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -132,7 +133,7 @@ public class CommandsController {
         dialog.setResultConverter(dialogButton -> {
             dialog.setOnCloseRequest(event -> {
                 if (dialogButton == add) {
-                    if (!validate(description)) {
+                    if (!validate(commands.getSelectionModel().getSelectedItem(), description)) {
                         event.consume();
                     } else {
                         String commandType = commands.getSelectionModel().getSelectedItem();
@@ -232,13 +233,20 @@ public class CommandsController {
         didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
     }
 
-    private boolean validate(TextField textField) {
+    private boolean validate(String commandType, TextField textField) {
+        boolean isPause = commandType.equals(CommandsTypes.PAUSE.getTypeName());
+        boolean isStop = commandType.equals(CommandsTypes.STOP.getTypeName());
         String description = textField.getText();
         boolean isDescriptionCorrect = true;
 
-        if (!description.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
-            processController.getStatusBarLine().setStatus("Неверно задано время", false);
-            isDescriptionCorrect = false;
+        if (isPause) {
+            isDescriptionCorrect = description.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d][\\s][\\d]{2,3}:[0-5][\\d]:[0-5][\\d]");
+        } else if (isStop) {
+            isDescriptionCorrect = description.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]");
+        }
+
+        if (!isDescriptionCorrect) {
+            processController.getStatusBarLine().setStatus("Неверно задан параметр команды", false);
         }
 
         return isDescriptionCorrect;
@@ -246,8 +254,14 @@ public class CommandsController {
 
     private String createDescription(String commandType, String oldDescription) {
         String newDescription = oldDescription;
+        boolean isPause = commandType.equals(CommandsTypes.PAUSE.getTypeName());
+        boolean isStop = commandType.equals(CommandsTypes.STOP.getTypeName());
 
-        if (commandType.equals(CommandsTypes.PAUSE.getTypeName()) || commandType.equals(CommandsTypes.STOP.getTypeName())) {
+        if (isPause) {
+            String startPauseTime = oldDescription.split(" ")[1];
+            String pauseTime = oldDescription.split(" ")[0];
+            newDescription = "На " + pauseTime + " через " + startPauseTime + " с начала запуска";
+        } else if (isStop) {
             newDescription = "Через " + oldDescription + " с начала запуска";
         }
 
@@ -260,6 +274,7 @@ public class CommandsController {
 
     public void executeCommands() {
         for (Command command : getCommands()) {
+            boolean isPause = command.getType().equals(CommandsTypes.PAUSE.getTypeName());
             boolean isStop = command.getType().equals(CommandsTypes.STOP.getTypeName());
             long time = command.getTime();
 
@@ -267,7 +282,9 @@ public class CommandsController {
             TimerTask timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    if (isStop) {
+                    if (isPause) {
+                        processController.handlePause();
+                    } else if (isStop) {
                         processController.handleStop();
                     }
                 }

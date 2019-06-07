@@ -1,6 +1,7 @@
 package ru.avem.posum.hardware;
 
 import javafx.util.Pair;
+import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.utils.TextEncoder;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Process {
+    private final int CHANNELS = 4; // количество каналов
     private final int SLOTS = 16; // количество слотов в крейте
 
     private String bioPath = LTR212.getBioPath();
@@ -19,6 +21,7 @@ public class Process {
     private int[][] measuringRanges = new int[SLOTS][SLOTS];
     private int[] modulesTypes = new int[SLOTS];
     private String[] operations = new String[SLOTS];
+    private boolean paused;
     private int[][] settingsOfModules = new int[SLOTS][SLOTS];
     private int[] slots = new int[SLOTS];
     private String[] statuses = new String[SLOTS];
@@ -94,13 +97,6 @@ public class Process {
         perform(data, timeMarks);
     }
 
-    public void initData(List<Modules> modules) {
-        for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
-            data[moduleIndex] = new double[modules.get(moduleIndex).getDataLength()];
-            timeMarks[moduleIndex] = new double[modules.get(moduleIndex).getDataLength() * 2];
-        }
-    }
-
     public void finish() {
         stop();
         disconnect();
@@ -112,7 +108,7 @@ public class Process {
     }
 
     public boolean isFinished() {
-       return checkStatuses();
+        return checkStatuses();
     }
 
     public native void openConnection(String crateSerialNumber, int[] modulesTypes, int[] slots, String ltr212biosPath);
@@ -132,6 +128,13 @@ public class Process {
 
     static {
         System.loadLibrary("ProcessLibrary");
+    }
+
+    public void initData(List<Modules> modules) {
+        for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
+            data[moduleIndex] = new double[modules.get(moduleIndex).getDataLength()];
+            timeMarks[moduleIndex] = new double[modules.get(moduleIndex).getDataLength() * 2];
+        }
     }
 
     public boolean isStopped() {
@@ -231,13 +234,25 @@ public class Process {
     }
 
     public double[][] getData() {
-        return data;
+        if (paused) {
+            return new double[SLOTS][];
+        } else {
+            return data;
+        }
     }
 
-    public double[] getData(int slot) {
-        double[] output = new double[data[slot].length];
-        System.arraycopy(data[slot], 0, output, 0, output.length);
-        return output;
+//    public double[] getData(int slot) {
+//        double[] output = new double[data[slot].length];
+//        System.arraycopy(data[slot], 0, output, 0, output.length);
+//        return output;
+//    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean isPaused) {
+        this.paused = isPaused;
     }
 
     public void setStopped(boolean stopped) {

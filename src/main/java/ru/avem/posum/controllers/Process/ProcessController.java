@@ -279,7 +279,7 @@ public class ProcessController implements BaseController {
         if (!initialized) {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Инициализация модулей");
-            eventsController.getEventsModel().addEvent(testProgram.getId(),"Инициализация модулей", EventsTypes.LOG, System.currentTimeMillis());
+            eventsController.getEventsModel().addEvent(testProgram.getId(),"Инициализация модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
             regulatorParametersController.hideToolBar();
@@ -305,7 +305,7 @@ public class ProcessController implements BaseController {
         } else {
             statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Отмена инициализации модулей");
-            eventsController.getEventsModel().addEvent(testProgram.getId(), "Отмена инициализации модулей", EventsTypes.LOG, System.currentTimeMillis());
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Отмена инициализации модулей", EventsTypes.LOG);
 
             toggleUiElements(true);
             regulatorParametersController.hideToolBar();
@@ -317,11 +317,11 @@ public class ProcessController implements BaseController {
 
                 if (!process.isConnected()) {
                     statusBarLine.setStatus("Отмена инициализации модулей успешно выполнена", true);
-                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Отмена инициализации модулей успешно выполнена", EventsTypes.OK, System.currentTimeMillis());
+                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Отмена инициализации модулей успешно выполнена", EventsTypes.OK);
                     initialized = false;
                 } else {
                     statusBarLine.setStatus("Произошла ошибка при отмене инициализации модулей", false);
-                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Произошла ошибка при отмене инициализации модулей", EventsTypes.WARNING, System.currentTimeMillis());
+                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Произошла ошибка при отмене инициализации модулей", EventsTypes.WARNING);
                 }
 
                 toggleInitializationUiElements();
@@ -384,7 +384,7 @@ public class ProcessController implements BaseController {
         if (process.isInitialized()) {
             process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
-            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешная инициализация модулей", EventsTypes.OK, System.currentTimeMillis());
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешная инициализация модулей", EventsTypes.OK);
             initialized = true;
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
@@ -400,13 +400,13 @@ public class ProcessController implements BaseController {
 
         for (Pair<String, String> status : statuses) {
             String error = String.format("%s. %s.", status.getKey(), status.getValue());
-            eventsController.getEventsModel().addEvent(testProgram.getId(), error, EventsTypes.ERROR, System.currentTimeMillis());
+            eventsController.getEventsModel().addEvent(testProgram.getId(), error, EventsTypes.ERROR);
         }
     }
 
     public void handleStart() {
         statusBarLine.setStatusOfProgress("Запуск программы испытаний");
-        eventsController.getEventsModel().addEvent(testProgram.getId(), "Запуск программы испытаний", EventsTypes.LOG, System.currentTimeMillis());
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Запуск программы испытаний", EventsTypes.LOG);
 
         toggleUiElements(true);
 
@@ -425,7 +425,7 @@ public class ProcessController implements BaseController {
 
         if (process.isRan()) {
             statusBarLine.setStatus("Операция успешно выполнена", true);
-            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешный запуск модулей", EventsTypes.OK, System.currentTimeMillis());
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешный запуск модулей", EventsTypes.OK);
 
             Platform.runLater(() -> {
                 tableController.toggleResponseUiElements(false);
@@ -477,7 +477,7 @@ public class ProcessController implements BaseController {
 
     public void handleSmoothStopButton() {
         statusBarLine.setStatusOfProgress("Плавная остановка запущена");
-        eventsController.getEventsModel().addEvent(testProgram.getId(), "Запущена плавная остановка", EventsTypes.LOG, System.currentTimeMillis());
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Запущена плавная остановка", EventsTypes.LOG);
         tableController.getRegulatorController().doSmoothStop();
 
         new Thread(() -> {
@@ -486,15 +486,31 @@ public class ProcessController implements BaseController {
                 if (tableController.getRegulatorController().isStopped()) {
                     handleStop();
                     statusBarLine.setStatus("Плавная остановка успешно выполнена", true);
-                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Плавная остановка успешно выполнена", EventsTypes.OK, System.currentTimeMillis());
+                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Плавная остановка успешно выполнена", EventsTypes.OK);
                 }
             }
         }).start();
     }
 
+    public void handlePause() {
+        statusBarLine.setStatusOfProgress("Программа испытаний поставлена на паузу");
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Пауза программы испытаний", EventsTypes.LOG);
+
+        new Thread(() -> {
+            stopwatchController.pauseStopwatch();
+            process.setPaused(true);
+
+            while (process.isStopped() && process.isPaused()) {
+                Utils.sleep(100);
+            }
+
+            process.setPaused(false);
+        }).start();
+    }
+
     public void handleStop() {
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
-        eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG, System.currentTimeMillis());
+        eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
 
         graphController.getGraphModel().clear();
         tableController.toggleResponseUiElements(true);
@@ -515,7 +531,7 @@ public class ProcessController implements BaseController {
 
         if (process.isFinished()) {
             statusBarLine.setStatus("Программа испытаний успешно завершена", true);
-            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешное завершение программы испытаний", EventsTypes.OK, System.currentTimeMillis());
+            eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешное завершение программы испытаний", EventsTypes.OK);
         } else {
             statusBarLine.setStatus("Ошибка завершения программы испытаний", false);
             showErrors();

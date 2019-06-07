@@ -8,8 +8,8 @@ import ru.avem.posum.db.EventsRepository;
 public class EventsModel {
     private ObservableList<Event> events = FXCollections.observableArrayList();
 
-    public void addEvent(long testProgramId, String description, EventsTypes status, long mills) {
-        ru.avem.posum.db.models.Event event = new ru.avem.posum.db.models.Event(testProgramId, description, status.toString(), mills);
+    public void addEvent(long testProgramId, String description, EventsTypes status) {
+        ru.avem.posum.db.models.Event event = new ru.avem.posum.db.models.Event(testProgramId, description, status.toString(), System.currentTimeMillis());
         EventsRepository.insertEvent(event);
         events.add(new Event(event.getId(), event.getDescription(), event.getStatus(), event.getTime()));
     }
@@ -31,6 +31,6 @@ public class EventsModel {
     }
 
     public void setEvent(long testProgramId, String description) {
-        this.addEvent(testProgramId, description, EventsTypes.LOG, System.currentTimeMillis());
+        this.addEvent(testProgramId, description, EventsTypes.LOG);
     }
 }

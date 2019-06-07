@@ -93,13 +93,20 @@ public class RegulatorController {
     }
 
     public double[] getSignalForDac() {
+        Optional<Modules> dac = getDacModule();
+        parseDacSettings(dac.get());
+        int signalLength = dac.get().getDataLength();
+        double[] signal = new double[signalLength];
+
+        if (checkPause()) {
+            return signal;
+        }
+
         int signalType = 0; // синусоидальный сигнал
         double[] amplitudes = ltr34SettingsModel.getAmplitudes();
         double[] dc = ltr34SettingsModel.getDc();
         double[] frequencies = ltr34SettingsModel.getFrequencies();
 
-        Optional<Modules> dac = getDacModule();
-        parseDacSettings(dac.get());
 
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
         for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
@@ -148,12 +155,14 @@ public class RegulatorController {
             }
         }
 
-        int signalLength = dac.get().getDataLength();
-        double[] signal = new double[signalLength];
         ltr34SettingsModel.calculateSignal(signalType);
         System.arraycopy(ltr34SettingsModel.getSignal(), 0, signal, 0, ltr34SettingsModel.getSignal().length);
 
         return signal;
+    }
+
+    private boolean checkPause() {
+        return processController.getProcess().isPaused();
     }
 
     private void parseDacSettings(Modules dac) {
