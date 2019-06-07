@@ -15,7 +15,6 @@ import java.util.TimerTask;
 
 import static ru.avem.posum.db.CommandsRepository.getAllCommands;
 
-
 public class CommandsController {
     private ComboBox<String> commandsComboBox;
     private CommandsModel commandsModel = new CommandsModel();
@@ -305,5 +304,9 @@ public class CommandsController {
 
     public ObservableList<Command> getCommands() {
         return commandsModel.getCommands();
+    }
+
+    public TimerController getTimerController() {
+        return timerController;
     }
 }

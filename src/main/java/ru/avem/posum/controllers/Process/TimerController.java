@@ -14,7 +14,6 @@ public class TimerController {
     public void startTimers() {
         for (Triple<Timer, TimerTask, Long> timerParams : timers) {
             timerParams.getFirst().schedule(timerParams.getSecond(), timerParams.getThird());
-
         }
     }
 
@@ -22,5 +21,9 @@ public class TimerController {
         for (Triple<Timer, TimerTask, Long> timerParams : timers) {
             timerParams.getFirst().cancel();
         }
+    }
+
+    public void clearTimers() {
+        timers.clear();
     }
 }
