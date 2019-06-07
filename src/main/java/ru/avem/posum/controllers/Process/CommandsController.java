@@ -105,8 +105,8 @@ public class CommandsController {
         commands.getItems().addAll(CommandsTypes.PAUSE.getTypeName(), CommandsTypes.STOP.getTypeName());
         commands.getSelectionModel().select(0);
         TextField description = new TextField();
-        description.setPromptText("чч:мм:сс");
-        setTextFormat(description, 8, ":");
+        description.setPromptText("чч:мм:сс чч:мм:сс");
+        setPauseFormat(description);
         description.setOnKeyPressed(this::listenBackSpaceKey);
 
         grid.add(new Label("Команда:"), 0, 0);
@@ -155,30 +155,69 @@ public class CommandsController {
     private void listen(ComboBox<String> comboBox, TextField textField) {
         comboBox.valueProperty().addListener(observable -> {
             String selectedValue = comboBox.getSelectionModel().getSelectedItem();
+            boolean isPause = selectedValue.equals(CommandsTypes.PAUSE.getTypeName());
+            boolean isStop = selectedValue.equals(CommandsTypes.STOP.getTypeName());
 
-            if (selectedValue.equals(CommandsTypes.PAUSE.getTypeName()) ||
-                    selectedValue.equals(CommandsTypes.STOP.getTypeName())) {
+            if (isPause) {
+                textField.setPromptText("чч:мм:сс чч:мм:сс");
+                setPauseFormat(textField);
+                textField.setOnKeyPressed(this::listenBackSpaceKey);
+            }
+
+            if (isStop) {
                 textField.setPromptText("чч:мм:сс");
-                setTextFormat(textField, 8, ":");
+                setStopFormat(textField);
                 textField.setOnKeyPressed(this::listenBackSpaceKey);
             }
         });
     }
 
-    private void setTextFormat(TextField textField, int limitOfNumbers, String separator) {
+    private void setPauseFormat(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            int maxLength = 17; // количество символов
+            String separator = ":";
             String text = textField.getText();
 
-            textField.setText(text.replaceAll("[^\\d" + separator + "]", ""));
-            addColons(textField, text, separator);
+            textField.setText(text.replaceAll("[^\\d" + separator + "\\s+]", ""));
+            addColonsForPause(textField, text, separator);
 
-            if (text.length() > limitOfNumbers) {
+            if (text.length() > maxLength) {
                 textField.setText(oldValue);
             }
         });
     }
 
-    private void addColons(TextField textField, String text, String separator) {
+
+    private void addColonsForPause(TextField textField, String text, String separator) {
+        int charactersCounter = text.length();
+
+        if (!didBackSpacePressed) {
+            if (charactersCounter == 2 || charactersCounter == 5 || charactersCounter == 11 || charactersCounter == 14) {
+                textField.setText(text + separator);
+            }
+
+            if (charactersCounter == 8) {
+                textField.setText(text + " ");
+            }
+        }
+    }
+
+    private void setStopFormat(TextField textField) {
+        int maxLength = 8; // количество символов
+        String separator = ":";
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String text = textField.getText();
+
+            textField.setText(text.replaceAll("[^\\d" + separator + "]", ""));
+            addColonsForStop(textField, text, separator);
+
+            if (text.length() > maxLength) {
+                textField.setText(oldValue);
+            }
+        });
+    }
+
+    private void addColonsForStop(TextField textField, String text, String separator) {
         int charactersCounter = text.length();
 
         if (!didBackSpacePressed) {

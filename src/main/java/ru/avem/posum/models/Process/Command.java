@@ -2,13 +2,11 @@ package ru.avem.posum.models.Process;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.TimerTask;
 
 public class Command {
     private long id;
