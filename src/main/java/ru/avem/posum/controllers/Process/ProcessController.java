@@ -23,6 +23,7 @@ import ru.avem.posum.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimerTask;
 
 public class ProcessController implements BaseController {
     @FXML
@@ -455,6 +456,7 @@ public class ProcessController implements BaseController {
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());
             tableController.initRegulator();
             calibrationModel.loadCalibrations(table.getItems(), processModel.getModules());
+            commandsController.executeCommands();
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
             while (!process.isStopped()) {

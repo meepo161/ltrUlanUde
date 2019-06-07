@@ -4,7 +4,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import ru.avem.posum.db.EventsRepository;
-import ru.avem.posum.models.Process.Command;
 import ru.avem.posum.models.Process.Event;
 import ru.avem.posum.models.Process.EventsModel;
 

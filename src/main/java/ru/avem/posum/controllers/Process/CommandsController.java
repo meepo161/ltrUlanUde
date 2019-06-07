@@ -11,6 +11,7 @@ import ru.avem.posum.models.Process.CommandsModel;
 import ru.avem.posum.models.Process.CommandsTypes;
 
 import java.util.List;
+import java.util.TimerTask;
 
 import static ru.avem.posum.db.CommandsRepository.getAllCommands;
 
@@ -21,6 +22,7 @@ public class CommandsController {
     private boolean didBackSpacePressed;
     private ProcessController processController;
     private TableView<Command> table;
+    private TimerController timerController = new TimerController();
 
     public CommandsController(ProcessController processController, TableView<Command> table) {
         this.processController = processController;
@@ -213,11 +215,32 @@ public class CommandsController {
         return newDescription;
     }
 
-    public ObservableList<Command> getCommands() {
-        return commandsModel.getCommands();
-    }
-
     public void addCommand(String type, String description) {
         commandsModel.addCommand(processController.getTestProgramId(), type, description);
+    }
+
+    public void executeCommands() {
+        for (Command command : getCommands()) {
+            boolean isStop = command.getType().equals(CommandsTypes.STOP.getTypeName());
+            long time = command.getTime();
+
+
+            TimerTask timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    if (isStop) {
+                        processController.handleStop();
+                    }
+                }
+            };
+
+            timerController.createTimer(timerTask, time);
+        }
+
+        timerController.startTimers();
+    }
+
+    public ObservableList<Command> getCommands() {
+        return commandsModel.getCommands();
     }
 }

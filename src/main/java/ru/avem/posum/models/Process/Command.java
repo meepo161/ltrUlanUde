@@ -2,6 +2,13 @@ package ru.avem.posum.models.Process;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import sun.java2d.pipe.SpanShapeRenderer;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.TimerTask;
 
 public class Command {
     private long id;
@@ -20,6 +27,21 @@ public class Command {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String time = description.get().split("Через ")[1].split("с начала запуска")[0];
+        Date mills = new Date();
+        try {
+            mills = simpleDateFormat.parse(time);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return mills.getTime();
     }
 
     public String getType() {
