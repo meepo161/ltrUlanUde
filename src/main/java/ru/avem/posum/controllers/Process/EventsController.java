@@ -53,7 +53,7 @@ public class EventsController {
         processController.getStatusBarLine().setStatus("События успешно удалены", true);
     }
 
-    private void listen(TableView<Event> tableView) {
+    public void listen(TableView<Event> tableView) {
         tableView.setRowFactory(tv -> {
             TableRow<Event> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -63,6 +63,21 @@ public class EventsController {
                     contextMenu.hide();
                 }
             });
+
+            row.itemProperty().addListener(observable -> {
+                setEventsColors(row);
+            });
+
+            row.selectedProperty().addListener(observable -> {
+                if (row.isSelected()) {
+                    row.setStyle("-fx-background-color: #0096C9;");
+                } else {
+                    setEventsColors(row);
+                }
+            });
+
+
+            tv.refresh();
 
             return row;
         });
@@ -103,33 +118,25 @@ public class EventsController {
         result.ifPresent(eventText -> eventsModel.setEvent(processController.getTestProgramId(), eventText));
     }
 
-    public void setEventsColors(TableView<Event> newTableEvent) {
-        newTableEvent.setRowFactory((TableView<Event> paramP) -> new TableRow<Event>() {
-            @Override
-            protected void updateItem(Event row, boolean paramBoolean) {
-                if (row != null) {
-                    switch (row.getStatus()) {
-                        case "ERROR":
-                            setStyle("-fx-background-color: #ff4500; -fx-text-background-color: black;");
-                            break;
-                        case "LOG":
-                            setStyle("-fx-background-color: #f0f8ff; -fx-text-background-color: black;");
-                            break;
-                        case "OK":
-                            setStyle("-fx-background-color: #92cd74; -fx-text-background-color: black;");
-                            break;
-                        case "WARNING":
-                            setStyle("-fx-background-color: #f0e68c; -fx-text-background-color: black;");
-                            break;
-                        default:
-                            setStyle(null);
-                    }
-                } else {
-                    setStyle(null);
-                }
-                super.updateItem(row, paramBoolean);
+    public void setEventsColors(TableRow<Event> row) {
+        if (row != null && row.getItem() != null) {
+            switch (row.getItem().getStatus()) {
+                case "ERROR":
+                    row.setStyle("-fx-background-color: #ff4500;");
+                    break;
+                case "LOG":
+                    row.setStyle("-fx-background-color: #f0f8ff;");
+                    break;
+                case "OK":
+                    row.setStyle("-fx-background-color: #92cd74;");
+                    break;
+                case "WARNING":
+                    row.setStyle("-fx-background-color: #f0e68c;");
+                    break;
+                default:
+                    row.setStyle(null);
             }
-        });
+        }
     }
 
     public EventsModel getEventsModel() {

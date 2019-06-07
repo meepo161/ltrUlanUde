@@ -223,9 +223,9 @@ public class ProcessController implements BaseController {
 
     private void initEventsTableView() {
         eventsTableView.setItems(eventsController.getEventsModel().getEvents());
-        eventsController.setEventsColors(eventsTableView);
         eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
         eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+        eventsController.listen(eventsTableView);
     }
 
     private void listenTableViews() {
