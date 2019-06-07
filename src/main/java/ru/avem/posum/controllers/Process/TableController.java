@@ -459,6 +459,30 @@ public class TableController {
         }
     }
 
+    public void delete(ChannelModel channelModel) {
+        List<Channels> channels = ChannelsRepository.getAllChannels();
+
+        for (Channels channel : channels) {
+            if (channelModel.getId() == channel.getId()) {
+                ChannelsRepository.deleteChannel(channel);
+                break;
+            }
+        }
+    }
+
+    public void delete(List<ChannelModel> channels) {
+        List<Channels> dbChannels = ChannelsRepository.getAllChannels();
+
+        for (ChannelModel channelModel : channels) {
+            for (Channels dbChannel : dbChannels) {
+                if (channelModel.getId() == dbChannel.getId()) {
+                    ChannelsRepository.deleteChannel(dbChannel);
+                    break;
+                }
+            }
+        }
+    }
+
     public ObservableList<ChannelModel> getChannels() {
         return tableView.getItems();
     }

@@ -385,6 +385,7 @@ public class RegulatorParametersController {
         ChannelModel selectedChannelModel = tableView.getSelectionModel().getSelectedItem();
         tableView.getItems().remove(selectedChannelModel);
         deleteDescriptions(selectedChannelModel);
+        processController.getTableController().delete(selectedChannelModel);
         statusBarLine.setStatus("Канал успешно удален", true);
         check(tableView);
     }
@@ -446,6 +447,7 @@ public class RegulatorParametersController {
 
     private void clearPairModels() {
         ObservableList<ChannelModel> channelModels = tableView.getItems();
+        processController.getTableController().delete(channelModels);
         tableView.getItems().removeAll(channelModels);
         clearDescriptions();
         statusBarLine.setStatus("Все каналы успешно удалены", true);
