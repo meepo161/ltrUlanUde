@@ -1,6 +1,5 @@
 package ru.avem.posum.controllers.Process;
 
-import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -18,11 +17,15 @@ import static ru.avem.posum.db.CommandsRepository.getAllCommands;
 
 
 public class CommandsController {
+    private ComboBox<String> commandsComboBox;
     private CommandsModel commandsModel = new CommandsModel();
     private ContextMenu contextMenu = new ContextMenu();
+    private Dialog dialog;
     private boolean didBackSpacePressed;
+    private GridPane grid;
     private ProcessController processController;
     private TableView<Command> table;
+    private TextField descriptionTextFiled;
     private TimerController timerController = new TimerController();
 
     public CommandsController(ProcessController processController, TableView<Command> table) {
@@ -87,57 +90,144 @@ public class CommandsController {
     }
 
     public void showDialogOfCommandAdding() {
-        // Create the custom dialog.
-        Dialog dialog = new Dialog();
+        createDialog();
+        createButtons();
+        createComboBox();
+        createTextField();
+        createGrid();
+        setButtonsStyle();
+        setResult();
+        dialog.showAndWait();
+    }
+
+    private void createDialog() {
+        dialog = new Dialog();
         dialog.setTitle("Добавление команды");
         dialog.setHeaderText("Задайте необходымые параметры");
+    }
 
-        // Set the button types.
+    private void createButtons() {
         ButtonType add = new ButtonType("Добавить", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(add, cancel);
+    }
 
-        // Create the commands combobox and description textfield.
-        GridPane grid = new GridPane();
+    private void createComboBox() {
+        commandsComboBox = new ComboBox<>();
+        commandsComboBox.getItems().addAll(CommandsTypes.PAUSE.getTypeName(), CommandsTypes.STOP.getTypeName());
+        commandsComboBox.getSelectionModel().select(0);
+        commandsComboBox.setStyle("-fx-background-radius: 5px;\n");
+        commandsComboBox.setMinWidth(175);
+        listen(commandsComboBox);
+    }
+
+    private void listen(ComboBox<String> comboBox) {
+        comboBox.valueProperty().addListener(observable -> {
+            createTextField();
+            createGrid();
+        });
+    }
+
+    private void createTextField() {
+        descriptionTextFiled = new TextField();
+        descriptionTextFiled.setPromptText("чч:мм:сс чч:мм:сс");
+        descriptionTextFiled.setOnKeyPressed(this::listenBackSpaceKey);
+        descriptionTextFiled.setStyle("-fx-background-radius: 5px;\n");
+
+        String selectedValue = commandsComboBox.getSelectionModel().getSelectedItem();
+        boolean isPause = selectedValue.equals(CommandsTypes.PAUSE.getTypeName());
+        boolean isStop = selectedValue.equals(CommandsTypes.STOP.getTypeName());
+
+        if (isPause) {
+            descriptionTextFiled.setPromptText("чч:мм:сс чч:мм:сс");
+            setFormat(17, ":");
+            descriptionTextFiled.setOnKeyPressed(this::listenBackSpaceKey);
+        }
+
+        if (isStop) {
+            System.out.println(selectedValue);
+            descriptionTextFiled.setPromptText("чч:мм:сс");
+            setFormat(8, ":");
+            descriptionTextFiled.setOnKeyPressed(this::listenBackSpaceKey);
+        }
+    }
+
+    private void listenBackSpaceKey(KeyEvent keyEvent) {
+        KeyCode keyCode = keyEvent.getCode();
+        didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
+    }
+
+    private void setFormat(int maxLength, String separator) {
+        descriptionTextFiled.textProperty().addListener((observable, oldValue, newValue) -> {
+            String text = descriptionTextFiled.getText();
+
+            descriptionTextFiled.setText(text.replaceAll("[^\\d" + separator + "\\s]", ""));
+            addSeparator(separator);
+
+            if (text.length() > maxLength) {
+                descriptionTextFiled.setText(oldValue);
+            }
+        });
+    }
+
+
+    private void addSeparator(String separator) {
+        int charactersCounter = descriptionTextFiled.getText().length();
+        String selectedValue = commandsComboBox.getSelectionModel().getSelectedItem();
+        boolean isPause = selectedValue.equals(CommandsTypes.PAUSE.getTypeName());
+        boolean isStop = selectedValue.equals(CommandsTypes.STOP.getTypeName());
+
+        if (isPause) {
+            if (!didBackSpacePressed) {
+                if (charactersCounter == 2 || charactersCounter == 5 || charactersCounter == 11 || charactersCounter == 14) {
+                    descriptionTextFiled.setText(descriptionTextFiled.getText() + separator);
+                }
+
+                if (charactersCounter == 8) {
+                    descriptionTextFiled.setText(descriptionTextFiled.getText() + " ");
+                }
+            }
+        }
+
+        if (isStop) {
+            if (!didBackSpacePressed) {
+                if (charactersCounter == 2 || charactersCounter == 5) {
+                    descriptionTextFiled.setText(descriptionTextFiled.getText() + separator);
+                }
+            }
+        }
+    }
+
+    private void createGrid() {
+        grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-
-        ComboBox<String> commands = new ComboBox<>();
-        commands.getItems().addAll(CommandsTypes.PAUSE.getTypeName(), CommandsTypes.STOP.getTypeName());
-        commands.getSelectionModel().select(0);
-        TextField description = new TextField();
-        description.setPromptText("чч:мм:сс чч:мм:сс");
-        setPauseFormat(description);
-        description.setOnKeyPressed(this::listenBackSpaceKey);
-
         grid.add(new Label("Команда:"), 0, 0);
-        grid.add(commands, 1, 0);
+        grid.add(commandsComboBox, 1, 0);
         grid.add(new Label("Параметры:"), 0, 1);
-        grid.add(description, 1, 1);
+        grid.add(descriptionTextFiled, 1, 1);
         dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getContent().setStyle("-fx-font-size: 13px;");
+    }
 
-        // Set the style.
-        commands.setStyle("-fx-background-radius: 5px;\n");
-        commands.setMinWidth(175);
-        description.setStyle("-fx-background-radius: 5px;\n");
+    private void setButtonsStyle() {
         ButtonBar buttonBar = (ButtonBar) dialog.getDialogPane().lookup(".button-bar");
         buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 13px;\n" + "-fx-background-radius: 5px;\n" +
                 "\t-fx-border-radius: 5px;"));
-        dialog.getDialogPane().getContent().setStyle("-fx-font-size: 13px;");
+    }
 
-        // Add listeners.
-        listen(commands, description);
+    private void setResult() {
+        ButtonType add = dialog.getDialogPane().getButtonTypes().get(0);
+        ButtonType cancel = dialog.getDialogPane().getButtonTypes().get(1);
 
-
-        // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             dialog.setOnCloseRequest(event -> {
                 if (dialogButton == add) {
-                    if (!validate(commands.getSelectionModel().getSelectedItem(), description)) {
+                    if (!validate(commandsComboBox.getSelectionModel().getSelectedItem(), descriptionTextFiled)) {
                         event.consume();
                     } else {
-                        String commandType = commands.getSelectionModel().getSelectedItem();
-                        String newDescription = createDescription(commandType, description.getText());
+                        String commandType = commandsComboBox.getSelectionModel().getSelectedItem();
+                        String newDescription = createDescription(commandType, descriptionTextFiled.getText());
                         addCommand(commandType, newDescription);
                     }
                 }
@@ -149,88 +239,6 @@ public class CommandsController {
                 return cancel;
             }
         });
-
-        dialog.showAndWait();
-    }
-
-    private void listen(ComboBox<String> comboBox, TextField textField) {
-        comboBox.valueProperty().addListener(observable -> {
-            String selectedValue = comboBox.getSelectionModel().getSelectedItem();
-            boolean isPause = selectedValue.equals(CommandsTypes.PAUSE.getTypeName());
-            boolean isStop = selectedValue.equals(CommandsTypes.STOP.getTypeName());
-
-            if (isPause) {
-                textField.setPromptText("чч:мм:сс чч:мм:сс");
-                setPauseFormat(textField);
-                textField.setOnKeyPressed(this::listenBackSpaceKey);
-            }
-
-            if (isStop) {
-                textField.setPromptText("чч:мм:сс");
-                setStopFormat(textField);
-                textField.setOnKeyPressed(this::listenBackSpaceKey);
-            }
-        });
-    }
-
-    private void setPauseFormat(TextField textField) {
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            int maxLength = 17; // количество символов
-            String separator = ":";
-            String text = textField.getText();
-
-            textField.setText(text.replaceAll("[^\\d" + separator + "\\s+]", ""));
-            addColonsForPause(textField, text, separator);
-
-            if (text.length() > maxLength) {
-                textField.setText(oldValue);
-            }
-        });
-    }
-
-
-    private void addColonsForPause(TextField textField, String text, String separator) {
-        int charactersCounter = text.length();
-
-        if (!didBackSpacePressed) {
-            if (charactersCounter == 2 || charactersCounter == 5 || charactersCounter == 11 || charactersCounter == 14) {
-                textField.setText(text + separator);
-            }
-
-            if (charactersCounter == 8) {
-                textField.setText(text + " ");
-            }
-        }
-    }
-
-    private void setStopFormat(TextField textField) {
-        int maxLength = 8; // количество символов
-        String separator = ":";
-        textField.textProperty().addListener((observable, oldValue, newValue) -> {
-            String text = textField.getText();
-
-            textField.setText(text.replaceAll("[^\\d" + separator + "]", ""));
-            addColonsForStop(textField, text, separator);
-
-            if (text.length() > maxLength) {
-                textField.setText(oldValue);
-            }
-        });
-    }
-
-    private void addColonsForStop(TextField textField, String text, String separator) {
-        int charactersCounter = text.length();
-
-        if (!didBackSpacePressed) {
-            if (charactersCounter == 2 || charactersCounter == 5) {
-                textField.setText(text + separator);
-            }
-        }
-    }
-
-    private void listenBackSpaceKey(KeyEvent keyEvent) {
-        KeyCode keyCode = keyEvent.getCode();
-        didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
     }
 
     private boolean validate(String commandType, TextField textField) {
