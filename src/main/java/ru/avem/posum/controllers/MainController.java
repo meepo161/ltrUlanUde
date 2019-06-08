@@ -215,7 +215,7 @@ public class MainController implements BaseController {
             statusBarLine.setStatus("Ошибка: отсутсвуют программы испытаний", false);
             isTestProgramSelected = false;
         } else if (selectedIndex == -1) {
-            statusBarLine.setStatus("Ошибка: программа испытаний не выбрана", false);
+            statusBarLine.setStatus("Выберите программу испытаний", false);
             isTestProgramSelected = false;
         } else {
             isTestProgramSelected = true;

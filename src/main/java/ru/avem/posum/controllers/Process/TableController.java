@@ -455,8 +455,11 @@ public class TableController {
                         channel.getChosenParameterIndex(), channel.getResponseColor());
 
                 tableView.getItems().add(channelModel);
+                processController.getLinkingController().add(channelModel);
             }
         }
+
+        processController.getLinkingController().initModulesList();
     }
 
     public void delete(ChannelModel channelModel) {

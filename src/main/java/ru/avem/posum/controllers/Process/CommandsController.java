@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.Process;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -116,7 +117,9 @@ public class CommandsController {
         commandsComboBox.getItems().addAll(CommandsTypes.PAUSE.getTypeName(), CommandsTypes.STOP.getTypeName());
         commandsComboBox.getSelectionModel().select(0);
         commandsComboBox.setStyle("-fx-background-radius: 5px;\n");
+        commandsComboBox.getStylesheets().add(getClass().getResource("combo-box.css").toExternalForm());
         commandsComboBox.setMinWidth(175);
+        Platform.runLater(() -> commandsComboBox.requestFocus());
         listen(commandsComboBox);
     }
 
@@ -124,6 +127,10 @@ public class CommandsController {
         comboBox.valueProperty().addListener(observable -> {
             createTextField();
             createGrid();
+            Platform.runLater(() -> {
+                descriptionTextFiled.requestFocus();
+                commandsComboBox.requestFocus();
+            });
         });
     }
 
@@ -144,7 +151,6 @@ public class CommandsController {
         }
 
         if (isStop) {
-            System.out.println(selectedValue);
             descriptionTextFiled.setPromptText("чч:мм:сс");
             setFormat(8, ":");
             descriptionTextFiled.setOnKeyPressed(this::listenBackSpaceKey);

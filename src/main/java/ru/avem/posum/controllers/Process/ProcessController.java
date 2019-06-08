@@ -668,6 +668,7 @@ public class ProcessController implements BaseController {
 
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
+        linkingController.setTestProgram(testProgram);
         loadTestProgram();
     }
 

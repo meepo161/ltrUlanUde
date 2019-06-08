@@ -407,9 +407,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void setTestProgram() {
         TestProgram testProgram = mainController.getSelectedTestProgram();
-
         processController.setTestProgram(testProgram);
-        linkingController.setTestProgram(testProgram);
     }
 
     @Override

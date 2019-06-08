@@ -79,7 +79,7 @@ public class LinkingModel {
         List<Modules> outputList = new ArrayList<>();
 
         for (Modules module : modules) {
-            if (module.getModuleType().equals(modulesType)) {
+            if (module.getModuleType().equals(modulesType) && module.getTestProgramId() == testProgram.getId()) {
                 outputList.add(module);
             }
         }
@@ -148,12 +148,8 @@ public class LinkingModel {
         return modules;
     }
 
-    public HashMap<String, List<Pair<Integer, String>>> getChannelsHashMap() {
-        return channelsHashMap;
-    }
-
-    public Modules getModule(String channelDescription) {
-        return modulesHashMap.get(channelDescription);
+    public ObservableList<CheckBox> getChosenChannels() {
+        return chosenChannels;
     }
 
     public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
@@ -162,9 +158,5 @@ public class LinkingModel {
 
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
-    }
-
-    public ObservableList<CheckBox> getChosenChannels() {
-        return chosenChannels;
     }
 }

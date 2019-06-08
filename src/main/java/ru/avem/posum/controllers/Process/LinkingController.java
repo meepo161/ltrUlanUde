@@ -256,13 +256,28 @@ public class LinkingController implements BaseController, LinkingManager {
         }).start();
     }
 
+    public void add(ChannelModel channelModel) {
+        String name = channelModel.getName();
+        if (name.contains(" => ")) {
+            String dacName = name.split(" => ")[0];
+            String adcName = name.split(" => ")[1];
+            CheckBox dacCheckBox = new CheckBox(dacName);
+            CheckBox adcCheckBox = new CheckBox(adcName);
+            linkingModel.getLinkedChannels().add(new Pair<>(dacCheckBox, adcCheckBox));
+        } else {
+            CheckBox adcCheckBox = new CheckBox(name);
+            linkingModel.getChosenChannels().add(adcCheckBox);
+        }
+    }
+
+    public void initModulesList() {
+        linkingModel.getDescriptionsOfChannels(Crate.LTR34);
+        linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24);
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
-    }
-
-    public LinkingModel getLinkingModel() {
-        return linkingModel;
     }
 
     public void setGraphModel(GraphModel graphModel) {
@@ -275,5 +290,6 @@ public class LinkingController implements BaseController, LinkingManager {
 
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
+        linkingModel.setTestProgram(testProgram);
     }
 }
