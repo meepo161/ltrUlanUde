@@ -496,6 +496,13 @@ public class TableController {
         }
     }
 
+    public void clearChannels() {
+        ObservableList<ChannelModel> channelModels = table.getItems();
+        for (ChannelModel channel : channelModels) {
+
+        }
+    }
+
     public ObservableList<ChannelModel> getChannels() {
         return table.getItems();
     }

@@ -34,27 +34,30 @@ public class ChannelModel {
 
     public ChannelModel(String name) {
         this.name = new SimpleStringProperty(name);
-        amplitude = new SimpleStringProperty("0");
-        responseAmplitude = new SimpleStringProperty("0");
-        relativeResponseAmplitude = new SimpleStringProperty("0");
-        dc = new SimpleStringProperty("0");
-        responseDc = new SimpleStringProperty("0");
-        relativeResponseDc = new SimpleStringProperty("0");
-        frequency = new SimpleStringProperty("0");
-        responseFrequency = new SimpleStringProperty("0");
-        relativeResponseFrequency = new SimpleStringProperty("0");
-        loadsCounter = new SimpleStringProperty("0");
-        responseLoadsCounter = new SimpleStringProperty("0");
-        rms = new SimpleStringProperty("0");
-        responseRms = new SimpleStringProperty("0");
-        relativeResponseRms = new SimpleStringProperty("0");
-        pCoefficient = new SimpleStringProperty("0");
-        iCoefficient = new SimpleStringProperty("0");
-        dCoefficient = new SimpleStringProperty("0");
+        initResponseFields();
+        pCoefficient = new SimpleStringProperty("0.0");
+        iCoefficient = new SimpleStringProperty("0.0");
+        dCoefficient = new SimpleStringProperty("0.0");
         chosenParameterIndex = new SimpleStringProperty("-1");
         responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, %d);", 139, 0, 0, 1));
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
+    }
+
+    public void initResponseFields() {
+        responseAmplitude = new SimpleStringProperty("0.0");
+        relativeResponseAmplitude = new SimpleStringProperty("0.0");
+        dc = new SimpleStringProperty("0.0");
+        responseDc = new SimpleStringProperty("0.0");
+        relativeResponseDc = new SimpleStringProperty("0.0");
+        frequency = new SimpleStringProperty("0.0");
+        responseFrequency = new SimpleStringProperty("0.0");
+        relativeResponseFrequency = new SimpleStringProperty("0.0");
+        loadsCounter = new SimpleStringProperty("0");
+        responseLoadsCounter = new SimpleStringProperty("0");
+        rms = new SimpleStringProperty("0.0");
+        responseRms = new SimpleStringProperty("0.0");
+        relativeResponseRms = new SimpleStringProperty("0.0");
     }
 
     public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
@@ -67,20 +70,7 @@ public class ChannelModel {
         this.dCoefficient = new SimpleStringProperty(dCoefficient);
         this.chosenParameterIndex = new SimpleStringProperty(chosenParameterIndex);
         this.responseColor = new SimpleStringProperty(responseColor);
-        amplitude = new SimpleStringProperty("0");
-        responseAmplitude = new SimpleStringProperty("0");
-        relativeResponseAmplitude = new SimpleStringProperty("0");
-        dc = new SimpleStringProperty("0");
-        responseDc = new SimpleStringProperty("0");
-        relativeResponseDc = new SimpleStringProperty("0");
-        frequency = new SimpleStringProperty("0");
-        responseFrequency = new SimpleStringProperty("0");
-        relativeResponseFrequency = new SimpleStringProperty("0");
-        loadsCounter = new SimpleStringProperty("0");
-        responseLoadsCounter = new SimpleStringProperty("0");
-        rms = new SimpleStringProperty("0");
-        responseRms = new SimpleStringProperty("0");
-        relativeResponseRms = new SimpleStringProperty("0");
+        initResponseFields();
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
     }
