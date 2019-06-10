@@ -4,13 +4,17 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Pair;
+import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.db.EventsRepository;
 import ru.avem.posum.models.process.Event;
 import ru.avem.posum.models.process.EventsModel;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,14 +63,20 @@ public class EventsController {
     }
 
     private void clearEvents() {
-        ObservableList<Event> events = table.getItems();
+        processController.getStatusBarLine().toggleProgressIndicator(false);
+        processController.getStatusBarLine().setStatusOfProgress("Удаление всех событий из журнала");
 
-        for (Event event : events) {
-            eventsModel.deleteEvent(event);
-        }
+        new Thread(() -> {
+            ObservableList<Event> events = table.getItems();
 
-        events.clear();
-        processController.getStatusBarLine().setStatus("События успешно удалены", true);
+            for (Event event : events) {
+                eventsModel.deleteEvent(event);
+            }
+
+            events.clear();
+            processController.getStatusBarLine().toggleProgressIndicator(true);
+            processController.getStatusBarLine().setStatus("События успешно удалены", true);
+        }).start();
     }
 
     public void listen(TableView<Event> tableView) {
@@ -155,6 +165,56 @@ public class EventsController {
         }
     }
 
+    public EventsModel getEventsModel() {
+        return eventsModel;
+    }
+
+    public void saveJournal(String testProgramName, long testProgramId) {
+        // Prepare the data
+        String[] sheets = {"Журнал событий", "Программа испытаний"};
+        String[] journalHeaders = {"События", "Время"};
+        String[] commandsHeaders = {"Команды", "Параметры"};
+        String[][] headers = {journalHeaders, commandsHeaders};
+        Pair<List<String>, List<String>> journal = getEvents(testProgramId);
+        List<Short> journalColors = getEventsColors(testProgramId);
+        Pair<List<String>, List<String>> commands = processController.getCommandsController().getCommands(testProgramId);
+        List<Short> commandsColors = processController.getCommandsController().getCommandsColors(testProgramId);
+        List<Pair<List<String>, List<String>>> sheetsData = new ArrayList<>();
+        sheetsData.add(journal);
+        sheetsData.add(commands);
+        List<List<Short>> colors = new ArrayList<>();
+        colors.add(journalColors);
+        colors.add(commandsColors);
+
+        // Create and fill the workbook
+        ProtocolController protocolController = processController.getProtocolController();
+        protocolController.createProtocol(sheets);
+        protocolController.createTitle(testProgramName, 2, sheets);
+        for (int index = 0; index < headers.length; index++) {
+            protocolController.createHeaders(sheets[index], headers[index]);
+        }
+
+        for (int index = 0; index < sheets.length; index++) {
+            protocolController.fill(sheets[index], colors.get(index), sheetsData.get(index).getKey(), sheetsData.get(index).getValue());
+            protocolController.autosizeColumns(sheets[index]);
+        }
+
+        // Show the save file window
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx");
+        fileChooser.getExtensionFilters().add(extFilter);
+        fileChooser.setTitle("Сохранение журнала");
+        File selectedDirectory = fileChooser.showSaveDialog(new Stage());
+
+        // Save the workbook
+        if (selectedDirectory != null) {
+            String path = selectedDirectory.getAbsolutePath();
+            path = path.contains(".xlsx") ? path : path + ".xlsx";
+            protocolController.saveProtocol(path);
+            processController.getStatusBarLine().setStatus("Журнал событий сохранен в " + path, true);
+        }
+    }
+
     public Pair<List<String>, List<String>> getEvents(long testProgramId) {
         List<ru.avem.posum.db.models.Event> dbEvents = EventsRepository.getAllEvents();
         List<String> events = new ArrayList<>();
@@ -179,9 +239,5 @@ public class EventsController {
         }
 
         return colors;
-    }
-
-    public EventsModel getEventsModel() {
-        return eventsModel;
     }
 }

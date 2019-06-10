@@ -88,7 +88,7 @@ public class TestProgram {
         this.crateSerialNumber = crateSerialNumber;
     }
 
-    public String getTestProgramName() {
+    public String getName() {
         return testProgramName;
     }
 

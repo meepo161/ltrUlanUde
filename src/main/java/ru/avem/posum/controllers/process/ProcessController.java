@@ -9,8 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -23,8 +21,6 @@ import ru.avem.posum.models.process.*;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -610,48 +606,8 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSaveJournal() {
-        String title = testProgram.getTestProgramName();
-        String[] sheets = {"Журнал событий", "Программа испытаний"};
-        String[] journalHeaders = {"События", "Время"};
-        String[] commandsHeaders = {"Команды", "Параметры"};
-        String[][] headers = {journalHeaders, commandsHeaders};
-        Pair<List<String>, List<String>> journal = eventsController.getEvents(testProgram.getId());
-        List<Short> journalColors = eventsController.getEventsColors(testProgram.getId());
-        Pair<List<String>, List<String>> commands = commandsController.getCommands(testProgram.getId());
-        List<Short> commandsColors = commandsController.getCommandsColors(testProgram.getId());
-        List<Pair<List<String>, List<String>>> sheetsData = new ArrayList<>();
-        sheetsData.add(journal);
-        sheetsData.add(commands);
-        List<List<Short>> colors = new ArrayList<>();
-        colors.add(journalColors);
-        colors.add(commandsColors);
-
-        protocolController.createProtocol(sheets);
-        protocolController.createTitle(title, 2, sheets);
-        for (int index = 0; index < headers.length; index++) {
-            protocolController.createHeaders(sheets[index], headers[index]);
-        }
-
-        for (int index = 0; index < sheets.length; index++) {
-            protocolController.fill(sheets[index], colors.get(index), sheetsData.get(index).getKey(), sheetsData.get(index).getValue());
-            protocolController.autosizeColumns(sheets[index]);
-        }
-
-        // Show the save file window
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx");
-        fileChooser.getExtensionFilters().add(extFilter);
-        fileChooser.setTitle("Сохранение журнала");
-        File selectedDirectory = fileChooser.showSaveDialog(new Stage());
-
-        if (selectedDirectory != null) {
-            String path = selectedDirectory.getAbsolutePath();
-            path = path.contains(".xlsx") ? path : path + ".xlsx";
-            protocolController.saveProtocol(path);
-            statusBarLine.setStatus("Журнал событий сохранен в " + path, true);
-        }
+        eventsController.saveJournal(testProgram.getName(), testProgram.getId());
     }
-
 
     public void handleSaveRegulatorParameters() {
         if (table.getSelectionModel().getSelectedIndex() != -1) {
@@ -670,6 +626,10 @@ public class ProcessController implements BaseController {
         return calibrationModel;
     }
 
+    public CommandsController getCommandsController() {
+        return commandsController;
+    }
+
     public GraphController getGraphController() {
         return graphController;
     }
@@ -684,6 +644,10 @@ public class ProcessController implements BaseController {
 
     public ProcessModel getProcessModel() {
         return processModel;
+    }
+
+    public ProtocolController getProtocolController() {
+        return protocolController;
     }
 
     public StatusBarLine getStatusBarLine() {

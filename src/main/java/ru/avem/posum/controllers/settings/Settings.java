@@ -338,7 +338,7 @@ public class Settings implements BaseController {
     }
 
     private void loadGeneralSettings(TestProgram testProgram) {
-        testProgramNameTextField.setText(testProgram.getTestProgramName());
+        testProgramNameTextField.setText(testProgram.getName());
         sampleNameTextField.setText(testProgram.getSampleName());
         sampleSerialNumberTextField.setText(testProgram.getSampleSerialNumber());
         documentNumberTextField.setText(testProgram.getDocumentNumber());
