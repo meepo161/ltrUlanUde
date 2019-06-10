@@ -2,6 +2,8 @@ package ru.avem.posum.db.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import ru.avem.posum.models.process.EventsTypes;
 
 import java.text.SimpleDateFormat;
 
@@ -31,12 +33,28 @@ public class Event {
         this.status = status;
     }
 
+    public Short getColorIndex() {
+        if (status.equals(EventsTypes.LOG.toString())) {
+            return IndexedColors.WHITE.index;
+        } else if (status.equals(EventsTypes.ERROR.toString())) {
+            return IndexedColors.RED.index;
+        } else if (status.equals(EventsTypes.WARNING.toString())) {
+            return IndexedColors.YELLOW.index;
+        } else {
+            return IndexedColors.GREEN.index;
+        }
+    }
+
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public String getDescription() {
+        return description;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public long getTestProgramId() {
@@ -47,24 +65,20 @@ public class Event {
         return this.time + " " + this.date;
     }
 
-    public void setTime(long millis) {
-        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
-        this.time = new SimpleDateFormat("HH:mm:ss").format(millis);
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getStatus() {
-        return status;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setTime(long millis) {
+        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
+        this.time = new SimpleDateFormat("HH:mm:ss").format(millis);
     }
 }

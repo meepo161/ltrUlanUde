@@ -1,9 +1,9 @@
 package ru.avem.posum;
 
-import ru.avem.posum.controllers.Process.LinkingController;
+import ru.avem.posum.controllers.process.LinkingController;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
-import ru.avem.posum.models.Signal.SignalModel;
+import ru.avem.posum.models.signal.SignalModel;
 
 import java.util.List;
 

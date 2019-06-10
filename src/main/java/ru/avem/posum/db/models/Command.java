@@ -2,6 +2,8 @@ package ru.avem.posum.db.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import ru.avem.posum.models.process.CommandsTypes;
 
 @DatabaseTable(tableName = "commands")
 public class Command {
@@ -24,6 +26,26 @@ public class Command {
         this.type = type;
     }
 
+    public String getCommand() {
+        String command = "";
+
+        if (type.equals(CommandsTypes.PAUSE.getTypeName())) {
+            command = CommandsTypes.PAUSE.getTypeName();
+        } else if (type.equals(CommandsTypes.STOP.getTypeName())) {
+            command = CommandsTypes.STOP.getTypeName();
+        }
+
+        return command;
+    }
+
+    public Short getColorIndex() {
+        return IndexedColors.WHITE.index;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public long getId() {
         return id;
     }
@@ -32,20 +54,16 @@ public class Command {
         return testProgramId;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
+    public String getType() {
+        return type;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public String getType() {
-        return type;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public void setType(String type) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class ADC extends Module {
     public enum Settings {
-        ADC_MODE("ADC mode"), CALIBRATION_COEFFICIENTS("Calibration coefficients"),
+        ADC_MODE("ADC mode"), CALIBRATION_COEFFICIENTS("calibration coefficients"),
         FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
         LOGIC_CHANNELS_COUNT("Logic channels count"), IIR("IIR"),
         FIR("FIR"), DECIMATION("Decimation"), TAP("Filter order"),
