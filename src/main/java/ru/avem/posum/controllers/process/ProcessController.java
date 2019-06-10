@@ -533,6 +533,7 @@ public class ProcessController implements BaseController {
             Utils.sleep(1000);
             process.finish();
             tableController.getRegulatorController().setFirstStart(false);
+            tableController.clearChannels();
             stopwatchController.pauseStopwatch();
             commandsController.getTimerController().clearTimers();
             checkFinish();

@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 
 public class ChannelModel {
     private long id;
+    private String initialValue = "0.0";
     private StringProperty name;
     private StringProperty amplitude;
     private StringProperty responseAmplitude;
@@ -35,29 +36,30 @@ public class ChannelModel {
     public ChannelModel(String name) {
         this.name = new SimpleStringProperty(name);
         initResponseFields();
-        pCoefficient = new SimpleStringProperty("0.0");
-        iCoefficient = new SimpleStringProperty("0.0");
-        dCoefficient = new SimpleStringProperty("0.0");
-        chosenParameterIndex = new SimpleStringProperty("-1");
+        pCoefficient = new SimpleStringProperty(initialValue);
+        iCoefficient = new SimpleStringProperty(initialValue);
+        dCoefficient = new SimpleStringProperty(initialValue);
+        chosenParameterIndex = new SimpleStringProperty(initialValue);
         responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, %d);", 139, 0, 0, 1));
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
     }
 
-    public void initResponseFields() {
-        responseAmplitude = new SimpleStringProperty("0.0");
-        relativeResponseAmplitude = new SimpleStringProperty("0.0");
-        dc = new SimpleStringProperty("0.0");
-        responseDc = new SimpleStringProperty("0.0");
-        relativeResponseDc = new SimpleStringProperty("0.0");
-        frequency = new SimpleStringProperty("0.0");
-        responseFrequency = new SimpleStringProperty("0.0");
-        relativeResponseFrequency = new SimpleStringProperty("0.0");
+    private void initResponseFields() {
+        amplitude = new SimpleStringProperty(initialValue);
+        responseAmplitude = new SimpleStringProperty(initialValue);
+        relativeResponseAmplitude = new SimpleStringProperty(initialValue);
+        dc = new SimpleStringProperty(initialValue);
+        responseDc = new SimpleStringProperty(initialValue);
+        relativeResponseDc = new SimpleStringProperty(initialValue);
+        frequency = new SimpleStringProperty(initialValue);
+        responseFrequency = new SimpleStringProperty(initialValue);
+        relativeResponseFrequency = new SimpleStringProperty(initialValue);
         loadsCounter = new SimpleStringProperty("0");
         responseLoadsCounter = new SimpleStringProperty("0");
-        rms = new SimpleStringProperty("0.0");
-        responseRms = new SimpleStringProperty("0.0");
-        relativeResponseRms = new SimpleStringProperty("0.0");
+        rms = new SimpleStringProperty(initialValue);
+        responseRms = new SimpleStringProperty(initialValue);
+        relativeResponseRms = new SimpleStringProperty(initialValue);
     }
 
     public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
@@ -96,6 +98,23 @@ public class ChannelModel {
         return colorPicker;
     }
 
+    public void clearResponse() {
+        setAmplitude(initialValue);
+        setResponseAmplitude(initialValue);
+        setRelativeResponseAmplitude(initialValue);
+        setDc(initialValue);
+        setResponseDc(initialValue);
+        setRelativeResponseDc(initialValue);
+        setFrequency(initialValue);
+        setResponseFrequency(initialValue);
+        setRelativeResponseFrequency(initialValue);
+        setLoadsCounter("0");
+        setResponseLoadsCounter("0");
+        setRms(initialValue);
+        setResponseRms(initialValue);
+        setRelativeResponseRms(initialValue);
+    }
+
     public StringProperty amplitudeProperty() {
         return amplitude;
     }
@@ -109,7 +128,7 @@ public class ChannelModel {
     }
 
     public String getAmplitude() {
-        return amplitude.get().isEmpty() ? "0" : amplitude.get();
+        return amplitude.get().isEmpty() ? initialValue : amplitude.get();
     }
 
     public String getChosenParameterIndex() {
@@ -121,7 +140,7 @@ public class ChannelModel {
     }
 
     public String getDc() {
-        return dc.get().isEmpty() ? "0" : dc.get();
+        return dc.get().isEmpty() ? initialValue : dc.get();
     }
 
     public String getDCoefficient() {
@@ -129,7 +148,7 @@ public class ChannelModel {
     }
 
     public String getFrequency() {
-        return frequency.get().isEmpty() ? "0" : frequency.get();
+        return frequency.get().isEmpty() ? initialValue : frequency.get();
     }
 
     public String getICoefficient() {
@@ -199,7 +218,7 @@ public class ChannelModel {
     }
 
     public String getRms() {
-        return rms.get().isEmpty() ? "0" : rms.get();
+        return rms.get().isEmpty() ? initialValue : rms.get();
     }
 
     public int getSlot() {
@@ -268,6 +287,10 @@ public class ChannelModel {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public void setLoadsCounter(String value) {
+        loadsCounter.set(value);
     }
 
     public void setName(String description) {

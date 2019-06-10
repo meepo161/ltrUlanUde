@@ -499,7 +499,7 @@ public class TableController {
     public void clearChannels() {
         ObservableList<ChannelModel> channelModels = table.getItems();
         for (ChannelModel channel : channelModels) {
-
+            channel.clearResponse();
         }
     }
 
