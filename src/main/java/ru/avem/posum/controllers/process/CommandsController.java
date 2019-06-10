@@ -39,6 +39,11 @@ public class CommandsController {
         listen(table);
     }
 
+    public void init(long testProgramId) {
+        table.getItems().clear();
+        loadCommands(testProgramId);
+    }
+
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");

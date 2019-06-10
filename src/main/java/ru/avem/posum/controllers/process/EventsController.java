@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.process;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
@@ -8,6 +9,8 @@ import ru.avem.posum.db.EventsRepository;
 import ru.avem.posum.models.process.Event;
 import ru.avem.posum.models.process.EventsModel;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,15 +19,27 @@ public class EventsController {
     private ContextMenu contextMenu = new ContextMenu();
     private EventsModel eventsModel = new EventsModel();
     private ProcessController processController;
+    private Button saveJournalButton;
     private TableView<Event> table;
 
-    public EventsController(ProcessController processController, TableView<Event> table) {
+    public EventsController(ProcessController processController, Button saveJournalButton, TableView<Event> table) {
         this.processController = processController;
         this.table = table;
+        this.saveJournalButton = saveJournalButton;
 
         initContextMenu();
         listen(table);
     }
+
+    public void init(long testProgramId) {
+        table.getItems().addListener((ListChangeListener<Event>) observable -> {
+            saveJournalButton.setDisable(table.getItems().isEmpty());
+        });
+
+        table.getItems().clear();
+        loadEvents(testProgramId);
+    }
+
 
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");

@@ -197,7 +197,7 @@ public class ProcessController implements BaseController {
 
         commandsController = new CommandsController(this, commandsTableView);
 
-        eventsController = new EventsController(this, eventsTableView);
+        eventsController = new EventsController(this, saveJournalButton, eventsTableView);
 
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
@@ -214,7 +214,7 @@ public class ProcessController implements BaseController {
 
         tableController = new TableController(table, channelsColumn, responseColumn, ampResponseColumn,
                 dcResponseColumn, frequencyResponseColumn, loadsCounterColumn, rmsResponseColumn, graphController,
-                this);
+                this, initializeButton);
 
         stopwatchController = new StopwatchController(this, timeLabel, timeTextField);
 
@@ -240,10 +240,6 @@ public class ProcessController implements BaseController {
     private void listenTableViews() {
         table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
             initializeButton.setDisable(table.getItems().isEmpty());
-        });
-
-        eventsTableView.getItems().addListener((ListChangeListener<Event>) observable -> {
-            initializeButton.setDisable(eventsTableView.getItems().isEmpty());
         });
     }
 
@@ -616,7 +612,7 @@ public class ProcessController implements BaseController {
         String title = testProgram.getTestProgramName();
         String[] sheets = {"Журнал событий", "Программа испытаний"};
         String[] journalHeaders = {"События", "Время"};
-        String[]commandsHeaders = {"Команды", "Параметры"};
+        String[] commandsHeaders = {"Команды", "Параметры"};
         String[][] headers = {journalHeaders, commandsHeaders};
         Pair<List<String>, List<String>> journal = eventsController.getEvents(testProgram.getId());
         List<Short> journalColors = eventsController.getEventsColors(testProgram.getId());
@@ -646,10 +642,14 @@ public class ProcessController implements BaseController {
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle("Сохранение журнала");
         File selectedDirectory = fileChooser.showSaveDialog(new Stage());
-        String path = selectedDirectory == null ? System.getProperty("User.dir") : selectedDirectory.getAbsolutePath();
-        protocolController.saveProtocol(path);
-    }
 
+        if (selectedDirectory != null) {
+            String path = selectedDirectory.getAbsolutePath();
+            path = path.contains(".xlsx") ? path : path + ".xlsx";
+            protocolController.saveProtocol(path);
+            statusBarLine.setStatus("Журнал событий сохранен в " + path, true);
+        }
+    }
 
 
     public void handleSaveRegulatorParameters() {
@@ -719,11 +719,9 @@ public class ProcessController implements BaseController {
     private void loadTestProgram() {
         Platform.runLater(() -> table.getItems().clear());
         processModel.clear();
-        tableController.loadChannels();
-        commandsTableView.getItems().clear();
-        commandsController.loadCommands(testProgram.getId());
-        eventsTableView.getItems().clear();
-        eventsController.loadEvents(testProgram.getId());
+        tableController.init();
+        commandsController.init(testProgram.getId());
+        eventsController.init(testProgram.getId());
         statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clearStatusBar();
     }

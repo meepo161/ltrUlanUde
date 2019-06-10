@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TableController {
-    private TableView<ChannelModel> tableView;
+    private TableView<ChannelModel> table;
     private TableColumn<ChannelModel, String> channelsColumn;
     private TableColumn<ChannelModel, HBox> responseColumn;
     private TableColumn<ChannelModel, String> ampResponseColumn;
@@ -32,18 +32,19 @@ public class TableController {
 
     private int disableCount;
     private GraphController graphController;
+    private Button initializeButton;
     private ProcessController processController;
     private Thread showingThread;
     private RegulatorController regulatorController;
     private SignalParametersModel signalParametersModel = new SignalParametersModel();
 
-    public TableController(TableView<ChannelModel> tableView, TableColumn<ChannelModel, String> channelsColumn,
+    public TableController(TableView<ChannelModel> table, TableColumn<ChannelModel, String> channelsColumn,
                            TableColumn<ChannelModel, HBox> responseColumn, TableColumn<ChannelModel, String> ampResponseColumn,
                            TableColumn<ChannelModel, String> dcResponseColumn, TableColumn<ChannelModel, String> frequencyResponseColumn,
                            TableColumn<ChannelModel, String> loadsCounterColumn, TableColumn<ChannelModel, String> rmsResponseColumn,
-                           GraphController graphController, ProcessController processController) {
+                           GraphController graphController, ProcessController processController, Button initializeButton) {
 
-        this.tableView = tableView;
+        this.table = table;
         this.channelsColumn = channelsColumn;
         this.responseColumn = responseColumn;
         this.ampResponseColumn = ampResponseColumn;
@@ -54,13 +55,22 @@ public class TableController {
         this.graphController = graphController;
         this.processController = processController;
         this.regulatorController = new RegulatorController(processController);
+        this.initializeButton = initializeButton;
 
         initTableView();
         listenStopButton();
     }
 
+    public void init() {
+        table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
+            initializeButton.setDisable(table.getItems().isEmpty());
+        });
+
+        loadChannels();
+    }
+
     private void initTableView() {
-        tableView.setItems(graphController.getGraphModel().getChannels());
+        table.setItems(graphController.getGraphModel().getChannels());
 
         Utils.makeHeaderWrappable(channelsColumn);
 
@@ -79,7 +89,7 @@ public class TableController {
         loadsCounterColumn.setCellValueFactory(cellData -> cellData.getValue().responseLoadsCounterProperty());
         rmsResponseColumn.setCellValueFactory(cellData -> cellData.getValue().responseRmsProperty());
 
-        listen(tableView);
+        listen(table);
     }
 
     public void initResponse(TableColumn<ChannelModel, HBox> columnOfTable) {
@@ -130,7 +140,7 @@ public class TableController {
     }
 
     private ObservableList<CheckBox> getCheckBoxes() {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
         ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
 
         if (!channels.isEmpty()) {
@@ -145,7 +155,7 @@ public class TableController {
     }
 
     private ObservableList<ColorPicker> getColorPickers() {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
         ObservableList<ColorPicker> colorPickers = FXCollections.observableArrayList();
 
         if (!channels.isEmpty()) {
@@ -210,7 +220,7 @@ public class TableController {
     }
 
     private void parseData(int channelIndex) {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
         String channelDescription = channels.get(channelIndex).getName();
         Pair<Integer, Integer> channel = parseSlotAndChannel(channelDescription);
 
@@ -309,7 +319,7 @@ public class TableController {
     }
 
     private List<ChannelModel> getDacChannels() {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
         List<ChannelModel> dacChannels = new ArrayList<>();
 
         for (ChannelModel channel : channels) {
@@ -322,7 +332,7 @@ public class TableController {
     }
 
     private void show() {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
         ObservableList<Modules> modules = processController.getProcessModel().getModules();
 
         for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
@@ -369,7 +379,7 @@ public class TableController {
 
     private void setSeriesColor(int channelIndex) {
         if (getCheckBoxes().get(channelIndex).isSelected()) {
-            ObservableList<ChannelModel> channels = tableView.getItems();
+            ObservableList<ChannelModel> channels = table.getItems();
             String selectedColor = channels.get(channelIndex).getResponseColor();
             Node line = graphController.getGraphModel().getGraphSeries().getNode();
             line.setStyle("-fx-stroke: " + selectedColor);
@@ -396,7 +406,7 @@ public class TableController {
     }
 
     public void toggleResponseUiElements(boolean isDisable) {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
 
         for (ChannelModel channel : channels) {
             channel.getResponseCheckBox().setDisable(isDisable);
@@ -425,7 +435,7 @@ public class TableController {
     }
 
     public void saveChannels() {
-        ObservableList<ChannelModel> channels = tableView.getItems();
+        ObservableList<ChannelModel> channels = table.getItems();
         List<Channels> dbChannels = ChannelsRepository.getAllChannels();
 
         for (ChannelModel channelModel : channels) {
@@ -454,7 +464,7 @@ public class TableController {
                         channel.getPCoefficient(), channel.getICoefficient(), channel.getDCoefficient(),
                         channel.getChosenParameterIndex(), channel.getResponseColor());
 
-                tableView.getItems().add(channelModel);
+                table.getItems().add(channelModel);
                 processController.getLinkingController().add(channelModel);
             }
         }
@@ -487,7 +497,7 @@ public class TableController {
     }
 
     public ObservableList<ChannelModel> getChannels() {
-        return tableView.getItems();
+        return table.getItems();
     }
 
     public RegulatorController getRegulatorController() {

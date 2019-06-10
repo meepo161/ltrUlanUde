@@ -1,20 +1,19 @@
 package ru.avem.posum.controllers.protocol
 
-import javafx.scene.paint.Color
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
-import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.avem.posum.controllers.process.ProcessController
 import java.io.FileOutputStream
 
 open class ProtocolController(val processController: ProcessController) {
-    val workbook = XSSFWorkbook()
+    private var workbook = XSSFWorkbook()
     private val maxColons = 100 // maximum number of colons in workbook
 
     open fun createProtocol(vararg sheetNames: String) {
+        workbook = XSSFWorkbook()
         for ((index, name) in sheetNames.withIndex()) {
             workbook.createSheet()
             workbook.setSheetName(index, name)
@@ -29,6 +28,7 @@ open class ProtocolController(val processController: ProcessController) {
         for (sheetName in sheets) {
             val sheet = workbook.getSheet(sheetName)
             val row = sheet.createRow(rowNumber)
+            row.heightInPoints = 30.0f
 
             for (index in columnNumber..endCell) {
                 val cell = row.createCell(index)
@@ -73,6 +73,7 @@ open class ProtocolController(val processController: ProcessController) {
         for ((index, header) in headers.withIndex()) {
             val sheet = workbook.getSheet(sheetName)
             val row = if (sheet.getRow(rowNumber) == null) sheet.createRow(rowNumber) else sheet.getRow(rowNumber)
+            row.heightInPoints = 20.0f
             val cell = row.createCell(index)
             cell.setCellValue(header)
             cell.cellStyle = getHeaderStyle()
@@ -100,6 +101,7 @@ open class ProtocolController(val processController: ProcessController) {
         for ((columnIndex, data) in dataForColumns.withIndex()) {
             for (rowIndex in constrain until (data.size + constrain)) {
                 val row = if (sheet.getRow(rowIndex) == null) sheet.createRow(rowIndex) else sheet.getRow(rowIndex)
+                row.heightInPoints = 16.0f
                 val cell = if (row.getCell(columnIndex) == null) row.createCell(columnIndex) else row.getCell(columnIndex)
                 val value = data[rowIndex - constrain]
                 cell.setCellValue(value)
