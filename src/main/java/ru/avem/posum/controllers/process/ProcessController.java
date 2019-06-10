@@ -548,7 +548,7 @@ public class ProcessController implements BaseController {
             showErrors();
         }
 
-        tableController.setDefaultChannelsState();
+        tableController.disableChannels();
         graphController.setDefaultGraphControlsState();
 
         initialized = false;
@@ -611,13 +611,21 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSaveRegulatorParameters() {
-        if (table.getSelectionModel().getSelectedIndex() != -1) {
-            ChannelModel selectedChannel = table.getSelectionModel().getSelectedItem();
-            regulatorParametersController.save(selectedChannel);
-            statusBarLine.setStatus("Настройки успешно сохранены", true);
-        } else {
-            statusBarLine.setStatus("Не выбран канал для сохранения", false);
-        }
+        statusBarLine.clearStatusBar();
+        statusBarLine.setStatusOfProgress("Сохранение параметров регулятора");
+
+        new Thread(() -> {
+            if (table.getSelectionModel().getSelectedIndex() != -1) {
+                ChannelModel selectedChannel = table.getSelectionModel().getSelectedItem();
+                regulatorParametersController.save(selectedChannel);
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.setStatus("Настройки успешно сохранены", true);
+            } else {
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.setStatus("Не выбран канал для сохранения", false);
+            }
+        }).start();
+
     }
 
     public void handlePlugButton() {
@@ -649,6 +657,10 @@ public class ProcessController implements BaseController {
 
     public ProtocolController getProtocolController() {
         return protocolController;
+    }
+
+    public RegulatorParametersController getRegulatorParametersController() {
+        return regulatorParametersController;
     }
 
     public StatusBarLine getStatusBarLine() {

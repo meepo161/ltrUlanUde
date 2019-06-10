@@ -9,6 +9,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
+import ru.avem.posum.db.ChannelsRepository;
+import ru.avem.posum.db.models.Channels;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.process.ChannelModel;
 import ru.avem.posum.models.process.RegulatorParametersModel;
@@ -481,6 +483,7 @@ public class RegulatorParametersController {
     }
 
     public void save(ChannelModel selectedChannel) {
+        // Save to channel model
         selectedChannel.setAmplitude(amplitudeTextField.getText());
         selectedChannel.setDc(dcTextField.getText());
         selectedChannel.setFrequency(frequencyTextField.getText());
@@ -489,11 +492,26 @@ public class RegulatorParametersController {
         selectedChannel.setDCoefficient(dTextField.getText());
         selectedChannel.setChosenParameterIndex(String.valueOf(getChosenParameterIndex()));
 
-        removeColumns();
-        addColumns(getChosenIndexesOfParameters());
+        Platform.runLater(() -> {
+            removeColumns();
+            addColumns();
+        });
+
+        // Save to database
+        List<Channels> dbChannels = ChannelsRepository.getAllChannels();
+        for (Channels channel : dbChannels) {
+            if (channel.getId() == selectedChannel.getId()) {
+                channel.setPCoefficient(pTextField.getText());
+                channel.setICoefficient(iTextField.getText());
+                channel.setDCoefficient(dTextField.getText());
+                channel.setChosenParameterIndex(selectedChannel.getChosenParameterIndex());
+                channel.setChosenParameterValue(selectedChannel.getChosenParameterValue());
+                ChannelsRepository.updateChannel(channel);
+            }
+        }
     }
 
-    private void removeColumns() {
+    public void removeColumns() {
         int normalCountOfColumns = 7; // количество колонок в таблице, если регулировка отсутвует
         int realCountOfColumns = tableView.getColumns().size();
 
@@ -503,7 +521,8 @@ public class RegulatorParametersController {
         }
     }
 
-    private void addColumns(List<Integer> chosenIndexesOfParameters) {
+    public void addColumns() {
+        List<Integer> chosenIndexesOfParameters = getChosenIndexesOfParameters();
         for (int value : chosenIndexesOfParameters) {
             switch (value) {
                 case 0:

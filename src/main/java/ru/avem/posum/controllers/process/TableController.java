@@ -413,24 +413,11 @@ public class TableController {
         }
     }
 
-    public void setDefaultChannelsState() {
-        disableChannels();
-        resetColors();
-    }
-
-    private void disableChannels() {
+    public void disableChannels() {
         ObservableList<CheckBox> checkBoxes = getCheckBoxes();
 
         for (CheckBox checkBox : checkBoxes) {
             Platform.runLater(() -> checkBox.setSelected(false));
-        }
-    }
-
-    private void resetColors() {
-        ObservableList<ColorPicker> colorPickers = getColorPickers();
-
-        for (ColorPicker colorPicker : colorPickers) {
-            Platform.runLater(() -> colorPicker.setValue(Color.DARKRED));
         }
     }
 
@@ -443,6 +430,7 @@ public class TableController {
                 if (channelModel.getId() == dbChannel.getId()) {
                     dbChannel.setName(channelModel.getName());
                     dbChannel.setChosenParameterIndex(channelModel.getChosenParameterIndex());
+                    dbChannel.setChosenParameterValue(channelModel.getChosenParameterValue());
                     dbChannel.setPCoefficient(channelModel.getPCoefficient());
                     dbChannel.setICoefficient(channelModel.getICoefficient());
                     dbChannel.setDCoefficient(channelModel.getDCoefficient());
@@ -462,14 +450,19 @@ public class TableController {
             if (channel.getTestProgramId() == processController.getTestProgramId()) {
                 ChannelModel channelModel = new ChannelModel(channel.getId(), channel.getName(),
                         channel.getPCoefficient(), channel.getICoefficient(), channel.getDCoefficient(),
-                        channel.getChosenParameterIndex(), channel.getResponseColor());
+                        channel.getChosenParameterIndex(), channel.getChosenParameterValue(), channel.getResponseColor());
 
                 table.getItems().add(channelModel);
                 processController.getLinkingController().add(channelModel);
+                Platform.runLater(() -> {
+                     processController.getRegulatorParametersController().removeColumns();
+                     processController.getRegulatorParametersController().addColumns();
+                });
             }
         }
 
         processController.getLinkingController().initModulesList();
+
     }
 
     public void delete(ChannelModel channelModel) {

@@ -45,38 +45,6 @@ public class ChannelModel {
         colorPicker = createColorPicker();
     }
 
-    private void initResponseFields() {
-        amplitude = new SimpleStringProperty(initialValue);
-        responseAmplitude = new SimpleStringProperty(initialValue);
-        relativeResponseAmplitude = new SimpleStringProperty(initialValue);
-        dc = new SimpleStringProperty(initialValue);
-        responseDc = new SimpleStringProperty(initialValue);
-        relativeResponseDc = new SimpleStringProperty(initialValue);
-        frequency = new SimpleStringProperty(initialValue);
-        responseFrequency = new SimpleStringProperty(initialValue);
-        relativeResponseFrequency = new SimpleStringProperty(initialValue);
-        loadsCounter = new SimpleStringProperty("0");
-        responseLoadsCounter = new SimpleStringProperty("0");
-        rms = new SimpleStringProperty(initialValue);
-        responseRms = new SimpleStringProperty(initialValue);
-        relativeResponseRms = new SimpleStringProperty(initialValue);
-    }
-
-    public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
-                        String chosenParameterIndex, String responseColor) {
-
-        this.id = id;
-        this.name = new SimpleStringProperty(name);
-        this.pCoefficient = new SimpleStringProperty(pCoefficient);
-        this.iCoefficient = new SimpleStringProperty(iCoefficient);
-        this.dCoefficient = new SimpleStringProperty(dCoefficient);
-        this.chosenParameterIndex = new SimpleStringProperty(chosenParameterIndex);
-        this.responseColor = new SimpleStringProperty(responseColor);
-        initResponseFields();
-        responseCheckBox = createResponseCheckBox();
-        colorPicker = createColorPicker();
-    }
-
     private CheckBox createResponseCheckBox() {
         CheckBox checkBox = new CheckBox();
         checkBox.setMaxHeight(20); // ограничение высоты в 20px для нормального отображения в ячейке таблицы
@@ -96,6 +64,53 @@ public class ChannelModel {
         colorPicker.setStyle("-fx-color-label-visible: false;");
 
         return colorPicker;
+    }
+
+    private void initResponseFields() {
+        amplitude = new SimpleStringProperty(initialValue);
+        responseAmplitude = new SimpleStringProperty(initialValue);
+        relativeResponseAmplitude = new SimpleStringProperty(initialValue);
+        dc = new SimpleStringProperty(initialValue);
+        responseDc = new SimpleStringProperty(initialValue);
+        relativeResponseDc = new SimpleStringProperty(initialValue);
+        frequency = new SimpleStringProperty(initialValue);
+        responseFrequency = new SimpleStringProperty(initialValue);
+        relativeResponseFrequency = new SimpleStringProperty(initialValue);
+        loadsCounter = new SimpleStringProperty("0");
+        responseLoadsCounter = new SimpleStringProperty("0");
+        rms = new SimpleStringProperty(initialValue);
+        responseRms = new SimpleStringProperty(initialValue);
+        relativeResponseRms = new SimpleStringProperty(initialValue);
+    }
+
+    public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
+                        String chosenParameterIndex, String chosenParameterValue, String responseColor) {
+
+        this.id = id;
+        this.name = new SimpleStringProperty(name);
+        this.pCoefficient = new SimpleStringProperty(pCoefficient);
+        this.iCoefficient = new SimpleStringProperty(iCoefficient);
+        this.dCoefficient = new SimpleStringProperty(dCoefficient);
+        this.chosenParameterIndex = new SimpleStringProperty(chosenParameterIndex);
+        this.responseColor = new SimpleStringProperty(responseColor);
+        initResponseFields();
+        setChosenParameterValue(chosenParameterValue);
+        responseCheckBox = createResponseCheckBox();
+        colorPicker = createColorPicker();
+    }
+
+    private void setChosenParameterValue(String value) {
+        switch (Integer.parseInt(chosenParameterIndex.get())) {
+            case 0:
+                setAmplitude(value);
+                break;
+            case 1:
+                setDc(value);
+                break;
+            case 2:
+                setFrequency(value);
+                break;
+        }
     }
 
     public void clearResponse() {
@@ -133,6 +148,19 @@ public class ChannelModel {
 
     public String getChosenParameterIndex() {
         return chosenParameterIndex.get();
+    }
+
+    public String getChosenParameterValue() {
+        switch (Integer.parseInt(chosenParameterIndex.get())) {
+            case 0:
+                return amplitude.get();
+            case 1:
+                return dc.get();
+            case 2:
+                return frequency.get();
+            default:
+                return "0";
+        }
     }
 
     public ColorPicker getColorPicker() {
