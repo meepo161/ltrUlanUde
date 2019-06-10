@@ -682,7 +682,7 @@ public class ProcessController implements BaseController {
     }
 
     private void loadTestProgram() {
-        Platform.runLater(() -> table.getItems().clear());
+        table.getItems().clear();
         processModel.clear();
         tableController.init();
         commandsController.init(testProgram.getId());

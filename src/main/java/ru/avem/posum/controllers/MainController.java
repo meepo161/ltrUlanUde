@@ -117,7 +117,7 @@ public class MainController implements BaseController {
 
     private void setColumns() {
         columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("index"));
-        columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("testProgramName"));
+        columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("Name"));
         columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("created"));
         columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("changed"));
         columnTestProgramTime.setCellValueFactory(new PropertyValueFactory<>("testProgramTime"));
