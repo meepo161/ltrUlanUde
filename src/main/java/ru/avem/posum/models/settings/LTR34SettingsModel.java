@@ -49,10 +49,6 @@ public class LTR34SettingsModel {
         int channels = (ltr34.getCheckedChannelsCounter() <= 4) ? 4 : 8;
 
         for (int channelIndex = 0; channelIndex < channels; channelIndex++) {
-            if (channelIndex == 0) {
-                System.out.printf("Amplitude: %f\n", amplitudes[channelIndex]);
-            }
-
             switch (signalType) {
                 case 0:
                     channelsData.add(createSinSignal(signal.length / channels, amplitudes[channelIndex],

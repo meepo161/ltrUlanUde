@@ -463,7 +463,6 @@ public class SettingsModel implements BaseController {
 
     private void loadADCSettings() {
         adc = (ADC) modules.get(slot);
-        System.out.println(slot);
 
         for (Modules module : ModulesRepository.getAllModules()) {
             parseADCSettings(module);
@@ -472,7 +471,6 @@ public class SettingsModel implements BaseController {
 
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
-            System.out.println(adc.getChannelsCount());
             channels = adc.getChannelsCount();
             setADCSettingsFields();
             parseChannelsSettings(module);
@@ -543,7 +541,7 @@ public class SettingsModel implements BaseController {
             dac.setModuleId(module.getId());
             dac.setData(new double[module.getDataLength()]);
 
-            for (int i = 0; i < channels; i++) {
+            for (int i = 0; i < dac.getChannelsCount(); i++) {
                 checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
                 descriptions[i] = parsedChannelsDescription[i];
                 amplitudes[i] = Double.parseDouble(parsedAmplitudes[i]);

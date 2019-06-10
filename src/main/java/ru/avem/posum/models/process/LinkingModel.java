@@ -63,14 +63,16 @@ public class LinkingModel {
         }
 
         // Удаляет из списка выбранные каналы АЦП
+        List<CheckBox> channelsToRemove = new ArrayList<>();
         for (CheckBox channel : chosenChannels) {
             String descriptionOfChannel = channel.getText();
 
             for (CheckBox description : channels) {
                 if (description.getText().equals(descriptionOfChannel)) {
-                    Platform.runLater(() -> channels.remove(description));
+                    channelsToRemove.add(description);
                 }
             }
+            Platform.runLater(() -> channels.removeAll(channelsToRemove));
         }
     }
 

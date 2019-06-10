@@ -318,7 +318,7 @@ public class RegulatorParametersController {
     }
 
     private void selectParameters(ChannelModel channelModel) {
-        int chosenParameterIndex = Integer.parseInt(channelModel.getChosenParameterIndex());
+        int chosenParameterIndex = (int) Double.parseDouble(channelModel.getChosenParameterIndex());
 
         if (chosenParameterIndex != -1) {
             for (int parametersIndex = 0; parametersIndex < pidParameters.size(); parametersIndex++) {

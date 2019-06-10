@@ -45,7 +45,7 @@ public class RegulatorController {
     private void setRegulatorParameters(ChannelModel channel, int channelIndex) {
         double neededAmplitude = Double.parseDouble(channel.getAmplitude());
         double neededDc = Double.parseDouble(channel.getDc());
-        int neededFrequency = Integer.parseInt(channel.getFrequency());
+        double neededFrequency = Double.parseDouble(channel.getFrequency());
         double neededRms = Double.parseDouble(channel.getRms());
         double pValue = Double.parseDouble(channel.getPCoefficient());
         double iValue = Double.parseDouble(channel.getICoefficient());
@@ -119,7 +119,7 @@ public class RegulatorController {
                     List<Pair<Integer, String>> dacChannels = Modules.getChannelsDescriptions(dac.get());
                     for (Pair<Integer, String> dacChannel : dacChannels) {
                         if (dacChannel.getValue().equals(dacChannelDescription)) {
-                            switch (Integer.parseInt(channel.getChosenParameterIndex())) {
+                            switch ((int) Double.parseDouble(channel.getChosenParameterIndex())) {
                                 case 0:
                                     double newAmplitude = regulatorModel[channelIndex].getAmplitude();
                                     if ((newAmplitude + amplitudes[channelIndex] + dc[channelIndex]) < 10) { // ограничение максимального напряжения, подаваемого с ЦАП

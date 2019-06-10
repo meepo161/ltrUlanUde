@@ -385,6 +385,7 @@ public class ProcessController implements BaseController {
             process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешная инициализация модулей", EventsTypes.OK);
+            initializeButton.setDisable(false);
             initialized = true;
         } else {
             statusBarLine.setStatus("Ошибка инициализации модулей", false);
