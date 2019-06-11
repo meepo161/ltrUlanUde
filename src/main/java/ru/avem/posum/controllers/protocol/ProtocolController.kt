@@ -1,5 +1,7 @@
 package ru.avem.posum.controllers.protocol
 
+import javafx.stage.FileChooser
+import javafx.stage.Stage
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddress
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
@@ -127,23 +129,24 @@ open class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-    open fun saveProtocol(path: String) {
+    open fun showFileSaver(windowTitle: String, initialFileName: String): File {
+        val userDocumentsPath = System.getProperty("user.home") + "\\Documents"
+        val file = File(userDocumentsPath)
+        val fileChooser = FileChooser()
+        fileChooser.initialDirectory = file
+        fileChooser.initialFileName = initialFileName
+        val extensionFilter = FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx")
+        fileChooser.extensionFilters.add(extensionFilter)
+        fileChooser.title = windowTitle
+        return fileChooser.showSaveDialog(Stage())
+    }
+
+    open fun saveProtocol(selectedDirectory: File, successfulStatus: String) {
+        var path = selectedDirectory.absolutePath
+        path = if (path.contains(".xlsx")) path else "$path.xlsx"
         val outputStream = FileOutputStream(path)
         workbook.write(outputStream)
         workbook.close()
-    }
-
-    open fun addSheet(file: File, sheetName: String) {
-        workbook = WorkbookFactory.create(file) as XSSFWorkbook
-        workbook.createSheet(sheetName).isSelected = true
-        workbook.setSheetOrder(sheetName, 0)
-    }
-
-    open fun overrideFile(path: String) {
-        val bufferedPath = "$path.new"
-        val outputString = FileOutputStream(bufferedPath)
-        workbook.write(outputString)
-        Files.delete(Paths.get(path))
-        Files.move(Paths.get(bufferedPath), Paths.get(path))
+        processController.statusBarLine.setStatus(successfulStatus + path, true)
     }
 }

@@ -316,6 +316,10 @@ public class CommandsController {
         timerController.startTimers();
     }
 
+    public int getCellsToMerge() {
+        return getCommandsHeaders().length;
+    }
+
     public ObservableList<Command> getCommands() {
         return commandsModel.getCommands();
     }
@@ -347,6 +351,10 @@ public class CommandsController {
         }
 
         return colors;
+    }
+
+    public String[] getCommandsHeaders() {
+        return new String[]{"Команды", "Параметры"};
     }
 
     public TimerController getTimerController() {

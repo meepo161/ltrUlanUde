@@ -574,30 +574,16 @@ public class ProcessController implements BaseController {
     public void handleSavePointButton() {
         // Prepare data
         String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-        List<String> channels = new ArrayList<>();
-        for (int columnIndex = 0; columnIndex < table.getColumns().size(); columnIndex++) {
-            if (!table.getColumns().get(columnIndex).getText().equals("Отклик")) {
-                channels.add(table.getColumns().get(columnIndex).getText());
-            }
-        }
-        String[] channelsHeaders = channels.toArray(new String[0]);
-        String[][] headers = {channelsHeaders, Utils.getJournalHeaders(), Utils.getCommandsHeaders()};
-        List<List<String>> channelData = tableController.getChannelsData();
-        List<List<String>> journalData = eventsController.getEvents(testProgram.getId());
-        List<List<String>> commandsData = getCommandsController().getCommands(testProgram.getId());
+        String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
         List<List<List<String>>> data = new ArrayList<>();
-        data.add(channelData);
-        data.add(journalData);
-        data.add(commandsData);
-        List<Short> channelsColors = tableController.getColorsForProtocol();
-        List<Short> journalColors = eventsController.getEventsColors(testProgram.getId());
-        List<Short> commandsColors = commandsController.getCommandsColors(testProgram.getId());
+        data.add(tableController.getChannelsData());
+        data.add(eventsController.getEvents(testProgram.getId()));
+        data.add(getCommandsController().getCommands(testProgram.getId()));
         List<List<Short>> colors = new ArrayList<>();
-        colors.add(channelsColors);
-        colors.add(journalColors);
-        colors.add(commandsColors);
-
-        int[] cellsToMerge = {table.getColumns().size() - 1, 2, 2};
+        colors.add(tableController.getColorsForProtocol());
+        colors.add(eventsController.getEventsColors(testProgram.getId()));
+        colors.add(commandsController.getCommandsColors(testProgram.getId()));
+        int[] cellsToMerge = { tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
 
         // Create the workbook
         protocolController.createProtocol(sheets);
@@ -605,30 +591,14 @@ public class ProcessController implements BaseController {
         for (int index = 0; index < headers.length; index++) {
             protocolController.createHeaders(sheets[index], headers[index]);
         }
-
         for (int index = 0; index < sheets.length; index++) {
             protocolController.fill(sheets[index], colors.get(index), data.get(index));
             protocolController.autosizeColumns(sheets[index]);
         }
 
-        // Show the save file window
-        FileChooser fileChooser = new FileChooser();
-        String userDocumentsPath = System.getProperty("user.home") + "\\Documents";
-        File file = new File(userDocumentsPath);
-        fileChooser.setInitialDirectory(file);
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx");
-        fileChooser.getExtensionFilters().add(extFilter);
-        fileChooser.setTitle("Сохранение протокола");
-        File selectedDirectory = fileChooser.showSaveDialog(new Stage());
-
-        // Save the workbook
-        String path = "";
-        if (selectedDirectory != null) {
-            path = selectedDirectory.getAbsolutePath();
-            path = path.contains(".xlsx") ? path : path + ".xlsx";
-            protocolController.saveProtocol(path);
-            statusBarLine.setStatus("Протокол сохранен в " + path, true);
-        }
+        // Show window and save the workbook
+        File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
+        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
     }
 
     public void handleSaveWaveformButton() {
@@ -666,8 +636,8 @@ public class ProcessController implements BaseController {
         eventsController.showDialogOfEventAdding();
     }
 
-    public String handleSaveJournal() {
-        return eventsController.saveJournal(testProgram.getName(), testProgram.getId());
+    public void handleSaveJournal() {
+        eventsController.saveJournal(testProgram.getName(), testProgram.getId());
     }
 
     public void handleSaveRegulatorParameters() {

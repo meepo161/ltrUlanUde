@@ -170,21 +170,17 @@ public class EventsController {
         return eventsModel;
     }
 
-    public String saveJournal(String testProgramName, long testProgramId) {
+    public void saveJournal(String testProgramName, long testProgramId) {
         // Prepare the data
         String[] sheets = {"Журнал событий", "Программа испытаний"};
-        String[][] headers = {Utils.getJournalHeaders(), Utils.getCommandsHeaders()};
-        List<List<String>> journal = getEvents(testProgramId);
-        List<List<String>> commands = processController.getCommandsController().getCommands(testProgramId);
-        List<List<List<String>>> sheetsData = new ArrayList<>();
-        sheetsData.add(journal);
-        sheetsData.add(commands);
-        List<Short> journalColors = getEventsColors(testProgramId);
-        List<Short> commandsColors = processController.getCommandsController().getCommandsColors(testProgramId);
+        String[][] headers = {getJournalHeaders(), processController.getCommandsController().getCommandsHeaders()};
+        List<List<List<String>>> data = new ArrayList<>();
+        data.add(getEvents(testProgramId));
+        data.add(processController.getCommandsController().getCommands(testProgramId));
         List<List<Short>> colors = new ArrayList<>();
-        colors.add(journalColors);
-        colors.add(commandsColors);
-        int[] cellsToMerge = {2, 2};
+        colors.add(getEventsColors(testProgramId));
+        colors.add(processController.getCommandsController().getCommandsColors(testProgramId));
+        int[] cellsToMerge = {getCellsToMerge(), processController.getCommandsController().getCellsToMerge()};
 
         // Create and fill the workbook
         ProtocolController protocolController = processController.getProtocolController();
@@ -195,30 +191,17 @@ public class EventsController {
         }
 
         for (int index = 0; index < sheets.length; index++) {
-            protocolController.fill(sheets[index], colors.get(index), sheetsData.get(index));
+            protocolController.fill(sheets[index], colors.get(index), data.get(index));
             protocolController.autosizeColumns(sheets[index]);
         }
 
-        // Show the save file window
-        FileChooser fileChooser = new FileChooser();
-        String userDocumentsPath = System.getProperty("user.home") + "\\Documents";
-        File file = new File(userDocumentsPath);
-        fileChooser.setInitialDirectory(file);
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx");
-        fileChooser.getExtensionFilters().add(extFilter);
-        fileChooser.setTitle("Сохранение журнала");
-        File selectedDirectory = fileChooser.showSaveDialog(new Stage());
+        // Show window and save the workbook
+        File selectedDirectory = protocolController.showFileSaver("Сохранение журнала", "Journal.xlsx");
+        protocolController.saveProtocol(selectedDirectory, "Журнал сохранен в ");
+    }
 
-        // Save the workbook
-        String path = "";
-        if (selectedDirectory != null) {
-            path = selectedDirectory.getAbsolutePath();
-            path = path.contains(".xlsx") ? path : path + ".xlsx";
-            protocolController.saveProtocol(path);
-            processController.getStatusBarLine().setStatus("Журнал событий сохранен в " + path, true);
-        }
-
-        return path;
+    public int getCellsToMerge() {
+        return getJournalHeaders().length;
     }
 
     public List<List<String>> getEvents(long testProgramId) {
@@ -248,5 +231,9 @@ public class EventsController {
         }
 
         return colors;
+    }
+
+    public String[] getJournalHeaders() {
+        return new String[]{"События", "Время"};
     }
 }

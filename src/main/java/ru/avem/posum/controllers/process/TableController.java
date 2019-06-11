@@ -570,9 +570,21 @@ public class TableController {
             }
         }
 
-        System.out.println("Output list size: " + output.size());
-
         return output;
+    }
+
+    public String[] getColumnsHeaders() {
+        List<String> columnHeaders = new ArrayList<>();
+        for (int columnIndex = 0; columnIndex < table.getColumns().size(); columnIndex++) {
+            if (!table.getColumns().get(columnIndex).getText().equals("Отклик")) {
+                columnHeaders.add(table.getColumns().get(columnIndex).getText());
+            }
+        }
+        return columnHeaders.toArray(new String[0]);
+    }
+
+    public int getCellsToMerge() {
+        return table.getColumns().size() - 1;
     }
 
     public List<Short> getColorsForProtocol() {
