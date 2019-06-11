@@ -613,6 +613,9 @@ public class ProcessController implements BaseController {
 
         // Show the save file window
         FileChooser fileChooser = new FileChooser();
+        String userDocumentsPath = System.getProperty("user.home") + "\\Documents";
+        File file = new File(userDocumentsPath);
+        fileChooser.setInitialDirectory(file);
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLSX files (*.xlsx)", "*.xlsx");
         fileChooser.getExtensionFilters().add(extFilter);
         fileChooser.setTitle("Сохранение протокола");
