@@ -539,28 +539,38 @@ public class TableController {
         output.add(frequency);
         output.add(rms);
         output.add(loadsCounters);
+
+        boolean[] chosenParameters = {false, false, false};
         for (ChannelModel channelModel : channelModels) {
             switch (Integer.parseInt(channelModel.getChosenParameterIndex())) {
                 case 0:
-                    if (!output.contains(neededAmlitudes)) {
-                        output.add(neededAmlitudes);
-                        output.add(relativeResponseAmplitudes);
-                    }
+                    chosenParameters[0] = true;
                     break;
                 case 1:
-                    if (!output.contains(neededDc)) {
-                        output.add(neededDc);
-                        output.add(relativeResponseDc);
-                    }
+                    chosenParameters[1] = true;
                     break;
                 case 2:
-                    if (!output.contains(neededFrequency)) {
-                        output.add(neededFrequency);
-                        output.add(relativeResponseFrequency);
-                    }
+                    chosenParameters[2] = true;
                     break;
             }
         }
+
+        for (int i = 0; i < chosenParameters.length; i++) {
+            if (chosenParameters[i]) {
+                if (i == 0) {
+                    output.add(neededAmlitudes);
+                    output.add(relativeResponseAmplitudes);
+                } else if (i == 1) {
+                    output.add(neededDc);
+                    output.add(relativeResponseDc);
+                } else {
+                    output.add(neededFrequency);
+                    output.add(relativeResponseFrequency);
+                }
+            }
+        }
+
+        System.out.println("Output list size: " + output.size());
 
         return output;
     }
@@ -568,7 +578,7 @@ public class TableController {
     public List<Short> getColorsForProtocol() {
         ObservableList<ChannelModel> channelModels = table.getItems();
         List<Short> colors = new ArrayList<>();
-        for (ChannelModel channelModel : channelModels) {
+        for (ChannelModel ignored : channelModels) {
             colors.add(IndexedColors.WHITE.index);
         }
         return colors;
