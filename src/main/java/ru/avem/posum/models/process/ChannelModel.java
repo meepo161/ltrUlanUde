@@ -114,18 +114,15 @@ public class ChannelModel {
     }
 
     public void clearResponse() {
-        setAmplitude(initialValue);
         setResponseAmplitude(initialValue);
         setRelativeResponseAmplitude(initialValue);
         setDc(initialValue);
         setResponseDc(initialValue);
         setRelativeResponseDc(initialValue);
-        setFrequency(initialValue);
         setResponseFrequency(initialValue);
         setRelativeResponseFrequency(initialValue);
         setLoadsCounter("0");
         setResponseLoadsCounter("0");
-        setRms(initialValue);
         setResponseRms(initialValue);
         setRelativeResponseRms(initialValue);
     }
