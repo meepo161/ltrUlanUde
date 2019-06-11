@@ -11,6 +11,7 @@ import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.db.EventsRepository;
 import ru.avem.posum.models.process.Event;
 import ru.avem.posum.models.process.EventsModel;
+import ru.avem.posum.utils.Utils;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -169,33 +170,32 @@ public class EventsController {
         return eventsModel;
     }
 
-    public void saveJournal(String testProgramName, long testProgramId) {
+    public String saveJournal(String testProgramName, long testProgramId) {
         // Prepare the data
         String[] sheets = {"Журнал событий", "Программа испытаний"};
-        String[] journalHeaders = {"События", "Время"};
-        String[] commandsHeaders = {"Команды", "Параметры"};
-        String[][] headers = {journalHeaders, commandsHeaders};
-        Pair<List<String>, List<String>> journal = getEvents(testProgramId);
-        List<Short> journalColors = getEventsColors(testProgramId);
-        Pair<List<String>, List<String>> commands = processController.getCommandsController().getCommands(testProgramId);
-        List<Short> commandsColors = processController.getCommandsController().getCommandsColors(testProgramId);
-        List<Pair<List<String>, List<String>>> sheetsData = new ArrayList<>();
+        String[][] headers = {Utils.getJournalHeaders(), Utils.getCommandsHeaders()};
+        List<List<String>> journal = getEvents(testProgramId);
+        List<List<String>> commands = processController.getCommandsController().getCommands(testProgramId);
+        List<List<List<String>>> sheetsData = new ArrayList<>();
         sheetsData.add(journal);
         sheetsData.add(commands);
+        List<Short> journalColors = getEventsColors(testProgramId);
+        List<Short> commandsColors = processController.getCommandsController().getCommandsColors(testProgramId);
         List<List<Short>> colors = new ArrayList<>();
         colors.add(journalColors);
         colors.add(commandsColors);
+        int[] cellsToMerge = {2, 2};
 
         // Create and fill the workbook
         ProtocolController protocolController = processController.getProtocolController();
         protocolController.createProtocol(sheets);
-        protocolController.createTitle(testProgramName, 2, sheets);
+        protocolController.createTitle(testProgramName, cellsToMerge, sheets);
         for (int index = 0; index < headers.length; index++) {
             protocolController.createHeaders(sheets[index], headers[index]);
         }
 
         for (int index = 0; index < sheets.length; index++) {
-            protocolController.fill(sheets[index], colors.get(index), sheetsData.get(index).getKey(), sheetsData.get(index).getValue());
+            protocolController.fill(sheets[index], colors.get(index), sheetsData.get(index));
             protocolController.autosizeColumns(sheets[index]);
         }
 
@@ -207,15 +207,18 @@ public class EventsController {
         File selectedDirectory = fileChooser.showSaveDialog(new Stage());
 
         // Save the workbook
+        String path = "";
         if (selectedDirectory != null) {
-            String path = selectedDirectory.getAbsolutePath();
+            path = selectedDirectory.getAbsolutePath();
             path = path.contains(".xlsx") ? path : path + ".xlsx";
             protocolController.saveProtocol(path);
             processController.getStatusBarLine().setStatus("Журнал событий сохранен в " + path, true);
         }
+
+        return path;
     }
 
-    public Pair<List<String>, List<String>> getEvents(long testProgramId) {
+    public List<List<String>> getEvents(long testProgramId) {
         List<ru.avem.posum.db.models.Event> dbEvents = EventsRepository.getAllEvents();
         List<String> events = new ArrayList<>();
         List<String> time = new ArrayList<>();
@@ -225,7 +228,10 @@ public class EventsController {
                 time.add(event.getTime());
             }
         }
-        return new Pair<>(events, time);
+        List<List<String>> output = new ArrayList<>();
+        output.add(events);
+        output.add(time);
+        return output;
     }
 
     public List<Short> getEventsColors(long testProgramId) {

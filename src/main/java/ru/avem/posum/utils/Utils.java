@@ -52,7 +52,17 @@ public class Utils {
         col.setGraphic(stack);
     }
 
+    public static String[] getCommandsHeaders() {
+        String[] headers = {"Команды", "Параметры"};
+        return headers;
+    }
+
     public static int getDecimalScaleLimit() {
         return DECIMAL_SCALE_LIMIT;
+    }
+
+    public static String[] getJournalHeaders() {
+        String[] headers = {"События", "Время"};
+        return headers;
     }
 }

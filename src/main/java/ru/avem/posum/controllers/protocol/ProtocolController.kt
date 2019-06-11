@@ -6,7 +6,10 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.avem.posum.controllers.process.ProcessController
+import java.io.File
 import java.io.FileOutputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 
 open class ProtocolController(val processController: ProcessController) {
     private var workbook = XSSFWorkbook()
@@ -20,12 +23,12 @@ open class ProtocolController(val processController: ProcessController) {
         }
     }
 
-    open fun createTitle(title: String, mergingCells: Int, vararg sheets: String) {
+    open fun createTitle(title: String, cellsToMerge: IntArray, vararg sheets: String) {
         val rowNumber = 0 // row for title
         val columnNumber = 0 // beginning of sheet
-        val endCell = if (mergingCells > 1) mergingCells - 1 else 0
 
-        for (sheetName in sheets) {
+        for ((index, sheetName) in sheets.withIndex()) {
+            val endCell = if (cellsToMerge[index] > 1) cellsToMerge[index] - 1 else 0
             val sheet = workbook.getSheet(sheetName)
             val row = sheet.createRow(rowNumber)
             row.heightInPoints = 30.0f
@@ -37,7 +40,7 @@ open class ProtocolController(val processController: ProcessController) {
 
             val cell = row.getCell(columnNumber)
             cell.setCellValue(title)
-            if (mergingCells > 1) sheet.addMergedRegion(CellRangeAddress(rowNumber, rowNumber, columnNumber, endCell))
+            if (cellsToMerge[index] > 1) sheet.addMergedRegion(CellRangeAddress(rowNumber, rowNumber, columnNumber, endCell))
             autosizeColumns(sheetName)
         }
     }
@@ -94,7 +97,7 @@ open class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-    open fun fill(sheetName: String, colors: List<Short>, vararg dataForColumns: List<String>) {
+    open fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
         val sheet = workbook.getSheet(sheetName)
         val constrain = 2 // miss the title and headers rows
 
@@ -124,11 +127,23 @@ open class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-
-
     open fun saveProtocol(path: String) {
         val outputStream = FileOutputStream(path)
         workbook.write(outputStream)
         workbook.close()
+    }
+
+    open fun addSheet(file: File, sheetName: String) {
+        workbook = WorkbookFactory.create(file) as XSSFWorkbook
+        workbook.createSheet(sheetName).isSelected = true
+        workbook.setSheetOrder(sheetName, 0)
+    }
+
+    open fun overrideFile(path: String) {
+        val bufferedPath = "$path.new"
+        val outputString = FileOutputStream(bufferedPath)
+        workbook.write(outputString)
+        Files.delete(Paths.get(path))
+        Files.move(Paths.get(bufferedPath), Paths.get(path))
     }
 }

@@ -320,7 +320,7 @@ public class CommandsController {
         return commandsModel.getCommands();
     }
 
-    public Pair<List<String>, List<String>> getCommands(long testProgramId) {
+    public List<List<String>> getCommands(long testProgramId) {
         List<ru.avem.posum.db.models.Command> dbCommands = CommandsRepository.getAllCommands();
         List<String> commands = new ArrayList<>();
         List<String> parameters = new ArrayList<>();
@@ -330,7 +330,10 @@ public class CommandsController {
                 parameters.add(command.getDescription());
             }
         }
-        return new Pair<>(commands, parameters);
+        List<List<String>> output = new ArrayList<>();
+        output.add(commands);
+        output.add(parameters);
+        return output;
     }
 
     public List<Short> getCommandsColors(long testProgramId) {

@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import ru.avem.posum.db.ChannelsRepository;
 import ru.avem.posum.db.models.Channels;
 import ru.avem.posum.db.models.Modules;
@@ -455,8 +456,8 @@ public class TableController {
                 table.getItems().add(channelModel);
                 processController.getLinkingController().add(channelModel);
                 Platform.runLater(() -> {
-                     processController.getRegulatorParametersController().removeColumns();
-                     processController.getRegulatorParametersController().addColumns();
+                    processController.getRegulatorParametersController().removeColumns();
+                    processController.getRegulatorParametersController().addColumns();
                 });
             }
         }
@@ -498,6 +499,79 @@ public class TableController {
 
     public ObservableList<ChannelModel> getChannels() {
         return table.getItems();
+    }
+
+    public List<List<String>> getChannelsData() {
+        ObservableList<ChannelModel> channelModels = table.getItems();
+
+        List<String> names = new ArrayList<>();
+        List<String> amplitudes = new ArrayList<>();
+        List<String> dc = new ArrayList<>();
+        List<String> frequency = new ArrayList<>();
+        List<String> rms = new ArrayList<>();
+        List<String> loadsCounters = new ArrayList<>();
+        List<String> neededAmlitudes = new ArrayList<>();
+        List<String> neededDc = new ArrayList<>();
+        List<String> neededFrequency = new ArrayList<>();
+        List<String> relativeResponseAmplitudes = new ArrayList<>();
+        List<String> relativeResponseDc = new ArrayList<>();
+        List<String> relativeResponseFrequency = new ArrayList<>();
+
+        for (ChannelModel channelModel : channelModels) {
+            names.add(channelModel.getName());
+            amplitudes.add(channelModel.getResponseAmplitude());
+            dc.add(channelModel.getResponseDc());
+            frequency.add(channelModel.getResponseFrequency());
+            rms.add(channelModel.getRms());
+            loadsCounters.add(channelModel.getLoadsCounter());
+            neededAmlitudes.add(channelModel.getChosenParameterIndex().equals("0") ? channelModel.getChosenParameterValue() : "0.0");
+            neededDc.add(channelModel.getChosenParameterIndex().equals("1") ? channelModel.getChosenParameterValue() : "0.0");
+            neededFrequency.add(channelModel.getChosenParameterIndex().equals("2") ? channelModel.getChosenParameterValue() : "0.0");
+            relativeResponseAmplitudes.add(channelModel.getRelativeResponseAmplitude());
+            relativeResponseDc.add(channelModel.getRelativeResponseDc());
+            relativeResponseFrequency.add(channelModel.getRelativeResponseFrequency());
+        }
+
+        List<List<String>> output = new ArrayList<>();
+        output.add(names);
+        output.add(amplitudes);
+        output.add(dc);
+        output.add(frequency);
+        output.add(rms);
+        output.add(loadsCounters);
+        for (ChannelModel channelModel : channelModels) {
+            switch (Integer.parseInt(channelModel.getChosenParameterIndex())) {
+                case 0:
+                    if (!output.contains(neededAmlitudes)) {
+                        output.add(neededAmlitudes);
+                        output.add(relativeResponseAmplitudes);
+                    }
+                    break;
+                case 1:
+                    if (!output.contains(neededDc)) {
+                        output.add(neededDc);
+                        output.add(relativeResponseDc);
+                    }
+                    break;
+                case 2:
+                    if (!output.contains(neededFrequency)) {
+                        output.add(neededFrequency);
+                        output.add(relativeResponseFrequency);
+                    }
+                    break;
+            }
+        }
+
+        return output;
+    }
+
+    public List<Short> getColorsForProtocol() {
+        ObservableList<ChannelModel> channelModels = table.getItems();
+        List<Short> colors = new ArrayList<>();
+        for (ChannelModel channelModel : channelModels) {
+            colors.add(IndexedColors.WHITE.index);
+        }
+        return colors;
     }
 
     public RegulatorController getRegulatorController() {
