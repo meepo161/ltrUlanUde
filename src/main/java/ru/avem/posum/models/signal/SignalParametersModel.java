@@ -37,7 +37,7 @@ public class SignalParametersModel {
     private double loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
-    private int minSamples = 200;
+    private int minSamples = 50;
     private double minSignalValue;
     private double rms;
     private int periods;
@@ -207,13 +207,29 @@ public class SignalParametersModel {
 
     private double calculateFrequency() {
         int estimatedFrequency = estimateFrequency();
+        if (estimatedFrequency > 5000) {
+            return estimatedFrequency;
+        }
 
-        System.out.println("Estimated frequency: " + estimatedFrequency);
+        int filterCoefficient = 10; // значение по умолчанию
+        minSamples = 200;
+        int samplingRate = (int) adc.getFrequency(); // частота дискретизации
+
+        if (samplingRate < 1000) {
+            minSamples = 5;
+            filterCoefficient = 2;
+        } else if (samplingRate < 10_000) {
+            minSamples = 20;
+            filterCoefficient = 2;
+        } else if (samplingRate > 10_000 && samplingRate < 50_000) {
+            filterCoefficient = 5;
+            minSamples = 50;
+        }
 
         double accuracyCoefficient = 5; // коэффициент для переключения алгоритмов
         double frequency;
 
-        frequency = defineFrequencySecondAlgorithm(estimatedFrequency * 2);
+        frequency = defineFrequencySecondAlgorithm(estimatedFrequency * filterCoefficient);
 
         if (!(frequency - savedFrequency > 1) && (frequency > savedFrequency)) {
             frequency = savedFrequency;
@@ -221,7 +237,7 @@ public class SignalParametersModel {
         }
 
         if (frequencyCalculationCounter == 10) {
-            frequency = defineFrequencySecondAlgorithm(estimatedFrequency * 2);
+            frequency = defineFrequencySecondAlgorithm(estimatedFrequency * filterCoefficient);
             frequencyCalculationCounter = 0;
         }
 
@@ -239,11 +255,11 @@ public class SignalParametersModel {
         int frequency = 0;
         double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
 
-        for (int i = channel; i < data.length; i += channels) {
-            if (data[i] >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
+        for (int index = channel; index < data.length; index += channels) {
+            if (data[index] >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (data[i] < dc - lowerLimitOfAmplitude && positivePartOfSignal) {
+            } else if (data[index] < dc - lowerLimitOfAmplitude && positivePartOfSignal && (index >= channels * minSamples)) {
                 positivePartOfSignal = false;
             }
         }
