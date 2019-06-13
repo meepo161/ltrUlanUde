@@ -312,8 +312,6 @@ public class SignalParametersModel {
             }
         }
 
-        System.out.println("samples " + samplesPerSemiPeriod);
-
         return (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
     }
 
