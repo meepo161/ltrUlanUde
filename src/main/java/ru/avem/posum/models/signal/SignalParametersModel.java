@@ -37,7 +37,7 @@ public class SignalParametersModel {
     private double loadsCounter;
     private double lowerBound;
     private double maxSignalValue;
-    private int minSamples = 20;
+    private int minSamples = 200;
     private double minSignalValue;
     private double rms;
     private int periods;
@@ -207,6 +207,9 @@ public class SignalParametersModel {
 
     private double calculateFrequency() {
         int estimatedFrequency = estimateFrequency();
+
+        System.out.println("Estimated frequency: " + estimatedFrequency);
+
         double accuracyCoefficient = 5; // коэффициент для переключения алгоритмов
         double frequency;
 
@@ -231,24 +234,16 @@ public class SignalParametersModel {
         return freq;
     }
 
-
-    private double getLowerLimitOfAmplitude() {
-        return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
-                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
-    }
-
     private int estimateFrequency() {
         boolean positivePartOfSignal = false;
         int frequency = 0;
         double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
 
-        iir.lowPass(10, data.length / channels, 50);
         for (int i = channel; i < data.length; i += channels) {
-            double value = iir.filter(data[i]);
-            if (value >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
+            if (data[i] >= dc + lowerLimitOfAmplitude && !positivePartOfSignal) {
                 frequency++;
                 positivePartOfSignal = true;
-            } else if (value < dc - lowerLimitOfAmplitude && positivePartOfSignal) {
+            } else if (data[i] < dc - lowerLimitOfAmplitude && positivePartOfSignal) {
                 positivePartOfSignal = false;
             }
         }
@@ -256,11 +251,15 @@ public class SignalParametersModel {
         return frequency;
     }
 
+    private double getLowerLimitOfAmplitude() {
+        return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
+                Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
+    }
+
     private double defineFrequencyFirstAlgorithm() {
         int shift = 1_000;
         double firstValue = data[channel] + shift;
         boolean firstPeriod = true;
-        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude();
         boolean positivePartOfSignal = !(firstValue > (dc + shift));
         samplesPerSemiPeriod = zeroTransitionCounter = 0;
 
@@ -271,31 +270,33 @@ public class SignalParametersModel {
             countSamplesFirstAlgorithm();
 
             if (firstValue >= centerOfSignal) {
-                if (value >= centerOfSignal && firstPeriod && (value >= lowerLimitOfAmplitude)) {
+                if (value >= centerOfSignal && firstPeriod && (index >= channels * minSamples)) {
                     positivePartOfSignal = true;
                 } else if ((value < centerOfSignal && positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = false;
                     firstPeriod = false;
-                } else if (value >= centerOfSignal && !firstPeriod && !positivePartOfSignal && (value >= lowerLimitOfAmplitude)) {
+                } else if (value > centerOfSignal && !firstPeriod && !positivePartOfSignal && samplesPerSemiPeriod > minSamples) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = true;
                 }
             }
 
             if (firstValue < centerOfSignal) {
-                if (value < centerOfSignal && firstPeriod && (value >= lowerLimitOfAmplitude)) {
+                if (value < centerOfSignal && firstPeriod && (index >= channels * minSamples)) {
                     positivePartOfSignal = false;
                 } else if ((value >= centerOfSignal && !positivePartOfSignal && samplesPerSemiPeriod == 0)) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = true;
                     firstPeriod = false;
-                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && value >= lowerLimitOfAmplitude) {
+                } else if (value < centerOfSignal && !firstPeriod && positivePartOfSignal && samplesPerSemiPeriod >= minSamples) {
                     zeroTransitionCounter++;
                     positivePartOfSignal = false;
                 }
             }
         }
+
+        System.out.println("samples " + samplesPerSemiPeriod);
 
         return (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
     }

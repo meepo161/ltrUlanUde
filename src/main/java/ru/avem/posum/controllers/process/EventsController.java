@@ -4,30 +4,26 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import javafx.util.Pair;
 import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.db.EventsRepository;
 import ru.avem.posum.models.process.Event;
 import ru.avem.posum.models.process.EventsModel;
-import ru.avem.posum.utils.Utils;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class EventsController {
+    private Button addEventButton;
     private ContextMenu contextMenu = new ContextMenu();
     private EventsModel eventsModel = new EventsModel();
     private ProcessController processController;
     private Button saveJournalButton;
     private TableView<Event> table;
 
-    public EventsController(ProcessController processController, Button saveJournalButton, TableView<Event> table) {
+    public EventsController(ProcessController processController, Button addEventButton, Button saveJournalButton, TableView<Event> table) {
+        this.addEventButton = addEventButton;
         this.processController = processController;
         this.table = table;
         this.saveJournalButton = saveJournalButton;
@@ -66,6 +62,9 @@ public class EventsController {
     private void clearEvents() {
         processController.getStatusBarLine().toggleProgressIndicator(false);
         processController.getStatusBarLine().setStatusOfProgress("Удаление всех событий из журнала");
+        table.setDisable(true);
+        addEventButton.setDisable(true);
+        saveJournalButton.setDisable(true);
 
         new Thread(() -> {
             ObservableList<Event> events = table.getItems();
@@ -75,6 +74,8 @@ public class EventsController {
             }
 
             events.clear();
+            table.setDisable(false);
+            addEventButton.setDisable(false);
             processController.getStatusBarLine().toggleProgressIndicator(true);
             processController.getStatusBarLine().setStatus("События успешно удалены", true);
         }).start();
@@ -142,7 +143,13 @@ public class EventsController {
 
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(eventText -> eventsModel.setEvent(processController.getTestProgramId(), eventText));
+        result.ifPresent(eventText -> {
+            if (eventText.isEmpty()) {
+                processController.getStatusBarLine().setStatus("Введите описание события", false);
+            } else {
+                eventsModel.setEvent(processController.getTestProgramId(), eventText);
+            }
+        });
     }
 
     public void setEventsColors(TableRow<Event> row) {

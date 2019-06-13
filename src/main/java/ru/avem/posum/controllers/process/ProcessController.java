@@ -197,7 +197,7 @@ public class ProcessController implements BaseController {
 
         commandsController = new CommandsController(this, commandsTableView);
 
-        eventsController = new EventsController(this, saveJournalButton, eventsTableView);
+        eventsController = new EventsController(this, addEventButton, saveJournalButton, eventsTableView);
 
         graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
