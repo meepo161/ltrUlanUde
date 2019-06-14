@@ -32,6 +32,8 @@ public class ChannelModel {
     private CheckBox responseCheckBox;
     private ColorPicker colorPicker;
     private StringProperty responseColor;
+    private String date;
+    private String time;
 
     public ChannelModel(String name) {
         this.name = new SimpleStringProperty(name);
@@ -164,6 +166,10 @@ public class ChannelModel {
         return colorPicker;
     }
 
+    public String getDate() {
+        return date;
+    }
+
     public String getDc() {
         return dc.get().isEmpty() ? initialValue : dc.get();
     }
@@ -250,6 +256,10 @@ public class ChannelModel {
         return Integer.parseInt(this.name.getValue().split("слот ")[1].split("\\)")[0]);
     }
 
+    public String getTime() {
+        return time;
+    }
+
     public StringProperty nameProperty() {
         return name;
     }
@@ -292,6 +302,10 @@ public class ChannelModel {
 
     public void setChosenParameterIndex(String chosenParameterIndex) {
         this.chosenParameterIndex.set(chosenParameterIndex);
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public void setDc(String dc) {
@@ -368,6 +382,10 @@ public class ChannelModel {
 
     public void setRms(String rms) {
         this.rms.set(rms);
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public ObservableValue<HBox> getResponse() {

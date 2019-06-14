@@ -41,7 +41,6 @@ public class EventsController {
         loadEvents(testProgramId);
     }
 
-
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
@@ -214,16 +213,19 @@ public class EventsController {
     public List<List<String>> getEvents(long testProgramId) {
         List<ru.avem.posum.db.models.Event> dbEvents = EventsRepository.getAllEvents();
         List<String> events = new ArrayList<>();
+        List<String> date = new ArrayList<>();
         List<String> time = new ArrayList<>();
         for (ru.avem.posum.db.models.Event event : dbEvents) {
             if (event.getTestProgramId() == testProgramId) {
                 events.add(event.getDescription());
-                time.add(event.getTime());
+                date.add(event.getTime().split(" ")[1]);
+                time.add(event.getTime().split(" ")[0]);
             }
         }
         List<List<String>> output = new ArrayList<>();
-        output.add(events);
+        output.add(date);
         output.add(time);
+        output.add(events);
         return output;
     }
 
@@ -241,6 +243,6 @@ public class EventsController {
     }
 
     public String[] getJournalHeaders() {
-        return new String[]{"События", "Время"};
+        return new String[]{"Дата", "Время", "События"};
     }
 }

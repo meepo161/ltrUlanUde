@@ -506,8 +506,13 @@ public class TableController {
         return table.getItems();
     }
 
-    public List<List<String>> getChannelsData() {
-        ObservableList<ChannelModel> channelModels = table.getItems();
+    public List<List<String>> getChannelsData(boolean isPointData) {
+        List<ChannelModel> channelModels;
+        if (isPointData) {
+            channelModels = table.getItems();
+        } else {
+            channelModels = processController.getJsonController().parse();
+        }
 
         List<String> names = new ArrayList<>();
         List<String> amplitudes = new ArrayList<>();
@@ -521,6 +526,10 @@ public class TableController {
         List<String> relativeResponseAmplitudes = new ArrayList<>();
         List<String> relativeResponseDc = new ArrayList<>();
         List<String> relativeResponseFrequency = new ArrayList<>();
+        List<String> date = new ArrayList<>();
+        List<String> time = new ArrayList<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm:ss");
 
         for (ChannelModel channelModel : channelModels) {
             names.add(channelModel.getName());
@@ -535,9 +544,15 @@ public class TableController {
             relativeResponseAmplitudes.add(channelModel.getRelativeResponseAmplitude());
             relativeResponseDc.add(channelModel.getRelativeResponseDc());
             relativeResponseFrequency.add(channelModel.getRelativeResponseFrequency());
+            String channelDate = isPointData ? simpleDateFormat.format(System.currentTimeMillis()) : channelModel.getDate();
+            date.add(channelDate);
+            String channelTime = isPointData ? simpleTimeFormat.format(System.currentTimeMillis()) : channelModel.getTime();
+            time.add(channelTime);
         }
 
         List<List<String>> output = new ArrayList<>();
+        output.add(date);
+        output.add(time);
         output.add(names);
         output.add(amplitudes);
         output.add(dc);
@@ -580,6 +595,8 @@ public class TableController {
 
     public String[] getColumnsHeaders() {
         List<String> columnHeaders = new ArrayList<>();
+        columnHeaders.add("Дата");
+        columnHeaders.add("Время");
         for (int columnIndex = 0; columnIndex < table.getColumns().size(); columnIndex++) {
             if (!table.getColumns().get(columnIndex).getText().equals("Отклик")) {
                 columnHeaders.add(table.getColumns().get(columnIndex).getText());
@@ -589,17 +606,18 @@ public class TableController {
     }
 
     public int getCellsToMerge() {
-        return table.getColumns().size() - 1;
+        return table.getColumns().size() + 1;
     }
 
     public List<ChannelDataModel> getChannelsDataList(long time) {
         List<ChannelDataModel> channelsData = new ArrayList<>();
         ObservableList<ChannelModel> channels = table.getItems();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d HH:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         for (ChannelModel channel : channels) {
             ChannelDataModel channelData = new ChannelDataModel(channel.getName());
+            channelData.setChosenParameterIndex(Integer.parseInt(channel.getChosenParameterIndex()));
             channelData.setLoadsCounter(Integer.parseInt(channel.getLoadsCounter()));
             channelData.setNeededAmplitude(Double.parseDouble(channel.getAmplitude()));
             channelData.setNeededDc(Double.parseDouble(channel.getDc()));
@@ -610,20 +628,29 @@ public class TableController {
             channelData.setRelativeResponseAmplitude(Double.parseDouble(channel.getRelativeResponseAmplitude()));
             channelData.setRelativeResponseDc(Double.parseDouble(channel.getRelativeResponseDc()));
             channelData.setRelativeResponseFrequency(Double.parseDouble(channel.getRelativeResponseFrequency()));
-            channelData.setTime(simpleDateFormat.format(time));
+            channelData.setTime(simpleDateFormat.format(System.currentTimeMillis()));
             channelsData.add(channelData);
         }
 
         return channelsData;
     }
 
-    public List<Short> getColorsForProtocol() {
-        ObservableList<ChannelModel> channelModels = table.getItems();
-        List<Short> colors = new ArrayList<>();
-        for (ChannelModel ignored : channelModels) {
-            colors.add(IndexedColors.WHITE.index);
+    public List<Short> getColorsForProtocol(boolean isPointData) {
+        if (isPointData) {
+            ObservableList<ChannelModel> channelModels = table.getItems();
+            List<Short> colors = new ArrayList<>();
+            for (ChannelModel ignored : channelModels) {
+                colors.add(IndexedColors.WHITE.index);
+            }
+            return colors;
+        } else {
+            List<ChannelModel> channelModels = processController.getJsonController().parse();
+            List<Short> colors = new ArrayList<>();
+            for (ChannelModel ignored : channelModels) {
+                colors.add(IndexedColors.WHITE.index);
+            }
+            return colors;
         }
-        return colors;
     }
 
     public RegulatorController getRegulatorController() {

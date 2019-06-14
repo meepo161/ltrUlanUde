@@ -3,6 +3,7 @@ package ru.avem.posum.models.protocol
 import java.io.Serializable
 
 class ChannelDataModel(val name: String) : Serializable {
+    var chosenParameterIndex = -1
     var loadsCounter = 0
     var neededAmplitude = 0.0
     var neededDc = 0.0
@@ -14,5 +15,5 @@ class ChannelDataModel(val name: String) : Serializable {
     var responseDc = 0.0
     var responseFrequency = 0.0
     var rms = 0.0
-    var time = "0 00:00:00"
+    var time = "00.00.00 00:00:00"
 }

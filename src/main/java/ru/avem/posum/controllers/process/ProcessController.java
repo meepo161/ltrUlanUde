@@ -9,8 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
@@ -25,7 +23,6 @@ import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -488,7 +485,6 @@ public class ProcessController implements BaseController {
         tableController.getRegulatorController().doSmoothStop();
 
         new Thread(() -> {
-
             while (!tableController.getRegulatorController().isStopped()) {
                 if (tableController.getRegulatorController().isStopped()) {
                     handleStop();
@@ -573,16 +569,16 @@ public class ProcessController implements BaseController {
         wm.setScene(WindowsManager.Scenes.LINKING_SCENE);
     }
 
-    public void handleSavePointButton() {
+    public void handleSavePoint() {
         // Prepare data
         String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
         String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
         List<List<List<String>>> data = new ArrayList<>();
-        data.add(tableController.getChannelsData());
+        data.add(tableController.getChannelsData(true));
         data.add(eventsController.getEvents(testProgram.getId()));
         data.add(getCommandsController().getCommands(testProgram.getId()));
         List<List<Short>> colors = new ArrayList<>();
-        colors.add(tableController.getColorsForProtocol());
+        colors.add(tableController.getColorsForProtocol(true));
         colors.add(eventsController.getEventsColors(testProgram.getId()));
         colors.add(commandsController.getCommandsColors(testProgram.getId()));
         int[] cellsToMerge = { tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
@@ -609,6 +605,33 @@ public class ProcessController implements BaseController {
 
     public void handleSaveProtocolButton() {
         jsonController.close();
+        // Prepare data
+        String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
+        String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
+        List<List<List<String>>> data = new ArrayList<>();
+        data.add(tableController.getChannelsData(false));
+        data.add(eventsController.getEvents(testProgram.getId()));
+        data.add(getCommandsController().getCommands(testProgram.getId()));
+        List<List<Short>> colors = new ArrayList<>();
+        colors.add(tableController.getColorsForProtocol(false));
+        colors.add(eventsController.getEventsColors(testProgram.getId()));
+        colors.add(commandsController.getCommandsColors(testProgram.getId()));
+        int[] cellsToMerge = { tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+
+        // Create the workbook
+        protocolController.createProtocol(sheets);
+        protocolController.createTitle(testProgram.getName(), cellsToMerge, sheets);
+        for (int index = 0; index < headers.length; index++) {
+            protocolController.createHeaders(sheets[index], headers[index]);
+        }
+        for (int index = 0; index < sheets.length; index++) {
+            protocolController.fill(sheets[index], colors.get(index), data.get(index));
+            protocolController.autosizeColumns(sheets[index]);
+        }
+
+        // Show window and save the workbook
+        File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
+        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
     }
 
     public void handleBack() {
