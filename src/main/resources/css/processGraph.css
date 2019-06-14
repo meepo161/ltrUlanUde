@@ -1,0 +1,7 @@
+.chart-title, .axis-label {
+    -fx-font-size: 14px;
+}
+
+.axis-label {
+    -fx-padding: 5 0 0 0;
+}

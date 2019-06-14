@@ -1,5 +1,7 @@
 package ru.avem.posum.hardware;
 
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,26 +14,29 @@ public class LTR24 extends ADC {
 
     @Override
     public void openConnection() {
-        status = openConnection(crate, getSlot());
-        checkStatus();
+        status = openConnection(crateSerialNumber, getSlot());
+        setConnectionOpen(checkStatus());
     }
 
     @Override
     public void checkConnection() {
-        CrateModel crateModel = new CrateModel();
-        if (!crateModel.getCratesNames().isEmpty()) {
-            status = checkConnection(getSlot());
-            checkStatus();
-        } else {
-            openConnection();
-            status = "Потеряно соединение с крейтом";
+        Crate crate = new Crate();
+
+        if (crate.getCratesNames().isPresent()) {
+            ObservableList<String> cratesNames = crate.getCratesNames().get();
+
+            if (!cratesNames.isEmpty()) {
+                status = checkConnection(getSlot());
+            } else {
+                status = "Потеряно соединение с крейтом";
+                openConnection();
+            }
         }
     }
 
     @Override
     public void initializeModule() {
-        status = initialize(getSlot(), getChannelsTypes(), getMeasuringRanges(), getLTR24ModuleSettings());
-        checkStatus();
+        status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR24ModuleSettings());
     }
 
     @Override
@@ -42,24 +47,24 @@ public class LTR24 extends ADC {
     @Override
     public void start() {
         status = start(getSlot());
-        checkStatus();
     }
 
     @Override
     public void write(double[] data, double[] timeMarks) {
-        write(getSlot(), data, timeMarks, data.length, 1000);
+        write(getSlot(), data, timeMarks, data.length);
     }
 
     @Override
     public void stop() {
         status = stop(getSlot());
-        checkStatus();
     }
 
     @Override
     public void closeConnection() {
-        status = closeConnection(getSlot());
-        checkStatus();
+        if (isConnectionOpen()) {
+            status = closeConnection(getSlot());
+            setConnectionOpen(checkStatus());
+        }
     }
 
     public native String openConnection(String crate, int slot);
@@ -72,23 +77,23 @@ public class LTR24 extends ADC {
 
     public native String start(int slot);
 
-    public native String write(int slot, double[] data, double[] timeMarks, int length, int timeout);
+    public native String write(int slot, double[] data, double[] timeMarks, int dataLength);
 
     public native String stop(int slot);
 
     public native String closeConnection(int slot);
 
     static {
-        System.loadLibrary( "LTR24Library");
+        System.loadLibrary("LTR24Library");
     }
 
     private void initializeModuleSettings() {
-        getModuleSettings().put(Settings.FREQUENCY.getSettingName(), 7); // частота дискретизации 9.7 кГц
+        getSettingsOfModule().put(Settings.FREQUENCY, 0); // частота дискретизации 117 кГц
     }
 
     private int[] getLTR24ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
-        settingsList.add(getModuleSettings().get(Settings.FREQUENCY.getSettingName()));
+        settingsList.add(getSettingsOfModule().get(Settings.FREQUENCY));
 
         int[] settings = new int[settingsList.size()];
 
@@ -102,14 +107,14 @@ public class LTR24 extends ADC {
     @Override
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
-        settings.append(moduleSettings.get(Settings.FREQUENCY.getSettingName())).append(", ");
+        settings.append(settingsOfModule.get(Settings.FREQUENCY)).append(", ");
         return settings;
     }
 
     @Override
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
-        moduleSettings.put(Settings.FREQUENCY.getSettingName(), Integer.valueOf(separatedSettings[0]));
+        settingsOfModule.put(Settings.FREQUENCY, Integer.valueOf(separatedSettings[0]));
     }
 
     @Override

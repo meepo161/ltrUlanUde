@@ -19,12 +19,16 @@ import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Calibration;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.utils.StatusBarLine;
+import ru.avem.posum.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainController implements BaseController {
+    @FXML
+    private Label checkIcon;
     @FXML
     private TableColumn<TestProgram, Integer> columnTableViewIndex;
     @FXML
@@ -40,6 +44,8 @@ public class MainController implements BaseController {
     @FXML
     private TableColumn<TestProgram, String> columnTestProgramType;
     @FXML
+    private Menu menuEdit;
+    @FXML
     private Button openExperimentButton;
     @FXML
     private ProgressIndicator progressIndicator;
@@ -47,7 +53,10 @@ public class MainController implements BaseController {
     private StatusBar statusBar;
     @FXML
     private TableView<TestProgram> testProgramTableView;
+    @FXML
+    private Label warningIcon;
 
+    private boolean isAdministration;
     private List<TestProgram> allTestPrograms;
     private ControllerManager cm;
     private ContextMenu contextMenu = new ContextMenu();
@@ -55,7 +64,7 @@ public class MainController implements BaseController {
     private long newTestProgramId;
     private long oldTestProgramId;
     private int selectedIndex;
-    private StatusBarLine statusBarLine = new StatusBarLine();
+    private StatusBarLine statusBarLine;
     private TestProgram testProgram;
     private long testProgramId;
     private ObservableList<TestProgram> testPrograms;
@@ -65,6 +74,14 @@ public class MainController implements BaseController {
     private void initialize() {
         initTableView();
         addMouseListener();
+        statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
+    }
+
+    public void initMenu() {
+        menuEdit.setDisable(!isAdministration);
+        if (!isAdministration) {
+            clearContextMenu();
+        }
     }
 
     private void initTableView() {
@@ -100,7 +117,7 @@ public class MainController implements BaseController {
 
     private void setColumns() {
         columnTableViewIndex.setCellValueFactory(new PropertyValueFactory<>("index"));
-        columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("testProgramName"));
+        columnTestProgramName.setCellValueFactory(new PropertyValueFactory<>("Name"));
         columnTestProgramCreatingDate.setCellValueFactory(new PropertyValueFactory<>("created"));
         columnTestProgramChangingDate.setCellValueFactory(new PropertyValueFactory<>("changed"));
         columnTestProgramTime.setCellValueFactory(new PropertyValueFactory<>("testProgramTime"));
@@ -133,12 +150,16 @@ public class MainController implements BaseController {
         contextMenu.getItems().addAll(menuItemEdit, menuItemCopy, menuItemDelete);
     }
 
+    public void clearContextMenu() {
+        contextMenu.getItems().clear();
+    }
+
     private void addMouseListener() {
         testProgramTableView.setRowFactory(tv -> {
             TableRow<TestProgram> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    handleMenuItemEdit();
+                    handleOpenExperiment();
                 }
 
                 if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
@@ -158,14 +179,16 @@ public class MainController implements BaseController {
     }
 
     private void initModulesList() {
-        CrateModel crateModel = cm.getCrateModelInstance();
-        crateModel.getModulesList().clear();
+        Crate crate = cm.getCrateModelInstance();
+        crate.getModulesList().clear();
+        crate.initCratesList();
     }
 
     private void prepareSettingsScene() {
         cm.loadDefaultSettings();
         cm.setEditMode(false);
         cm.hideRequiredFieldsSymbols();
+        cm.selectGeneralSettingsTab();
     }
 
     private void showSettingsScene() {
@@ -189,10 +212,10 @@ public class MainController implements BaseController {
         selectedIndex = getSelectedItemIndex();
 
         if (testPrograms.isEmpty()) {
-            showNotification("Ошибка: отсутсвуют программы испытаний");
+            statusBarLine.setStatus("Ошибка: отсутсвуют программы испытаний", false);
             isTestProgramSelected = false;
         } else if (selectedIndex == -1) {
-            showNotification("Ошибка: программа испытаний не выбрана");
+            statusBarLine.setStatus("Выберите программу испытаний", false);
             isTestProgramSelected = false;
         } else {
             isTestProgramSelected = true;
@@ -202,6 +225,7 @@ public class MainController implements BaseController {
     private void prepareEditSettingsScene() {
         cm.setEditMode(true);
         cm.showTestProgram(allTestPrograms.get(getSelectedItemIndex() - 1));
+        cm.selectGeneralSettingsTab();
     }
 
     private int getSelectedItemIndex() {
@@ -217,21 +241,15 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            toggleProgressIndicatorState(false);
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Копирование программы испытаний");
             new Thread(() -> {
                 copyTestProgram();
                 copyModulesSettings();
                 reloadTestProgramsList();
-                showNotification("Программа испытаний скопирована");
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.setStatus("Программа испытаний скопирована", true);
             }).start();
-        }
-    }
-
-    private void toggleProgressIndicatorState(boolean hide) {
-        if (hide) {
-            progressIndicator.setStyle("-fx-opacity: 0;");
-        } else {
-            progressIndicator.setStyle("-fx-opacity: 1.0;");
         }
     }
 
@@ -272,23 +290,19 @@ public class MainController implements BaseController {
         cm.loadItemsForMainTableView();
     }
 
-    private void showNotification(String text) {
-        Platform.runLater(() -> {
-            toggleProgressIndicatorState(true);
-            statusBarLine.setStatus(text, statusBar);
-        });
-    }
-
     public void handleMenuItemDelete() {
         getTestPrograms();
         checkSelection();
 
         if (isTestProgramSelected) {
-            toggleProgressIndicatorState(false);
+            statusBarLine.clearStatusBar();
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Удаление программы испытаний");
             new Thread(() -> {
                 delete();
                 reloadTestProgramsList();
-                showNotification("Программа испытаний удалена");
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.setStatus("Программа испытаний удалена", true);
             }).start();
         }
     }
@@ -331,18 +345,19 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            getTestProgram(selectedIndex);
-            setExperimentId();
-            showExperimentScene();
+            statusBarLine.clearStatusBar();
+            statusBarLine.toggleProgressIndicator(false);
+            statusBarLine.setStatusOfProgress("Открытие программы испытаний");
+
+            new Thread(() -> {
+                getTestProgram(selectedIndex);
+                cm.setTestProgram();
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.clearStatusBar();
+                Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
+            }).start();
+
         }
-    }
-
-    private void setExperimentId() {
-        cm.getExperimentModel().SetTestId(testProgram.getId());
-    }
-
-    private void showExperimentScene() {
-        wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE);
     }
 
     public void handleMenuItemExit() {
@@ -351,6 +366,14 @@ public class MainController implements BaseController {
 
     public Button getOpenExperimentButton() {
         return openExperimentButton;
+    }
+
+    public TestProgram getSelectedTestProgram() {
+        return testProgramTableView.getSelectionModel().getSelectedItem();
+    }
+
+    public void setAdministration(boolean administration) {
+        isAdministration = administration;
     }
 
     @Override

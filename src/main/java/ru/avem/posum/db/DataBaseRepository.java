@@ -12,7 +12,9 @@ public class DataBaseRepository {
         if (!new File(DATABASE_NAME).exists() || forceInit) {
             AccountRepository.createTable(Account.class);
             CalibrationsRepository.createTable(Calibration.class);
-            EventRepository.createTable(Event.class);
+            ChannelsRepository.createTable(Channels.class);
+            CommandsRepository.createTable(Command.class);
+            EventsRepository.createTable(Event.class);
             ModulesRepository.createTable(Modules.class);
             TestProgramRepository.createTable(TestProgram.class);
 
@@ -21,10 +23,6 @@ public class DataBaseRepository {
 
             Account user = new Account("user", "user");
             AccountRepository.insertAccount(user);
-
-
-            Event event = new Event(0, "База создана");
-            EventRepository.insertEvent(event);
         }
     }
 }

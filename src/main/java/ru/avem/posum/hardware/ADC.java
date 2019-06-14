@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class ADC extends Module {
     public enum Settings {
-        ADC_MODE("ADC mode"), CALIBRATION_COEFFICIENTS("Calibration coefficients"),
+        ADC_MODE("ADC mode"), CALIBRATION_COEFFICIENTS("calibration coefficients"),
         FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
         LOGIC_CHANNELS_COUNT("Logic channels count"), IIR("IIR"),
         FIR("FIR"), DECIMATION("Decimation"), TAP("Filter order"),
@@ -20,34 +20,51 @@ public abstract class ADC extends Module {
         Settings(String settingName) {
             this.settingName = settingName;
         }
+    }
 
-        public String getSettingName() {
-            return settingName;
+    public enum MeasuringRangeOfChannel {
+        LOWER_BOUND(0), UPPER_BOUND(0);
+
+        private double boundValue;
+
+        MeasuringRangeOfChannel(double boundValue) {
+            this.boundValue = boundValue;
+        }
+
+        public void setBoundValue(double boundValue) {
+            this.boundValue = boundValue;
+        }
+
+        public double getBoundValue() {
+            return boundValue;
         }
     }
 
     private HashMap<String, Integer> bounds = new HashMap<>();
-    private RingBuffer ringBufferForCalculation;
-    private RingBuffer ringBufferForShow;
     private ArrayList<List<Double>> calibrationCoefficients;
     private ArrayList<List<String>> calibrationSettings;
-    private final static int CHANNELS = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
-    private int[] channelsTypes;
     private double[] data;
+    private String firPath;
+    private String iirPath;
     private int[] measuringRanges;
-    HashMap<String, Integer> moduleSettings;
+    private RingBuffer ringBufferForCalculation;
+    private RingBuffer ringBufferForShow;
+    HashMap<Settings, Integer> settingsOfModule;
     private double[] timeMarks;
     private RingBuffer timeMarksRingBuffer;
+    private int[] typeOfChannels;
 
     ADC() {
-        channelsCount = CHANNELS;
-        checkedChannels = new boolean[channelsCount];
-        channelsTypes = new int[channelsCount];
-        measuringRanges = new int[channelsCount];
-        channelsDescription = new String[channelsCount];
+        channelsCount = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим
         calibrationCoefficients = new ArrayList<>();
         calibrationSettings = new ArrayList<>();
-        moduleSettings = new HashMap<>();
+        checkedChannels = new boolean[channelsCount];
+        firPath = "";
+        iirPath = "";
+        measuringRanges = new int[channelsCount];
+        descriptions = new String[channelsCount];
+        settingsOfModule = new HashMap<>();
+        typeOfChannels = new int[channelsCount];
     }
 
     public abstract double getFrequency();
@@ -70,16 +87,24 @@ public abstract class ADC extends Module {
         return calibrationSettings;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
-    }
-
-    public int[] getChannelsTypes() {
-        return channelsTypes;
-    }
-
     public double[] getData() {
         return data;
+    }
+
+    public String[] getDescriptions() {
+        return descriptions;
+    }
+
+    public String getFirPath() {
+        return firPath;
+    }
+
+    public String getIirPath() {
+        return iirPath;
+    }
+
+    public int[] getMeasuringRanges() {
+        return measuringRanges;
     }
 
     public RingBuffer getRingBufferForCalculation() {
@@ -90,16 +115,16 @@ public abstract class ADC extends Module {
         return ringBufferForShow;
     }
 
-    public int[] getMeasuringRanges() {
-        return measuringRanges;
-    }
-
-    public HashMap<String, Integer> getModuleSettings() {
-        return moduleSettings;
+    public HashMap<Settings, Integer> getSettingsOfModule() {
+        return settingsOfModule;
     }
 
     public double[] getTimeMarks() {
         return timeMarks;
+    }
+
+    public int[] getTypeOfChannels() {
+        return typeOfChannels;
     }
 
     public void setCalibrationCoefficients(ArrayList<List<Double>> calibrationCoefficients) {
@@ -112,6 +137,14 @@ public abstract class ADC extends Module {
 
     public void setData(double[] data) {
         this.data = data;
+    }
+
+    public void setFirPath(String firPath) {
+        this.firPath = firPath;
+    }
+
+    public void setIirPath(String iirPath) {
+        this.iirPath = iirPath;
     }
 
     public void setRingBufferForCalculation(RingBuffer ringBufferForCalculation) {

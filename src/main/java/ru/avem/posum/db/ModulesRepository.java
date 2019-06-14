@@ -9,6 +9,7 @@ import ru.avem.posum.db.models.Modules;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModulesRepository extends DataBaseRepository {
@@ -41,10 +42,17 @@ public class ModulesRepository extends DataBaseRepository {
         return (List<Modules>) modules[0];
     }
 
-    public static Modules getModules(long id) {
-        final Modules[] modules = {null};
-        sendAction((modulesDao -> modules[0] = modulesDao.queryForId(id)));
-        return modules[0];
+    public static List<Modules> getModules(long id) {
+        List<Modules> allModules = getAllModules();
+        List<Modules> modulesOfTestProgram = new ArrayList<>();
+
+        for (Modules module : allModules) {
+            if (module.getTestProgramId() == id) {
+                modulesOfTestProgram.add(module);
+            }
+        }
+
+        return modulesOfTestProgram;
     }
 
     @FunctionalInterface

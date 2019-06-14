@@ -2,6 +2,8 @@ package ru.avem.posum.db.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import ru.avem.posum.models.process.EventsTypes;
 
 import java.text.SimpleDateFormat;
 
@@ -10,9 +12,7 @@ public class Event {
     @DatabaseField(generatedId = true)
     private long id;
     @DatabaseField
-    private long idTest;
-    @DatabaseField
-    private long millis = System.currentTimeMillis();
+    private long testProgramId;
     @DatabaseField
     private String date;
     @DatabaseField
@@ -26,57 +26,59 @@ public class Event {
         // ORMLite and XML binder need a no-arg constructor
     }
 
-    public Event(long idTest, String description, String status, long millis) {
-        this.idTest = idTest;
-        this.setMillis(millis);
+    public Event(long testProgramId, String description, String status, long millis) {
+        this.testProgramId = testProgramId;
+        this.setTime(millis);
         this.description = description;
         this.status = status;
     }
 
-    public Event(long idTest, String description, String status) {
-        this(idTest, description, status, System.currentTimeMillis());
-    }
-
-    public Event(long idTest, String description) {
-        this(idTest, description, "LOG", System.currentTimeMillis());
+    public Short getColorIndex() {
+        if (status.equals(EventsTypes.LOG.toString())) {
+            return IndexedColors.WHITE.index;
+        } else if (status.equals(EventsTypes.ERROR.toString())) {
+            return IndexedColors.RED.index;
+        } else if (status.equals(EventsTypes.WARNING.toString())) {
+            return IndexedColors.YELLOW.index;
+        } else {
+            return IndexedColors.GREEN.index;
+        }
     }
 
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getTime() {
-        return this.date + " " + this.time;
-    }
-
-    public long getMillis() {
-        return millis;
-    }
-
-    public void setMillis(long millis) {
-        this.millis = millis;
-        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
-        this.time = new SimpleDateFormat("HH:mm:ss").format(millis);
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getStatus() {
         return status;
     }
 
+    public long getTestProgramId() {
+        return testProgramId;
+    }
+
+    public String getTime() {
+        return this.time + " " + this.date;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
 
+    public void setTime(long millis) {
+        this.date = new SimpleDateFormat("dd.MM.yy").format(millis);
+        this.time = new SimpleDateFormat("HH:mm:ss").format(millis);
+    }
 }

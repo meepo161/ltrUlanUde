@@ -13,46 +13,55 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
+import ru.avem.posum.controllers.calibration.CalibrationController;
+import ru.avem.posum.controllers.process.LinkingController;
+import ru.avem.posum.controllers.process.ProcessController;
+import ru.avem.posum.controllers.settings.LTR212.LTR212Settings;
+import ru.avem.posum.controllers.settings.LTR24.LTR24Settings;
+import ru.avem.posum.controllers.settings.LTR27.LTR27Settings;
+import ru.avem.posum.controllers.settings.LTR34.LTR34Settings;
+import ru.avem.posum.controllers.settings.Settings;
+import ru.avem.posum.controllers.signal.SignalController;
 import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.TestProgram;
-import ru.avem.posum.hardware.CrateModel;
+import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
-import ru.avem.posum.models.ExperimentModel;
-import ru.avem.posum.models.SignalModel;
+import ru.avem.posum.models.signal.SignalModel;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
+    private CalibrationController calibrationController;
+    private Scene calibrationScene;
     private volatile boolean closed;
     private LoginController loginController;
-    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
-    private LTR24SettingController ltr24SettingController;
-    private LTR27SettingController ltr27SettingController;
-    private LTR34SettingController ltr34SettingController;
-    private LTR212SettingController ltr212SettingController;
-    private CalibrationController calibrationController;
-    private MainController mainController;
-    private Parent parent;
-    private ProcessController processController;
-    private SettingsController settingsController;
-    private Scene mainScene;
+    private LinkingController linkingController;
+    private Scene linkingScene;
     private Scene loginScene;
-    private Scene settingsScene;
-    private Scene processScene;
-    private Scene ltr24Scene;
-    private Scene ltr27Scene;
-    private Scene ltr34Scene;
-    private Scene ltr212Scene;
-    private Scene signalGraphScene;
-    private Scene calibrationScene;
-    private SignalGraphController signalGraphController;
     private Stage loginStage;
+    private LTR24Settings ltr24Settings;
+    private Scene ltr24Scene;
+    private LTR27Settings ltr27Settings;
+    private Scene ltr27Scene;
+    private LTR34Settings ltr34Settings;
+    private Scene ltr34Scene;
+    private LTR212Settings ltr212Settings;
+    private Scene ltr212Scene;
+    private Scene mainScene;
+    private MainController mainController;
+    private List<Pair<BaseController, Scene>> modulesPairs = new ArrayList<>();
+    private Parent parent;
     private Stage primaryStage;
+    private ProcessController processController;
+    private Scene processScene;
+    private Settings settings;
+    private Scene settingsScene;
+    private SignalController signalController;
+    private Scene signalGraphScene;
     private boolean stopped;
 
     @Override
@@ -62,6 +71,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         crateLoginScene();
         createMainScene();
         createSettingsScene();
+        createLinkingScene();
         createProcessScene();
         createLTR24Scene();
         createLTR34Scene();
@@ -109,8 +119,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createSettingsScene() throws IOException {
-        settingsController = (SettingsController) getController("/layouts/settingsView.fxml");
+        settings = (Settings) getController("/layouts/settingsView.fxml");
         settingsScene = createScene(1280, 720);
+    }
+
+    private void createLinkingScene() throws IOException {
+        linkingController = (LinkingController) getController("/layouts/linkingView.fxml");
+        linkingScene = createScene(1280, 720);
     }
 
     private void createProcessScene() throws IOException {
@@ -119,22 +134,22 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createLTR24Scene() throws IOException {
-        ltr24SettingController = (LTR24SettingController) getController("/layouts/LTR24SettingView.fxml");
+        ltr24Settings = (LTR24Settings) getController("/layouts/LTR24SettingView.fxml");
         ltr24Scene = createScene(1280, 720);
     }
 
     private void createLTR34Scene() throws IOException {
-        ltr34SettingController = (LTR34SettingController) getController("/layouts/LTR34SettingView.fxml");
+        ltr34Settings = (LTR34Settings) getController("/layouts/LTR34SettingView.fxml");
         ltr34Scene = createScene(1280, 720);
     }
 
     private void createLTR212Scene() throws IOException {
-        ltr212SettingController = (LTR212SettingController) getController("/layouts/LTR212SettingView.fxml");
+        ltr212Settings = (LTR212Settings) getController("/layouts/LTR212SettingView.fxml");
         ltr212Scene = createScene(1280, 720);
     }
 
     private void createSignalGraphScene() throws IOException {
-        signalGraphController = (SignalGraphController) getController("/layouts/signalGraphView.fxml");
+        signalController = (SignalController) getController("/layouts/signalGraphView.fxml");
         signalGraphScene = createScene(1280, 720);
     }
 
@@ -193,8 +208,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void checkCalibration() {
-        Utils.sleep(500);
-        signalGraphController.checkCalibration();
+        signalController.checkCalibration();
+
+        new Thread(() -> {
+            Utils.sleep(2000); // пауза для отрисовки ненулевого сигнала
+            signalController.getGraphController().restartOfShow();
+        }).start();
     }
 
     @Override
@@ -203,16 +222,16 @@ public class Main extends Application implements WindowsManager, ControllerManag
         for (String module : modulesNames) {
             String layoutPath = null;
             switch (Utils.parseModuleType(module)) {
-                case CrateModel.LTR24:
+                case Crate.LTR24:
                     layoutPath = "/layouts/LTR24SettingView.fxml";
                     break;
-                case CrateModel.LTR27:
+                case Crate.LTR27:
                     layoutPath = "/layouts/LTR27SettingView.fxml";
                     break;
-                case CrateModel.LTR34:
+                case Crate.LTR34:
                     layoutPath = "/layouts/LTR34SettingView.fxml";
                     break;
-                case CrateModel.LTR212:
+                case Crate.LTR212:
                     layoutPath = "/layouts/LTR212SettingView.fxml";
                     break;
             }
@@ -247,74 +266,66 @@ public class Main extends Application implements WindowsManager, ControllerManag
         System.out.println("Version_1.0 closed");
     }
 
-    private void stopAllModules() {
-        ObservableList<String> modulesNames = settingsController.getSettingsModel().getModulesNames();
+    @Override
+    public void stopAllModules() {
+        ObservableList<String> modulesNames = settings.getSettingsModel().getModulesNames();
         HashMap<Integer, Module> modules = getCrateModelInstance().getModulesList();
 
         if (!modules.isEmpty()) {
             for (int index = 0; index < modulesNames.size(); index++) {
-                int slot = settingsController.getSettingsModel().parseSlotNumber(index);
-                if (slot != 16) { // TODO: delete this, because LTR27Module is absentee
-                    Module module = modules.get(slot);
-                    module.checkConnection();
-                    module.checkStatus();
-                    if (module.getStatus().equals("Операция успешно выполнена")) {
-                        module.stop();
-                        module.closeConnection();
-                    }
+                int slot = settings.getSettingsModel().parseSlotNumber(index);
+                Module module = modules.get(slot);
+
+                if (module.isConnectionOpen()) {
+                    module.closeConnection();
                 }
             }
         }
     }
 
     @Override
-    public String getCrate() {
-        return settingsController.getCrate();
+    public String getCrateSerialNumber() {
+        return settings.getHardwareSettings().getCrateSerialNumber();
     }
 
     @Override
-    public CrateModel getCrateModelInstance() {
-        return settingsController.getCrateModel();
+    public Crate getCrateModelInstance() {
+        return settings.getHardwareSettings().getCrate();
+    }
+
+    @Override
+    public double getDc() {
+        return signalController.getSignalModel().getDc();
     }
 
     @Override
     public int getDecimalFormatScale() {
-        return signalGraphController.getDecimalFormatScale();
+        return signalController.getDecimalFormatScale();
     }
 
     @Override
-    public ExperimentModel getExperimentModel() {
-        return processController.getExperimentModel();
+    public LinkingController getLinkingController() {
+        return linkingController;
     }
 
     @Override
-    public boolean getICPMode() {
-        return ltr24SettingController.isIcpMode();
-    }
-
-    @Override
-    public String getValueName() {
-        return signalGraphController.getSignalModel().getValueName();
-    }
-
-    @Override
-    public double getZeroShift() {
-        return signalGraphController.getSignalModel().getZeroShift();
+    public String getStyleSheet() {
+        return settingsScene.getStylesheets().get(0);
     }
 
     @Override
     public void giveChannelInfo(int channel, String moduleType, int slot) {
-        signalGraphController.getSignalModel().setFields(moduleType, slot, channel);
+        signalController.getSignalModel().setFields(moduleType, slot, channel);
     }
 
     @Override
     public void hideRequiredFieldsSymbols() {
-        settingsController.hideRequiredFieldsSymbols();
+        settings.hideRequiredFieldsSymbols();
     }
 
     @Override
     public void initializeSignalGraphView() {
-        signalGraphController.initializeView();
+        signalController.initializeView();
     }
 
     @Override
@@ -329,12 +340,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadDefaultCalibrationSettings(SignalModel signalModel) {
-        calibrationController.loadDefaults(signalModel);
+        signalController.getGraphController().setShowFinished(true);
+        calibrationController.loadDefaultCalibrationSettings(signalModel);
     }
 
     @Override
     public void loadDefaultSettings() {
-        settingsController.loadDefaultSettings();
+        settings.loadDefaultSettings();
     }
 
     @Override
@@ -345,7 +357,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void loadItemsForModulesTableView() {
-        settingsController.refreshModulesList();
+        settings.refreshModulesList();
     }
 
     @Override
@@ -353,19 +365,30 @@ public class Main extends Application implements WindowsManager, ControllerManag
         String moduleType = (moduleName + " ").substring(0, 6).trim();
 
         switch (moduleType) {
-            case CrateModel.LTR24:
-                ltr24SettingController = (LTR24SettingController) modulesPairs.get(id).getKey();
-                ltr24SettingController.loadSettings(moduleName);
+            case Crate.LTR24:
+                ltr24Settings = (LTR24Settings) modulesPairs.get(id).getKey();
+                ltr24Settings.loadSettings(moduleName);
                 break;
-            case CrateModel.LTR34:
-                ltr34SettingController = (LTR34SettingController) modulesPairs.get(id).getKey();
-                ltr34SettingController.loadSettings(moduleName);
+            case Crate.LTR34:
+                ltr34Settings = (LTR34Settings) modulesPairs.get(id).getKey();
+                ltr34Settings.loadSettings(moduleName);
                 break;
-            case CrateModel.LTR212:
-                ltr212SettingController = (LTR212SettingController) modulesPairs.get(id).getKey();
-                ltr212SettingController.loadSettings(moduleName);
+            case Crate.LTR212:
+                ltr212Settings = (LTR212Settings) modulesPairs.get(id).getKey();
+                ltr212Settings.loadSettings(moduleName);
                 break;
         }
+    }
+
+    @Override
+    public void selectGeneralSettingsTab() {
+        settings.selectGeneralSettingsTab();
+    }
+
+    @Override
+    public void setAdministration(boolean administration) {
+        mainController.setAdministration(administration);
+        mainController.initMenu();
     }
 
     @Override
@@ -375,7 +398,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void setEditMode(boolean editMode) {
-        settingsController.setEditMode(editMode);
+        settings.setEditMode(editMode);
+    }
+
+    @Override
+    public void setTestProgram() {
+        TestProgram testProgram = mainController.getSelectedTestProgram();
+        processController.setTestProgram(testProgram);
     }
 
     @Override
@@ -390,7 +419,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void showTestProgram(TestProgram testProgram) {
-        settingsController.showTestProgram(testProgram);
+        settings.showTestProgram(testProgram);
     }
 
     @Override
@@ -412,8 +441,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 primaryStage.setTitle("Процесс испытаний");
                 primaryStage.setScene(processScene);
                 break;
+            case LINKING_SCENE:
+                primaryStage.setTitle("Добавление каналов ЦАП и АЦП");
+                primaryStage.setScene(linkingScene);
+                break;
             case LTR24_SCENE:
-                primaryStage.setTitle("Настройки модуля LTR24Table");
+                primaryStage.setTitle("Настройки модуля LTR24");
                 primaryStage.setScene(ltr24Scene);
                 break;
             case LTR34_SCENE:

@@ -4,20 +4,24 @@ import ru.avem.posum.utils.TextEncoder;
 
 public abstract class Module {
     int channelsCount;
-    String crate;
-    private int slot;
-    private long moduleId;
-    String[] channelsDescription;
     boolean[] checkedChannels;
-    protected volatile String status;
+    private boolean connectionOpen;
+    String crateSerialNumber;
+    double[] data;
+    String[] descriptions;
+    private long moduleId;
+    private int slot;
+    protected String status;
     private TextEncoder textEncoder = new TextEncoder();
 
     public boolean checkStatus() {
-        if (!status.equals("Операция успешно выполнена")) {
-            status = textEncoder.cp2utf(status);
+        if (status.equals("Операция успешно выполнена")) {
+            return true;
+        } else if (status.equals("Потеряно соединение с крейтом")) {
             return false;
         } else {
-            return true;
+            status = textEncoder.cp2utf(status);
+            return false;
         }
     }
 
@@ -35,6 +39,7 @@ public abstract class Module {
 
     public abstract void closeConnection();
 
+
     public int getChannelsCount() {
         return channelsCount;
     }
@@ -43,8 +48,12 @@ public abstract class Module {
         return checkedChannels;
     }
 
-    public String[] getChannelsDescription() {
-        return channelsDescription;
+    public double[] getData() {
+        return data;
+    }
+
+    public String[] getDescriptions() {
+        return descriptions;
     }
 
     public long getModuleId() {
@@ -55,12 +64,28 @@ public abstract class Module {
         return slot;
     }
 
+    public boolean isConnectionOpen() {
+        return connectionOpen;
+    }
+
     public String getStatus() {
         return status;
     }
 
-    public void setCrate(String crate) {
-        this.crate = crate;
+    public void setConnectionOpen(boolean connectionOpen) {
+        this.connectionOpen = connectionOpen;
+    }
+
+    public void setChannelsCount(int channelsCount) {
+        this.channelsCount = channelsCount;
+    }
+
+    public void setCrateSerialNumber(String crateSerialNumber) {
+        this.crateSerialNumber = crateSerialNumber;
+    }
+
+    public void setData(double[] data) {
+        this.data = data;
     }
 
     public void setModuleId(long moduleId) {
@@ -74,5 +99,4 @@ public abstract class Module {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }
