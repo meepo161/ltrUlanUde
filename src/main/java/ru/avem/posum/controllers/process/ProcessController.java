@@ -16,6 +16,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.controllers.protocol.JsonController;
 import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Process;
@@ -177,6 +178,7 @@ public class ProcessController implements BaseController {
     private ControllerManager cm;
     private EventsController eventsController;
     private GraphController graphController;
+    private JsonController jsonController = new JsonController(System.getProperty("user.dir") + "\\channelsData.txt");
     private boolean initialized;
     private LinkingController linkingController;
     private Process process = new Process();
@@ -602,11 +604,11 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSaveWaveformButton() {
-
+        jsonController.close();
     }
 
     public void handleSaveProtocolButton() {
-
+        jsonController.close();
     }
 
     public void handleBack() {
@@ -673,6 +675,10 @@ public class ProcessController implements BaseController {
         return graphController;
     }
 
+    public JsonController getJsonController() {
+        return jsonController;
+    }
+
     public LinkingController getLinkingController() {
         return linkingController;
     }
@@ -699,6 +705,10 @@ public class ProcessController implements BaseController {
 
     public Button getStopButton() {
         return stopButton;
+    }
+
+    public StopwatchController getStopwatchController() {
+        return stopwatchController;
     }
 
     public TableController getTableController() {

@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import ru.avem.posum.db.ChannelsRepository;
@@ -16,10 +15,15 @@ import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.process.ChannelModel;
 import ru.avem.posum.models.process.SignalParametersModel;
+import ru.avem.posum.models.protocol.ChannelDataModel;
 import ru.avem.posum.utils.Utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class TableController {
     private TableView<ChannelModel> table;
@@ -308,6 +312,7 @@ public class TableController {
                 signalParametersModel.calculateParameters();
 
                 regulatorController.setResponse();
+                processController.getJsonController().save(getChannelsDataList(processController.getStopwatchController().getTime()));
 
                 show();
                 Utils.sleep(1000);
@@ -585,6 +590,31 @@ public class TableController {
 
     public int getCellsToMerge() {
         return table.getColumns().size() - 1;
+    }
+
+    public List<ChannelDataModel> getChannelsDataList(long time) {
+        List<ChannelDataModel> channelsData = new ArrayList<>();
+        ObservableList<ChannelModel> channels = table.getItems();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        for (ChannelModel channel : channels) {
+            ChannelDataModel channelData = new ChannelDataModel(channel.getName());
+            channelData.setLoadsCounter(Integer.parseInt(channel.getLoadsCounter()));
+            channelData.setNeededAmplitude(Double.parseDouble(channel.getAmplitude()));
+            channelData.setNeededDc(Double.parseDouble(channel.getDc()));
+            channelData.setNeededFrequency(Double.parseDouble(channel.getFrequency()));
+            channelData.setResponseAmplitude(Double.parseDouble(channel.getResponseAmplitude()));
+            channelData.setResponseDc(Double.parseDouble(channel.getResponseDc()));
+            channelData.setResponseFrequency(Double.parseDouble(channel.getResponseFrequency()));
+            channelData.setRelativeResponseAmplitude(Double.parseDouble(channel.getRelativeResponseAmplitude()));
+            channelData.setRelativeResponseDc(Double.parseDouble(channel.getRelativeResponseDc()));
+            channelData.setRelativeResponseFrequency(Double.parseDouble(channel.getRelativeResponseFrequency()));
+            channelData.setTime(simpleDateFormat.format(time));
+            channelsData.add(channelData);
+        }
+
+        return channelsData;
     }
 
     public List<Short> getColorsForProtocol() {
