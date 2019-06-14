@@ -13,11 +13,11 @@ import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 
-open class ProtocolController(val processController: ProcessController) {
+class ProtocolController(val processController: ProcessController) {
     private var workbook = XSSFWorkbook()
     private val maxColons = 100 // maximum number of colons in workbook
 
-    open fun createProtocol(vararg sheetNames: String) {
+    fun createProtocol(vararg sheetNames: String) {
         workbook = XSSFWorkbook()
         for ((index, name) in sheetNames.withIndex()) {
             workbook.createSheet()
@@ -25,7 +25,7 @@ open class ProtocolController(val processController: ProcessController) {
         }
     }
 
-    open fun createTitle(title: String, cellsToMerge: IntArray, vararg sheets: String) {
+    fun createTitle(title: String, cellsToMerge: IntArray, vararg sheets: String) {
         val rowNumber = 0 // row for title
         val columnNumber = 0 // beginning of sheet
 
@@ -65,7 +65,7 @@ open class ProtocolController(val processController: ProcessController) {
         return font
     }
 
-    open fun autosizeColumns(sheetName: String) {
+    fun autosizeColumns(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
         for (index in 0..maxColons) {
             sheet.autoSizeColumn(index, true)
@@ -73,7 +73,7 @@ open class ProtocolController(val processController: ProcessController) {
         }
     }
 
-    open fun createHeaders(sheetName: String, vararg headers: String) {
+    fun createHeaders(sheetName: String, vararg headers: String) {
         val rowNumber = 1 // row for headers
         for ((index, header) in headers.withIndex()) {
             val sheet = workbook.getSheet(sheetName)
@@ -99,7 +99,7 @@ open class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-    open fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
+    fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
         val sheet = workbook.getSheet(sheetName)
         val constrain = 2 // miss the title and headers rows
 
@@ -129,7 +129,7 @@ open class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-    open fun showFileSaver(windowTitle: String, initialFileName: String): File {
+    fun showFileSaver(windowTitle: String, initialFileName: String): File {
         val userDocumentsPath = System.getProperty("user.home") + "\\Documents"
         val file = File(userDocumentsPath)
         val fileChooser = FileChooser()
@@ -141,7 +141,7 @@ open class ProtocolController(val processController: ProcessController) {
         return fileChooser.showSaveDialog(Stage())
     }
 
-    open fun saveProtocol(selectedDirectory: File, successfulStatus: String) {
+    fun saveProtocol(selectedDirectory: File, successfulStatus: String) {
         var path = selectedDirectory.absolutePath
         path = if (path.contains(".xlsx")) path else "$path.xlsx"
         val outputStream = FileOutputStream(path)

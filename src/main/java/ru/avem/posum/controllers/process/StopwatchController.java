@@ -80,6 +80,10 @@ public class StopwatchController {
         stopWatch.reset();
     }
 
+    public long getTime() {
+        return stopWatch.getTime();
+    }
+
     public void toggleTimer(boolean isHide) {
         Platform.runLater(() -> {
             stopwatchLabel.setDisable(isHide);
