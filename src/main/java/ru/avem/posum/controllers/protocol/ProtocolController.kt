@@ -10,14 +10,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.avem.posum.controllers.process.ProcessController
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.Files
-import java.nio.file.Paths
 
 class ProtocolController(val processController: ProcessController) {
     private var workbook = XSSFWorkbook()
     private val maxColons = 100 // maximum number of colons in workbook
 
-    fun createProtocol(vararg sheetNames: String) {
+    fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
+        createProtocol(*sheets)
+        createTitle(title, titleCellsToMerge, *sheets)
+    }
+
+    private fun createProtocol(vararg sheetNames: String) {
         workbook = XSSFWorkbook()
         for ((index, name) in sheetNames.withIndex()) {
             workbook.createSheet()
@@ -25,7 +28,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
-    fun createTitle(title: String, cellsToMerge: IntArray, vararg sheets: String) {
+    private fun createTitle(title: String, cellsToMerge: IntArray, vararg sheets: String) {
         val rowNumber = 0 // row for title
         val columnNumber = 0 // beginning of sheet
 
@@ -73,7 +76,18 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
-    fun createHeaders(sheetName: String, vararg headers: String) {
+    fun fillWorkBook(sheets: Array<String>, headers: Array<Array<String>>, data: List<List<List<String>>>,
+                     colors: List<List<Short>>) {
+        for (index in headers.indices) {
+            createHeaders(sheets[index], *headers[index])
+        }
+        for (index in sheets.indices) {
+            fill(sheets[index], colors[index], data[index])
+            autosizeColumns(sheets[index])
+        }
+    }
+
+    private fun createHeaders(sheetName: String, vararg headers: String) {
         val rowNumber = 1 // row for headers
         for ((index, header) in headers.withIndex()) {
             val sheet = workbook.getSheet(sheetName)
@@ -99,7 +113,7 @@ class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-    fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
+    private fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
         val sheet = workbook.getSheet(sheetName)
         val constrain = 2 // miss the title and headers rows
 

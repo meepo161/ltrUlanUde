@@ -1,8 +1,6 @@
 package ru.avem.posum.models.protocol
 
-import java.io.Serializable
-
-class ChannelDataModel(val name: String) : Serializable {
+class ChannelDataModel(val name: String) {
     var chosenParameterIndex = -1
     var loadsCounter = 0
     var neededAmplitude = 0.0

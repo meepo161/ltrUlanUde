@@ -312,7 +312,7 @@ public class TableController {
                 signalParametersModel.calculateParameters();
 
                 regulatorController.setResponse();
-                processController.getJsonController().save(getChannelsDataList(processController.getStopwatchController().getTime()));
+                processController.getJsonController().save(getChannelsDataList());
 
                 show();
                 Utils.sleep(1000);
@@ -609,7 +609,7 @@ public class TableController {
         return table.getColumns().size() + 1;
     }
 
-    public List<ChannelDataModel> getChannelsDataList(long time) {
+    public List<ChannelDataModel> getChannelsDataList() {
         List<ChannelDataModel> channelsData = new ArrayList<>();
         ObservableList<ChannelModel> channels = table.getItems();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm:ss");

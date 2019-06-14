@@ -186,6 +186,7 @@ public class ProcessController implements BaseController {
     private TableController tableController;
     private StopwatchController stopwatchController;
     private TestProgram testProgram;
+    private TestProgramController testProgramController = new TestProgramController();
     private List<Node> uiElements = new ArrayList<>();
     private WindowsManager wm;
 
@@ -584,19 +585,12 @@ public class ProcessController implements BaseController {
         int[] cellsToMerge = { tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
 
         // Create the workbook
-        protocolController.createProtocol(sheets);
-        protocolController.createTitle(testProgram.getName(), cellsToMerge, sheets);
-        for (int index = 0; index < headers.length; index++) {
-            protocolController.createHeaders(sheets[index], headers[index]);
-        }
-        for (int index = 0; index < sheets.length; index++) {
-            protocolController.fill(sheets[index], colors.get(index), data.get(index));
-            protocolController.autosizeColumns(sheets[index]);
-        }
+        protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
+        protocolController.fillWorkBook(sheets, headers, data, colors);
 
         // Show window and save the workbook
-        File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
-        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+        File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");
+        protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
     }
 
     public void handleSaveWaveformButton() {
@@ -606,33 +600,31 @@ public class ProcessController implements BaseController {
     public void handleSaveProtocolButton() {
         jsonController.close();
         // Prepare data
-        String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-        String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
+        String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
+        String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
+                eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
         List<List<List<String>>> data = new ArrayList<>();
+        data.add(testProgramController.getTestProgramData());
         data.add(tableController.getChannelsData(false));
         data.add(eventsController.getEvents(testProgram.getId()));
         data.add(getCommandsController().getCommands(testProgram.getId()));
         List<List<Short>> colors = new ArrayList<>();
+        colors.add(testProgramController.getColorsForProtocol());
         colors.add(tableController.getColorsForProtocol(false));
         colors.add(eventsController.getEventsColors(testProgram.getId()));
         colors.add(commandsController.getCommandsColors(testProgram.getId()));
-        int[] cellsToMerge = { tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+        int[] cellsToMerge = { testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),
+                eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
 
         // Create the workbook
-        protocolController.createProtocol(sheets);
-        protocolController.createTitle(testProgram.getName(), cellsToMerge, sheets);
-        for (int index = 0; index < headers.length; index++) {
-            protocolController.createHeaders(sheets[index], headers[index]);
-        }
-        for (int index = 0; index < sheets.length; index++) {
-            protocolController.fill(sheets[index], colors.get(index), data.get(index));
-            protocolController.autosizeColumns(sheets[index]);
-        }
+        protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
+        protocolController.fillWorkBook(sheets, headers, data, colors);
 
         // Show window and save the workbook
         File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
         protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
     }
+
 
     public void handleBack() {
         ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
@@ -761,6 +753,7 @@ public class ProcessController implements BaseController {
         table.getItems().clear();
         processModel.clear();
         tableController.init();
+        testProgramController.parse(testProgram);
         commandsController.init(testProgram.getId());
         eventsController.init(testProgram.getId());
         statusBarLine.toggleProgressIndicator(true);

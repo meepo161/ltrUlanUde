@@ -188,22 +188,13 @@ public class EventsController {
         colors.add(processController.getCommandsController().getCommandsColors(testProgramId));
         int[] cellsToMerge = {getCellsToMerge(), processController.getCommandsController().getCellsToMerge()};
 
-        // Create and fill the workbook
-        ProtocolController protocolController = processController.getProtocolController();
-        protocolController.createProtocol(sheets);
-        protocolController.createTitle(testProgramName, cellsToMerge, sheets);
-        for (int index = 0; index < headers.length; index++) {
-            protocolController.createHeaders(sheets[index], headers[index]);
-        }
-
-        for (int index = 0; index < sheets.length; index++) {
-            protocolController.fill(sheets[index], colors.get(index), data.get(index));
-            protocolController.autosizeColumns(sheets[index]);
-        }
+        // Create the workbook
+        processController.getProtocolController().createWorkBook(sheets, testProgramName, cellsToMerge);
+        processController.getProtocolController().fillWorkBook(sheets, headers, data, colors);
 
         // Show window and save the workbook
-        File selectedDirectory = protocolController.showFileSaver("Сохранение журнала", "Journal.xlsx");
-        protocolController.saveProtocol(selectedDirectory, "Журнал сохранен в ");
+        File selectedDirectory = processController.getProtocolController().showFileSaver("Сохранение журнала", "Journal.xlsx");
+        processController.getProtocolController().saveProtocol(selectedDirectory, "Журнал сохранен в ");
     }
 
     public int getCellsToMerge() {
