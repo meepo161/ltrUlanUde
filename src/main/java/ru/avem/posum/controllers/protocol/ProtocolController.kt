@@ -169,22 +169,21 @@ class ProtocolController(val processController: ProcessController) {
         processController.statusBarLine.setStatus(successfulStatus + path, true)
     }
 
-    fun showProtocolSaverDialog(): Boolean? {
+    fun showProtocolSaverDialog(): Long {
         val dialog = createDialog()
+        val combobox = createComboBox()
         val buttons = createButtons()
-        val grid = createGrid()
-
+        val grid = createGrid(combobox)
         dialog.dialogPane.content = grid
         dialog.dialogPane.buttonTypes.addAll(buttons.first, buttons.second)
         setButtonsStyle(dialog)
         dialog.dialogPane.content.style = "-fx-font-size: 13px;"
-        setResult(dialog)
-        val result = dialog.showAndWait()
-        return  result.get()
+        setResult(dialog, combobox)
+        return dialog.showAndWait().get()
     }
 
-    private fun createDialog(): Dialog<Boolean> {
-        val dialog = Dialog<Boolean>()
+    private fun createDialog(): Dialog<Long> {
+        val dialog = Dialog<Long>()
         dialog.title = "Параметры сохранения протокола"
         dialog.headerText = "Задайте необходимые параметры"
         return dialog
@@ -196,17 +195,17 @@ class ProtocolController(val processController: ProcessController) {
         return Pair(saveButton, cancelButton)
     }
 
-    private fun setButtonsStyle(dialog: Dialog<Boolean>) {
+    private fun setButtonsStyle(dialog: Dialog<Long>) {
         val buttonBar = dialog.dialogPane.lookup(".button-bar") as ButtonBar
         buttonBar.stylesheets.add(javaClass.getResource("buttons.css").toExternalForm())
     }
 
-    private fun createGrid(): GridPane {
+    private fun createGrid(combobox: ComboBox<String>): GridPane {
         val grid = GridPane()
         grid.hgap = 10.0
         grid.vgap = 10.0
         grid.add(Label("Проредить по:"), 0, 0)
-        grid.add(createComboBox(), 1, 0)
+        grid.add(combobox, 1, 0)
         return grid
     }
 
@@ -220,8 +219,27 @@ class ProtocolController(val processController: ProcessController) {
         return comboBox
     }
 
-    private fun setResult(dialog: Dialog<Boolean>) {
+    private fun setResult(dialog: Dialog<Long>, combobox: ComboBox<String>) {
         val saveButton = dialog.dialogPane.buttonTypes[0]
-        dialog.setResultConverter { it == saveButton }
+        dialog.setResultConverter {
+            if (it == saveButton) parseRarefactionCoefficient(combobox.selectionModel.selectedItem)
+            else -1
+        }
+    }
+
+    private fun parseRarefactionCoefficient(string: String): Long {
+        var coefficient: Long = 1 // default value
+        when (string) {
+            "Без прореживания" -> coefficient = 1000
+            "5 секунд" -> coefficient = 5000
+            "10 секунд" -> coefficient = 10_000
+            "30 секунд" -> coefficient = 30_000
+            "1 минуте" -> coefficient = 60_000
+            "10 минут" -> coefficient = 600_000
+            "30 минут" -> coefficient = 1800_000
+            "1 часу" -> coefficient = 3600_000
+            "12 часов" -> coefficient = 43_200_000
+        }
+        return coefficient
     }
 }

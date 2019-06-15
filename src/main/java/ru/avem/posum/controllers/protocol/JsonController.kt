@@ -8,6 +8,7 @@ import ru.avem.posum.models.process.ChannelModel
 import ru.avem.posum.models.protocol.ChannelDataModel
 import java.io.File
 import java.io.FileNotFoundException
+import java.text.SimpleDateFormat
 
 class JsonController(private val path: String) {
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
@@ -44,27 +45,38 @@ class JsonController(private val path: String) {
         if (json.last() != ']') File(path).writeText("$json\n]") // end of list
     }
 
-    fun parse(): List<ChannelModel> {
+    fun parse(rarefactionCoefficient: Long): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()
         val channelsDataModels = load()
+        val timeFormat = SimpleDateFormat("hh:mm:ss")
         if (channelsDataModels != null) {
+            var time = timeFormat.parse(channelsDataModels[0].time.split(" ")[1]).time
+            var timeIsChanged = false
             for (channelData in channelsDataModels) {
                 val channelModel = ChannelModel(channelData.name)
-                channelModel.amplitude = channelData.neededAmplitude.toString()
-                channelModel.dc = channelData.neededDc.toString()
-                channelModel.frequency = channelData.neededFrequency.toString()
-                channelModel.rms = channelData.rms.toString()
-                channelModel.loadsCounter = channelData.loadsCounter.toString()
-                channelModel.chosenParameterIndex = channelData.chosenParameterIndex.toString()
-                channelModel.responseAmplitude = channelData.responseAmplitude.toString()
-                channelModel.responseDc = channelData.responseDc.toString()
-                channelModel.responseFrequency = channelData.responseFrequency.toString()
-                channelModel.relativeResponseAmplitude = channelData.relativeResponseAmplitude.toString()
-                channelModel.relativeResponseDc = channelData.relativeResponseDc.toString()
-                channelModel.relativeResponseFrequency = channelData.relativeResponseFrequency.toString()
-                channelModel.date = channelData.time.split(" ")[0]
-                channelModel.time = channelData.time.split(" ")[1]
-                channelsModels.add(channelModel)
+                val channelTime = timeFormat.parse(channelData.time.split(" ")[1]).time
+                println("First time $time, channel time $channelTime")
+                if (channelTime == time || rarefactionCoefficient == 1000.toLong()) {
+                    channelModel.amplitude = channelData.neededAmplitude.toString()
+                    channelModel.dc = channelData.neededDc.toString()
+                    channelModel.frequency = channelData.neededFrequency.toString()
+                    channelModel.rms = channelData.rms.toString()
+                    channelModel.loadsCounter = channelData.loadsCounter.toString()
+                    channelModel.chosenParameterIndex = channelData.chosenParameterIndex.toString()
+                    channelModel.responseAmplitude = channelData.responseAmplitude.toString()
+                    channelModel.responseDc = channelData.responseDc.toString()
+                    channelModel.responseFrequency = channelData.responseFrequency.toString()
+                    channelModel.relativeResponseAmplitude = channelData.relativeResponseAmplitude.toString()
+                    channelModel.relativeResponseDc = channelData.relativeResponseDc.toString()
+                    channelModel.relativeResponseFrequency = channelData.relativeResponseFrequency.toString()
+                    channelModel.date = channelData.time.split(" ")[0]
+                    channelModel.time = channelData.time.split(" ")[1]
+                    channelsModels.add(channelModel)
+                    timeIsChanged = false
+                } else if (!timeIsChanged) {
+                    time += rarefactionCoefficient
+                    timeIsChanged = true
+                }
             }
         }
         return channelsModels

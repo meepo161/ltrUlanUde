@@ -575,11 +575,11 @@ public class ProcessController implements BaseController {
         String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
         String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
         List<List<List<String>>> data = new ArrayList<>();
-        data.add(tableController.getChannelsData(true));
+        data.add(tableController.getChannelsData(true, 1));
         data.add(eventsController.getEvents(testProgram.getId()));
         data.add(getCommandsController().getCommands(testProgram.getId()));
         List<List<Short>> colors = new ArrayList<>();
-        colors.add(tableController.getColorsForProtocol(true));
+        colors.add(tableController.getColorsForProtocol(true, 1));
         colors.add(eventsController.getEventsColors(testProgram.getId()));
         colors.add(commandsController.getCommandsColors(testProgram.getId()));
         int[] cellsToMerge = {tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
@@ -599,20 +599,20 @@ public class ProcessController implements BaseController {
 
     public void handleSaveProtocolButton() {
         jsonController.close();
-        boolean isSaving = protocolController.showProtocolSaverDialog();
-        if (isSaving) {
+        long rarefactionCoefficient = protocolController.showProtocolSaverDialog();
+        if (rarefactionCoefficient != -1) {
             // Prepare data
             String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
             String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
                     eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
             List<List<List<String>>> data = new ArrayList<>();
             data.add(testProgramController.getTestProgramData());
-            data.add(tableController.getChannelsData(false));
+            data.add(tableController.getChannelsData(false, rarefactionCoefficient));
             data.add(eventsController.getEvents(testProgram.getId()));
             data.add(getCommandsController().getCommands(testProgram.getId()));
             List<List<Short>> colors = new ArrayList<>();
             colors.add(testProgramController.getColorsForProtocol());
-            colors.add(tableController.getColorsForProtocol(false));
+            colors.add(tableController.getColorsForProtocol(false, rarefactionCoefficient));
             colors.add(eventsController.getEventsColors(testProgram.getId()));
             colors.add(commandsController.getCommandsColors(testProgram.getId()));
             int[] cellsToMerge = {testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),

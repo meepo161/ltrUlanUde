@@ -506,12 +506,12 @@ public class TableController {
         return table.getItems();
     }
 
-    public List<List<String>> getChannelsData(boolean isPointData) {
+    public List<List<String>> getChannelsData(boolean isPointData, long rarefactionCoefficient) {
         List<ChannelModel> channelModels;
         if (isPointData) {
             channelModels = table.getItems();
         } else {
-            channelModels = processController.getJsonController().parse();
+            channelModels = processController.getJsonController().parse(rarefactionCoefficient);
         }
 
         List<String> names = new ArrayList<>();
@@ -613,7 +613,6 @@ public class TableController {
         List<ChannelDataModel> channelsData = new ArrayList<>();
         ObservableList<ChannelModel> channels = table.getItems();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm:ss");
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         for (ChannelModel channel : channels) {
             ChannelDataModel channelData = new ChannelDataModel(channel.getName());
@@ -635,22 +634,19 @@ public class TableController {
         return channelsData;
     }
 
-    public List<Short> getColorsForProtocol(boolean isPointData) {
+    public List<Short> getColorsForProtocol(boolean isPointData, long rarefactionCoefficient) {
+        List<ChannelModel> channelModels;
         if (isPointData) {
-            ObservableList<ChannelModel> channelModels = table.getItems();
-            List<Short> colors = new ArrayList<>();
-            for (ChannelModel ignored : channelModels) {
-                colors.add(IndexedColors.WHITE.index);
-            }
-            return colors;
+            channelModels = table.getItems();
         } else {
-            List<ChannelModel> channelModels = processController.getJsonController().parse();
-            List<Short> colors = new ArrayList<>();
-            for (ChannelModel ignored : channelModels) {
-                colors.add(IndexedColors.WHITE.index);
-            }
-            return colors;
+            channelModels = processController.getJsonController().parse(rarefactionCoefficient);
         }
+
+        List<Short> colors = new ArrayList<>();
+        for (ChannelModel ignored : channelModels) {
+            colors.add(IndexedColors.WHITE.index);
+        }
+        return colors;
     }
 
     public RegulatorController getRegulatorController() {
