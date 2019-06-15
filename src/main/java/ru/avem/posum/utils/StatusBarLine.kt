@@ -12,32 +12,24 @@ class StatusBarLine(private val checkIcon: Label, private val isMainView: Boolea
     private var statusBarThread = Thread()
 
     fun setStatusOfProgress(text: String) {
-        clear()
-        toggleProgressIndicator(false)
         Platform.runLater {
+            clearStatusBar()
+            toggleProgressIndicator(false)
             statusBar.style = "-fx-padding: 0 0 0 3.2;"
             statusBar.text = text
             handleStatusBar()
         }
     }
 
-    fun clear() {
-        Platform.runLater {
-            statusBar.text = ""
-            hideIcons()
-        }
-    }
-
-    private fun hideIcons() {
+    private fun clearStatusBar() {
+        statusBar.text = ""
         checkIcon.style = "-fx-opacity: 0;"
         warningIcon.style = "-fx-opacity: 0;"
     }
 
-    fun toggleProgressIndicator(isHidden: Boolean) {
-        Platform.runLater {
-            if (isHidden) progressIndicator.style = "-fx-opacity: 0;"
-            else progressIndicator.style = "-fx-opacity: 1;"
-        }
+    private fun toggleIndicator(isHidden: Boolean) {
+        if (isHidden) progressIndicator.style = "-fx-opacity: 0;"
+        else progressIndicator.style = "-fx-opacity: 1;"
     }
 
     private fun handleStatusBar() {
@@ -47,16 +39,18 @@ class StatusBarLine(private val checkIcon: Label, private val isMainView: Boolea
 
     private fun startNewStatusBarThread() {
         statusBarThread = Thread {
-            Utils.sleep(5000)
-            clear()
+            try {
+                Thread.sleep(5000)
+                clear()
+            } catch (ignored: InterruptedException) {}
         }
         statusBarThread.start()
     }
 
     fun setStatus(text: String, isStatusSuccessful: Boolean) {
-        clear()
-        toggleProgressIndicator(true)
         Platform.runLater {
+            clearStatusBar()
+            toggleIndicator(true)
             statusBar.text = text
             initIcons(isStatusSuccessful)
             handleStatusBar()
@@ -77,5 +71,13 @@ class StatusBarLine(private val checkIcon: Label, private val isMainView: Boolea
         }
 
         statusBar.style = padding
+    }
+
+    fun toggleProgressIndicator(isHidden: Boolean) {
+        Platform.runLater { toggleIndicator(isHidden) }
+    }
+
+    fun clear() {
+        Platform.runLater { clearStatusBar() }
     }
 }
