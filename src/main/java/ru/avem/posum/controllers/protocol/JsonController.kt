@@ -41,8 +41,8 @@ class JsonController(private val path: String) {
 
     fun close() {
         val json = File(path).readText().removeSuffix(",\n")
-        File(path).writeText("$json\n]")
-    } // end of list
+        if (json.last() != ']') File(path).writeText("$json\n]") // end of list
+    }
 
     fun parse(): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()

@@ -1,5 +1,8 @@
 package ru.avem.posum.controllers.protocol
 
+import javafx.collections.FXCollections
+import javafx.scene.control.*
+import javafx.scene.layout.GridPane
 import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.apache.poi.ss.usermodel.*
@@ -8,8 +11,10 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFFont
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.avem.posum.controllers.process.ProcessController
+import sun.reflect.generics.tree.VoidDescriptor
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.system.measureTimeMillis
 
 class ProtocolController(val processController: ProcessController) {
     private var workbook = XSSFWorkbook()
@@ -143,7 +148,7 @@ class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
-    fun showFileSaver(windowTitle: String, initialFileName: String): File {
+    fun showFileSaver(windowTitle: String, initialFileName: String): File? {
         val userDocumentsPath = System.getProperty("user.home") + "\\Documents"
         val file = File(userDocumentsPath)
         val fileChooser = FileChooser()
@@ -162,5 +167,61 @@ class ProtocolController(val processController: ProcessController) {
         workbook.write(outputStream)
         workbook.close()
         processController.statusBarLine.setStatus(successfulStatus + path, true)
+    }
+
+    fun showProtocolSaverDialog(): Boolean? {
+        val dialog = createDialog()
+        val buttons = createButtons()
+        val grid = createGrid()
+
+        dialog.dialogPane.content = grid
+        dialog.dialogPane.buttonTypes.addAll(buttons.first, buttons.second)
+        setButtonsStyle(dialog)
+        dialog.dialogPane.content.style = "-fx-font-size: 13px;"
+        setResult(dialog)
+        val result = dialog.showAndWait()
+        return  result.get()
+    }
+
+    private fun createDialog(): Dialog<Boolean> {
+        val dialog = Dialog<Boolean>()
+        dialog.title = "Параметры сохранения протокола"
+        dialog.headerText = "Задайте необходимые параметры"
+        return dialog
+    }
+
+    private fun createButtons(): Pair<ButtonType, ButtonType> {
+        val saveButton = ButtonType("Сохранить", ButtonBar.ButtonData.OK_DONE)
+        val cancelButton = ButtonType("Отмена", ButtonBar.ButtonData.OK_DONE)
+        return Pair(saveButton, cancelButton)
+    }
+
+    private fun setButtonsStyle(dialog: Dialog<Boolean>) {
+        val buttonBar = dialog.dialogPane.lookup(".button-bar") as ButtonBar
+        buttonBar.stylesheets.add(javaClass.getResource("buttons.css").toExternalForm())
+    }
+
+    private fun createGrid(): GridPane {
+        val grid = GridPane()
+        grid.hgap = 10.0
+        grid.vgap = 10.0
+        grid.add(Label("Проредить по:"), 0, 0)
+        grid.add(createComboBox(), 1, 0)
+        return grid
+    }
+
+    private fun createComboBox(): ComboBox<String> {
+        val comboBox = ComboBox<String>()
+        val items = FXCollections.observableArrayList<String>("Без прореживания", "5 секунд", "10 секунд",
+                "30 секунд", "1 минуте", "10 минут", "30 минут", "1 часу", "12 часов")
+        comboBox.items = items
+        comboBox.selectionModel.select("Без прореживания")
+        comboBox.stylesheets.add(javaClass.getResource("combo-box.css").toExternalForm())
+        return comboBox
+    }
+
+    private fun setResult(dialog: Dialog<Boolean>) {
+        val saveButton = dialog.dialogPane.buttonTypes[0]
+        dialog.setResultConverter { it == saveButton }
     }
 }

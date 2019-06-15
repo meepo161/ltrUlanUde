@@ -582,7 +582,7 @@ public class ProcessController implements BaseController {
         colors.add(tableController.getColorsForProtocol(true));
         colors.add(eventsController.getEventsColors(testProgram.getId()));
         colors.add(commandsController.getCommandsColors(testProgram.getId()));
-        int[] cellsToMerge = { tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+        int[] cellsToMerge = {tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
 
         // Create the workbook
         protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
@@ -599,32 +599,34 @@ public class ProcessController implements BaseController {
 
     public void handleSaveProtocolButton() {
         jsonController.close();
-        // Prepare data
-        String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-        String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
-                eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
-        List<List<List<String>>> data = new ArrayList<>();
-        data.add(testProgramController.getTestProgramData());
-        data.add(tableController.getChannelsData(false));
-        data.add(eventsController.getEvents(testProgram.getId()));
-        data.add(getCommandsController().getCommands(testProgram.getId()));
-        List<List<Short>> colors = new ArrayList<>();
-        colors.add(testProgramController.getColorsForProtocol());
-        colors.add(tableController.getColorsForProtocol(false));
-        colors.add(eventsController.getEventsColors(testProgram.getId()));
-        colors.add(commandsController.getCommandsColors(testProgram.getId()));
-        int[] cellsToMerge = { testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),
-                eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+        boolean isSaving = protocolController.showProtocolSaverDialog();
+        if (isSaving) {
+            // Prepare data
+            String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
+            String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
+                    eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
+            List<List<List<String>>> data = new ArrayList<>();
+            data.add(testProgramController.getTestProgramData());
+            data.add(tableController.getChannelsData(false));
+            data.add(eventsController.getEvents(testProgram.getId()));
+            data.add(getCommandsController().getCommands(testProgram.getId()));
+            List<List<Short>> colors = new ArrayList<>();
+            colors.add(testProgramController.getColorsForProtocol());
+            colors.add(tableController.getColorsForProtocol(false));
+            colors.add(eventsController.getEventsColors(testProgram.getId()));
+            colors.add(commandsController.getCommandsColors(testProgram.getId()));
+            int[] cellsToMerge = {testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),
+                    eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
 
-        // Create the workbook
-        protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
-        protocolController.fillWorkBook(sheets, headers, data, colors);
+            // Create the workbook
+            protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
+            protocolController.fillWorkBook(sheets, headers, data, colors);
 
-        // Show window and save the workbook
-        File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
-        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+            // Show window and save the workbook
+            File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
+            if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+        }
     }
-
 
     public void handleBack() {
         ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);

@@ -194,7 +194,7 @@ public class EventsController {
 
         // Show window and save the workbook
         File selectedDirectory = processController.getProtocolController().showFileSaver("Сохранение журнала", "Journal.xlsx");
-        processController.getProtocolController().saveProtocol(selectedDirectory, "Журнал сохранен в ");
+        if (selectedDirectory != null) processController.getProtocolController().saveProtocol(selectedDirectory, "Журнал сохранен в ");
     }
 
     public int getCellsToMerge() {
