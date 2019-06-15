@@ -18,7 +18,7 @@ class JsonController(private val path: String) {
         createFile()
     }
 
-    private fun createFile() {
+    fun createFile() {
         try {
             File(path).writeText("[\n") // beginning of list
         } catch (e: FileNotFoundException) {

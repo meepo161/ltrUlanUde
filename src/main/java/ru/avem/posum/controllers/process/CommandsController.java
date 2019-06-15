@@ -76,7 +76,7 @@ public class CommandsController {
         tableView.setRowFactory(tv -> {
             TableRow<Command> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty()) && processController.getProcess().isStopped()) {
                     contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
                 } else if (event.getClickCount() == 1) {
                     contextMenu.hide();

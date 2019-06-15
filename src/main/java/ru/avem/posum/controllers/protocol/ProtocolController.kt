@@ -13,6 +13,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ru.avem.posum.controllers.process.ProcessController
 import sun.reflect.generics.tree.VoidDescriptor
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import kotlin.system.measureTimeMillis
 
@@ -163,10 +164,14 @@ class ProtocolController(val processController: ProcessController) {
     fun saveProtocol(selectedDirectory: File, successfulStatus: String) {
         var path = selectedDirectory.absolutePath
         path = if (path.contains(".xlsx")) path else "$path.xlsx"
-        val outputStream = FileOutputStream(path)
-        workbook.write(outputStream)
-        workbook.close()
-        processController.statusBarLine.setStatus(successfulStatus + path, true)
+        try {
+            val outputStream = FileOutputStream(path)
+            workbook.write(outputStream)
+            workbook.close()
+            processController.statusBarLine.setStatus(successfulStatus + path, true)
+        } catch (e: FileNotFoundException){
+            processController.statusBarLine.setStatus("Ошибка сохранения - файл занят другим процессом", false)
+        }
     }
 
     fun showProtocolSaverDialog(): Long {

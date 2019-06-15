@@ -149,7 +149,7 @@ public class GraphController {
         coefficients.add("В 500 меньше");
 
         rarefactionCoefficientComboBox.setItems(coefficients);
-        rarefactionCoefficientComboBox.getSelectionModel().select(3);
+        rarefactionCoefficientComboBox.getSelectionModel().select(6);
     }
 
     private void listenRarefactionCoefficients() {

@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.process;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -182,6 +183,7 @@ public class ProcessController implements BaseController {
     private ProcessModel processModel = new ProcessModel();
     private ProtocolController protocolController;
     private RegulatorParametersController regulatorParametersController;
+    List<Pair<Node, Boolean>> states;
     private StatusBarLine statusBarLine;
     private TableController tableController;
     private StopwatchController stopwatchController;
@@ -364,9 +366,22 @@ public class ProcessController implements BaseController {
         }
     }
 
-    private void toggleUiElements(boolean isDisable) {
+    public void toggleUiElements(boolean isDisable) {
         for (Node element : uiElements) {
             element.setDisable(isDisable);
+        }
+    }
+
+    public void saveUiElementsState() {
+        states = new ArrayList<>();
+        for (Node element : uiElements) {
+            states.add(new Pair<>(element, element.isDisable()));
+        }
+    }
+
+    public void loadUiElementsState() {
+        for (Pair<Node, Boolean> uiElementState : states) {
+            uiElementState.getKey().setDisable(uiElementState.getValue());
         }
     }
 
@@ -386,7 +401,6 @@ public class ProcessController implements BaseController {
         statusBarLine.toggleProgressIndicator(true);
 
         if (process.isInitialized()) {
-            process.setStopped(false);
             statusBarLine.setStatus("Операция успешно выполнена", true);
             eventsController.getEventsModel().addEvent(testProgram.getId(), "Успешная инициализация модулей", EventsTypes.OK);
             initializeButton.setDisable(false);
@@ -441,7 +455,6 @@ public class ProcessController implements BaseController {
                 timeTextField.setDisable(false);
                 savePointButton.setDisable(false);
                 saveWaveformButton.setDisable(false);
-                saveProtocolButton.setDisable(false);
                 backButton.setDisable(false);
                 table.setDisable(false);
                 graph.setDisable(false);
@@ -462,6 +475,7 @@ public class ProcessController implements BaseController {
             tableController.initRegulator();
             calibrationModel.loadCalibrations(table.getItems(), processModel.getModules());
             commandsController.executeCommands();
+            jsonController.createFile();
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
             while (!process.isStopped()) {
@@ -590,7 +604,7 @@ public class ProcessController implements BaseController {
 
         // Show window and save the workbook
         File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");
-        protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
+        if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
     }
 
     public void handleSaveWaveformButton() {
@@ -601,30 +615,40 @@ public class ProcessController implements BaseController {
         jsonController.close();
         long rarefactionCoefficient = protocolController.showProtocolSaverDialog();
         if (rarefactionCoefficient != -1) {
-            // Prepare data
-            String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-            String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
-                    eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
-            List<List<List<String>>> data = new ArrayList<>();
-            data.add(testProgramController.getTestProgramData());
-            data.add(tableController.getChannelsData(false, rarefactionCoefficient));
-            data.add(eventsController.getEvents(testProgram.getId()));
-            data.add(getCommandsController().getCommands(testProgram.getId()));
-            List<List<Short>> colors = new ArrayList<>();
-            colors.add(testProgramController.getColorsForProtocol());
-            colors.add(tableController.getColorsForProtocol(false, rarefactionCoefficient));
-            colors.add(eventsController.getEventsColors(testProgram.getId()));
-            colors.add(commandsController.getCommandsColors(testProgram.getId()));
-            int[] cellsToMerge = {testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),
-                    eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+            statusBarLine.clearStatusBar();
+            statusBarLine.setStatusOfProgress("Подготовка данных для сохраения протокола");
 
-            // Create the workbook
-            protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
-            protocolController.fillWorkBook(sheets, headers, data, colors);
+            new Thread(() -> {
+                // Prepare data
+                String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
+                String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
+                        eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
+                List<List<List<String>>> data = new ArrayList<>();
+                data.add(testProgramController.getTestProgramData());
+                data.add(tableController.getChannelsData(false, rarefactionCoefficient));
+                data.add(eventsController.getEvents(testProgram.getId()));
+                data.add(getCommandsController().getCommands(testProgram.getId()));
+                List<List<Short>> colors = new ArrayList<>();
+                colors.add(testProgramController.getColorsForProtocol());
+                colors.add(tableController.getColorsForProtocol(false, rarefactionCoefficient));
+                colors.add(eventsController.getEventsColors(testProgram.getId()));
+                colors.add(commandsController.getCommandsColors(testProgram.getId()));
+                int[] cellsToMerge = {testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),
+                        eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
 
-            // Show window and save the workbook
-            File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
-            if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+                // Create the workbook
+                protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
+                protocolController.fillWorkBook(sheets, headers, data, colors);
+
+                // Show window and save the workbook
+                Platform.runLater(() -> {
+                    statusBarLine.toggleProgressIndicator(true);
+                    statusBarLine.clearStatusBar();
+                    File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
+                    if (selectedDirectory != null)
+                        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+                });
+            }).start();
         }
     }
 

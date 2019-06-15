@@ -2,9 +2,10 @@ package ru.avem.posum.controllers.process;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import ru.avem.posum.controllers.protocol.ProtocolController;
+import javafx.util.Pair;
 import ru.avem.posum.db.EventsRepository;
 import ru.avem.posum.models.process.Event;
 import ru.avem.posum.models.process.EventsModel;
@@ -61,9 +62,8 @@ public class EventsController {
     private void clearEvents() {
         processController.getStatusBarLine().toggleProgressIndicator(false);
         processController.getStatusBarLine().setStatusOfProgress("Удаление всех событий из журнала");
-        table.setDisable(true);
-        addEventButton.setDisable(true);
-        saveJournalButton.setDisable(true);
+        processController.saveUiElementsState();
+        processController.toggleUiElements(true);
 
         new Thread(() -> {
             ObservableList<Event> events = table.getItems();
@@ -72,9 +72,9 @@ public class EventsController {
                 eventsModel.deleteEvent(event);
             }
 
+
             events.clear();
-            table.setDisable(false);
-            addEventButton.setDisable(false);
+            processController.loadUiElementsState();
             processController.getStatusBarLine().toggleProgressIndicator(true);
             processController.getStatusBarLine().setStatus("События успешно удалены", true);
         }).start();
@@ -84,7 +84,7 @@ public class EventsController {
         tableView.setRowFactory(tv -> {
             TableRow<Event> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty())) {
+                if (event.getButton() == MouseButton.SECONDARY && (!row.isEmpty()) && processController.getProcess().isStopped()) {
                     contextMenu.show(tableView, event.getScreenX(), event.getScreenY());
                 } else if (event.getClickCount() == 1) {
                     contextMenu.hide();
