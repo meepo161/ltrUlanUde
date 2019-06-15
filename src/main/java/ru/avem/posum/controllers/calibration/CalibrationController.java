@@ -465,7 +465,7 @@ public class CalibrationController implements BaseController {
             backButton.setDisable(false);
             loadDefaultUiElementsState();
             clearCalibrationData();
-            statusBarLine.clearStatusBar();
+            statusBarLine.clear();
             statusBarLine.toggleProgressIndicator(true);
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE));
         }).start();

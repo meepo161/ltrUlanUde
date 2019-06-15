@@ -19,17 +19,30 @@ public class EventsController {
     private Button addEventButton;
     private ContextMenu contextMenu = new ContextMenu();
     private EventsModel eventsModel = new EventsModel();
+    private TableColumn<Event, String> eventDescriptionColumn;
+    private TableColumn<Event, String> eventTimeColumn;
     private ProcessController processController;
     private Button saveJournalButton;
     private TableView<Event> table;
 
-    public EventsController(ProcessController processController, Button addEventButton, Button saveJournalButton, TableView<Event> table) {
+    public EventsController(ProcessController processController, Button addEventButton, Button saveJournalButton,
+                            TableView<Event> table, TableColumn<Event, String> eventDescriptionColumn,
+                            TableColumn<Event, String> eventTimeColumn) {
         this.addEventButton = addEventButton;
         this.processController = processController;
         this.table = table;
         this.saveJournalButton = saveJournalButton;
+        this.eventDescriptionColumn = eventDescriptionColumn;
+        this.eventTimeColumn = eventTimeColumn;
 
         initContextMenu();
+        listen(table);
+    }
+
+    public void initTableView() {
+        table.setItems(getEvents());
+        eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
+        eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
         listen(table);
     }
 
@@ -218,6 +231,10 @@ public class EventsController {
         output.add(time);
         output.add(events);
         return output;
+    }
+
+    private ObservableList<Event> getEvents() {
+        return eventsModel.getEvents();
     }
 
     public List<Short> getEventsColors(long testProgramId) {

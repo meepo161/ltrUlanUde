@@ -192,7 +192,7 @@ public class Settings implements BaseController {
                 }
 
                 statusBarLine.toggleProgressIndicator(true);
-                statusBarLine.clearStatusBar();
+                statusBarLine.clear();
             }).start();
         }
     }
@@ -269,8 +269,6 @@ public class Settings implements BaseController {
     }
 
     private void save() {
-        statusBarLine.clearStatusBar();
-        statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Сохранение программы испытаний");
         toggleUiElements();
         saveSettings();
@@ -324,7 +322,7 @@ public class Settings implements BaseController {
             cm.stopAllModules();
             hardwareSettings.clear();
             statusBarLine.toggleProgressIndicator(true);
-            statusBarLine.clearStatusBar();
+            statusBarLine.clear();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.MAIN_SCENE));
         }).start();
     }

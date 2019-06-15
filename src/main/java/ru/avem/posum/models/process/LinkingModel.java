@@ -50,6 +50,7 @@ public class LinkingModel {
     }
 
     private void checkRemoved(ObservableList<CheckBox> channels) {
+        List<CheckBox> channelsToRemove = new ArrayList<>();
         // Удаляет из списка связанные каналы ЦАП - АЦП
         for (Pair<CheckBox, CheckBox> descriptions : linkedChannels) {
             String descriptionOfDacChannel = descriptions.getKey().getText();
@@ -57,13 +58,12 @@ public class LinkingModel {
 
             for (CheckBox description : channels) {
                 if (description.getText().equals(descriptionOfDacChannel) || description.getText().equals(descriptionOfAdcChannel)) {
-                    Platform.runLater(() -> channels.remove(description));
+                    channelsToRemove.add(description);
                 }
             }
         }
 
         // Удаляет из списка выбранные каналы АЦП
-        List<CheckBox> channelsToRemove = new ArrayList<>();
         for (CheckBox channel : chosenChannels) {
             String descriptionOfChannel = channel.getText();
 
@@ -72,7 +72,7 @@ public class LinkingModel {
                     channelsToRemove.add(description);
                 }
             }
-            Platform.runLater(() -> channels.removeAll(channelsToRemove));
+            channels.removeAll(channelsToRemove);
         }
     }
 

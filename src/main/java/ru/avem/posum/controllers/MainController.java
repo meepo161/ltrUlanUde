@@ -295,8 +295,6 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            statusBarLine.clearStatusBar();
-            statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Удаление программы испытаний");
             new Thread(() -> {
                 delete();
@@ -345,15 +343,13 @@ public class MainController implements BaseController {
         checkSelection();
 
         if (isTestProgramSelected) {
-            statusBarLine.clearStatusBar();
-            statusBarLine.toggleProgressIndicator(false);
             statusBarLine.setStatusOfProgress("Открытие программы испытаний");
 
             new Thread(() -> {
                 getTestProgram(selectedIndex);
                 cm.setTestProgram();
                 statusBarLine.toggleProgressIndicator(true);
-                statusBarLine.clearStatusBar();
+                statusBarLine.clear();
                 Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.EXPERIMENT_SCENE));
             }).start();
 

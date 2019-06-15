@@ -232,7 +232,7 @@ public class SignalController implements BaseController {
         new Thread(() -> {
             stopReceivingOfData();
             resetShowingSettings();
-            statusBarLine.clearStatusBar();
+            statusBarLine.clear();
             changeScene();
         }).start();
     }

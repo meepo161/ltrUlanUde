@@ -125,7 +125,7 @@ public class GraphController {
                     }
 
                     Utils.sleep(200);
-                    signalController.getStatusBarLine().clearStatusBar();
+                    signalController.getStatusBarLine().clear();
                     signalController.getStatusBarLine().toggleProgressIndicator(true);
                 }).start();
             }
@@ -348,7 +348,7 @@ public class GraphController {
 
                 Utils.sleep(1900); // пауза для отрисовки ненулевого графика
                 restartOfShow();
-                signalController.getStatusBarLine().clearStatusBar();
+                signalController.getStatusBarLine().clear();
                 signalController.getStatusBarLine().toggleProgressIndicator(true);
             }).start();
         });

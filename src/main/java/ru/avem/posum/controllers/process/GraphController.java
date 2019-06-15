@@ -155,7 +155,6 @@ public class GraphController {
     private void listenRarefactionCoefficients() {
         rarefactionCoefficientComboBox.valueProperty().addListener(observable -> {
             String selection = rarefactionCoefficientComboBox.getSelectionModel().getSelectedItem();
-            processController.getStatusBarLine().clearStatusBar();
             processController.getStatusBarLine().setStatusOfProgress("Обработка графика");
 
             new Thread(() -> {
@@ -170,7 +169,7 @@ public class GraphController {
                 restartShow();
                 Utils.sleep(400); // ожидание начала отрисовки графика
                 processController.getStatusBarLine().toggleProgressIndicator(true);
-                processController.getStatusBarLine().clearStatusBar();
+                processController.getStatusBarLine().clear();
             }).start();
         });
     }

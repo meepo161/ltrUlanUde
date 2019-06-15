@@ -22,6 +22,8 @@ import static ru.avem.posum.db.CommandsRepository.getAllCommands;
 public class CommandsController {
     private ComboBox<String> commandsComboBox;
     private CommandsModel commandsModel = new CommandsModel();
+    private TableColumn<Command, String> commandsTypesColumn;
+    private TableColumn<Command, String> commandsDescriptionsColumn;
     private ContextMenu contextMenu = new ContextMenu();
     private Dialog dialog;
     private boolean didBackSpacePressed;
@@ -31,12 +33,22 @@ public class CommandsController {
     private TextField descriptionTextFiled;
     private TimerController timerController = new TimerController();
 
-    public CommandsController(ProcessController processController, TableView<Command> table) {
+    public CommandsController(ProcessController processController, TableView<Command> table,
+                              TableColumn<Command, String> commandsTypesColumn,
+                              TableColumn<Command, String> commandsDescriptionsColumn) {
         this.processController = processController;
         this.table = table;
+        this.commandsTypesColumn = commandsTypesColumn;
+        this.commandsDescriptionsColumn = commandsDescriptionsColumn;
 
         initContextMenu();
         listen(table);
+    }
+
+    public void initTableView() {
+        table.setItems(getCommands());
+        commandsTypesColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+        commandsDescriptionsColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
     }
 
     public void init(long testProgramId) {

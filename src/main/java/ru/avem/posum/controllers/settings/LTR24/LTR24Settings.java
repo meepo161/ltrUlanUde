@@ -119,7 +119,6 @@ public class LTR24Settings implements BaseController {
             }
 
             statusBarLine.toggleProgressIndicator(true);
-            statusBarLine.clearStatusBar();
             statusBarLine.setStatus(ltr24SettingsModel.getLTR24Instance().getStatus(),
                     ltr24SettingsModel.getLTR24Instance().checkStatus());
             backButton.setDisable(false);
@@ -140,7 +139,7 @@ public class LTR24Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        statusBarLine.clearStatusBar();
+        statusBarLine.clear();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -171,7 +170,7 @@ public class LTR24Settings implements BaseController {
             ltr24ChannelsSettings.enableValueOnChannelButtonsState();
             backButton.setDisable(false);
             statusBarLine.toggleProgressIndicator(true);
-            statusBarLine.clearStatusBar();
+            statusBarLine.clear();
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
         }).start();
     }

@@ -62,19 +62,10 @@ public class TableController {
         this.regulatorController = new RegulatorController(processController);
         this.initializeButton = initializeButton;
 
-        initTableView();
         listenStopButton();
     }
 
-    public void init() {
-        table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
-            initializeButton.setDisable(table.getItems().isEmpty());
-        });
-
-        loadChannels();
-    }
-
-    private void initTableView() {
+    public void initTableView() {
         table.setItems(graphController.getGraphModel().getChannels());
 
         Utils.makeHeaderWrappable(channelsColumn);
@@ -132,7 +123,7 @@ public class TableController {
 
     private void listen(TableView<ChannelModel> tableView) {
         tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
-
+            initializeButton.setDisable(table.getItems().isEmpty());
 
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
             ObservableList<ColorPicker> colorPickers = getColorPickers();

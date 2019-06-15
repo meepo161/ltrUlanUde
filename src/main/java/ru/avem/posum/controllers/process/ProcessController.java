@@ -1,6 +1,5 @@
 package ru.avem.posum.controllers.process;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -45,7 +44,7 @@ public class ProcessController implements BaseController {
     @FXML
     private Label amplitudeVoltLabel;
     @FXML
-    private CheckBox autoscaleCheckBox;
+    private CheckBox autoScaleCheckBox;
     @FXML
     private Button backButton;
     @FXML
@@ -183,7 +182,7 @@ public class ProcessController implements BaseController {
     private ProcessModel processModel = new ProcessModel();
     private ProtocolController protocolController;
     private RegulatorParametersController regulatorParametersController;
-    List<Pair<Node, Boolean>> states;
+    private List<Pair<Node, Boolean>> states;
     private StatusBarLine statusBarLine;
     private TableController tableController;
     private StopwatchController stopwatchController;
@@ -197,11 +196,12 @@ public class ProcessController implements BaseController {
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
         statusBarLine.setStatus("Программа испытаний загружена", true);
 
-        commandsController = new CommandsController(this, commandsTableView);
+        commandsController = new CommandsController(this, commandsTableView, commandsTypesColumn, commandsDescriptionsColumn);
 
-        eventsController = new EventsController(this, addEventButton, saveJournalButton, eventsTableView);
+        eventsController = new EventsController(this, addEventButton, saveJournalButton, eventsTableView,
+                eventDescriptionColumn, eventTimeColumn);
 
-        graphController = new GraphController(autoscaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
+        graphController = new GraphController(autoScaleCheckBox, graph, horizontalScaleLabel, horizontalScaleComboBox,
                 process, rarefactionCoefficientLabel, rarefactionCoefficientComboBox, verticalScaleLabel, verticalScaleComboBox,
                 this);
 
@@ -220,29 +220,11 @@ public class ProcessController implements BaseController {
 
         stopwatchController = new StopwatchController(this, timeLabel, timeTextField);
 
-        initCommandsTableView();
-        initEventsTableView();
-        listenTableViews();
+        commandsController.initTableView();
+        eventsController.initTableView();
+        tableController.initTableView();
+
         fillListOfUiElements();
-    }
-
-    private void initCommandsTableView() {
-        commandsTableView.setItems(commandsController.getCommands());
-        commandsTypesColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
-        commandsDescriptionsColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-    }
-
-    private void initEventsTableView() {
-        eventsTableView.setItems(eventsController.getEventsModel().getEvents());
-        eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
-        eventDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-        eventsController.listen(eventsTableView);
-    }
-
-    private void listenTableViews() {
-        table.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
-            initializeButton.setDisable(table.getItems().isEmpty());
-        });
     }
 
     private void fillListOfUiElements() {
@@ -264,7 +246,7 @@ public class ProcessController implements BaseController {
         uiElements.add(eventsTableView);
         uiElements.add(addEventButton);
         uiElements.add(saveJournalButton);
-        uiElements.add(autoscaleCheckBox);
+        uiElements.add(autoScaleCheckBox);
         uiElements.add(rarefactionCoefficientLabel);
         uiElements.add(rarefactionCoefficientComboBox);
         uiElements.add(verticalScaleLabel);
@@ -302,7 +284,6 @@ public class ProcessController implements BaseController {
                 } else {
                     showErrors();
                     statusBarLine.toggleProgressIndicator(true);
-                    statusBarLine.clearStatusBar();
                     statusBarLine.setStatus("Ошибка открытия соединений с модулями", false);
 
                     toggleInitializationUiElements();
@@ -319,7 +300,7 @@ public class ProcessController implements BaseController {
             new Thread(() -> {
                 process.disconnect();
                 statusBarLine.toggleProgressIndicator(true);
-                statusBarLine.clearStatusBar();
+                statusBarLine.clear();
 
                 if (!process.isConnected()) {
                     statusBarLine.setStatus("Отмена инициализации модулей успешно выполнена", true);
@@ -439,7 +420,7 @@ public class ProcessController implements BaseController {
     }
 
     private void checkRunning() {
-        statusBarLine.clearStatusBar();
+        statusBarLine.clear();
         statusBarLine.toggleProgressIndicator(true);
 
         if (process.isRan()) {
@@ -615,7 +596,6 @@ public class ProcessController implements BaseController {
         jsonController.close();
         long rarefactionCoefficient = protocolController.showProtocolSaverDialog();
         if (rarefactionCoefficient != -1) {
-            statusBarLine.clearStatusBar();
             statusBarLine.setStatusOfProgress("Подготовка данных для сохраения протокола");
 
             new Thread(() -> {
@@ -643,7 +623,7 @@ public class ProcessController implements BaseController {
                 // Show window and save the workbook
                 Platform.runLater(() -> {
                     statusBarLine.toggleProgressIndicator(true);
-                    statusBarLine.clearStatusBar();
+                    statusBarLine.clear();
                     File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
                     if (selectedDirectory != null)
                         protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
@@ -667,6 +647,7 @@ public class ProcessController implements BaseController {
             regulatorParametersController.hideToolBar();
             stopwatchController.stopStopwatch();
             tableController.saveChannels();
+            table.getItems().clear();
             wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
         }
     }
@@ -684,7 +665,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSaveRegulatorParameters() {
-        statusBarLine.clearStatusBar();
         statusBarLine.setStatusOfProgress("Сохранение параметров регулятора");
 
         new Thread(() -> {
@@ -776,14 +756,13 @@ public class ProcessController implements BaseController {
     }
 
     private void loadTestProgram() {
-        table.getItems().clear();
         processModel.clear();
-        tableController.init();
+        tableController.loadChannels();
         testProgramController.parse(testProgram);
         commandsController.init(testProgram.getId());
         eventsController.init(testProgram.getId());
         statusBarLine.toggleProgressIndicator(true);
-        statusBarLine.clearStatusBar();
+        statusBarLine.clear();
     }
 
     @Override

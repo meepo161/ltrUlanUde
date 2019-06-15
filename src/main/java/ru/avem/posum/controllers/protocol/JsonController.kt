@@ -55,7 +55,6 @@ class JsonController(private val path: String) {
             for (channelData in channelsDataModels) {
                 val channelModel = ChannelModel(channelData.name)
                 val channelTime = timeFormat.parse(channelData.time.split(" ")[1]).time
-                println("First time $time, channel time $channelTime")
                 if (channelTime == time || rarefactionCoefficient == 1000.toLong()) {
                     channelModel.amplitude = channelData.neededAmplitude.toString()
                     channelModel.dc = channelData.neededDc.toString()

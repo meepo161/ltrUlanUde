@@ -138,7 +138,6 @@ public class LTR212Settings implements BaseController {
                 });
             }
 
-            statusBarLine.clearStatusBar();
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.setStatus(ltr212SettingsModel.getLTR212Instance().getStatus(),
                     ltr212SettingsModel.getLTR212Instance().checkStatus());
@@ -158,7 +157,7 @@ public class LTR212Settings implements BaseController {
             cm.loadItemsForModulesTableView();
         }).start();
 
-        statusBarLine.clearStatusBar();
+        statusBarLine.clear();
         changeScene(WindowsManager.Scenes.SETTINGS_SCENE);
     }
 
@@ -171,8 +170,6 @@ public class LTR212Settings implements BaseController {
     }
 
     private void showChannelValue(int channel) {
-        statusBarLine.clearStatusBar();
-        statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
         ltr212ChannelsSettings.disableValueOnChannelButtonsState();
         backButton.setDisable(true);
@@ -189,8 +186,8 @@ public class LTR212Settings implements BaseController {
             Utils.sleep(2000); // пауза для отрисовки ненулевого сигнала
             ltr212ChannelsSettings.enableValueOnChannelButtonsState();
             backButton.setDisable(false);
-            statusBarLine.clearStatusBar();
             statusBarLine.toggleProgressIndicator(true);
+            statusBarLine.clear();
             changeScene(WindowsManager.Scenes.SIGNAL_GRAPH_SCENE);
         }).start();
     }
