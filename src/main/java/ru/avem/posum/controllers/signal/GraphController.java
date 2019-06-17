@@ -362,6 +362,7 @@ public class GraphController {
                 } else {
                     Platform.runLater(() -> graphSeries.getData().clear());
                     signalController.getSignalModel().setCalibratedNull(0.0);
+                    signalController.getSignalModel().setCalibrationOfNullExists(false);
                     signalController.getSignalModel().setCalibrationExists(false);
                     signalController.getSignalModel().setDefaultValueName();
                     setValueNameToGraph();
@@ -369,7 +370,7 @@ public class GraphController {
                     Platform.runLater(this::resetGraphBounds);
                 }
 
-                Utils.sleep(1900); // пауза для отрисовки ненулевого графика
+                Utils.sleep(2000); // пауза для отрисовки ненулевого графика
                 restartOfShow();
                 signalController.getStatusBarLine().clear();
                 signalController.getStatusBarLine().toggleProgressIndicator(true);

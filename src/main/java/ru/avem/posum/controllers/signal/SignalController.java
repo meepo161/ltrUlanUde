@@ -121,14 +121,18 @@ public class SignalController implements BaseController {
         signalModel.defineModuleInstance(cm.getCrateModelInstance().getModulesList());
         signalModel.checkCalibration();
 
+        if (signalModel.isCalibrationExists() || signalModel.isCalibrationOfNullExists()) {
+            calibrationCheckBox.setSelected(true);
+        }
+
         if (signalModel.isCalibrationExists()) {
             graphController.setShowFinished(true);
             graphController.clearSeries();
-            calibrationCheckBox.setSelected(true);
             graphController.setValueNameToGraph();
             graphController.setGraphBounds();
             setSignalParametersLabels();
-        } else if (signalModel.getAdc().getCalibrationSettings().isEmpty()) {
+        } else if (signalModel.getAdc().getCalibrationSettings().get(signalModel.getChannel()).isEmpty()) {
+            statusBarLine.toggleProgressIndicator(true);
             statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", false);
         }
     }

@@ -15,6 +15,7 @@ public class SignalModel {
     private double averageCount = 1;
     private double[] buffer;
     private boolean calibrationExists;
+    private boolean calibrationOfNullExists;
     private int channel;
     private boolean connectionLost;
     private double dc;
@@ -81,10 +82,10 @@ public class SignalModel {
     }
 
     public void checkCalibration() {
+        checkSettingOfNul();
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
 
         if (!calibrationCoefficients.isEmpty()) {
-            checkSettingOfNul();
             setCalibrationExists(true);
             signalParametersModel.defineCalibratedBounds(adc);
             setBounds();
@@ -101,6 +102,7 @@ public class SignalModel {
                 signalParametersModel.setShift(0);
                 if (CalibrationPoint.parseValueName(calibration).isEmpty()) {
                     signalParametersModel.setShift(CalibrationPoint.parseChannelValue(calibration));
+                    calibrationOfNullExists = true;
                     break;
                 }
             }
@@ -269,6 +271,10 @@ public class SignalModel {
         return calibrationExists;
     }
 
+    public boolean isCalibrationOfNullExists() {
+        return calibrationOfNullExists;
+    }
+
     public boolean isConnectionLost() {
         return connectionLost;
     }
@@ -289,7 +295,13 @@ public class SignalModel {
         signalParametersModel.setPeakValue(amplitude);
     }
 
-    public void setCalibratedNull(double value) { signalParametersModel.setShift(value); }
+    public void setCalibratedNull(double value) {
+        signalParametersModel.setShift(value);
+    }
+
+    public void setCalibrationOfNullExists(boolean calibrationOfNullExists) {
+        this.calibrationOfNullExists = calibrationOfNullExists;
+    }
 
     public void setFrequency(int frequency) {
         signalParametersModel.setFrequency(frequency);
