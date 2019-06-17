@@ -132,6 +132,8 @@ public class SignalController implements BaseController {
             graphController.setGraphBounds();
             setSignalParametersLabels();
         } else if (signalModel.getAdc().getCalibrationSettings().get(signalModel.getChannel()).isEmpty()) {
+            calibrationCheckBox.setSelected(false);
+            Utils.sleep(500);
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", false);
         }

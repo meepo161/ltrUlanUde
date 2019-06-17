@@ -370,10 +370,7 @@ public class GraphController {
                     Platform.runLater(this::resetGraphBounds);
                 }
 
-                Utils.sleep(2000); // пауза для отрисовки ненулевого графика
                 restartOfShow();
-                signalController.getStatusBarLine().clear();
-                signalController.getStatusBarLine().toggleProgressIndicator(true);
             }).start();
         });
     }
