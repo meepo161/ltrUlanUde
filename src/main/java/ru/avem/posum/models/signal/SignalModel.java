@@ -170,7 +170,7 @@ public class SignalModel {
     }
 
     private void getSignalParameters() {
-        amplitude = signalParametersModel.getAmplitude();
+        amplitude = signalParametersModel.getPeakValue();
         frequency = signalParametersModel.getSignalFrequency();
         loadsCounter = signalParametersModel.getLoadsCounter();
         rms = signalParametersModel.getRms();
@@ -287,7 +287,7 @@ public class SignalModel {
     }
 
     public void setAmplitude(int amplitude) {
-        signalParametersModel.setAmplitude(amplitude);
+        signalParametersModel.setPeakValue(amplitude);
     }
 
     public void setFrequency(int frequency) {

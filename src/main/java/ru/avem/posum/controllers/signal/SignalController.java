@@ -110,7 +110,7 @@ public class SignalController implements BaseController {
 
     public void setSignalParametersLabels() {
         Platform.runLater(() -> {
-            amplitudeLabel.setText(String.format("Амлитуда, %s:", signalModel.getValueName()));
+            amplitudeLabel.setText(String.format("Pk - Pk, %s:", signalModel.getValueName()));
             loadsCounterLabel.setText("Нагружений:");
             rmsLabel.setText(String.format("RMS, %s:", signalModel.getValueName()));
             zeroShiftLabel.setText(String.format("Статика, %s:", signalModel.getValueName()));

@@ -70,7 +70,7 @@
                         <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="Напряжение, В" lowerBound="-10.0" side="LEFT" tickUnit="2.0" upperBound="10.0" />
                     </yAxis>
                 </LineChart>
-                <Label fx:id="amplitudeLabel" text="Амплитуда:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                <Label fx:id="amplitudeLabel" text="Pk - Pk, В:" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
                 <TextField fx:id="amplitudeTextField" focusTraversable="false" maxWidth="150.0" minWidth="150.0" mouseTransparent="true" prefWidth="150.0" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                     <GridPane.margin>
                         <Insets />

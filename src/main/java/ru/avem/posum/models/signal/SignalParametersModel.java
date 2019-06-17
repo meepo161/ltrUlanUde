@@ -11,8 +11,8 @@ public class SignalParametersModel {
     private boolean accurateFrequencyCalculation = true;
     private ADC adc;
     private int averageIterator;
-    private double amplitude;
-    private double bufferedAmplitude;
+    private double peakValue;
+    private double bufferedPeakValue;
     private double bufferedFrequency;
     private double bufferedLoadsCounter;
     private double bufferedRms;
@@ -153,33 +153,33 @@ public class SignalParametersModel {
 
     private void calculateParameters(double averageCount) {
         if (averageCount == 1) {
-            amplitude = rms = dc = 0;
-            bufferedAmplitude = amplitude = calculateAmplitude();
+            peakValue = rms = dc = 0;
+            bufferedPeakValue = peakValue = calculatePeakValue();
             bufferedDC = dc = calculateDC();
             bufferedRms = rms = calculateRms();
             bufferedFrequency = signalFrequency = accurateFrequencyCalculation ? calculateFrequency() : estimateFrequency();
             loadsCounter += calculateLoadsCounter();
         } else if (averageIterator < averageCount) {
-            bufferedAmplitude += calculateAmplitude();
+            bufferedPeakValue += calculatePeakValue();
             bufferedRms += calculateRms();
             bufferedDC += calculateDC();
             bufferedFrequency += accurateFrequencyCalculation ? calculateFrequency() : estimateFrequency();
             bufferedLoadsCounter += calculateLoadsCounter();
             averageIterator++;
         } else {
-            amplitude = bufferedAmplitude / averageCount;
+            peakValue = bufferedPeakValue / averageCount;
             rms = bufferedRms / averageCount;
             dc = bufferedDC / averageCount;
             signalFrequency = bufferedFrequency / averageCount;
             loadsCounter += bufferedLoadsCounter / averageCount;
-            bufferedAmplitude = bufferedFrequency = bufferedLoadsCounter = bufferedRms = bufferedDC = 0;
+            bufferedPeakValue = bufferedFrequency = bufferedLoadsCounter = bufferedRms = bufferedDC = 0;
             averageIterator = 0;
         }
     }
 
-    private double calculateAmplitude() {
-        double amplitude = (maxSignalValue - minSignalValue) / 2 + shift;
-        return amplitude < 0 ? 0 : amplitude;
+    private double calculatePeakValue() {
+        double peakValue = (maxSignalValue - minSignalValue);
+        return peakValue < 0 ? 0 : peakValue;
     }
 
     private double calculateDC() {
@@ -245,7 +245,7 @@ public class SignalParametersModel {
             frequency = defineFrequencyFirstAlgorithm();
         }
 
-        double freq = amplitude < getLowerLimitOfAmplitude() ? 0 : frequency;
+        double freq = peakValue < getLowerLimitOfAmplitude() ? 0 : frequency;
         savedFrequency = freq;
         return freq;
     }
@@ -399,10 +399,10 @@ public class SignalParametersModel {
 
     private void sumCalibratedParameters() {
         if (lowerBound < 0 & firstLoadValue >= 0) {
-            bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(amplitude);
+            bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(peakValue);
             bufferedCalibratedRms += calibratedRms = applyCalibration(rms);
         } else {
-            bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(adc, amplitude);
+            bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(adc, peakValue);
             bufferedCalibratedRms += calibratedRms = applyCalibration(adc, rms);
         }
         bufferedCalibratedZeroShift += calibratedDC = applyCalibration(adc, dc);
@@ -510,8 +510,8 @@ public class SignalParametersModel {
         calibratedValueName = CalibrationPoint.parseValueName(calibrationSettings.get(calibrationSettings.size() - 1));
     }
 
-    public double getAmplitude() {
-        return amplitude;
+    public double getPeakValue() {
+        return peakValue;
     }
 
     public double getCalibratedAmplitude() {
@@ -562,8 +562,8 @@ public class SignalParametersModel {
         this.accurateFrequencyCalculation = accurateFrequencyCalculation;
     }
 
-    public void setAmplitude(int amplitude) {
-        this.amplitude = amplitude;
+    public void setPeakValue(int peakValue) {
+        this.peakValue = peakValue;
     }
 
     public void setDc(int dc) {
