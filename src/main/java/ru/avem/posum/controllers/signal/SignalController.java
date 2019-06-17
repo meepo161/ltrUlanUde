@@ -232,8 +232,9 @@ public class SignalController implements BaseController {
         new Thread(() -> {
             stopReceivingOfData();
             resetShowingSettings();
-            statusBarLine.clear();
             changeScene();
+            statusBarLine.toggleProgressIndicator(true);
+            statusBarLine.clear();
         }).start();
     }
 
@@ -263,7 +264,6 @@ public class SignalController implements BaseController {
     private void changeScene() {
         String moduleType = signalModel.getModuleType();
         int slot = signalModel.getSlot();
-        toggleProgressIndicatorState(true);
         Platform.runLater(() -> wm.setModuleScene(moduleType, slot - 1));
         cm.loadItemsForModulesTableView();
     }

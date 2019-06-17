@@ -166,7 +166,7 @@ public class LTR24Settings implements BaseController {
             cm.initializeSignalGraphView();
             cm.checkCalibration();
 
-            Utils.sleep(2000); // пауза для отрисовки ненулевого сигнала
+            Utils.sleep(2500); // пауза для отрисовки ненулевого сигнала
             ltr24ChannelsSettings.enableValueOnChannelButtonsState();
             backButton.setDisable(false);
             statusBarLine.toggleProgressIndicator(true);

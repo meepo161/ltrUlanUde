@@ -8,6 +8,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import ru.avem.posum.hardware.Crate;
+import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.signal.GraphModel;
 import ru.avem.posum.utils.Utils;
 
@@ -29,11 +31,14 @@ public class GraphController {
         signalController.getGraph().getData().add(graphSeries);
         clearSeries();
         toggleAutoRange(false);
+        setVerticalSignalScales();
+        setHorizontalScales();
+        setDefaultScales();
     }
 
     private void toggleAutoRange(boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        yAxis.setAutoRanging(isAutoRangeEnabled);
+        Platform.runLater(() -> yAxis.setAutoRanging(isAutoRangeEnabled));
         restartOfShow();
     }
 
@@ -48,8 +53,9 @@ public class GraphController {
         setDefaultScales();
         listenScalesComboBox(signalController.getVerticalScalesComboBox());
         listenScalesComboBox(signalController.getHorizontalScalesComboBox());
-        addRarefactionCoefficients();
+        setRarefactionCoefficients();
         listenRarefactionComboBox();
+        selectRarefactionCoefficient();
         setGraphTypes();
         listenGraphTypesComboBox();
         setDecimalFormats();
@@ -132,7 +138,7 @@ public class GraphController {
         });
     }
 
-    private void addRarefactionCoefficients() {
+    private void setRarefactionCoefficients() {
         ObservableList<String> coefficients = FXCollections.observableArrayList();
 
         coefficients.add("Все");
@@ -149,11 +155,18 @@ public class GraphController {
         signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(3);
     }
 
+    private void selectRarefactionCoefficient() {
+        Platform.runLater(() -> {
+            String selection = signalController.getSignalModel().getModuleType().equals(Crate.LTR24) ? "В 250 меньше" : "В 10 меньше";
+            signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(selection);
+        });
+    }
+
     private void listenRarefactionComboBox() {
         signalController.getRarefactionCoefficientComboBox().valueProperty().addListener(observable -> {
             if (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex() == 0) {
                 signalController.getSignalModel().setRarefactionCoefficient(1);
-            } else if (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex() != -1){
+            } else if (signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedIndex() != -1) {
                 String selection = signalController.getRarefactionCoefficientComboBox().getSelectionModel().getSelectedItem();
                 int coefficient = Integer.parseInt(selection.split(" ")[1]);
                 signalController.getSignalModel().setRarefactionCoefficient(coefficient);
@@ -208,7 +221,7 @@ public class GraphController {
         if (isFFT) {
             signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(0);
         } else {
-            signalController.getRarefactionCoefficientComboBox().getSelectionModel().select(3);
+            selectRarefactionCoefficient();
         }
     }
 
@@ -274,12 +287,19 @@ public class GraphController {
 
     private void listenAutoRangeCheckBox() {
         signalController.getAutoRangeCheckBox().selectedProperty().addListener(observable -> {
-            if (signalController.getAutoRangeCheckBox().isSelected()) {
-                toggleAutoRange(true);
-            } else {
-                toggleAutoRange(false);
-                resetGraphBounds();
-            }
+            signalController.getStatusBarLine().toggleProgressIndicator(false);
+            signalController.getStatusBarLine().setStatusOfProgress("Обработка графика");
+
+            new Thread(() -> {
+                if (signalController.getAutoRangeCheckBox().isSelected()) {
+                    toggleAutoRange(true);
+                } else {
+                    toggleAutoRange(false);
+                    resetGraphBounds();
+                }
+                signalController.getStatusBarLine().toggleProgressIndicator(true);
+                signalController.getStatusBarLine().clear();
+            }).start();
         });
     }
 
@@ -320,12 +340,14 @@ public class GraphController {
 
     private void setNonCalibratedGraphBounds() {
         int selectedRange = signalController.getVerticalScalesComboBox().getSelectionModel().getSelectedIndex();
-        if (selectedRange != 0) {
-            signalController.getVerticalScalesComboBox().getSelectionModel().select(0);
-        } else {
-            signalController.getVerticalScalesComboBox().getSelectionModel().select(1);
-        }
-        signalController.getVerticalScalesComboBox().getSelectionModel().select(selectedRange);
+        Platform.runLater(() -> {
+            if (selectedRange != 0) {
+                signalController.getVerticalScalesComboBox().getSelectionModel().select(0);
+            } else {
+                signalController.getVerticalScalesComboBox().getSelectionModel().select(1);
+            }
+            signalController.getVerticalScalesComboBox().getSelectionModel().select(selectedRange);
+        });
     }
 
     private void listenCalibrationCheckBox() {

@@ -639,16 +639,26 @@ public class ProcessController implements BaseController {
         Optional<ButtonType> result = alert.showAndWait();
 
         if (result.isPresent() && result.get() == ok) {
-            if (!process.isStopped()) {
-                handleStop();
-            }
+            statusBarLine.setStatusOfProgress("Загрузка элементов главного окна программы");
 
-            regulatorParametersController.clear();
-            regulatorParametersController.hideToolBar();
-            stopwatchController.stopStopwatch();
-            tableController.saveChannels();
-            table.getItems().clear();
-            wm.setScene(WindowsManager.Scenes.MAIN_SCENE);
+            new Thread(() -> {
+                saveUiElementsState();
+                toggleUiElements(true);
+                if (!process.isStopped()) {
+                    handleStop();
+                }
+
+                regulatorParametersController.clear();
+                regulatorParametersController.hideToolBar();
+                stopwatchController.stopStopwatch();
+                tableController.saveChannels();
+                table.getItems().clear();
+                statusBarLine.toggleProgressIndicator(true);
+                statusBarLine.clear();
+                loadUiElementsState();
+                Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.MAIN_SCENE));
+            }).start();
+
         }
     }
 
