@@ -81,11 +81,10 @@ public class SignalModel {
     }
 
     public void checkCalibration() {
-        checkSettingOfNul();
-
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
 
         if (!calibrationCoefficients.isEmpty()) {
+            checkSettingOfNul();
             setCalibrationExists(true);
             signalParametersModel.defineCalibratedBounds(adc);
             setBounds();
@@ -289,6 +288,8 @@ public class SignalModel {
     public void setAmplitude(int amplitude) {
         signalParametersModel.setPeakValue(amplitude);
     }
+
+    public void setCalibratedNull(double value) { signalParametersModel.setShift(value); }
 
     public void setFrequency(int frequency) {
         signalParametersModel.setFrequency(frequency);

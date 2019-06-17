@@ -361,6 +361,7 @@ public class GraphController {
                     signalController.checkCalibration();
                 } else {
                     Platform.runLater(() -> graphSeries.getData().clear());
+                    signalController.getSignalModel().setCalibratedNull(0.0);
                     signalController.getSignalModel().setCalibrationExists(false);
                     signalController.getSignalModel().setDefaultValueName();
                     setValueNameToGraph();

@@ -128,7 +128,7 @@ public class SignalController implements BaseController {
             graphController.setValueNameToGraph();
             graphController.setGraphBounds();
             setSignalParametersLabels();
-        } else if (signalModel.getAdc().getCalibrationSettings().size() < 2) { // either is absentee either setted of null
+        } else if (signalModel.getAdc().getCalibrationSettings().isEmpty()) {
             statusBarLine.setStatus("Градуировочные коэффициенты отсутсвуют", false);
         }
     }
