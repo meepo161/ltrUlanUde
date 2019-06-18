@@ -267,7 +267,7 @@ class ProtocolController(val processController: ProcessController) {
         val rmsColumnIndex = 6
 
         val anchor = drawing.createAnchor(lastColumnIndex, firstRowIndex, lastColumnIndex + 100, firstRowIndex, lastColumnIndex + 2,
-                firstRowIndex, rmsColumnIndex + lastColumnIndex, firstRowIndex + 10)
+                firstRowIndex, rmsColumnIndex + lastRowIndex / 2, firstRowIndex + 10)
         val lineChart = drawing.createChart(anchor)
         val legend = lineChart.orAddLegend
         legend.position = LegendPosition.RIGHT
