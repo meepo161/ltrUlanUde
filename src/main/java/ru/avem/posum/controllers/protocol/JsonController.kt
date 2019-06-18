@@ -37,6 +37,7 @@ class JsonController(private val path: String) {
         val listType = Types.newParameterizedType(List::class.java, ChannelDataModel::class.java)
         val jsonAdapter: JsonAdapter<List<ChannelDataModel>> = moshi.adapter(listType)
         val json = File(path).readText()
+        jsonAdapter.lenient()
         return jsonAdapter.fromJson(json)
     }
 

@@ -7,25 +7,28 @@ import javafx.stage.FileChooser
 import javafx.stage.Stage
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.usermodel.charts.AxisPosition
-import org.apache.poi.ss.usermodel.charts.ChartAxis
+import org.apache.poi.ss.usermodel.charts.ChartDataSource
 import org.apache.poi.ss.util.CellRangeAddress
-import org.apache.poi.xddf.usermodel.chart.AxisCrosses
 import org.apache.poi.xddf.usermodel.chart.LegendPosition
 import ru.avem.posum.controllers.process.ProcessController
-import sun.reflect.generics.tree.VoidDescriptor
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import kotlin.system.measureTimeMillis
 import org.apache.poi.ss.usermodel.charts.DataSources
-import org.apache.poi.ss.usermodel.charts.ChartDataSource
 import org.apache.poi.xssf.usermodel.*
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean
 
 
 class ProtocolController(val processController: ProcessController) {
-    private var workbook = XSSFWorkbook()
+    private val amplitudeColumnIndex = 3
+    private val dcColumnIndex = 4
+    private val firstRowIndex = 2 // miss the title row and headers row
+    private val frequencyColumnIndex = 5
     private val maxColons = 100 // maximum number of colons in workbook
+    private val rowShifter = 10 // height of lineChart in rows
+    private val rmsColumnIndex = 6
+    private val timeColumnIndex = 1
+    private var workbook = XSSFWorkbook()
 
     fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
         createProtocol(*sheets)
@@ -256,19 +259,40 @@ class ProtocolController(val processController: ProcessController) {
 
     fun drawLineChart(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
-        val drawing = sheet.createDrawingPatriarch()
-        val lastColumnIndex = getLastColumnIndex(sheet) - 1
-        val firstRowIndex = 2 // miss the title row and headers row
-        val lastRowIndex = sheet.lastRowNum - 1
-        val timeColumnIndex = 1
-        val amplitudeColumnIndex = 3
-        val dcColumnIndex = 4
-        val frequencyColumnIndex = 5
-        val rmsColumnIndex = 6
+        val lastRowIndex = getLastRowIndex(sheet)
+        val timeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, timeColumnIndex, timeColumnIndex))
+        val amplitudeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, amplitudeColumnIndex, amplitudeColumnIndex))
+        val dcData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, dcColumnIndex, dcColumnIndex))
+        val frequencyData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, frequencyColumnIndex, frequencyColumnIndex))
+        val rmsData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, rmsColumnIndex, rmsColumnIndex))
 
-        val anchor = drawing.createAnchor(lastColumnIndex, firstRowIndex, lastColumnIndex + 100, firstRowIndex, lastColumnIndex + 2,
-                firstRowIndex, rmsColumnIndex + lastRowIndex / 2, firstRowIndex + 10)
+        var lineChart = createLineChart(sheet, "График амплитуды", 0)
+        drawLineChart(lineChart, "Амплитуда", timeData, amplitudeData)
+
+        lineChart = createLineChart(sheet, "График статики", (rowShifter + 1))
+        drawLineChart(lineChart, "Статика", timeData, dcData)
+
+        lineChart = createLineChart(sheet, "График частоты", 2 * (rowShifter + 1))
+        drawLineChart(lineChart, "Частота", timeData, frequencyData)
+
+        lineChart = createLineChart(sheet, "График rms", 3 * (rowShifter + 1))
+        drawLineChart(lineChart, "Rms", timeData, rmsData)
+    }
+
+    private fun createLineChart(sheet: XSSFSheet, lineChartTitle: String, chartBeginningRow: Int): XSSFChart {
+        val drawing = sheet.createDrawingPatriarch()
+        val chartBeginningColumnIndex = getLastColumnIndex(sheet) + 2
+        val lastRowIndex = getLastRowIndex(sheet)
+        val anchor = drawing.createAnchor(0, 0, 0, 0, chartBeginningColumnIndex,
+                firstRowIndex + chartBeginningRow, 20,
+                firstRowIndex + chartBeginningRow + rowShifter)
         val lineChart = drawing.createChart(anchor)
+        lineChart.setTitleText(lineChartTitle)
+
+        return lineChart
+    }
+
+    private fun drawLineChart(lineChart: XSSFChart, seriesTitle: String, xAxisData: ChartDataSource<Number>, yAxisData: ChartDataSource<Number>) {
         val legend = lineChart.orAddLegend
         legend.position = LegendPosition.RIGHT
 
@@ -278,30 +302,16 @@ class ProtocolController(val processController: ProcessController) {
         val yAxis = lineChart.createValueAxis(AxisPosition.LEFT)
         yAxis.crosses = org.apache.poi.ss.usermodel.charts.AxisCrosses.AUTO_ZERO
 
-        val timeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, timeColumnIndex, timeColumnIndex))
-        val amplitudeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, amplitudeColumnIndex, amplitudeColumnIndex))
-        val dcData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, dcColumnIndex, dcColumnIndex))
-        val frequencyData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, frequencyColumnIndex, frequencyColumnIndex))
-        val rmsData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, rmsColumnIndex, rmsColumnIndex))
-
-        val amplitudeSeries = data.addSeries(timeData, amplitudeData)
-        amplitudeSeries.setTitle("Амплитуда")
-//        val dcSeries = data.addSeries(timeData, dcData)
-//        dcSeries.setTitle("Статика")
-//        val frequencySeries = data.addSeries(timeData, frequencyData)
-//        frequencySeries.setTitle("Частота")
-//        val rmsSeries = data.addSeries(timeData, rmsData)
-//        rmsSeries.setTitle("Rms")
-
+        val amplitudeSeries = data.addSeries(xAxisData, yAxisData)
+        amplitudeSeries.setTitle(seriesTitle)
         lineChart.plot(data, xAxis, yAxis)
 
-        val xssfChart = lineChart as XSSFChart
-        val plotArea = xssfChart.ctChart.plotArea
+        val plotArea = lineChart.ctChart.plotArea
         plotArea.lineChartArray[0].smooth
         val ctBool = CTBoolean.Factory.newInstance()
         ctBool.`val` = false
         plotArea.lineChartArray[0].smooth = ctBool
-        for (series in plotArea.getLineChartArray()[0].getSerArray()) {
+        for (series in plotArea.lineChartArray[0].serArray) {
             series.smooth = ctBool
         }
     }
@@ -312,6 +322,10 @@ class ProtocolController(val processController: ProcessController) {
             val lastCellNum = sheet.getRow(index).lastCellNum
             if (sheet.getRow(index).lastCellNum > lastColumnNum) lastColumnNum = lastCellNum
         }
-        return lastColumnNum.toInt()
+        return lastColumnNum.toInt() - 1
+    }
+
+    private fun getLastRowIndex(sheet: XSSFSheet): Int {
+        return sheet.lastRowNum - 1
     }
 }
