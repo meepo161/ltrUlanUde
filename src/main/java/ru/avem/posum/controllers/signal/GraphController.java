@@ -13,6 +13,8 @@ import ru.avem.posum.hardware.LTR24;
 import ru.avem.posum.models.signal.GraphModel;
 import ru.avem.posum.utils.Utils;
 
+import java.util.ConcurrentModificationException;
+
 public class GraphController {
     private SignalController signalController;
     private LineChart<Number, Number> graph;
@@ -38,7 +40,10 @@ public class GraphController {
 
     private void toggleAutoRange(boolean isAutoRangeEnabled) {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
-        Platform.runLater(() -> yAxis.setAutoRanging(isAutoRangeEnabled));
+        try {
+            yAxis.setAutoRanging(isAutoRangeEnabled);
+        } catch (Throwable throwable) {}
+
         restartOfShow();
     }
 
