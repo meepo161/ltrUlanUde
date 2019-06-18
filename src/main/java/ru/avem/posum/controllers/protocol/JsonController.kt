@@ -46,6 +46,15 @@ class JsonController(private val path: String) {
         if (json.last() != ']') File(path).writeText("$json\n]") // end of list
     }
 
+    fun saveAndClose() {
+        val buffer = File(path).readText()
+        val tempPath = "$path.temp"
+        File(tempPath).createNewFile()
+        File(tempPath).writeText(buffer)
+        val json = File(tempPath).readText().removeSuffix(",\n")
+        if (json.last() != ']') File(path).writeText("$json\n]") // end of list
+    }
+
     fun parse(rarefactionCoefficient: Long): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()
         val channelsDataModels = load()
@@ -80,5 +89,9 @@ class JsonController(private val path: String) {
             }
         }
         return channelsModels
+    }
+
+    fun parse() { // TODO: parse parameters for waveForm
+
     }
 }

@@ -589,7 +589,31 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSaveWaveformButton() {
-        jsonController.close();
+        jsonController.saveAndClose();
+        statusBarLine.setStatusOfProgress("Подготовка данных для сохранения осциллограммы");
+
+        new Thread(() -> {
+            String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
+            String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
+            List<List<List<String>>> data = new ArrayList<>();
+            data.add(tableController.getChannelsData(true, 1));
+            data.add(eventsController.getEvents(testProgram.getId()));
+            data.add(getCommandsController().getCommands(testProgram.getId()));
+            List<List<Short>> colors = new ArrayList<>();
+            colors.add(tableController.getColorsForProtocol(true, 1));
+            colors.add(eventsController.getEventsColors(testProgram.getId()));
+            colors.add(commandsController.getCommandsColors(testProgram.getId()));
+            int[] cellsToMerge = {tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+
+            // Create the workbook
+            protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
+            protocolController.fillWorkBook(sheets, headers, data, colors);
+            protocolController.drawLineChart("Нагрузка на каналах");
+
+            // Show window and save the workbook
+            File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Waveform.xlsx");
+            if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Осциллограмма сохранена в ");
+        }).start();
     }
 
     public void handleSaveProtocolButton() {
@@ -626,8 +650,7 @@ public class ProcessController implements BaseController {
                     statusBarLine.toggleProgressIndicator(true);
                     statusBarLine.clear();
                     File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
-                    if (selectedDirectory != null)
-                        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+                    if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
                 });
             }).start();
         }

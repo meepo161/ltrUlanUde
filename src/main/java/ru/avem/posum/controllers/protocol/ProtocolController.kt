@@ -250,8 +250,8 @@ class ProtocolController(val processController: ProcessController) {
             "30 секунд" -> coefficient = 30_000
             "1 минуте" -> coefficient = 60_000
             "10 минут" -> coefficient = 600_000
-            "30 минут" -> coefficient = 1800_000
-            "1 часу" -> coefficient = 3600_000
+            "30 минут" -> coefficient = 1_800_000
+            "1 часу" -> coefficient = 3_600_000
             "12 часов" -> coefficient = 43_200_000
         }
         return coefficient
@@ -282,7 +282,6 @@ class ProtocolController(val processController: ProcessController) {
     private fun createLineChart(sheet: XSSFSheet, lineChartTitle: String, chartBeginningRow: Int): XSSFChart {
         val drawing = sheet.createDrawingPatriarch()
         val chartBeginningColumnIndex = getLastColumnIndex(sheet) + 2
-        val lastRowIndex = getLastRowIndex(sheet)
         val anchor = drawing.createAnchor(0, 0, 0, 0, chartBeginningColumnIndex,
                 firstRowIndex + chartBeginningRow, 20,
                 firstRowIndex + chartBeginningRow + rowShifter)
