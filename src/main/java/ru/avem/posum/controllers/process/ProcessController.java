@@ -619,6 +619,7 @@ public class ProcessController implements BaseController {
                 // Create the workbook
                 protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
                 protocolController.fillWorkBook(sheets, headers, data, colors);
+                protocolController.drawLineChart("Нагрузка на каналах");
 
                 // Show window and save the workbook
                 Platform.runLater(() -> {
