@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.util.Pair;
+import ru.avem.posum.controllers.protocol.ProtocolSheets;
 import ru.avem.posum.db.EventsRepository;
 import ru.avem.posum.models.process.Event;
 import ru.avem.posum.models.process.EventsModel;
@@ -117,7 +118,6 @@ public class EventsController {
                 }
             });
 
-
             tv.refresh();
 
             return row;
@@ -191,26 +191,15 @@ public class EventsController {
     }
 
     public void saveJournal(String testProgramName, long testProgramId) {
-        // Prepare the data
-        String[] sheets = {"Журнал событий", "Программа испытаний"};
-        String[][] headers = {getJournalHeaders(), processController.getCommandsController().getCommandsHeaders()};
-        List<List<List<String>>> data = new ArrayList<>();
-        data.add(getEvents(testProgramId));
-        data.add(processController.getCommandsController().getCommands(testProgramId));
-        List<List<Short>> colors = new ArrayList<>();
-        colors.add(getEventsColors(testProgramId));
-        colors.add(processController.getCommandsController().getCommandsColors(testProgramId));
-        int[] cellsToMerge = {getCellsToMerge(), processController.getCommandsController().getCellsToMerge()};
-
-        // Create the workbook
-        processController.getProtocolController().createWorkBook(sheets, testProgramName, cellsToMerge);
-        processController.getProtocolController().fillWorkBook(sheets, headers, data, colors);
+        ProtocolSheets[] sheetsNames = {ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
+        processController.getProtocolController().createProtocol(testProgramId, testProgramName, false, false, 1000, sheetsNames);
 
         // Show window and save the workbook
         Platform.runLater(() -> {
             File selectedDirectory = processController.getProtocolController().showFileSaver("Сохранение журнала", "Journal.xlsx");
-            if (selectedDirectory != null)
+            if (selectedDirectory != null) {
                 processController.getProtocolController().saveProtocol(selectedDirectory, "Журнал сохранен в ");
+            }
         });
     }
 

@@ -1,7 +1,6 @@
 package ru.avem.posum.controllers.process;
 
 import javafx.application.Platform;
-import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
@@ -16,6 +15,7 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.controllers.protocol.JsonController;
 import ru.avem.posum.controllers.protocol.ProtocolController;
+import ru.avem.posum.controllers.protocol.ProtocolSheets;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.process.*;
@@ -567,49 +567,28 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSavePoint() {
-        // Prepare data
-        String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-        String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
-        List<List<List<String>>> data = new ArrayList<>();
-        data.add(tableController.getChannelsData(true, true, 1000));
-        data.add(eventsController.getEvents(testProgram.getId()));
-        data.add(getCommandsController().getCommands(testProgram.getId()));
-        List<List<Short>> colors = new ArrayList<>();
-        colors.add(tableController.getColorsForProtocol(true, false, 1000));
-        colors.add(eventsController.getEventsColors(testProgram.getId()));
-        colors.add(commandsController.getCommandsColors(testProgram.getId()));
-        int[] cellsToMerge = {tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+        jsonController.shortClose();
+        statusBarLine.setStatusOfProgress("Подготовка данных для сохранения текущей нагрузки на каналах");
 
-        // Create the workbook
-        protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
-        protocolController.fillWorkBook(sheets, headers, data, colors);
+        new Thread(() -> {
+            ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
+            protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, true, 1000, sheetsNames);
 
-        // Show window and save the workbook
-        Platform.runLater(() -> {
-            File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");
-            if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
-        });
+            Platform.runLater(() -> {
+                File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");
+                if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
+            });
+        }).start();
     }
 
     public void handleSaveWaveformButton() {
-        jsonController.saveAndClose();
+        jsonController.shortClose();
         statusBarLine.setStatusOfProgress("Подготовка данных для сохранения осциллограммы");
 
         new Thread(() -> {
-            String[] sheets = {"Нагрузка на каналах"};
-            String[][] headers = {tableController.getColumnsHeaders()};
-            List<List<List<String>>> data = new ArrayList<>();
-            data.add(tableController.getChannelsData(false, true, 1000));
-            List<List<Short>> colors = new ArrayList<>();
-            colors.add(tableController.getColorsForProtocol(false, true, 1000));
-            int[] cellsToMerge = {tableController.getCellsToMerge()};
+            ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
+            protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, true, 1000, sheetsNames);
 
-            // Create the workbook
-            protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
-            protocolController.fillWorkBook(sheets, headers, data, colors);
-            protocolController.drawLineChart("Нагрузка на каналах");
-
-            // Show window and save the workbook
             Platform.runLater(() -> {
                 File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Waveform.xlsx");
                 if (selectedDirectory != null)
@@ -625,32 +604,10 @@ public class ProcessController implements BaseController {
             statusBarLine.setStatusOfProgress("Подготовка данных для сохраения протокола");
 
             new Thread(() -> {
-                // Prepare data
-                String[] sheets = {"Общие данные", "Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-                String[][] headers = {testProgramController.getTestProgramHeaders(), tableController.getColumnsHeaders(),
-                        eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
-                List<List<List<String>>> data = new ArrayList<>();
-                data.add(testProgramController.getTestProgramData());
-                data.add(tableController.getChannelsData(false, false, rarefactionCoefficient));
-                data.add(eventsController.getEvents(testProgram.getId()));
-                data.add(getCommandsController().getCommands(testProgram.getId()));
-                List<List<Short>> colors = new ArrayList<>();
-                colors.add(testProgramController.getColorsForProtocol());
-                colors.add(tableController.getColorsForProtocol(false, false, rarefactionCoefficient));
-                colors.add(eventsController.getEventsColors(testProgram.getId()));
-                colors.add(commandsController.getCommandsColors(testProgram.getId()));
-                int[] cellsToMerge = {testProgramController.getCellsToMerge(), tableController.getCellsToMerge(),
-                        eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+                ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
+                protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, false, rarefactionCoefficient, sheetsNames);
 
-                // Create the workbook
-                protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
-                protocolController.fillWorkBook(sheets, headers, data, colors);
-                protocolController.drawLineChart("Нагрузка на каналах");
-
-                // Show window and save the workbook
                 Platform.runLater(() -> {
-                    statusBarLine.toggleProgressIndicator(true);
-                    statusBarLine.clear();
                     File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
                     if (selectedDirectory != null)
                         protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
@@ -729,6 +686,10 @@ public class ProcessController implements BaseController {
         return commandsController;
     }
 
+    public EventsController getEventsController() {
+        return eventsController;
+    }
+
     public GraphController getGraphController() {
         return graphController;
     }
@@ -765,12 +726,12 @@ public class ProcessController implements BaseController {
         return stopButton;
     }
 
-    public StopwatchController getStopwatchController() {
-        return stopwatchController;
-    }
-
     public TableController getTableController() {
         return tableController;
+    }
+
+    public TestProgramController getTestProgramController() {
+        return testProgramController;
     }
 
     public long getTestProgramId() {

@@ -46,7 +46,7 @@ class JsonController(private val path: String) {
         if (json.last() != ']') File(path).writeText("$json\n]") // end of list
     }
 
-    fun saveAndClose() {
+    fun shortClose() {
         val buffer = File(path).readText()
         val tempPath = "$path.temp"
         File(tempPath).createNewFile()

@@ -17,8 +17,6 @@ import java.io.FileOutputStream
 import org.apache.poi.ss.usermodel.charts.DataSources
 import org.apache.poi.xssf.usermodel.*
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean
-
-
 class ProtocolController(val processController: ProcessController) {
     private val amplitudeColumnIndex = 3
     private val dcColumnIndex = 4
@@ -30,7 +28,52 @@ class ProtocolController(val processController: ProcessController) {
     private val timeColumnIndex = 1
     private var workbook = XSSFWorkbook()
 
-    fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
+    fun createProtocol(testProgramId: Long, testProgramTitle: String, isPointData: Boolean, isShort: Boolean,
+                       rarefactionCoefficient: Long, vararg sheetsNames: ProtocolSheets) {
+
+        // Prepare data
+        val headers = mutableListOf<Array<String>>()
+        val data = mutableListOf<List<List<String>>>()
+        val colors = mutableListOf<List<Short>>()
+        val cellsToMerge = mutableListOf<Int>()
+
+        for (sheetName in sheetsNames) {
+            when (sheetName) {
+                ProtocolSheets.GENERAL_DESCRIPTION -> {
+                    headers.add(processController.testProgramController.getTestProgramHeaders())
+                    data.add(processController.testProgramController.getTestProgramData())
+                    colors.add(processController.testProgramController.getColorsForProtocol())
+                    cellsToMerge.add(processController.testProgramController.getCellsToMerge())
+                }
+                ProtocolSheets.CHANNELS_DATA -> {
+                    headers.add(processController.tableController.columnsHeaders)
+                    data.add(processController.tableController.getChannelsData(isPointData, isShort, rarefactionCoefficient))
+                    colors.add(processController.tableController.getColorsForProtocol(isPointData, isShort, rarefactionCoefficient))
+                    cellsToMerge.add(processController.tableController.cellsToMerge)
+                }
+                ProtocolSheets.JOURNAL -> {
+                    headers.add(processController.eventsController.journalHeaders)
+                    data.add(processController.eventsController.getEvents(testProgramId))
+                    colors.add(processController.eventsController.getEventsColors(testProgramId))
+                    cellsToMerge.add(processController.eventsController.cellsToMerge)
+                }
+                ProtocolSheets.COMMANDS -> {
+                    headers.add(processController.commandsController.commandsHeaders)
+                    data.add(processController.commandsController.getCommands(testProgramId))
+                    colors.add(processController.commandsController.getCommandsColors(testProgramId))
+                    cellsToMerge.add(processController.commandsController.cellsToMerge)
+                }
+            }
+        }
+
+        // Create the workbook
+        val sheets = sheetsNames.map { it.sheetName }.toTypedArray()
+        createWorkBook(sheets, testProgramTitle, cellsToMerge.toIntArray())
+        fillWorkBook(sheets, headers.toTypedArray(), data, colors)
+        if (sheetsNames.any { it == ProtocolSheets.CHANNELS_DATA }) drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
+    }
+
+    private fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
         createProtocol(*sheets)
         createTitle(title, titleCellsToMerge, *sheets)
     }
@@ -53,8 +96,8 @@ class ProtocolController(val processController: ProcessController) {
             val row = sheet.createRow(rowNumber)
             row.heightInPoints = 30.0f
 
-            for (index in columnNumber..endCell) {
-                val cell = row.createCell(index)
+            for (columnIndex in columnNumber..endCell) {
+                val cell = row.createCell(columnIndex)
                 cell.cellStyle = getTitleStyle()
             }
 
@@ -83,7 +126,7 @@ class ProtocolController(val processController: ProcessController) {
         return font
     }
 
-    fun autosizeColumns(sheetName: String) {
+    private fun autosizeColumns(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
         for (index in 0..maxColons) {
             sheet.autoSizeColumn(index, true)
@@ -91,8 +134,8 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
-    fun fillWorkBook(sheets: Array<String>, headers: Array<Array<String>>, data: List<List<List<String>>>,
-                     colors: List<List<Short>>) {
+    private fun fillWorkBook(sheets: Array<String>, headers: Array<Array<String>>, data: List<List<List<String>>>,
+                             colors: List<List<Short>>) {
         for (index in headers.indices) {
             createHeaders(sheets[index], *headers[index])
         }
@@ -257,7 +300,7 @@ class ProtocolController(val processController: ProcessController) {
         return coefficient
     }
 
-    fun drawLineChart(sheetName: String) {
+    private fun drawLineChart(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
         val lastRowIndex = getLastRowIndex(sheet)
         val timeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, timeColumnIndex, timeColumnIndex))
