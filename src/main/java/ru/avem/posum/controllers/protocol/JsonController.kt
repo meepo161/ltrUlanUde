@@ -33,7 +33,7 @@ class JsonController(private val path: String) {
         }
     }
 
-    private fun load(): List<ChannelDataModel>? {
+    private fun load(path: String): List<ChannelDataModel>? {
         val listType = Types.newParameterizedType(List::class.java, ChannelDataModel::class.java)
         val jsonAdapter: JsonAdapter<List<ChannelDataModel>> = moshi.adapter(listType)
         val json = File(path).readText()
@@ -56,7 +56,7 @@ class JsonController(private val path: String) {
 
     fun parse(isShort: Boolean, rarefactionCoefficient: Long): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()
-        val channelsDataModels = load()
+        val channelsDataModels = if (isShort) load("$path.temp") else load(path)
         val timeFormat = SimpleDateFormat("hh:mm:ss")
         if (channelsDataModels != null) {
             var time = timeFormat.parse(channelsDataModels[0].time.split(" ")[1]).time
@@ -103,6 +103,6 @@ class JsonController(private val path: String) {
             if (time - channelTime < timeLimit) shortList.add(channelModel)
         }
 
-        return shortList
+        return shortList.asReversed()
     }
 }

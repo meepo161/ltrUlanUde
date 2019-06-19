@@ -571,11 +571,11 @@ public class ProcessController implements BaseController {
         String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
         String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
         List<List<List<String>>> data = new ArrayList<>();
-        data.add(tableController.getChannelsData(true, true, 1));
+        data.add(tableController.getChannelsData(true, true, 1000));
         data.add(eventsController.getEvents(testProgram.getId()));
         data.add(getCommandsController().getCommands(testProgram.getId()));
         List<List<Short>> colors = new ArrayList<>();
-        colors.add(tableController.getColorsForProtocol(true, false, 1));
+        colors.add(tableController.getColorsForProtocol(true, false, 1000));
         colors.add(eventsController.getEventsColors(testProgram.getId()));
         colors.add(commandsController.getCommandsColors(testProgram.getId()));
         int[] cellsToMerge = {tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
@@ -585,8 +585,10 @@ public class ProcessController implements BaseController {
         protocolController.fillWorkBook(sheets, headers, data, colors);
 
         // Show window and save the workbook
-        File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");
-        if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
+        Platform.runLater(() -> {
+            File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");
+            if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Файл сохранен в ");
+        });
     }
 
     public void handleSaveWaveformButton() {
@@ -594,17 +596,13 @@ public class ProcessController implements BaseController {
         statusBarLine.setStatusOfProgress("Подготовка данных для сохранения осциллограммы");
 
         new Thread(() -> {
-            String[] sheets = {"Нагрузка на каналах", "Журнал событий", "Программа испытаний"};
-            String[][] headers = {tableController.getColumnsHeaders(), eventsController.getJournalHeaders(), commandsController.getCommandsHeaders()};
+            String[] sheets = {"Нагрузка на каналах"};
+            String[][] headers = {tableController.getColumnsHeaders()};
             List<List<List<String>>> data = new ArrayList<>();
-            data.add(tableController.getChannelsData(true, true, 1));
-            data.add(eventsController.getEvents(testProgram.getId()));
-            data.add(getCommandsController().getCommands(testProgram.getId()));
+            data.add(tableController.getChannelsData(false, true, 1000));
             List<List<Short>> colors = new ArrayList<>();
-            colors.add(tableController.getColorsForProtocol(true, true, 1));
-            colors.add(eventsController.getEventsColors(testProgram.getId()));
-            colors.add(commandsController.getCommandsColors(testProgram.getId()));
-            int[] cellsToMerge = {tableController.getCellsToMerge(), eventsController.getCellsToMerge(), commandsController.getCellsToMerge()};
+            colors.add(tableController.getColorsForProtocol(false, true, 1000));
+            int[] cellsToMerge = {tableController.getCellsToMerge()};
 
             // Create the workbook
             protocolController.createWorkBook(sheets, testProgram.getName(), cellsToMerge);
@@ -612,8 +610,11 @@ public class ProcessController implements BaseController {
             protocolController.drawLineChart("Нагрузка на каналах");
 
             // Show window and save the workbook
-            File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Waveform.xlsx");
-            if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Осциллограмма сохранена в ");
+            Platform.runLater(() -> {
+                File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Waveform.xlsx");
+                if (selectedDirectory != null)
+                    protocolController.saveProtocol(selectedDirectory, "Осциллограмма сохранена в ");
+            });
         }).start();
     }
 
@@ -651,7 +652,8 @@ public class ProcessController implements BaseController {
                     statusBarLine.toggleProgressIndicator(true);
                     statusBarLine.clear();
                     File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
-                    if (selectedDirectory != null) protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
+                    if (selectedDirectory != null)
+                        protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
                 });
             }).start();
         }

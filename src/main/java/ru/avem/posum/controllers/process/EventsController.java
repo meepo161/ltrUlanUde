@@ -1,5 +1,6 @@
 package ru.avem.posum.controllers.process;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -206,8 +207,11 @@ public class EventsController {
         processController.getProtocolController().fillWorkBook(sheets, headers, data, colors);
 
         // Show window and save the workbook
-        File selectedDirectory = processController.getProtocolController().showFileSaver("Сохранение журнала", "Journal.xlsx");
-        if (selectedDirectory != null) processController.getProtocolController().saveProtocol(selectedDirectory, "Журнал сохранен в ");
+        Platform.runLater(() -> {
+            File selectedDirectory = processController.getProtocolController().showFileSaver("Сохранение журнала", "Journal.xlsx");
+            if (selectedDirectory != null)
+                processController.getProtocolController().saveProtocol(selectedDirectory, "Журнал сохранен в ");
+        });
     }
 
     public int getCellsToMerge() {
