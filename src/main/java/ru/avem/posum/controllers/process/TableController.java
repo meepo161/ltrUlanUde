@@ -497,12 +497,12 @@ public class TableController {
         return table.getItems();
     }
 
-    public List<List<String>> getChannelsData(boolean isPointData, long rarefactionCoefficient) {
+    public List<List<String>> getChannelsData(boolean isPointData, boolean isShort, long rarefactionCoefficient) {
         List<ChannelModel> channelModels;
         if (isPointData) {
             channelModels = table.getItems();
         } else {
-            channelModels = processController.getJsonController().parse(rarefactionCoefficient);
+            channelModels = processController.getJsonController().parse(isShort, rarefactionCoefficient);
         }
 
         List<String> names = new ArrayList<>();
@@ -625,18 +625,14 @@ public class TableController {
         return channelsData;
     }
 
-    public List<Short> getColorsForProtocol(boolean isPointData, long rarefactionCoefficient) {
-        List<ChannelModel> channelModels;
-        if (isPointData) {
-            channelModels = table.getItems();
-        } else {
-            channelModels = processController.getJsonController().parse(rarefactionCoefficient);
-        }
-
+    public List<Short> getColorsForProtocol(boolean isPointData, boolean isShort, long rarefactionCoefficient) {
+        int size = isPointData ? table.getItems().size() : processController.getJsonController().parse(isShort, rarefactionCoefficient).size();
         List<Short> colors = new ArrayList<>();
-        for (ChannelModel ignored : channelModels) {
+
+        for (int index = 0; index < size; index++) {
             colors.add(IndexedColors.WHITE.index);
         }
+
         return colors;
     }
 

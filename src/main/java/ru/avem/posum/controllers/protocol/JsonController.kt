@@ -41,7 +41,7 @@ class JsonController(private val path: String) {
         return jsonAdapter.fromJson(json)
     }
 
-    fun close() {
+    fun close(path: String) {
         val json = File(path).readText().removeSuffix(",\n")
         if (json.last() != ']') File(path).writeText("$json\n]") // end of list
     }
@@ -51,11 +51,10 @@ class JsonController(private val path: String) {
         val tempPath = "$path.temp"
         File(tempPath).createNewFile()
         File(tempPath).writeText(buffer)
-        val json = File(tempPath).readText().removeSuffix(",\n")
-        if (json.last() != ']') File(path).writeText("$json\n]") // end of list
+        close(tempPath)
     }
 
-    fun parse(rarefactionCoefficient: Long): List<ChannelModel> {
+    fun parse(isShort: Boolean, rarefactionCoefficient: Long): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()
         val channelsDataModels = load()
         val timeFormat = SimpleDateFormat("hh:mm:ss")
@@ -87,11 +86,23 @@ class JsonController(private val path: String) {
                     timeIsChanged = true
                 }
             }
+
+            if (isShort) return getShortList(channelsModels)
         }
         return channelsModels
     }
 
-    fun parse() { // TODO: parse parameters for waveForm
+    private fun getShortList(channelsModels: List<ChannelModel>): List<ChannelModel> {
+        val timeFormat = SimpleDateFormat("hh:mm:ss")
+        val time = timeFormat.parse(channelsModels.last().time).time
+        val timeLimit = 60_000 // maximum time interval in mills
+        val shortList = mutableListOf<ChannelModel>()
 
+        for (channelModel in channelsModels.asReversed()) {
+            val channelTime = timeFormat.parse(channelModel.time).time
+            if (time - channelTime < timeLimit) shortList.add(channelModel)
+        }
+
+        return shortList
     }
 }
