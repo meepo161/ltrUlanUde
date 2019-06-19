@@ -572,7 +572,7 @@ public class ProcessController implements BaseController {
 
         new Thread(() -> {
             ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
-            protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, true, 1000, sheetsNames);
+            protocolController.createProtocol(testProgram.getId(), testProgram.getName(), true, false, 1000, sheetsNames);
 
             Platform.runLater(() -> {
                 File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Point.xlsx");

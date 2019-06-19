@@ -70,7 +70,7 @@ class ProtocolController(val processController: ProcessController) {
         val sheets = sheetsNames.map { it.sheetName }.toTypedArray()
         createWorkBook(sheets, testProgramTitle, cellsToMerge.toIntArray())
         fillWorkBook(sheets, headers.toTypedArray(), data, colors)
-        if (sheetsNames.any { it == ProtocolSheets.CHANNELS_DATA }) drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
+        if (!isPointData && sheetsNames.any { it == ProtocolSheets.CHANNELS_DATA }) drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
     }
 
     private fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
@@ -302,7 +302,7 @@ class ProtocolController(val processController: ProcessController) {
 
     private fun drawLineChart(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
-        val lastRowIndex = getLastRowIndex(sheet)
+        val lastRowIndex = getLastRowIndex(sheet) + 1
         val timeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, timeColumnIndex, timeColumnIndex))
         val amplitudeData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, amplitudeColumnIndex, amplitudeColumnIndex))
         val dcData = DataSources.fromNumericCellRange(sheet, CellRangeAddress(firstRowIndex, lastRowIndex, dcColumnIndex, dcColumnIndex))
@@ -344,8 +344,8 @@ class ProtocolController(val processController: ProcessController) {
         val yAxis = lineChart.createValueAxis(AxisPosition.LEFT)
         yAxis.crosses = org.apache.poi.ss.usermodel.charts.AxisCrosses.AUTO_ZERO
 
-        val amplitudeSeries = data.addSeries(xAxisData, yAxisData)
-        amplitudeSeries.setTitle(seriesTitle)
+        val series = data.addSeries(xAxisData, yAxisData)
+        series.setTitle(seriesTitle)
         lineChart.plot(data, xAxis, yAxis)
 
         val plotArea = lineChart.ctChart.plotArea

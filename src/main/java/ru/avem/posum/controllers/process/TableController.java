@@ -502,7 +502,7 @@ public class TableController {
         if (isPointData) {
             channelModels = table.getItems();
         } else {
-            channelModels = processController.getJsonController().parse(isShort, rarefactionCoefficient);
+            channelModels = processController.getJsonController().parse(isPointData, isShort, rarefactionCoefficient);
         }
 
         List<String> names = new ArrayList<>();
@@ -626,7 +626,7 @@ public class TableController {
     }
 
     public List<Short> getColorsForProtocol(boolean isPointData, boolean isShort, long rarefactionCoefficient) {
-        int size = isPointData ? table.getItems().size() : processController.getJsonController().parse(isShort, rarefactionCoefficient).size();
+        int size = isPointData ? table.getItems().size() : processController.getJsonController().parse(isPointData, isShort, rarefactionCoefficient).size();
         List<Short> colors = new ArrayList<>();
 
         for (int index = 0; index < size; index++) {

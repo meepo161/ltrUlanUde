@@ -54,9 +54,9 @@ class JsonController(private val path: String) {
         close(tempPath)
     }
 
-    fun parse(isShort: Boolean, rarefactionCoefficient: Long): List<ChannelModel> {
+    fun parse(isPointData: Boolean, isShort: Boolean, rarefactionCoefficient: Long): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()
-        val channelsDataModels = if (isShort) load("$path.temp") else load(path)
+        val channelsDataModels = if (isShort || isPointData) load("$path.temp") else load(path)
         val timeFormat = SimpleDateFormat("hh:mm:ss")
         if (channelsDataModels != null) {
             var time = timeFormat.parse(channelsDataModels[0].time.split(" ")[1]).time
