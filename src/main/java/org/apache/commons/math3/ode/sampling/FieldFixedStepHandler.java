@@ -26,12 +26,12 @@ import org.apache.commons.math3.ode.FieldODEStateAndDerivative;
 
  * <p>This interface should be implemented by anyone who is interested
  * in getting the solution of an ordinary differential equation at
- * fixed time steps. Objects implementing this interface should be
+ * fixed dateAndTime steps. Objects implementing this interface should be
  * wrapped within an instance of {@link FieldStepNormalizer} that itself
  * is used as the general {@link FieldStepHandler} by the integrator. The
  * {@link FieldStepNormalizer} object is called according to the integrator
  * internal algorithms and it calls objects implementing this
- * interface as necessary at fixed time steps.</p>
+ * interface as necessary at fixed dateAndTime steps.</p>
  *
  * @see FieldStepHandler
  * @see FieldStepNormalizer
@@ -48,14 +48,14 @@ public interface FieldFixedStepHandler<T extends RealFieldElement<T>> {
      * may be used by the step handler to initialize some internal data
      * if needed.
      * </p>
-     * @param initialState initial time, state vector and derivative
-     * @param finalTime target time for the integration
+     * @param initialState initial dateAndTime, state vector and derivative
+     * @param finalTime target dateAndTime for the integration
      */
     void init(FieldODEStateAndDerivative<T> initialState, T finalTime);
 
     /**
      * Handle the last accepted step
-     * @param state current value of the independent <i>time</i> variable,
+     * @param state current value of the independent <i>dateAndTime</i> variable,
      * state vector and derivative
      * For efficiency purposes, the {@link FieldStepNormalizer} class reuses
      * the same array on each call, so if

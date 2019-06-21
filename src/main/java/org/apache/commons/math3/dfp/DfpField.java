@@ -386,7 +386,7 @@ public class DfpField implements Field<Dfp> {
     }
 
     /** Creates a {@link Dfp} with a non-finite value.
-     * @param sign sign of the Dfp to create
+     * @param sign sign of the Dfp to createJson
      * @param nans code of the value, must be one of {@link Dfp#INFINITE},
      * {@link Dfp#SNAN},  {@link Dfp#QNAN}
      * @return a new {@link Dfp} with a non-finite value

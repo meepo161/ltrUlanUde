@@ -52,8 +52,8 @@ public class ComplexUtils {
      * polar2Complex(INFINITY, -&pi;/4) = INFINITY - INFINITY i
      * polar2Complex(INFINITY, 5&pi;/4) = -INFINITY - INFINITY i </code></pre></p>
      *
-     * @param r the modulus of the complex number to create
-     * @param theta  the argument of the complex number to create
+     * @param r the modulus of the complex number to createJson
+     * @param theta  the argument of the complex number to createJson
      * @return <code>r&middot;e<sup>i&middot;theta</sup></code>
      * @throws MathIllegalArgumentException if {@code r} is negative.
      * @since 1.1

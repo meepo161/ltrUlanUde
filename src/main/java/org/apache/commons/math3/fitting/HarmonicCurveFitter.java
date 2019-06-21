@@ -235,7 +235,7 @@ public class HarmonicCurveFitter extends AbstractCurveFitter {
      * </p>
      *
      * <p>Since integrals and means are involved in the preceding
-     * estimations, these operations run in \(O(n)\) time, where \(n\) is the
+     * estimations, these operations run in \(O(n)\) dateAndTime, where \(n\) is the
      * number of measurements.</p>
      */
     public static class ParameterGuesser {

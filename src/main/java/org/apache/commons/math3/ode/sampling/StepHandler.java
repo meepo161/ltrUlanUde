@@ -47,9 +47,9 @@ public interface StepHandler {
      * may be used by the step handler to initialize some internal data
      * if needed.
      * </p>
-     * @param t0 start value of the independent <i>time</i> variable
+     * @param t0 start value of the independent <i>dateAndTime</i> variable
      * @param y0 array containing the start value of the state vector
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      */
     void init(double t0, double[] y0, double t);
 

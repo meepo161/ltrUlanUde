@@ -26,7 +26,7 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.OutOfRangeException;
 
 /**
- * Utility to create <a href="http://en.wikipedia.org/wiki/Combination">
+ * Utility to createJson <a href="http://en.wikipedia.org/wiki/Combination">
  * combinations</a> {@code (n, k)} of {@code k} elements in a set of
  * {@code n} elements.
  *
@@ -300,7 +300,7 @@ public class Combinations implements Iterable<int[]> {
         SingletonIterator(final int[] singleton) {
             this.singleton = singleton;
         }
-        /** @return True until next is called the first time, then false */
+        /** @return True until next is called the first dateAndTime, then false */
         public boolean hasNext() {
             return more;
         }

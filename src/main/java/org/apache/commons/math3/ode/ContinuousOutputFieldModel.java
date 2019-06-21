@@ -39,7 +39,7 @@ import org.apache.commons.math3.util.FastMath;
  * stores a copy of all steps information in a sorted collection for
  * later use. Once the integration process is over, the user can use
  * the {@link #getInterpolatedState(RealFieldElement) getInterpolatedState}
- * method to retrieve this information at any time. It is important to wait
+ * method to retrieve this information at any dateAndTime. It is important to wait
  * for the integration to be over before attempting to call {@link
  * #getInterpolatedState(RealFieldElement)} because some internal
  * variables are set only once the last step has been handled.</p>
@@ -48,7 +48,7 @@ import org.apache.commons.math3.util.FastMath;
  * application should remain independent from the integration process
  * or if one needs to mimic the behaviour of an analytical model
  * despite a numerical model is used (i.e. one needs the ability to
- * get the model value at any time or to navigate through the
+ * get the model value at any dateAndTime or to navigate through the
  * data).</p>
  *
  * <p>If problem modeling is done with several separate
@@ -81,10 +81,10 @@ import org.apache.commons.math3.util.FastMath;
 public class ContinuousOutputFieldModel<T extends RealFieldElement<T>>
     implements FieldStepHandler<T> {
 
-    /** Initial integration time. */
+    /** Initial integration dateAndTime. */
     private T initialTime;
 
-    /** Final integration time. */
+    /** Final integration dateAndTime. */
     private T finalTime;
 
     /** Integration direction indicator. */
@@ -210,25 +210,25 @@ public class ContinuousOutputFieldModel<T extends RealFieldElement<T>>
     }
 
     /**
-     * Get the initial integration time.
-     * @return initial integration time
+     * Get the initial integration dateAndTime.
+     * @return initial integration dateAndTime
      */
     public T getInitialTime() {
         return initialTime;
     }
 
     /**
-     * Get the final integration time.
-     * @return final integration time
+     * Get the final integration dateAndTime.
+     * @return final integration dateAndTime
      */
     public T getFinalTime() {
         return finalTime;
     }
 
     /**
-     * Get the state at interpolated time.
-     * @param time time of the interpolated point
-     * @return state at interpolated time
+     * Get the state at interpolated dateAndTime.
+     * @param time dateAndTime of the interpolated point
+     * @return state at interpolated dateAndTime
      */
     public FieldODEStateAndDerivative<T> getInterpolatedState(final T time) {
 
@@ -281,7 +281,7 @@ public class ContinuousOutputFieldModel<T extends RealFieldElement<T>>
             } else {
                 // estimate the index using a reverse quadratic polynomial
                 // (reverse means we have i = P(t), thus allowing to simply
-                // compute index = P(time) rather than solving a quadratic equation)
+                // compute index = P(dateAndTime) rather than solving a quadratic equation)
                 final T d12 = tMax.subtract(tMed);
                 final T d23 = tMed.subtract(tMin);
                 final T d13 = tMax.subtract(tMin);

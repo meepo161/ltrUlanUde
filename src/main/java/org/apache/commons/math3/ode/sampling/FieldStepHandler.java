@@ -48,8 +48,8 @@ public interface FieldStepHandler<T extends RealFieldElement<T>> {
      * may be used by the step handler to initialize some internal data
      * if needed.
      * </p>
-     * @param initialState initial time, state vector and derivative
-     * @param finalTime target time for the integration
+     * @param initialState initial dateAndTime, state vector and derivative
+     * @param finalTime target dateAndTime for the integration
      */
     void init(FieldODEStateAndDerivative<T> initialState, T finalTime);
 

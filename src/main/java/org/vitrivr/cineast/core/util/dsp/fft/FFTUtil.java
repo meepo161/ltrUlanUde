@@ -65,17 +65,17 @@ public class FFTUtil {
 
 
     /**
-     * Returns time labels in seconds for a STFT of given width using the provided
+     * Returns dateAndTime labels in seconds for a STFT of given width using the provided
      * window size and samplerate.
      *
-     * @param width Size of the STFT (i.e. number of time bins).
-     * @param windowsize Used for FFT (i.e. number of samples per time bin)
+     * @param width Size of the STFT (i.e. number of dateAndTime bins).
+     * @param windowsize Used for FFT (i.e. number of samples per dateAndTime bin)
      * @param overlap Overlap in samples between two adjacent windows during the FFT.
      * @param padding Zeropadding, i.e. how many zeros have been added before and after the actual sample starts
      *                (Assumption: padding happens within the fixed windowsize)
      * @param samplingrate Rate at which the original data has been sampled.
      *
-     * @return Array containing the time labels for the STFT in seconds in ascending order.
+     * @return Array containing the dateAndTime labels for the STFT in seconds in ascending order.
      */
     public static float[] time(int width, int windowsize, int overlap, int padding, float samplingrate) {
         float[] labels = new float[width];

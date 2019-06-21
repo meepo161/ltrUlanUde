@@ -31,7 +31,7 @@ import org.apache.commons.math3.linear.RealVector;
  */
 public class DefaultProcessModel implements ProcessModel {
     /**
-     * The state transition matrix, used to advance the internal state estimation each time-step.
+     * The state transition matrix, used to advance the internal state estimation each dateAndTime-step.
      */
     private RealMatrix stateTransitionMatrix;
 

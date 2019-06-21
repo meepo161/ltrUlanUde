@@ -31,7 +31,7 @@ import org.apache.commons.math3.util.FastMath;
 /** This class handles the state for one {@link EventHandler
  * event handler} during integration steps.
  *
- * <p>Each time the integrator proposes a step, the event handler
+ * <p>Each dateAndTime the integrator proposes a step, the event handler
  * switching function should be checked. This class handles the state
  * of one handler during one integration step, with references to the
  * state at the end of the preceding step. This information is used to
@@ -46,7 +46,7 @@ public class FieldEventState<T extends RealFieldElement<T>> {
     /** Event handler. */
     private final FieldEventHandler<T> handler;
 
-    /** Maximal time interval between events handler checks. */
+    /** Maximal dateAndTime interval between events handler checks. */
     private final double maxCheckInterval;
 
     /** Convergence threshold for event localization. */
@@ -67,10 +67,10 @@ public class FieldEventState<T extends RealFieldElement<T>> {
     /** Indicator of event expected during the step. */
     private boolean pendingEvent;
 
-    /** Occurrence time of the pending event. */
+    /** Occurrence dateAndTime of the pending event. */
     private T pendingEventTime;
 
-    /** Occurrence time of the previous event. */
+    /** Occurrence dateAndTime of the previous event. */
     private T previousEventTime;
 
     /** Integration direction. */
@@ -89,12 +89,12 @@ public class FieldEventState<T extends RealFieldElement<T>> {
 
     /** Simple constructor.
      * @param handler event handler
-     * @param maxCheckInterval maximal time interval between switching
+     * @param maxCheckInterval maximal dateAndTime interval between switching
      * function checks (this interval prevents missing sign changes in
      * case the integration steps becomes very large)
-     * @param convergence convergence threshold in the event time search
+     * @param convergence convergence threshold in the event dateAndTime search
      * @param maxIterationCount upper limit of the iteration count in
-     * the event time search
+     * the event dateAndTime search
      * @param solver Root-finding algorithm to use to detect state events
      */
     public FieldEventState(final FieldEventHandler<T> handler, final double maxCheckInterval,
@@ -125,8 +125,8 @@ public class FieldEventState<T extends RealFieldElement<T>> {
         return handler;
     }
 
-    /** Get the maximal time interval between events handler checks.
-     * @return maximal time interval between events handler checks
+    /** Get the maximal dateAndTime interval between events handler checks.
+     * @return maximal dateAndTime interval between events handler checks
      */
     public double getMaxCheckInterval() {
         return maxCheckInterval;
@@ -164,7 +164,7 @@ public class FieldEventState<T extends RealFieldElement<T>> {
             // the expected behavior). If however the user wants to restart the
             // solver from the final state reached at the event with the same
             // configuration (expecting the event to be triggered again at a
-            // later time), then the integrator may fail to start. It can get stuck
+            // later dateAndTime), then the integrator may fail to start. It can get stuck
             // at the previous event. The use case for the bug MATH-421 is fairly
             // general, so events occurring exactly at start in the first step should
             // be ignored.
@@ -224,7 +224,7 @@ public class FieldEventState<T extends RealFieldElement<T>> {
                 // variation direction, with respect to the integration direction
                 increasing = gb.subtract(ga).getReal() >= 0;
 
-                // find the event time making sure we select a solution just at or past the exact root
+                // find the event dateAndTime making sure we select a solution just at or past the exact root
                 final T root = forward ?
                                solver.solve(maxIterationCount, f, ta, tb, AllowedSolution.RIGHT_SIDE) :
                                solver.solve(maxIterationCount, f, tb, ta, AllowedSolution.LEFT_SIDE);
@@ -278,8 +278,8 @@ public class FieldEventState<T extends RealFieldElement<T>> {
 
     }
 
-    /** Get the occurrence time of the event triggered in the current step.
-     * @return occurrence time of the event triggered in the current
+    /** Get the occurrence dateAndTime of the event triggered in the current step.
+     * @return occurrence dateAndTime of the event triggered in the current
      * step or infinity if no events are triggered
      */
     public T getEventTime() {

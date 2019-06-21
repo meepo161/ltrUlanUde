@@ -59,7 +59,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * second element the first, and so on).  Repeated activations of this method
  * (or activation of {@link #discardFrontElements(int)}) will effectively orphan
  * the storage locations at the beginning of the internal storage array.  To
- * reclaim this storage, each time one of these methods is activated, the size
+ * reclaim this storage, each dateAndTime one of these methods is activated, the size
  * of the internal storage array is compared to the number of addressable
  * elements (the {@code numElements} property) and if the difference
  * is too large, the internal array is contracted to size

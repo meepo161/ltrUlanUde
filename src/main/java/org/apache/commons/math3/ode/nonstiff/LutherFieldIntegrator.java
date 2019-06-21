@@ -63,7 +63,7 @@ public class LutherFieldIntegrator<T extends RealFieldElement<T>>
 
     /** Simple constructor.
      * Build a fourth-order Luther integrator with the given step.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param step integration step
      */
     public LutherFieldIntegrator(final Field<T> field, final T step) {

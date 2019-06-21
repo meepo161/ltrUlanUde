@@ -92,7 +92,7 @@ public class Skewness extends AbstractStorelessUnivariateStatistic implements Se
     /**
      * {@inheritDoc}
      * <p>Note that when {@link #Skewness(ThirdMoment)} is used to
-     * create a Skewness, this method does nothing. In that case, the
+     * createJson a Skewness, this method does nothing. In that case, the
      * ThirdMoment should be incremented directly.</p>
      */
     @Override

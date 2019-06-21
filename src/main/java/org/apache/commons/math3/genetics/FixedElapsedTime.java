@@ -21,26 +21,26 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 
 /**
- * Stops after a fixed amount of time has elapsed.
+ * Stops after a fixed amount of dateAndTime has elapsed.
  * <p>
- * The first time {@link #isSatisfied(Population)} is invoked, the end time of the evolution is determined based on the
- * provided <code>maxTime</code> value. Once the elapsed time reaches the configured <code>maxTime</code> value,
+ * The first dateAndTime {@link #isSatisfied(Population)} is invoked, the end dateAndTime of the evolution is determined based on the
+ * provided <code>maxTime</code> value. Once the elapsed dateAndTime reaches the configured <code>maxTime</code> value,
  * {@link #isSatisfied(Population)} returns true.
  *
  * @since 3.1
  */
 public class FixedElapsedTime implements StoppingCondition {
-    /** Maximum allowed time period (in nanoseconds). */
+    /** Maximum allowed dateAndTime period (in nanoseconds). */
     private final long maxTimePeriod;
 
-    /** The predetermined termination time (stopping condition). */
+    /** The predetermined termination dateAndTime (stopping condition). */
     private long endTime = -1;
 
     /**
      * Create a new {@link FixedElapsedTime} instance.
      *
      * @param maxTime maximum number of seconds generations are allowed to evolve
-     * @throws NumberIsTooSmallException if the provided time is &lt; 0
+     * @throws NumberIsTooSmallException if the provided dateAndTime is &lt; 0
      */
     public FixedElapsedTime(final long maxTime) throws NumberIsTooSmallException {
         this(maxTime, TimeUnit.SECONDS);
@@ -49,9 +49,9 @@ public class FixedElapsedTime implements StoppingCondition {
     /**
      * Create a new {@link FixedElapsedTime} instance.
      *
-     * @param maxTime maximum time generations are allowed to evolve
+     * @param maxTime maximum dateAndTime generations are allowed to evolve
      * @param unit {@link TimeUnit} of the maxTime argument
-     * @throws NumberIsTooSmallException if the provided time is &lt; 0
+     * @throws NumberIsTooSmallException if the provided dateAndTime is &lt; 0
      */
     public FixedElapsedTime(final long maxTime, final TimeUnit unit) throws NumberIsTooSmallException {
         if (maxTime < 0) {
@@ -61,11 +61,11 @@ public class FixedElapsedTime implements StoppingCondition {
     }
 
     /**
-     * Determine whether or not the maximum allowed time has passed.
-     * The termination time is determined after the first generation.
+     * Determine whether or not the maximum allowed dateAndTime has passed.
+     * The termination dateAndTime is determined after the first generation.
      *
      * @param population ignored (no impact on result)
-     * @return <code>true</code> IFF the maximum allowed time period has elapsed
+     * @return <code>true</code> IFF the maximum allowed dateAndTime period has elapsed
      */
     public boolean isSatisfied(final Population population) {
         if (endTime < 0) {

@@ -522,7 +522,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
                 bits.set(i - begin);
             }
         }
-        //Check if empty then create a new copy
+        //Check if empty then createJson a new copy
         if (bits.isEmpty()) {
             temp = copyOf(values, begin, length); // Nothing removed, just copy
         } else if(bits.cardinality() == length){
@@ -692,7 +692,7 @@ public class Percentile extends AbstractUnivariateStatistic implements Serializa
      * input is returned as an estimate </li>
      * </ul>
      * <p>
-     * Users can now create {@link Percentile} by explicitly passing this enum;
+     * Users can now createJson {@link Percentile} by explicitly passing this enum;
      * such as by invoking {@link Percentile#withEstimationType(EstimationType)}
      * <p>
      * References:

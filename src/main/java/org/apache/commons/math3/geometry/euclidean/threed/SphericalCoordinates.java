@@ -178,7 +178,7 @@ public class SphericalCoordinates implements Serializable {
      * <p>
      * As Hessian are always symmetric, we use only the lower left part of the provided
      * spherical Hessian, so the upper part may not be initialized. However, we still
-     * do fill up the complete array we create, with guaranteed symmetry.
+     * do fill up the complete array we createJson, with guaranteed symmetry.
      * </p>
      * @param sHessian Hessian with respect to spherical coordinates
      * {{d<sup>2</sup>f/dr<sup>2</sup>, d<sup>2</sup>f/drd&theta;, d<sup>2</sup>f/drd&Phi;},
@@ -262,7 +262,7 @@ public class SphericalCoordinates implements Serializable {
             // row representing the gradient of theta
             jacobian[1][0] = -y / rho2;
             jacobian[1][1] =  x / rho2;
-            // jacobian[1][2] is already set to 0 at allocation time
+            // jacobian[1][2] is already set to 0 at allocation dateAndTime
 
             // row representing the gradient of phi
             jacobian[2][0] = x * z / (rho * r2);

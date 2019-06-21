@@ -19,7 +19,7 @@ package org.apache.commons.math3.genetics;
 import org.apache.commons.math3.exception.MathIllegalArgumentException;
 
 /**
- * Policy used to create a pair of new chromosomes by performing a crossover
+ * Policy used to createJson a pair of new chromosomes by performing a crossover
  * operation on a source pair of chromosomes.
  *
  * @since 2.0

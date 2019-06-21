@@ -96,7 +96,7 @@ public abstract class EmbeddedRungeKuttaFieldIntegrator<T extends RealFieldEleme
     private T maxGrowth;
 
     /** Build a Runge-Kutta integrator with the given Butcher array.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param fsal index of the pre-computed derivative for <i>fsal</i> methods
      * or -1 if method is not <i>fsal</i>
@@ -131,7 +131,7 @@ public abstract class EmbeddedRungeKuttaFieldIntegrator<T extends RealFieldEleme
     }
 
     /** Build a Runge-Kutta integrator with the given Butcher array.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param fsal index of the pre-computed derivative for <i>fsal</i> methods
      * or -1 if method is not <i>fsal</i>
@@ -224,7 +224,7 @@ public abstract class EmbeddedRungeKuttaFieldIntegrator<T extends RealFieldEleme
         setStepStart(initIntegration(equations, t0, y0, finalTime));
         final boolean forward = finalTime.subtract(initialState.getTime()).getReal() > 0;
 
-        // create some internal working arrays
+        // createJson some internal working arrays
         final int   stages = c.length + 1;
         T[]         y      = y0;
         final T[][] yDotK  = MathArrays.buildArray(getField(), stages, -1);

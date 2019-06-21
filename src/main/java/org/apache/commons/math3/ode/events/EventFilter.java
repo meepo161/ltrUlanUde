@@ -34,12 +34,12 @@ import java.util.Arrays;
  * <p>Sometimes, users are only interested in one type of event (say
  * increasing events for example) and not in the other type. In these
  * cases, looking precisely for all events location and triggering
- * events that will later be ignored is a waste of computing time.</p>
+ * events that will later be ignored is a waste of computing dateAndTime.</p>
  *
  * <p>Users can wrap a regular {@link EventHandler event handler} in
  * an instance of this class and provide this wrapping instance to
  * the {@link org.apache.commons.math3.ode.FirstOrderIntegrator ODE solver}
- * in order to avoid wasting time looking for uninteresting events.
+ * in order to avoid wasting dateAndTime looking for uninteresting events.
  * The wrapper will intercept the calls to the {@link
  * EventHandler#g(double, double[]) g function} and to the {@link
  * EventHandler#eventOccurred(double, double[], boolean)
@@ -66,13 +66,13 @@ public class EventFilter implements EventHandler {
     /** Transformers of the g function. */
     private final Transformer[] transformers;
 
-    /** Update time of the transformers. */
+    /** Update dateAndTime of the transformers. */
     private final double[] updates;
 
     /** Indicator for forward integration. */
     private boolean forward;
 
-    /** Extreme time encountered so far. */
+    /** Extreme dateAndTime encountered so far. */
     private double extremeT;
 
     /** Wrap an {@link EventHandler event handler}.
@@ -118,7 +118,7 @@ public class EventFilter implements EventHandler {
                     // there is a root somewhere between extremeT and t.
                     // the new transformer is valid for t (this is how we have just computed
                     // it above), but it is in fact valid on both sides of the root, so
-                    // it was already valid before t and even up to previous time. We store
+                    // it was already valid before t and even up to previous dateAndTime. We store
                     // the switch at extremeT for safety, to ensure the previous transformer
                     // is not applied too close of the root
                     System.arraycopy(updates,      1, updates,      0, last);
@@ -157,7 +157,7 @@ public class EventFilter implements EventHandler {
                     // there is a root somewhere between extremeT and t.
                     // the new transformer is valid for t (this is how we have just computed
                     // it above), but it is in fact valid on both sides of the root, so
-                    // it was already valid before t and even up to previous time. We store
+                    // it was already valid before t and even up to previous dateAndTime. We store
                     // the switch at extremeT for safety, to ensure the previous transformer
                     // is not applied too close of the root
                     System.arraycopy(updates,      0, updates,      1, updates.length - 1);

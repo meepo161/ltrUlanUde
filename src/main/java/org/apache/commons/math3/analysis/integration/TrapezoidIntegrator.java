@@ -101,7 +101,7 @@ public class TrapezoidIntegrator extends BaseAbstractUnivariateIntegrator {
     /**
      * Compute the n-th stage integral of trapezoid rule. This function
      * should only be called by API <code>integrate()</code> in the package.
-     * To save time it does not verify arguments - caller does.
+     * To write dateAndTime it does not verify arguments - caller does.
      * <p>
      * The interval is divided equally into 2^n sections rather than an
      * arbitrary m sections because this configuration can best utilize the

@@ -23,7 +23,7 @@ import org.apache.commons.math3.exception.util.ExceptionContextProvider;
 /**
  * Base class for all preconditions violation exceptions.
  * In most cases, this class should not be instantiated directly: it should
- * serve as a base class to create all the exceptions that have the semantics
+ * serve as a base class to createJson all the exceptions that have the semantics
  * of the standard {@link IllegalArgumentException}.
  *
  * @since 2.2

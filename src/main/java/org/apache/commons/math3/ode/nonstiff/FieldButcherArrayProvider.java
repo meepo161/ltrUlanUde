@@ -28,8 +28,8 @@ import org.apache.commons.math3.RealFieldElement;
 
 public interface FieldButcherArrayProvider<T extends RealFieldElement<T>> {
 
-    /** Get the time steps from Butcher array (without the first zero).
-     * @return time steps from Butcher array (without the first zero
+    /** Get the dateAndTime steps from Butcher array (without the first zero).
+     * @return dateAndTime steps from Butcher array (without the first zero
      */
     T[] getC();
 

@@ -777,7 +777,7 @@ public class MatrixUtils {
                 data[i] = ois.readDouble();
             }
 
-            // create the instance
+            // createJson the instance
             final RealVector vector = new ArrayRealVector(data, false);
 
             // set up the field
@@ -886,7 +886,7 @@ public class MatrixUtils {
                 }
             }
 
-            // create the instance
+            // createJson the instance
             final RealMatrix matrix = new Array2DRowRealMatrix(data, false);
 
             // set up the field

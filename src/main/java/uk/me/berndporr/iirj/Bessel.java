@@ -24,9 +24,9 @@ import org.apache.commons.math3.analysis.solvers.LaguerreSolver;
 import org.apache.commons.math3.complex.Complex;
 
 /**
- * User facing class which contains all the methods the user uses to create
+ * User facing class which contains all the methods the user uses to createJson
  * Bessel filters. This done in this way: Bessel bessel = new Bessel(); Then
- * call one of the methods below to create low-,high-,band-, or stopband
+ * call one of the methods below to createJson low-,high-,band-, or stopband
  * filters. For example: bessel.bandPass(2,250,50,5);
  */
 public class Bessel extends Cascade {

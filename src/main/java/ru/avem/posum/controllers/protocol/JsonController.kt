@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okio.Okio
 import ru.avem.posum.models.process.ChannelModel
 import ru.avem.posum.models.protocol.ChannelDataModel
 import java.io.File
@@ -37,7 +38,6 @@ class JsonController(private val path: String) {
         val listType = Types.newParameterizedType(List::class.java, ChannelDataModel::class.java)
         val jsonAdapter: JsonAdapter<List<ChannelDataModel>> = moshi.adapter(listType)
         val json = File(path).readText()
-        jsonAdapter.lenient()
         return jsonAdapter.fromJson(json)
     }
 
@@ -54,31 +54,44 @@ class JsonController(private val path: String) {
         close(tempPath)
     }
 
+    fun parse(file: File) {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        val bufferedSource = Okio.buffer(Okio.source(file))
+        val adapter: JsonAdapter<ChannelDataModel> = moshi.adapter(ChannelDataModel::class.java)
+
+        while (!bufferedSource.exhausted()) {
+            val line: String = bufferedSource.readUtf8Line() ?: break
+            val json = if (line.first() != '{') line.substring(1) else line
+            val channelDataModel = adapter.fromJson(json)
+
+        }
+    }
+
     fun parse(isPointData: Boolean, isShort: Boolean, rarefactionCoefficient: Long): List<ChannelModel> {
         val channelsModels = mutableListOf<ChannelModel>()
         val channelsDataModels = if (isShort || isPointData) load("$path.temp") else load(path)
         val timeFormat = SimpleDateFormat("hh:mm:ss")
         if (channelsDataModels != null) {
-            var time = timeFormat.parse(channelsDataModels[0].time.split(" ")[1]).time
+            var time = timeFormat.parse(channelsDataModels[0].dateAndTime.split(" ")[1]).time
             var timeIsChanged = false
             for (channelData in channelsDataModels) {
                 val channelModel = ChannelModel(channelData.name)
-                val channelTime = timeFormat.parse(channelData.time.split(" ")[1]).time
+                val channelTime = timeFormat.parse(channelData.dateAndTime.split(" ")[1]).time
                 if (channelTime == time || rarefactionCoefficient == 1000.toLong()) {
-                    channelModel.amplitude = channelData.neededAmplitude.toString()
-                    channelModel.dc = channelData.neededDc.toString()
-                    channelModel.frequency = channelData.neededFrequency.toString()
-                    channelModel.rms = channelData.rms.toString()
-                    channelModel.loadsCounter = channelData.loadsCounter.toString()
-                    channelModel.chosenParameterIndex = channelData.chosenParameterIndex.toString()
-                    channelModel.responseAmplitude = channelData.responseAmplitude.toString()
-                    channelModel.responseDc = channelData.responseDc.toString()
-                    channelModel.responseFrequency = channelData.responseFrequency.toString()
-                    channelModel.relativeResponseAmplitude = channelData.relativeResponseAmplitude.toString()
-                    channelModel.relativeResponseDc = channelData.relativeResponseDc.toString()
-                    channelModel.relativeResponseFrequency = channelData.relativeResponseFrequency.toString()
-                    channelModel.date = channelData.time.split(" ")[0]
-                    channelModel.time = channelData.time.split(" ")[1]
+                    channelModel.amplitude = channelData.neededAmplitude
+                    channelModel.dc = channelData.neededDc
+                    channelModel.frequency = channelData.neededFrequency
+                    channelModel.rms = channelData.rms
+                    channelModel.loadsCounter = channelData.loadsCounter
+                    channelModel.chosenParameterIndex = channelData.chosenParameterIndex
+                    channelModel.responseAmplitude = channelData.responseAmplitude
+                    channelModel.responseDc = channelData.responseDc
+                    channelModel.responseFrequency = channelData.responseFrequency
+                    channelModel.relativeResponseAmplitude = channelData.relativeResponseAmplitude
+                    channelModel.relativeResponseDc = channelData.relativeResponseDc
+                    channelModel.relativeResponseFrequency = channelData.relativeResponseFrequency
+                    channelModel.date = channelData.dateAndTime.split(" ")[0]
+                    channelModel.time = channelData.dateAndTime.split(" ")[1]
                     channelsModels.add(channelModel)
                     timeIsChanged = false
                 } else if (!timeIsChanged) {
@@ -95,7 +108,7 @@ class JsonController(private val path: String) {
     private fun getShortList(channelsModels: List<ChannelModel>): List<ChannelModel> {
         val timeFormat = SimpleDateFormat("hh:mm:ss")
         val time = timeFormat.parse(channelsModels.last().time).time
-        val timeLimit = 60_000 // maximum time interval in mills
+        val timeLimit = 60_000 // maximum dateAndTime interval in mills
         val shortList = mutableListOf<ChannelModel>()
 
         for (channelModel in channelsModels.asReversed()) {

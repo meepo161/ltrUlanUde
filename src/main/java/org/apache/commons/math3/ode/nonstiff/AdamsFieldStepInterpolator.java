@@ -140,7 +140,7 @@ class AdamsFieldStepInterpolator<T extends RealFieldElement<T>> extends Abstract
 
     /** Estimate state by applying Taylor formula.
      * @param reference reference state
-     * @param time time at which state must be estimated
+     * @param time dateAndTime at which state must be estimated
      * @param stepSize step size used in the scaled and Nordsieck arrays
      * @param scaled first scaled derivative
      * @param nordsieck Nordsieck vector

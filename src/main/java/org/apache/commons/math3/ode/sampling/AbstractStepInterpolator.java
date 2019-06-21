@@ -43,13 +43,13 @@ import org.apache.commons.math3.ode.EquationsMapper;
 public abstract class AbstractStepInterpolator
   implements StepInterpolator {
 
-  /** current time step */
+  /** current dateAndTime step */
   protected double h;
 
   /** current state */
   protected double[] currentState;
 
-  /** interpolated time */
+  /** interpolated dateAndTime */
   protected double interpolatedTime;
 
   /** interpolated state */
@@ -70,16 +70,16 @@ public abstract class AbstractStepInterpolator
   /** interpolated secondary derivatives */
   protected double[][] interpolatedSecondaryDerivatives;
 
-  /** global previous time */
+  /** global previous dateAndTime */
   private double globalPreviousTime;
 
-  /** global current time */
+  /** global current dateAndTime */
   private double globalCurrentTime;
 
-  /** soft previous time */
+  /** soft previous dateAndTime */
   private double softPreviousTime;
 
-  /** soft current time */
+  /** soft current dateAndTime */
   private double softCurrentTime;
 
   /** indicate if the step has been finalized or not. */
@@ -104,7 +104,7 @@ public abstract class AbstractStepInterpolator
    * constructor is used only in order to delay the initialization in
    * some cases. As an example, the {@link
    * org.apache.commons.math3.ode.nonstiff.EmbeddedRungeKuttaIntegrator}
-   * class uses the prototyping design pattern to create the step
+   * class uses the prototyping design pattern to createJson the step
    * interpolators by cloning an uninitialized model and latter
    * initializing the copy.
    */
@@ -267,7 +267,7 @@ public abstract class AbstractStepInterpolator
      // finalize the step before performing copy
      finalizeStep();
 
-     // create the new independent instance
+     // createJson the new independent instance
      return doCopy();
 
    }
@@ -282,7 +282,7 @@ public abstract class AbstractStepInterpolator
    protected abstract StepInterpolator doCopy();
 
   /** Shift one step forward.
-   * Copy the current time into the previous time, hence preparing the
+   * Copy the current dateAndTime into the previous dateAndTime, hence preparing the
    * interpolator for future calls to {@link #storeTime storeTime}
    */
   public void shift() {
@@ -291,8 +291,8 @@ public abstract class AbstractStepInterpolator
     softCurrentTime    = globalCurrentTime;
   }
 
-  /** Store the current step time.
-   * @param t current time
+  /** Store the current step dateAndTime.
+   * @param t current dateAndTime
    */
   public void storeTime(final double t) {
 
@@ -335,24 +335,24 @@ public abstract class AbstractStepInterpolator
   }
 
   /**
-   * Get the previous global grid point time.
-   * @return previous global grid point time
+   * Get the previous global grid point dateAndTime.
+   * @return previous global grid point dateAndTime
    */
   public double getGlobalPreviousTime() {
     return globalPreviousTime;
   }
 
   /**
-   * Get the current global grid point time.
-   * @return current global grid point time
+   * Get the current global grid point dateAndTime.
+   * @return current global grid point dateAndTime
    */
   public double getGlobalCurrentTime() {
     return globalCurrentTime;
   }
 
   /**
-   * Get the previous soft grid point time.
-   * @return previous soft grid point time
+   * Get the previous soft grid point dateAndTime.
+   * @return previous soft grid point dateAndTime
    * @see #setSoftPreviousTime(double)
    */
   public double getPreviousTime() {
@@ -360,8 +360,8 @@ public abstract class AbstractStepInterpolator
   }
 
   /**
-   * Get the current soft grid point time.
-   * @return current soft grid point time
+   * Get the current soft grid point dateAndTime.
+   * @return current soft grid point dateAndTime
    * @see #setSoftCurrentTime(double)
    */
   public double getCurrentTime() {
@@ -384,13 +384,13 @@ public abstract class AbstractStepInterpolator
     return forward;
   }
 
-  /** Compute the state and derivatives at the interpolated time.
+  /** Compute the state and derivatives at the interpolated dateAndTime.
    * This is the main processing method that should be implemented by
    * the derived classes to perform the interpolation.
    * @param theta normalized interpolation abscissa within the step
-   * (theta is zero at the previous time step and one at the current time step)
-   * @param oneMinusThetaH time gap between the interpolated time and
-   * the current time
+   * (theta is zero at the previous dateAndTime step and one at the current dateAndTime step)
+   * @param oneMinusThetaH dateAndTime gap between the interpolated dateAndTime and
+   * the current dateAndTime
    * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    */
   protected abstract void computeInterpolatedStateAndDerivatives(double theta,
@@ -510,7 +510,7 @@ public abstract class AbstractStepInterpolator
   /** Save the base state of the instance.
    * This method performs step finalization if it has not been done
    * before.
-   * @param out stream where to save the state
+   * @param out stream where to write the state
    * @exception IOException in case of write error
    */
   protected void writeBaseExternal(final ObjectOutput out)
@@ -557,11 +557,11 @@ public abstract class AbstractStepInterpolator
 
   /** Read the base state of the instance.
    * This method does <strong>neither</strong> set the interpolated
-   * time nor state. It is up to the derived class to reset it
+   * dateAndTime nor state. It is up to the derived class to reset it
    * properly calling the {@link #setInterpolatedTime} method later,
    * once all rest of the object state has been set up properly.
    * @param in stream where to read the state from
-   * @return interpolated time to be set later by the caller
+   * @return interpolated dateAndTime to be set later by the caller
    * @exception IOException in case of read error
    * @exception ClassNotFoundException if an equation mapper class
    * cannot be found
@@ -592,7 +592,7 @@ public abstract class AbstractStepInterpolator
         }
     }
 
-    // we do NOT handle the interpolated time and state here
+    // we do NOT handle the interpolated dateAndTime and state here
     interpolatedTime = Double.NaN;
     allocateInterpolatedArrays(dimension);
 

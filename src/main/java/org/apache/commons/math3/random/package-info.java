@@ -67,7 +67,7 @@
  *      So WELL19937c for exemple is equidistributed up to dimension 623 (19937/32). This means a Monte-Carlo
  *      simulation generating a vector of n variables at each iteration has some guarantees on the properties
  *      of the vector as long as its dimension does not exceed the limit. However, since we use bits from two
- *      successive 32 bits generated integers to create one double, this limit is smaller when the variables are
+ *      successive 32 bits generated integers to createJson one double, this limit is smaller when the variables are
  *      of type double. so for Monte-Carlo simulation where less the 16 doubles are generated at each round,
  *      WELL1024 may be sufficient. If a larger number of doubles are needed a generator with a larger pool
  *      would be useful.
@@ -76,7 +76,7 @@
  *      <p>
  *      The WELL generators are more modern then MersenneTwister (the paper describing than has been published
  *      in 2006 instead of 1998) and fix some of its (few) drawbacks. If initialization array contains many
- *      zero bits, MersenneTwister may take a very long time (several hundreds of thousands of iterations to
+ *      zero bits, MersenneTwister may take a very long dateAndTime (several hundreds of thousands of iterations to
  *      reach a steady state with a balanced number of zero and one in its bits pool). So the WELL generators
  *      are better to <i>escape zeroland</i> as explained by the WELL generators creators. The Well19937a and
  *      Well44497a generator are not maximally equidistributed (i.e. there are some dimensions or bits blocks
@@ -89,7 +89,7 @@
  *      The MersenneTwister generator uses a 624 elements integer array, so it consumes less than 2.5 kilobytes.
  *      The WELL generators use 6 integer arrays with a size equal to the pool size, so for example the
  *      WELL44497b generator uses about 33 kilobytes. This may be important if a very large number of
- *      generator instances were used at the same time.
+ *      generator instances were used at the same dateAndTime.
  *      </p>
  *
  *      <p>
@@ -123,7 +123,7 @@
  *      <p>
  *      Note that <em>none</em> of these generators are suitable for cryptography. They are devoted
  *      to simulation, and to generate very long series with strong properties on the series as a whole
- *      (equidistribution, no correlation ...). They do not attempt to create small series but with
+ *      (equidistribution, no correlation ...). They do not attempt to createJson small series but with
  *      very strong properties of unpredictability as needed in cryptography.
  *      </p>
  *

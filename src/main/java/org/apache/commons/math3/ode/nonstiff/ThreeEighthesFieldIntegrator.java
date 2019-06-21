@@ -53,7 +53,7 @@ public class ThreeEighthesFieldIntegrator<T extends RealFieldElement<T>>
 
     /** Simple constructor.
      * Build a 3/8 integrator with the given step.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param step integration step
      */
     public ThreeEighthesFieldIntegrator(final Field<T> field, final T step) {

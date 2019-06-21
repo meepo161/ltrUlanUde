@@ -1082,7 +1082,7 @@ public class Rotation implements Serializable {
     double q2q3  = q2 * q3;
     double q3q3  = q3 * q3;
 
-    // create the matrix
+    // createJson the matrix
     double[][] m = new double[3][];
     m[0] = new double[3];
     m[1] = new double[3];

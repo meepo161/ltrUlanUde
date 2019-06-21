@@ -128,7 +128,7 @@ public class CMAESOptimizer
     private int dimension;
     /**
      * Defines the number of initial iterations, where the covariance matrix
-     * remains diagonal and the algorithm has internally linear time complexity.
+     * remains diagonal and the algorithm has internally linear dateAndTime complexity.
      * diagonalOnly = 1 means keeping the covariance matrix always diagonal and
      * this setting also exhibits linear space complexity. This can be
      * particularly useful for dimension > 100.

@@ -235,11 +235,11 @@ public abstract class AdaptiveStepsizeIntegrator
    * @param forward forward integration indicator
    * @param order order of the method
    * @param scale scaling vector for the state vector (can be shorter than state vector)
-   * @param t0 start time
+   * @param t0 start dateAndTime
    * @param y0 state vector at t0
-   * @param yDot0 first time derivative of y0
+   * @param yDot0 first dateAndTime derivative of y0
    * @param y1 work array for a state vector
-   * @param yDot1 work array for the first time derivative of y1
+   * @param yDot1 work array for the first dateAndTime derivative of y1
    * @return first integration step
    * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    * @exception DimensionMismatchException if arrays dimensions do not match equations settings

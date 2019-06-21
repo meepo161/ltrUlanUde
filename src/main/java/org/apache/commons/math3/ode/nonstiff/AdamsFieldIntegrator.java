@@ -42,7 +42,7 @@ public abstract class AdamsFieldIntegrator<T extends RealFieldElement<T>> extend
 
     /**
      * Build an Adams integrator with the given order and step control parameters.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param nSteps number of steps of the method excluding the one being computed
      * @param order order of the method
@@ -69,7 +69,7 @@ public abstract class AdamsFieldIntegrator<T extends RealFieldElement<T>> extend
 
     /**
      * Build an Adams integrator with the given order and step control parameters.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param nSteps number of steps of the method excluding the one being computed
      * @param order order of the method

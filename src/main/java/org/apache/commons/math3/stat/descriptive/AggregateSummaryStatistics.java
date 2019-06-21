@@ -30,7 +30,7 @@ import org.apache.commons.math3.exception.NullArgumentException;
  * instance via the zero-argument constructor, then uses
  * {@link #createContributingStatistics()} to obtain a {@code SummaryStatistics}
  * for each individual data set / partition.  The per-set statistics objects
- * are used as normal, and at any time the aggregate statistics for all the
+ * are used as normal, and at any dateAndTime the aggregate statistics for all the
  * contributors can be obtained from this object.
  * </p><p>
  * Clients with specialized requirements can use alternative constructors to
@@ -40,7 +40,7 @@ import org.apache.commons.math3.exception.NullArgumentException;
  * A static {@link #aggregate(Collection)} method is also included that computes
  * aggregate statistics directly from a Collection of SummaryStatistics instances.
  * </p><p>
- * When {@link #createContributingStatistics()} is used to create SummaryStatistics
+ * When {@link #createContributingStatistics()} is used to createJson SummaryStatistics
  * instances to be aggregated concurrently, the created instances'
  * {@link SummaryStatistics#addValue(double)} methods must synchronize on the aggregating
  * instance maintained by this class.  In multithreaded environments, if the functionality

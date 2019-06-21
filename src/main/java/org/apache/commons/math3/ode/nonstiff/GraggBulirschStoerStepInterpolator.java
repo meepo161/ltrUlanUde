@@ -366,10 +366,10 @@ class GraggBulirschStoerStepInterpolator
 
     final int dimension = (currentState == null) ? -1 : currentState.length;
 
-    // save the state of the base class
+    // write the state of the base class
     writeBaseExternal(out);
 
-    // save the local attributes (but not the temporary vectors)
+    // write the local attributes (but not the temporary vectors)
     out.writeInt(currentDegree);
     for (int k = 0; k <= currentDegree; ++k) {
       for (int l = 0; l < dimension; ++l) {
@@ -399,7 +399,7 @@ class GraggBulirschStoerStepInterpolator
       }
     }
 
-    // we can now set the interpolated time and state
+    // we can now set the interpolated dateAndTime and state
     setInterpolatedTime(t);
 
   }

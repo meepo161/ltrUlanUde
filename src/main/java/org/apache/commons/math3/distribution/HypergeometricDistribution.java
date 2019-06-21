@@ -49,7 +49,7 @@ public class HypergeometricDistribution extends AbstractIntegerDistribution {
      * Construct a new hypergeometric distribution with the specified population
      * size, number of successes in the population, and sample size.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}

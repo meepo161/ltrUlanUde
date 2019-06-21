@@ -155,14 +155,14 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
     /**
      * {@inheritDoc}
      * <p>If all values are available, it is more accurate to use
-     * {@link #evaluate(double[])} rather than adding values one at a time
+     * {@link #evaluate(double[])} rather than adding values one at a dateAndTime
      * using this method and then executing {@link #getResult}, since
      * <code>evaluate</code> leverages the fact that is has the full
      * list of values together to execute a two-pass algorithm.
      * See {@link Variance}.</p>
      *
      * <p>Note also that when {@link #Variance(SecondMoment)} is used to
-     * create a Variance, this method does nothing. In that case, the
+     * createJson a Variance, this method does nothing. In that case, the
      * SecondMoment should be incremented directly.</p>
      */
     @Override
@@ -383,7 +383,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -468,7 +468,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * The formula used assumes that the supplied mean value is the weighted arithmetic
      * mean of the sample data, not a known population parameter. This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * This formula will not return the same result as the unweighted variance when all
@@ -546,7 +546,7 @@ public class Variance extends AbstractStorelessUnivariateStatistic implements Se
      * <p>
      * The formula used assumes that the supplied mean value is the weighted arithmetic
      * mean of the sample data, not a known population parameter. This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * This formula will not return the same result as the unweighted variance when all

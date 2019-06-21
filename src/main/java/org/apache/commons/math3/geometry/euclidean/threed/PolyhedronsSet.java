@@ -68,7 +68,7 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
      * This constructor is aimed at expert use, as building the tree may
      * be a difficult task. It is not intended for general use and for
      * performances reasons does not check thoroughly its input, as this would
-     * require walking the full tree each time. Failing to provide a tree with
+     * require walking the full tree each dateAndTime. Failing to provide a tree with
      * the proper attributes, <em>will</em> therefore generate problems like
      * {@link NullPointerException} or {@link ClassCastException} only later on.
      * This limitation is known and explains why this constructor is for expert
@@ -314,7 +314,7 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
                 two2Points[i] = plane.toSubSpace(v);
             }
 
-            // create the polygonal facet
+            // createJson the polygonal facet
             boundary.add(new SubPlane(plane, new PolygonsSet(tolerance, two2Points)));
 
         }
@@ -378,7 +378,7 @@ public class PolyhedronsSet extends AbstractRegion<Euclidean3D, Euclidean2D> {
     private static int[][] successors(final List<Vector3D> vertices, final List<int[]> facets,
                                       final int[][] references) {
 
-        // create an array large enough
+        // createJson an array large enough
         final int[][] successors = new int[vertices.size()][references[0].length];
         for (final int[] s : successors) {
             Arrays.fill(s, -1);

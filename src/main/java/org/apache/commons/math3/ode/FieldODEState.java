@@ -21,7 +21,7 @@ import org.apache.commons.math3.Field;
 import org.apache.commons.math3.RealFieldElement;
 import org.apache.commons.math3.util.MathArrays;
 
-/** Container for time, main and secondary state vectors.
+/** Container for dateAndTime, main and secondary state vectors.
 
  * @see FirstOrderFieldDifferentialEquations
  * @see FieldSecondaryEquations
@@ -36,27 +36,27 @@ public class FieldODEState<T extends RealFieldElement<T>> {
     /** Time. */
     private final T time;
 
-    /** Main state at time. */
+    /** Main state at dateAndTime. */
     private final T[] state;
 
-    /** Secondary state at time. */
+    /** Secondary state at dateAndTime. */
     private final T[][] secondaryState;
 
     /** Simple constructor.
      * <p>Calling this constructor is equivalent to call {@link
      * #FieldODEState(RealFieldElement, RealFieldElement[], RealFieldElement[][])
-     * FieldODEState(time, state, null)}.</p>
-     * @param time time
-     * @param state state at time
+     * FieldODEState(dateAndTime, state, null)}.</p>
+     * @param time dateAndTime
+     * @param state state at dateAndTime
      */
     public FieldODEState(T time, T[] state) {
         this(time, state, null);
     }
 
     /** Simple constructor.
-     * @param time time
-     * @param state state at time
-     * @param secondaryState state at time (may be null)
+     * @param time dateAndTime
+     * @param state state at dateAndTime
+     * @param secondaryState state at dateAndTime (may be null)
      */
     public FieldODEState(T time, T[] state, T[][] secondaryState) {
         this.time           = time;
@@ -88,8 +88,8 @@ public class FieldODEState<T extends RealFieldElement<T>> {
 
     }
 
-    /** Get time.
-     * @return time
+    /** Get dateAndTime.
+     * @return dateAndTime
      */
     public T getTime() {
         return time;
@@ -102,8 +102,8 @@ public class FieldODEState<T extends RealFieldElement<T>> {
         return state.length;
     }
 
-    /** Get main state at time.
-     * @return main state at time
+    /** Get main state at dateAndTime.
+     * @return main state at dateAndTime
      */
     public T[] getState() {
         return state.clone();
@@ -126,11 +126,11 @@ public class FieldODEState<T extends RealFieldElement<T>> {
         return index == 0 ? state.length : secondaryState[index - 1].length;
     }
 
-    /** Get secondary state at time.
+    /** Get secondary state at dateAndTime.
      * @param index index of the secondary set as returned
      * by {@link FieldExpandableODE#addSecondaryEquations(FieldSecondaryEquations)}
      * (beware index 0 corresponds to main state, additional states start at 1)
-     * @return secondary state at time
+     * @return secondary state at dateAndTime
      */
     public T[] getSecondaryState(final int index) {
         return index == 0 ? state.clone() : secondaryState[index - 1].clone();

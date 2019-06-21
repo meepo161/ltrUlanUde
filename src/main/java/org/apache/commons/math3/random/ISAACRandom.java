@@ -79,7 +79,7 @@ public class ISAACRandom extends BitsStreamGenerator implements Serializable {
      * Creates a new ISAAC random number generator.
      * <br/>
      * The instance is initialized using a combination of the
-     * current time and system hash code of the instance as the seed.
+     * current dateAndTime and system hash code of the instance as the seed.
      */
     public ISAACRandom() {
         setSeed(System.currentTimeMillis() + System.identityHashCode(this));
@@ -98,7 +98,7 @@ public class ISAACRandom extends BitsStreamGenerator implements Serializable {
      * Creates a new ISAAC random number generator using an int array seed.
      *
      * @param seed Initial seed. If {@code null}, the seed will be related
-     * to the current time.
+     * to the current dateAndTime.
      */
     public ISAACRandom(int[] seed) {
         setSeed(seed);

@@ -36,7 +36,7 @@ import org.apache.commons.math3.util.MathUtils;
  * <p>
  * This implementation is specially designed to be cache-friendly. Square blocks are
  * stored as small arrays and allow efficient traversal of data both in row major direction
- * and columns major direction, one block at a time. This greatly increases performances
+ * and columns major direction, one block at a dateAndTime. This greatly increases performances
  * for algorithms that use crossed directions loops like multiplication or transposition.
  * </p>
  * <p>
@@ -244,7 +244,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
     /**
      * Create a data array in blocks layout.
      * <p>
-     * This method can be used to create the array argument of the {@link
+     * This method can be used to createJson the array argument of the {@link
      * #BlockRealMatrix(int, int, double[][], boolean)} constructor.
      * </p>
      * @param rows Number of rows in the new matrix.
@@ -286,7 +286,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
     /** {@inheritDoc} */
     @Override
     public BlockRealMatrix copy() {
-        // create an empty matrix
+        // createJson an empty matrix
         BlockRealMatrix copied = new BlockRealMatrix(rows, columns);
 
         // copy the blocks
@@ -666,7 +666,7 @@ public class BlockRealMatrix extends AbstractRealMatrix implements Serializable 
         // safety checks
         MatrixUtils.checkSubMatrixIndex(this, startRow, endRow, startColumn, endColumn);
 
-        // create the output matrix
+        // createJson the output matrix
         final BlockRealMatrix out =
             new BlockRealMatrix(endRow - startRow + 1, endColumn - startColumn + 1);
 

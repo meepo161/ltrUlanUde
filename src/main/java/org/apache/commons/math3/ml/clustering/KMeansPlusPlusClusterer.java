@@ -204,10 +204,10 @@ public class KMeansPlusPlusClusterer<T extends Clusterable> extends Clusterer<T>
             throw new NumberIsTooSmallException(points.size(), k, false);
         }
 
-        // create the initial clusters
+        // createJson the initial clusters
         List<CentroidCluster<T>> clusters = chooseInitialCenters(points);
 
-        // create an array containing the latest assignment of a point to a cluster
+        // createJson an array containing the latest assignment of a point to a cluster
         // no need to initialize the array, as it will be filled with the first assignment
         int[] assignments = new int[points.size()];
         assignPointsToClusters(clusters, points, assignments);

@@ -108,7 +108,7 @@ public class FieldEquationsMapper<T extends RealFieldElement<T>> implements Seri
     }
 
     /** Map flat arrays to a state and derivative.
-     * @param t time
+     * @param t dateAndTime
      * @param y state array to map, including primary and secondary components
      * @param yDot state derivative array to map, including primary and secondary components
      * @return mapped state

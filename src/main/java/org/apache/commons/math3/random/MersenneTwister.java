@@ -99,7 +99,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
     private int   mti;
 
     /** Creates a new random number generator.
-     * <p>The instance is initialized using the current time plus the
+     * <p>The instance is initialized using the current dateAndTime plus the
      * system identity hash code of this instance as the seed.</p>
      */
     public MersenneTwister() {
@@ -117,7 +117,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
 
     /** Creates a new random number generator using an int array seed.
      * @param seed the initial seed (32 bits integers array), if null
-     * the seed of the generator will be related to the current time
+     * the seed of the generator will be related to the current dateAndTime
      */
     public MersenneTwister(int[] seed) {
         mt = new int[N];
@@ -157,7 +157,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
      * <p>The state of the generator is exactly the same as a new
      * generator built with the same seed.</p>
      * @param seed the initial seed (32 bits integers array), if null
-     * the seed of the generator will be the current system time plus the
+     * the seed of the generator will be the current system dateAndTime plus the
      * system identity hash code of this instance
      */
     @Override
@@ -229,7 +229,7 @@ public class MersenneTwister extends BitsStreamGenerator implements Serializable
 
         int y;
 
-        if (mti >= N) { // generate N words at one time
+        if (mti >= N) { // generate N words at one dateAndTime
             int mtNext = mt[0];
             for (int k = 0; k < N - M; ++k) {
                 int mtCurr = mtNext;

@@ -150,16 +150,16 @@ public abstract class AbstractFieldStepInterpolator<T extends RealFieldElement<T
         return forward;
     }
 
-    /** Compute the state and derivatives at the interpolated time.
+    /** Compute the state and derivatives at the interpolated dateAndTime.
      * This is the main processing method that should be implemented by
      * the derived classes to perform the interpolation.
      * @param equationsMapper mapper for ODE equations primary and secondary components
-     * @param time interpolation time
+     * @param time interpolation dateAndTime
      * @param theta normalized interpolation abscissa within the step
-     * (theta is zero at the previous time step and one at the current time step)
-     * @param thetaH time gap between the previous time and the interpolated time
-     * @param oneMinusThetaH time gap between the interpolated time and
-     * the current time
+     * (theta is zero at the previous dateAndTime step and one at the current dateAndTime step)
+     * @param thetaH dateAndTime gap between the previous dateAndTime and the interpolated dateAndTime
+     * @param oneMinusThetaH dateAndTime gap between the interpolated dateAndTime and
+     * the current dateAndTime
      * @return interpolated state and derivatives
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      */

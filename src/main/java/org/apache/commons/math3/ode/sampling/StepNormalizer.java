@@ -30,20 +30,20 @@ import org.apache.commons.math3.util.Precision;
  * remain constant and therefore only accept general step
  * handlers.</p>
  *
- * <p>The stepsize used is selected at construction time. The {@link
+ * <p>The stepsize used is selected at construction dateAndTime. The {@link
  * FixedStepHandler#handleStep handleStep} method of the underlying
  * {@link FixedStepHandler} object is called at normalized times. The
  * normalized times can be influenced by the {@link StepNormalizerMode} and
  * {@link StepNormalizerBounds}.</p>
  *
- * <p>There is no constraint on the integrator, it can use any time step
- * it needs (time steps longer or shorter than the fixed time step and
+ * <p>There is no constraint on the integrator, it can use any dateAndTime step
+ * it needs (dateAndTime steps longer or shorter than the fixed dateAndTime step and
  * non-integer ratios are all allowed).</p>
  *
  * <p>
  * <table border="1" align="center">
  * <tr BGCOLOR="#CCCCFF"><td colspan=6><font size="+2">Examples (step size = 0.5)</font></td></tr>
- * <tr BGCOLOR="#EEEEFF"><font size="+1"><td>Start time</td><td>End time</td>
+ * <tr BGCOLOR="#EEEEFF"><font size="+1"><td>Start dateAndTime</td><td>End dateAndTime</td>
  *  <td>Direction</td><td>{@link StepNormalizerMode Mode}</td>
  *  <td>{@link StepNormalizerBounds Bounds}</td><td>Output</td></font></tr>
  * <tr><td>0.3</td><td>3.1</td><td>forward</td><td>{@link StepNormalizerMode#INCREMENT INCREMENT}</td><td>{@link StepNormalizerBounds#NEITHER NEITHER}</td><td>0.8, 1.3, 1.8, 2.3, 2.8</td></tr>
@@ -89,16 +89,16 @@ import org.apache.commons.math3.util.Precision;
  */
 
 public class StepNormalizer implements StepHandler {
-    /** Fixed time step. */
+    /** Fixed dateAndTime step. */
     private double h;
 
     /** Underlying step handler. */
     private final FixedStepHandler handler;
 
-    /** First step time. */
+    /** First step dateAndTime. */
     private double firstTime;
 
-    /** Last step time. */
+    /** Last step dateAndTime. */
     private double lastTime;
 
     /** Last state vector. */
@@ -119,8 +119,8 @@ public class StepNormalizer implements StepHandler {
     /** Simple constructor. Uses {@link StepNormalizerMode#INCREMENT INCREMENT}
      * mode, and {@link StepNormalizerBounds#FIRST FIRST} bounds setting, for
      * backwards compatibility.
-     * @param h fixed time step (sign is not used)
-     * @param handler fixed time step handler to wrap
+     * @param h fixed dateAndTime step (sign is not used)
+     * @param handler fixed dateAndTime step handler to wrap
      */
     public StepNormalizer(final double h, final FixedStepHandler handler) {
         this(h, handler, StepNormalizerMode.INCREMENT,
@@ -129,8 +129,8 @@ public class StepNormalizer implements StepHandler {
 
     /** Simple constructor. Uses {@link StepNormalizerBounds#FIRST FIRST}
      * bounds setting.
-     * @param h fixed time step (sign is not used)
-     * @param handler fixed time step handler to wrap
+     * @param h fixed dateAndTime step (sign is not used)
+     * @param handler fixed dateAndTime step handler to wrap
      * @param mode step normalizer mode to use
      * @since 3.0
      */
@@ -141,8 +141,8 @@ public class StepNormalizer implements StepHandler {
 
     /** Simple constructor. Uses {@link StepNormalizerMode#INCREMENT INCREMENT}
      * mode.
-     * @param h fixed time step (sign is not used)
-     * @param handler fixed time step handler to wrap
+     * @param h fixed dateAndTime step (sign is not used)
+     * @param handler fixed dateAndTime step handler to wrap
      * @param bounds step normalizer bounds setting to use
      * @since 3.0
      */
@@ -152,8 +152,8 @@ public class StepNormalizer implements StepHandler {
     }
 
     /** Simple constructor.
-     * @param h fixed time step (sign is not used)
-     * @param handler fixed time step handler to wrap
+     * @param h fixed dateAndTime step (sign is not used)
+     * @param handler fixed dateAndTime step handler to wrap
      * @param mode step normalizer mode to use
      * @param bounds step normalizer bounds setting to use
      * @since 3.0
@@ -201,7 +201,7 @@ public class StepNormalizer implements StepHandler {
      */
     public void handleStep(final StepInterpolator interpolator, final boolean isLast)
         throws MaxCountExceededException {
-        // The first time, update the last state with the start information.
+        // The first dateAndTime, update the last state with the start information.
         if (lastState == null) {
             firstTime = interpolator.getPreviousTime();
             lastTime = interpolator.getPreviousTime();
@@ -216,7 +216,7 @@ public class StepNormalizer implements StepHandler {
             }
         }
 
-        // Calculate next normalized step time.
+        // Calculate next normalized step dateAndTime.
         double nextTime = (mode == StepNormalizerMode.INCREMENT) ?
                           lastTime + h :
                           (FastMath.floor(lastTime / h) + 1) * h;
@@ -254,12 +254,12 @@ public class StepNormalizer implements StepHandler {
     }
 
     /**
-     * Returns a value indicating whether the next normalized time is in the
+     * Returns a value indicating whether the next normalized dateAndTime is in the
      * current step.
-     * @param nextTime the next normalized time
+     * @param nextTime the next normalized dateAndTime
      * @param interpolator interpolator for the last accepted step, to use to
-     * get the end time of the current step
-     * @return value indicating whether the next normalized time is in the
+     * get the end dateAndTime of the current step
+     * @return value indicating whether the next normalized dateAndTime is in the
      * current step
      */
     private boolean isNextInStep(double nextTime,
@@ -280,11 +280,11 @@ public class StepNormalizer implements StepHandler {
         handler.handleStep(lastTime, lastState, lastDerivatives, isLast);
     }
 
-    /** Stores the interpolated information for the given time in the current
+    /** Stores the interpolated information for the given dateAndTime in the current
      * state.
      * @param interpolator interpolator for the last accepted step, to use to
      * get the interpolated information
-     * @param t the time for which to store the interpolated information
+     * @param t the dateAndTime for which to store the interpolated information
      * @exception MaxCountExceededException if the interpolator throws one because
      * the number of functions evaluations is exceeded
      */

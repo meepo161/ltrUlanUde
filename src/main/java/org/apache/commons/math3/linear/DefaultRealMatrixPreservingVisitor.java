@@ -20,7 +20,7 @@ package org.apache.commons.math3.linear;
 /**
  * Default implementation of the {@link RealMatrixPreservingVisitor} interface.
  * <p>
- * This class is a convenience to create custom visitors without defining all
+ * This class is a convenience to createJson custom visitors without defining all
  * methods. This class provides default implementations that do nothing.
  * </p>
  *

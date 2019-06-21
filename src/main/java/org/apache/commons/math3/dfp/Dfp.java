@@ -67,7 +67,7 @@ import org.apache.commons.math3.util.FastMath;
  *  10 number then it is one and that requirement would be met.</p>
  *
  *  <p>The radix of 10000 was chosen because it should be faster to operate
- *  on 4 decimal digits at once instead of one at a time.  Radix 10 behavior
+ *  on 4 decimal digits at once instead of one at a dateAndTime.  Radix 10 behavior
  *  can be realized by adding an additional rounding step to ensure that
  *  the number of decimal digits represented is constant.</p>
  *
@@ -535,7 +535,7 @@ public class Dfp implements RealFieldElement<Dfp> {
 
     /** Creates an instance with a non-finite value.
      * @param field field to which this instance belongs
-     * @param sign sign of the Dfp to create
+     * @param sign sign of the Dfp to createJson
      * @param nans code of the value, must be one of {@link #INFINITE},
      * {@link #SNAN},  {@link #QNAN}
      */
@@ -616,7 +616,7 @@ public class Dfp implements RealFieldElement<Dfp> {
     }
 
     /** Creates an instance with a non-finite value.
-     * @param sig sign of the Dfp to create
+     * @param sig sign of the Dfp to createJson
      * @param code code of the value, must be one of {@link #INFINITE},
      * {@link #SNAN},  {@link #QNAN}
      * @return a new instance with a non-finite value
@@ -1080,7 +1080,7 @@ public class Dfp implements RealFieldElement<Dfp> {
             return newInstance(this);
         }
 
-        /* General case:  create another dfp, result, that contains the
+        /* General case:  createJson another dfp, result, that contains the
          * a with the fractional part lopped off.  */
 
         Dfp result = newInstance(this);

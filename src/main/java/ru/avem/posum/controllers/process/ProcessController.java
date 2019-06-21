@@ -14,6 +14,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.controllers.protocol.JsonController;
+import ru.avem.posum.controllers.protocol.JsonControllerTwo;
 import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.controllers.protocol.ProtocolSheets;
 import ru.avem.posum.db.models.TestProgram;
@@ -177,6 +178,7 @@ public class ProcessController implements BaseController {
     private GraphController graphController;
     private String path = System.getProperty("user.dir") + "\\channelsData.txt";
     private JsonController jsonController = new JsonController(path);
+    private JsonControllerTwo jsonControllerTwo = new JsonControllerTwo(this);
     private boolean initialized;
     private LinkingController linkingController;
     private Process process = new Process();
@@ -458,6 +460,7 @@ public class ProcessController implements BaseController {
             calibrationModel.loadCalibrations(table.getItems(), processModel.getModules());
             commandsController.executeCommands();
             jsonController.createFile();
+            jsonControllerTwo.createJson();
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
             while (!process.isStopped()) {
@@ -597,22 +600,24 @@ public class ProcessController implements BaseController {
         }).start();
     }
 
-    public void handleSaveProtocolButton() {
-        jsonController.close(path);
+    public void handleSaveProtocol() {
         long rarefactionCoefficient = protocolController.showProtocolSaverDialog();
         if (rarefactionCoefficient != -1) {
-            statusBarLine.setStatusOfProgress("Подготовка данных для сохраения протокола");
 
-            new Thread(() -> {
-                ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
-                protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, false, rarefactionCoefficient, sheetsNames);
-
-                Platform.runLater(() -> {
-                    File selectedDirectory = protocolController.showFileSaver("Сохранение протокола", "Protocol.xlsx");
-                    if (selectedDirectory != null)
+            Platform.runLater(() -> {
+                saveUiElementsState();
+                toggleUiElements(true);
+                File selectedDirectory = protocolController.showFileSaver("Сохранение протокола испытаний", "Protocol.xlsx");
+                if (selectedDirectory != null) {
+                    statusBarLine.setStatusOfProgress("Сохранение протокола испытаний");
+                    new Thread(() -> {
+                        ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
+                        protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, false, rarefactionCoefficient, sheetsNames);
                         protocolController.saveProtocol(selectedDirectory, "Протокол сохранен в ");
-                });
-            }).start();
+                        loadUiElementsState();
+                    }).start();
+                }
+            });
         }
     }
 
@@ -696,6 +701,10 @@ public class ProcessController implements BaseController {
 
     public JsonController getJsonController() {
         return jsonController;
+    }
+
+    public JsonControllerTwo getJsonControllerTwo() {
+        return jsonControllerTwo;
     }
 
     public LinkingController getLinkingController() {

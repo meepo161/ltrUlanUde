@@ -70,7 +70,7 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
     /** Indicator that a state or derivative reset was triggered by some event. */
     private boolean resetOccurred;
 
-    /** Field to which the time and state vector elements belong. */
+    /** Field to which the dateAndTime and state vector elements belong. */
     private final Field<T> field;
 
     /** Events states. */
@@ -89,7 +89,7 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
     private transient FieldExpandableODE<T> equations;
 
     /** Build an instance.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      */
     protected AbstractFieldIntegrator(final Field<T> field, final String name) {
@@ -194,9 +194,9 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
 
     /** Prepare the start of an integration.
      * @param eqn equations to integrate
-     * @param t0 start value of the independent <i>time</i> variable
+     * @param t0 start value of the independent <i>dateAndTime</i> variable
      * @param y0 array containing the start value of the state vector
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      * @return initial state with derivatives added
      */
     protected FieldODEStateAndDerivative<T> initIntegration(final FieldExpandableODE<T> eqn,
@@ -243,7 +243,7 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
     }
 
     /** Compute the derivatives and check the number of evaluations.
-     * @param t current value of the independent <I>time</I> variable
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the state vector
      * @return state completed with derivatives
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
@@ -270,7 +270,7 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
 
     /** Accept a step, triggering events and step handlers.
      * @param interpolator step interpolator
-     * @param tEnd final integration time
+     * @param tEnd final integration dateAndTime
      * @return state at end of step
      * @exception MaxCountExceededException if the interpolator throws one because
      * the number of functions evaluations is exceeded
@@ -318,13 +318,13 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
                 final FieldEventState<T> currentEvent = iterator.next();
                 iterator.remove();
 
-                // get state at event time
+                // get state at event dateAndTime
                 final FieldODEStateAndDerivative<T> eventState = restricted.getInterpolatedState(currentEvent.getEventTime());
 
                 // restrict the interpolator to the first part of the step, up to the event
                 restricted = restricted.restrictStep(previousState, eventState);
 
-                // advance all event states to current time
+                // advance all event states to current dateAndTime
                 for (final FieldEventState<T> state : eventsStates) {
                     state.stepAccepted(eventState);
                     isLastStep = isLastStep || state.stop();
@@ -384,7 +384,7 @@ public abstract class AbstractFieldIntegrator<T extends RealFieldElement<T>> imp
 
     /** Check the integration span.
      * @param eqn set of differential equations
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      * @exception NumberIsTooSmallException if integration span is too small
      * @exception DimensionMismatchException if adaptive step size integrators
      * tolerance arrays dimensions are not compatible with equations settings

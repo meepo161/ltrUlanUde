@@ -84,7 +84,7 @@ public class DfpDec extends Dfp {
 
     /** Creates an instance with a non-finite value.
      * @param factory factory linked to this instance
-     * @param sign sign of the Dfp to create
+     * @param sign sign of the Dfp to createJson
      * @param nans code of the value, must be one of {@link #INFINITE},
      * {@link #SNAN},  {@link #QNAN}
      */

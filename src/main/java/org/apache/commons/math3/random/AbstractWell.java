@@ -62,7 +62,7 @@ public abstract class AbstractWell extends BitsStreamGenerator implements Serial
     protected final int[] i3;
 
     /** Creates a new random number generator.
-     * <p>The instance is initialized using the current time plus the
+     * <p>The instance is initialized using the current dateAndTime plus the
      * system identity hash code of this instance as the seed.</p>
      * @param k number of bits in the pool (not necessarily a multiple of 32)
      * @param m1 first parameter of the algorithm
@@ -90,7 +90,7 @@ public abstract class AbstractWell extends BitsStreamGenerator implements Serial
      * @param m2 second parameter of the algorithm
      * @param m3 third parameter of the algorithm
      * @param seed the initial seed (32 bits integers array), if null
-     * the seed of the generator will be related to the current time
+     * the seed of the generator will be related to the current dateAndTime
      */
     protected AbstractWell(final int k, final int m1, final int m2, final int m3, final int[] seed) {
 
@@ -147,7 +147,7 @@ public abstract class AbstractWell extends BitsStreamGenerator implements Serial
      * <p>The state of the generator is exactly the same as a new
      * generator built with the same seed.</p>
      * @param seed the initial seed (32 bits integers array). If null
-     * the seed of the generator will be the system time plus the system identity
+     * the seed of the generator will be the system dateAndTime plus the system identity
      * hash code of the instance.
      */
     @Override

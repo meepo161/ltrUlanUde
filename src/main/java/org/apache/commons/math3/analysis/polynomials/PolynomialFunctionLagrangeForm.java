@@ -156,7 +156,7 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
     /**
      * Evaluate the Lagrange polynomial using
      * <a href="http://mathworld.wolfram.com/NevillesAlgorithm.html">
-     * Neville's Algorithm</a>. It takes O(n^2) time.
+     * Neville's Algorithm</a>. It takes O(n^2) dateAndTime.
      *
      * @param x Interpolating points array.
      * @param y Interpolating values array.
@@ -190,7 +190,7 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
     /**
      * Evaluate the Lagrange polynomial using
      * <a href="http://mathworld.wolfram.com/NevillesAlgorithm.html">
-     * Neville's Algorithm</a>. It takes O(n^2) time.
+     * Neville's Algorithm</a>. It takes O(n^2) dateAndTime.
      *
      * @param x Interpolating points array.
      * @param y Interpolating values array.
@@ -248,7 +248,7 @@ public class PolynomialFunctionLagrangeForm implements UnivariateFunction {
 
     /**
      * Calculate the coefficients of Lagrange polynomial from the
-     * interpolation data. It takes O(n^2) time.
+     * interpolation data. It takes O(n^2) dateAndTime.
      * Note that this computation can be ill-conditioned: Use with caution
      * and only when it is necessary.
      */

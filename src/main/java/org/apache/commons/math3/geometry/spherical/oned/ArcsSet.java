@@ -934,7 +934,7 @@ public class ArcsSet extends AbstractRegion<Sphere1D, Sphere1D> implements Itera
 
     /** Specialized exception for inconsistent BSP tree state inconsistency.
      * <p>
-     * This exception is thrown at {@link ArcsSet} construction time when the
+     * This exception is thrown at {@link ArcsSet} construction dateAndTime when the
      * {@link org.apache.commons.math3.geometry.partitioning.Region.Location inside/outside}
      * state is not consistent at the 0, \(2 \pi \) crossing.
      * </p>

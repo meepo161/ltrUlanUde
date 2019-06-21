@@ -37,14 +37,14 @@ import org.apache.commons.math3.util.MathArrays;
 abstract class RungeKuttaFieldStepInterpolator<T extends RealFieldElement<T>>
     extends AbstractFieldStepInterpolator<T> {
 
-    /** Field to which the time and state vector elements belong. */
+    /** Field to which the dateAndTime and state vector elements belong. */
     private final Field<T> field;
 
     /** Slopes at the intermediate points. */
     private final T[][] yDotK;
 
     /** Simple constructor.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param forward integration direction indicator
      * @param yDotK slopes at the intermediate points
      * @param globalPreviousState start of the global step
@@ -83,7 +83,7 @@ abstract class RungeKuttaFieldStepInterpolator<T extends RealFieldElement<T>>
     }
 
     /** Create a new instance.
-     * @param newField field to which the time and state vector elements belong
+     * @param newField field to which the dateAndTime and state vector elements belong
      * @param newForward integration direction indicator
      * @param newYDotK slopes at the intermediate points
      * @param newGlobalPreviousState start of the global step

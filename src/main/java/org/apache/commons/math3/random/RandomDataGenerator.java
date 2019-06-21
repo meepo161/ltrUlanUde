@@ -85,7 +85,7 @@ import org.apache.commons.math3.util.MathArrays;
  * When a new <code>RandomDataImpl</code> is created, the underlying random
  * number generators are <strong>not</strong> initialized. If you do not
  * explicitly seed the default non-secure generator, it is seeded with the
- * current time in milliseconds plus the system identity hash code on first use.
+ * current dateAndTime in milliseconds plus the system identity hash code on first use.
  * The same holds for the secure generator. If you provide a <code>RandomGenerator</code>
  * to the constructor, however, this generator is not reseeded by the constructor
  * nor is it reseeded on first use.</li>
@@ -297,7 +297,7 @@ public class RandomDataGenerator implements RandomData, Serializable {
             secRan.nextBytes(randomBytes);
             alg.update(randomBytes);
 
-            // Compute hash -- will create 20-byte binary hash
+            // Compute hash -- will createJson 20-byte binary hash
             byte[] hash = alg.digest();
 
             // Loop over the hash, converting each byte to 2 hex digits
@@ -620,7 +620,7 @@ public class RandomDataGenerator implements RandomData, Serializable {
      * {@inheritDoc}
      *
      * This method calls {@link MathArrays#shuffle(int[],RandomGenerator)
-     * MathArrays.shuffle} in order to create a random shuffle of the set
+     * MathArrays.shuffle} in order to createJson a random shuffle of the set
      * of natural numbers {@code { 0, 1, ..., n - 1 }}.
      *
      * @throws NumberIsTooLargeException if {@code k > n}.
@@ -675,7 +675,7 @@ public class RandomDataGenerator implements RandomData, Serializable {
     /**
      * Reseeds the random number generator with the supplied seed.
      * <p>
-     * Will create and initialize if null.
+     * Will createJson and initialize if null.
      * </p>
      *
      * @param seed the seed value to use
@@ -685,10 +685,10 @@ public class RandomDataGenerator implements RandomData, Serializable {
     }
 
     /**
-     * Reseeds the secure random number generator with the current time in
+     * Reseeds the secure random number generator with the current dateAndTime in
      * milliseconds.
      * <p>
-     * Will create and initialize if null.
+     * Will createJson and initialize if null.
      * </p>
      */
     public void reSeedSecure() {
@@ -698,7 +698,7 @@ public class RandomDataGenerator implements RandomData, Serializable {
     /**
      * Reseeds the secure random number generator with the supplied seed.
      * <p>
-     * Will create and initialize if null.
+     * Will createJson and initialize if null.
      * </p>
      *
      * @param seed the seed value to use

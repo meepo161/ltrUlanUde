@@ -119,7 +119,7 @@ public class ConvexHull2D implements ConvexHull<Euclidean2D, Vector2D>, Serializ
     }
 
     /**
-     * Retrieve the line segments from the cached array or create them if needed.
+     * Retrieve the line segments from the cached array or createJson them if needed.
      *
      * @return the array of line segments
      */

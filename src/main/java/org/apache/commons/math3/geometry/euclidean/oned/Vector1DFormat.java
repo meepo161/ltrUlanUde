@@ -31,9 +31,9 @@ import org.apache.commons.math3.util.CompositeFormat;
  * Formats a 1D vector in components list format "{x}".
  * <p>The prefix and suffix "{" and "}" can be replaced by
  * any user-defined strings. The number format for components can be configured.</p>
- * <p>White space is ignored at parse time, even if it is in the prefix, suffix
+ * <p>White space is ignored at parse dateAndTime, even if it is in the prefix, suffix
  * or separator specifications. So even if the default separator does include a space
- * character that is used at format time, both input string "{1}" and
+ * character that is used at format dateAndTime, both input string "{1}" and
  * " { 1 } " will be parsed without error and the same vector will be
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>

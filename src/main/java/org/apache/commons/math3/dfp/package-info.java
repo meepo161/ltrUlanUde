@@ -59,7 +59,7 @@
  * 10 number then it is one and that requirement would be met.</p>
  *
  * <p>The radix of 10000 was chosen because it should be faster to operate
- * on 4 decimal digits at once instead of one at a time.  Radix 10 behavior
+ * on 4 decimal digits at once instead of one at a dateAndTime.  Radix 10 behavior
  * can be realized by add an additional rounding step to ensure that
  * the number of decimal digits represented is constant.</p>
  *

@@ -140,7 +140,7 @@ public class AdamsNordsieckFieldTransformer<T extends RealFieldElement<T>> {
         new HashMap<Integer, Map<Field<? extends RealFieldElement<?>>,
                                  AdamsNordsieckFieldTransformer<? extends RealFieldElement<?>>>>();
 
-    /** Field to which the time and state vector elements belong. */
+    /** Field to which the dateAndTime and state vector elements belong. */
     private final Field<T> field;
 
     /** Update matrix for the higher order derivatives h<sup>2</sup>/2 y'', h<sup>3</sup>/6 y''' ... */
@@ -150,7 +150,7 @@ public class AdamsNordsieckFieldTransformer<T extends RealFieldElement<T>> {
     private final T[] c1;
 
     /** Simple constructor.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param n number of steps of the multistep method
      * (excluding the one being computed)
      */
@@ -183,7 +183,7 @@ public class AdamsNordsieckFieldTransformer<T extends RealFieldElement<T>> {
     }
 
     /** Get the Nordsieck transformer for a given field and number of steps.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param nSteps number of steps of the multistep method
      * (excluding the one being computed)
      * @return Nordsieck transformer for the specified field and number of steps

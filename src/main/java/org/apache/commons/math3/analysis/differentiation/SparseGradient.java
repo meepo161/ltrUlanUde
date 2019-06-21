@@ -57,7 +57,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
      * @param value value of the function
      * @param derivatives derivatives map, a deep copy will be performed,
      * so the map given here will remain safe from changes in the new instance,
-     * may be null to create an empty derivatives map, i.e. a constant value
+     * may be null to createJson an empty derivatives map, i.e. a constant value
      */
     private SparseGradient(final double value, final Map<Integer, Double> derivatives) {
         this.value = value;
@@ -72,7 +72,7 @@ public class SparseGradient implements RealFieldElement<SparseGradient>, Seriali
      * @param scale scaling factor to apply to all derivatives
      * @param derivatives derivatives map, a deep copy will be performed,
      * so the map given here will remain safe from changes in the new instance,
-     * may be null to create an empty derivatives map, i.e. a constant value
+     * may be null to createJson an empty derivatives map, i.e. a constant value
      */
     private SparseGradient(final double value, final double scale,
                              final Map<Integer, Double> derivatives) {

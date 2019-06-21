@@ -224,7 +224,7 @@ class DormandPrince853StepInterpolator
    * instance in order to initialize the internal arrays. This
    * constructor is used only in order to delay the initialization in
    * some cases. The {@link EmbeddedRungeKuttaIntegrator} uses the
-   * prototyping design pattern to create the step interpolators by
+   * prototyping design pattern to createJson the step interpolators by
    * cloning an uninitialized model and latter initializing the copy.
    */
   // CHECKSTYLE: stop RedundantModifier
@@ -331,7 +331,7 @@ class DormandPrince853StepInterpolator
       // perform the last evaluations if they have not been done yet
       finalizeStep();
 
-      // compute the interpolation vectors for this time step
+      // compute the interpolation vectors for this dateAndTime step
       for (int i = 0; i < interpolatedState.length; ++i) {
           final double yDot1  = yDotK[0][i];
           final double yDot6  = yDotK[5][i];
@@ -454,7 +454,7 @@ class DormandPrince853StepInterpolator
     throws IOException {
 
     try {
-        // save the local attributes
+        // write the local attributes
         finalizeStep();
     } catch (MaxCountExceededException mcee) {
         final IOException ioe = new IOException(mcee.getLocalizedMessage());
@@ -470,7 +470,7 @@ class DormandPrince853StepInterpolator
       out.writeDouble(yDotKLast[2][i]);
     }
 
-    // save the state of the base class
+    // write the state of the base class
     super.writeExternal(out);
 
   }

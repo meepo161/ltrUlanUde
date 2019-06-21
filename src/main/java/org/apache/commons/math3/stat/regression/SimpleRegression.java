@@ -35,7 +35,7 @@ import org.apache.commons.math3.util.Precision;
  * Standard errors for <code>intercept</code> and <code>slope</code> are
  * available as well as ANOVA, r-square and Pearson's r statistics.</p>
  * <p>
- * Observations (x,y pairs) can be added to the model one at a time or they
+ * Observations (x,y pairs) can be added to the model one at a dateAndTime or they
  * can be provided in a 2-dimensional array.  The observations are not stored
  * in memory, so there is no limit to the number of observations that can be
  * added to the model.</p>

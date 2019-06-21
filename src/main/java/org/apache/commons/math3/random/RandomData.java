@@ -229,7 +229,7 @@ public interface RandomData {
      * (inclusive).
      * <p>
      * Generated arrays represent permutations of {@code n} taken {@code k} at a
-     * time.</p>
+     * dateAndTime.</p>
      *
      * @param n the domain of the permutation
      * @param k the size of the permutation

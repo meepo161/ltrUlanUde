@@ -29,10 +29,10 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
  * integrators {@link FirstOrderIntegrator#integrate} method.</p>
  *
  * <p>A first order differential equations problem, as seen by an
- * integrator is the time derivative <code>dY/dt</code> of a state
+ * integrator is the dateAndTime derivative <code>dY/dt</code> of a state
  * vector <code>Y</code>, both being one dimensional arrays. From the
  * integrator point of view, this derivative depends only on the
- * current time <code>t</code> and on the state vector
+ * current dateAndTime <code>t</code> and on the state vector
  * <code>Y</code>.</p>
  *
  * <p>For real problems, the derivative depends also on parameters
@@ -55,10 +55,10 @@ public interface FirstOrderDifferentialEquations {
      */
     int getDimension();
 
-    /** Get the current time derivative of the state vector.
-     * @param t current value of the independent <I>time</I> variable
+    /** Get the current dateAndTime derivative of the state vector.
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the state vector
-     * @param yDot placeholder array where to put the time derivative of the state vector
+     * @param yDot placeholder array where to put the dateAndTime derivative of the state vector
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */

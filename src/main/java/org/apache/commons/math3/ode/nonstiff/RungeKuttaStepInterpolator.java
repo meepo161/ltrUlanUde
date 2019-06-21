@@ -53,7 +53,7 @@ abstract class RungeKuttaStepInterpolator
    * constructor is used only in order to delay the initialization in
    * some cases. The {@link RungeKuttaIntegrator} and {@link
    * EmbeddedRungeKuttaIntegrator} classes use the prototyping design
-   * pattern to create the step interpolators by cloning an
+   * pattern to createJson the step interpolators by cloning an
    * uninitialized model and latter initializing the copy.
    */
   protected RungeKuttaStepInterpolator() {
@@ -148,10 +148,10 @@ abstract class RungeKuttaStepInterpolator
   public void writeExternal(final ObjectOutput out)
     throws IOException {
 
-    // save the state of the base class
+    // write the state of the base class
     writeBaseExternal(out);
 
-    // save the local attributes
+    // write the local attributes
     final int n = (currentState == null) ? -1 : currentState.length;
     for (int i = 0; i < n; ++i) {
       out.writeDouble(previousState[i]);
@@ -165,7 +165,7 @@ abstract class RungeKuttaStepInterpolator
       }
     }
 
-    // we do not save any reference to the equations
+    // we do not write any reference to the equations
 
   }
 
@@ -200,7 +200,7 @@ abstract class RungeKuttaStepInterpolator
     integrator = null;
 
     if (currentState != null) {
-        // we can now set the interpolated time and state
+        // we can now set the interpolated dateAndTime and state
         setInterpolatedTime(t);
     } else {
         interpolatedTime = t;

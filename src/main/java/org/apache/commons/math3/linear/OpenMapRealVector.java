@@ -126,7 +126,7 @@ public class OpenMapRealVector extends SparseRealVector
      * Create from an array.
      * Only non-zero entries will be stored.
      *
-     * @param values Set of values to create from.
+     * @param values Set of values to createJson from.
      */
     public OpenMapRealVector(double[] values) {
         this(values, DEFAULT_ZERO_TOLERANCE);
@@ -136,7 +136,7 @@ public class OpenMapRealVector extends SparseRealVector
      * Create from an array, specifying zero tolerance.
      * Only non-zero entries will be stored.
      *
-     * @param values Set of values to create from.
+     * @param values Set of values to createJson from.
      * @param epsilon Tolerance below which a value is considered zero.
      */
     public OpenMapRealVector(double[] values, double epsilon) {
@@ -155,7 +155,7 @@ public class OpenMapRealVector extends SparseRealVector
      * Create from an array.
      * Only non-zero entries will be stored.
      *
-     * @param values The set of values to create from
+     * @param values The set of values to createJson from
      */
     public OpenMapRealVector(Double[] values) {
         this(values, DEFAULT_ZERO_TOLERANCE);
@@ -165,7 +165,7 @@ public class OpenMapRealVector extends SparseRealVector
      * Create from an array.
      * Only non-zero entries will be stored.
      *
-     * @param values Set of values to create from.
+     * @param values Set of values to createJson from.
      * @param epsilon Tolerance below which a value is considered zero.
      */
     public OpenMapRealVector(Double[] values, double epsilon) {

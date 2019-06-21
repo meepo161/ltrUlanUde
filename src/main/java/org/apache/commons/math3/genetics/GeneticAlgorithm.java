@@ -156,7 +156,7 @@ public class GeneticAlgorithm {
 
             // crossover?
             if (randGen.nextDouble() < getCrossoverRate()) {
-                // apply crossover policy to create two offspring
+                // apply crossover policy to createJson two offspring
                 pair = getCrossoverPolicy().crossover(pair.getFirst(), pair.getSecond());
             }
 

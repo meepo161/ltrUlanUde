@@ -18,12 +18,9 @@ import ru.avem.posum.models.process.SignalParametersModel;
 import ru.avem.posum.models.protocol.ChannelDataModel;
 import ru.avem.posum.utils.Utils;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 public class TableController {
     private TableView<ChannelModel> table;
@@ -301,11 +298,13 @@ public class TableController {
                 signalParametersModel.setData(processController.getCalibrationModel().getCalibratedData());
                 signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
                 signalParametersModel.calculateParameters();
+                processController.getJsonControllerTwo().write(table.getItems());
 
-                regulatorController.setResponse();
-                processController.getJsonController().save(getChannelsDataList());
+                new Thread(() -> regulatorController.setResponse()).start();
+//                processController.getJsonController().save(getChannelsDataList());
 
-                show();
+
+                new Thread(this::show).start();
                 Utils.sleep(1000);
             }
         }).start();
@@ -365,7 +364,6 @@ public class TableController {
                         channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 1000)));
                     }
                 }
-
             }
         }
     }
@@ -598,31 +596,6 @@ public class TableController {
 
     public int getCellsToMerge() {
         return table.getColumns().size() + 1;
-    }
-
-    public List<ChannelDataModel> getChannelsDataList() {
-        List<ChannelDataModel> channelsData = new ArrayList<>();
-        ObservableList<ChannelModel> channels = table.getItems();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyy HH:mm:ss");
-
-        for (ChannelModel channel : channels) {
-            ChannelDataModel channelData = new ChannelDataModel(channel.getName());
-            channelData.setChosenParameterIndex(Integer.parseInt(channel.getChosenParameterIndex()));
-            channelData.setLoadsCounter(Integer.parseInt(channel.getLoadsCounter()));
-            channelData.setNeededAmplitude(Double.parseDouble(channel.getAmplitude()));
-            channelData.setNeededDc(Double.parseDouble(channel.getDc()));
-            channelData.setNeededFrequency(Double.parseDouble(channel.getFrequency()));
-            channelData.setResponseAmplitude(Double.parseDouble(channel.getResponseAmplitude()));
-            channelData.setResponseDc(Double.parseDouble(channel.getResponseDc()));
-            channelData.setResponseFrequency(Double.parseDouble(channel.getResponseFrequency()));
-            channelData.setRelativeResponseAmplitude(Double.parseDouble(channel.getRelativeResponseAmplitude()));
-            channelData.setRelativeResponseDc(Double.parseDouble(channel.getRelativeResponseDc()));
-            channelData.setRelativeResponseFrequency(Double.parseDouble(channel.getRelativeResponseFrequency()));
-            channelData.setTime(simpleDateFormat.format(System.currentTimeMillis()));
-            channelsData.add(channelData);
-        }
-
-        return channelsData;
     }
 
     public List<Short> getColorsForProtocol(boolean isPointData, boolean isShort, long rarefactionCoefficient) {

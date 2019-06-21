@@ -67,12 +67,12 @@ public interface ODEIntegrator  {
      * with an absolute accuracy equal to the given convergence threshold,
      * as root-finding algorithm to detect the state events.
      * @param handler event handler
-     * @param maxCheckInterval maximal time interval between switching
+     * @param maxCheckInterval maximal dateAndTime interval between switching
      * function checks (this interval prevents missing sign changes in
      * case the integration steps becomes very large)
-     * @param convergence convergence threshold in the event time search
+     * @param convergence convergence threshold in the event dateAndTime search
      * @param maxIterationCount upper limit of the iteration count in
-     * the event time search
+     * the event dateAndTime search
      * @see #getEventHandlers()
      * @see #clearEventHandlers()
      */
@@ -81,12 +81,12 @@ public interface ODEIntegrator  {
 
     /** Add an event handler to the integrator.
      * @param handler event handler
-     * @param maxCheckInterval maximal time interval between switching
+     * @param maxCheckInterval maximal dateAndTime interval between switching
      * function checks (this interval prevents missing sign changes in
      * case the integration steps becomes very large)
-     * @param convergence convergence threshold in the event time search
+     * @param convergence convergence threshold in the event dateAndTime search
      * @param maxIterationCount upper limit of the iteration count in
-     * the event time search
+     * the event dateAndTime search
      * @param solver The root-finding algorithm to use to detect the state
      * events.
      * @see #getEventHandlers()
@@ -109,14 +109,14 @@ public interface ODEIntegrator  {
      */
     void clearEventHandlers();
 
-    /** Get the current value of the step start time t<sub>i</sub>.
+    /** Get the current value of the step start dateAndTime t<sub>i</sub>.
      * <p>This method can be called during integration (typically by
      * the object implementing the {@link FirstOrderDifferentialEquations
      * differential equations} problem) if the value of the current step that
      * is attempted is needed.</p>
      * <p>The result is undefined if the method is called outside of
      * calls to <code>integrate</code>.</p>
-     * @return current value of the step start time t<sub>i</sub>
+     * @return current value of the step start dateAndTime t<sub>i</sub>
      */
     double getCurrentStepStart();
 

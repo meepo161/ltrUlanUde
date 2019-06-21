@@ -44,7 +44,7 @@ import org.apache.commons.math3.util.FastMath;
  * The {@code code map} and {@code mapToSelf} methods operate
  * on vectors element-wise, i.e. they perform the same operation (adding a scalar,
  * applying a function ...) on each element in turn. The {@code map}
- * versions create a new vector to hold the result and do not change the instance.
+ * versions createJson a new vector to hold the result and do not change the instance.
  * The {@code mapToSelf} version uses the instance itself to store the
  * results, so the instance is changed by this method. In all cases, the result
  * vector is returned by the methods, allowing the <i>fluent API</i>

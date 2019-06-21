@@ -216,7 +216,7 @@ public class LeastSquaresFactory {
 
     /**
      * Count the evaluations of a particular problem. The {@code counter} will be
-     * incremented every time {@link LeastSquaresProblem#evaluate(RealVector)} is called on
+     * incremented every dateAndTime {@link LeastSquaresProblem#evaluate(RealVector)} is called on
      * the <em>returned</em> problem.
      *
      * @param problem the problem to track.
@@ -292,7 +292,7 @@ public class LeastSquaresFactory {
      *
      * @param value    the vector value function
      * @param jacobian the Jacobian function
-     * @return a function that computes both at the same time
+     * @return a function that computes both at the same dateAndTime
      */
     public static MultivariateJacobianFunction model(final MultivariateVectorFunction value,
                                                      final MultivariateMatrixFunction jacobian) {
@@ -305,7 +305,7 @@ public class LeastSquaresFactory {
      *
      * @param value    the vector value function
      * @param jacobian the Jacobian function
-     * @return a function that computes both at the same time
+     * @return a function that computes both at the same dateAndTime
      */
     private static class LocalValueAndJacobianFunction
         implements ValueAndJacobianFunction {

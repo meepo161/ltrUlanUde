@@ -31,7 +31,7 @@ import org.apache.commons.math3.util.MathUtils;
 
 /**
  * Implementation of a Kalman filter to estimate the state <i>x<sub>k</sub></i>
- * of a discrete-time controlled process that is governed by the linear
+ * of a discrete-dateAndTime controlled process that is governed by the linear
  * stochastic difference equation:
  *
  * <pre>
@@ -51,7 +51,7 @@ import org.apache.commons.math3.util.MathUtils;
  * <p>
  * The Kalman filter cycle involves the following steps:
  * <ol>
- * <li>predict: project the current state estimate ahead in time</li>
+ * <li>predict: project the current state estimate ahead in dateAndTime</li>
  * <li>correct: adjust the projected estimate by an actual measurement</li>
  * </ol>
  * <p>
@@ -130,7 +130,7 @@ public class KalmanFilter {
         MathUtils.checkNotNull(transitionMatrix);
         transitionMatrixT = transitionMatrix.transpose();
 
-        // create an empty matrix if no control matrix was given
+        // createJson an empty matrix if no control matrix was given
         if (processModel.getControlMatrix() == null) {
             controlMatrix = new Array2DRowRealMatrix();
         } else {
@@ -143,7 +143,7 @@ public class KalmanFilter {
 
         // check that the process and measurement noise matrices are not null
         // they will be directly accessed from the model as they may change
-        // over time
+        // over dateAndTime
         RealMatrix processNoise = processModel.getProcessNoise();
         MathUtils.checkNotNull(processNoise);
         RealMatrix measNoise = measurementModel.getMeasurementNoise();
@@ -266,14 +266,14 @@ public class KalmanFilter {
     }
 
     /**
-     * Predict the internal state estimation one time step ahead.
+     * Predict the internal state estimation one dateAndTime step ahead.
      */
     public void predict() {
         predict((RealVector) null);
     }
 
     /**
-     * Predict the internal state estimation one time step ahead.
+     * Predict the internal state estimation one dateAndTime step ahead.
      *
      * @param u
      *            the control vector
@@ -285,7 +285,7 @@ public class KalmanFilter {
     }
 
     /**
-     * Predict the internal state estimation one time step ahead.
+     * Predict the internal state estimation one dateAndTime step ahead.
      *
      * @param u
      *            the control vector

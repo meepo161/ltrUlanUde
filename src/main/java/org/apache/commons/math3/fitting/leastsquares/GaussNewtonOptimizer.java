@@ -205,7 +205,7 @@ public class GaussNewtonOptimizer implements LeastSquaresOptimizer {
 
     /** {@inheritDoc} */
     public Optimum optimize(final LeastSquaresProblem lsp) {
-        //create local evaluation and iteration counts
+        //createJson local evaluation and iteration counts
         final Incrementor evaluationCounter = lsp.getEvaluationCounter();
         final Incrementor iterationCounter = lsp.getIterationCounter();
         final ConvergenceChecker<Evaluation> checker

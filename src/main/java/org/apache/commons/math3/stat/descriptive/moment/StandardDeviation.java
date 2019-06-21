@@ -189,7 +189,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Throws <code>IllegalArgumentException</code> if the array is null.</p>
@@ -218,7 +218,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Throws <code>MathIllegalArgumentException</code> if the array is null.</p>

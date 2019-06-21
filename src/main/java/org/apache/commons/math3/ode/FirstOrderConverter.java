@@ -28,8 +28,8 @@ package org.apache.commons.math3.ode;
  * <p>The transformation is done by changing the n dimension state
  * vector to a 2n dimension vector, where the first n components are
  * the initial state variables and the n last components are their
- * first time derivative. The first time derivative of this state
- * vector then really contains both the first and second time
+ * first dateAndTime derivative. The first dateAndTime derivative of this state
+ * vector then really contains both the first and second dateAndTime
  * derivative of the initial state vector, which can be handled by the
  * underlying second order equations set.</p>
  *
@@ -64,10 +64,10 @@ public class FirstOrderConverter implements FirstOrderDifferentialEquations {
     /** state vector. */
     private final double[] z;
 
-    /** first time derivative of the state vector. */
+    /** first dateAndTime derivative of the state vector. */
     private final double[] zDot;
 
-    /** second time derivative of the state vector. */
+    /** second dateAndTime derivative of the state vector. */
     private final double[] zDDot;
 
   /** Simple constructor.
@@ -91,10 +91,10 @@ public class FirstOrderConverter implements FirstOrderDifferentialEquations {
     return 2 * dimension;
   }
 
-  /** Get the current time derivative of the state vector.
-   * @param t current value of the independent <I>time</I> variable
+  /** Get the current dateAndTime derivative of the state vector.
+   * @param t current value of the independent <I>dateAndTime</I> variable
    * @param y array containing the current value of the state vector
-   * @param yDot placeholder array where to put the time derivative of the state vector
+   * @param yDot placeholder array where to put the dateAndTime derivative of the state vector
    */
   public void computeDerivatives(final double t, final double[] y, final double[] yDot) {
 

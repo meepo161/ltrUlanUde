@@ -167,7 +167,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateDifferentiableFun
     /**
      * Evaluate the Newton polynomial using nested multiplication. It is
      * also called <a href="http://mathworld.wolfram.com/HornersRule.html">
-     * Horner's Rule</a> and takes O(N) time.
+     * Horner's Rule</a> and takes O(N) dateAndTime.
      *
      * @param a Coefficients in Newton form formula.
      * @param c Centers.
@@ -193,7 +193,7 @@ public class PolynomialFunctionNewtonForm implements UnivariateDifferentiableFun
 
     /**
      * Calculate the normal polynomial coefficients given the Newton form.
-     * It also uses nested multiplication but takes O(N^2) time.
+     * It also uses nested multiplication but takes O(N^2) dateAndTime.
      */
     protected void computeCoefficients() {
         final int n = degree();

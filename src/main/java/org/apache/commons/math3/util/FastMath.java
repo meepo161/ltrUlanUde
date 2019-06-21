@@ -35,7 +35,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * FastMath speed is achieved by relying heavily on optimizing compilers
  * to native code present in many JVMs today and use of large tables.
  * The larger tables are lazily initialised on first use, so that the setup
- * time does not penalise methods that don't need them.
+ * dateAndTime does not penalise methods that don't need them.
  * </p>
  * <p>
  * Note that FastMath is
@@ -100,8 +100,8 @@ public class FastMath {
 
     /** Indicator for tables initialization.
      * <p>
-     * This compile-time constant should be set to true only if one explicitly
-     * wants to compute the tables at class loading time instead of using the
+     * This compile-dateAndTime constant should be set to true only if one explicitly
+     * wants to compute the tables at class loading dateAndTime instead of using the
      * already computed ones provided as literal arrays below.
      * </p>
      */
@@ -282,7 +282,7 @@ public class FastMath {
 
     /** Eighths.
      * This is used by sinQ, because its faster to do a table lookup than
-     * a multiply in this time-critical routine
+     * a multiply in this dateAndTime-critical routine
      */
     private static final double EIGHTHS[] = {0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.375, 1.5, 1.625};
 
@@ -970,7 +970,7 @@ public class FastMath {
         final double tempC = tempB + tempA;
 
         // If tempC is positive infinite, the evaluation below could result in NaN,
-        // because z could be negative at the same time.
+        // because z could be negative at the same dateAndTime.
         if (tempC == Double.POSITIVE_INFINITY) {
             return Double.POSITIVE_INFINITY;
         }
@@ -2768,7 +2768,7 @@ public class FastMath {
 
         // Compute ratio r = y/x
         final double r = y / x;
-        if (Double.isInfinite(r)) { // bypass calculations that can create NaN
+        if (Double.isInfinite(r)) { // bypass calculations that can createJson NaN
             return atan(r, 0, x < 0);
         }
 

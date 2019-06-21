@@ -194,7 +194,7 @@ public class EventsController {
         ProtocolSheets[] sheetsNames = {ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
         processController.getProtocolController().createProtocol(testProgramId, testProgramName, false, false, 1000, sheetsNames);
 
-        // Show window and save the workbook
+        // Show window and write the workbook
         Platform.runLater(() -> {
             File selectedDirectory = processController.getProtocolController().showFileSaver("Сохранение журнала", "Journal.xlsx");
             if (selectedDirectory != null) {

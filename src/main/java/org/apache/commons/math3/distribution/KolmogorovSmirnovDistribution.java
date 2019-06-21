@@ -115,7 +115,7 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * Calculates {@code P(D_n < d)} using method described in [1] with quick
      * decisions for extreme values given in [2] (see above). The result is
      * exact in the sense that BigFraction/BigReal is used everywhere at the
-     * expense of very slow execution time. Almost never choose this in real
+     * expense of very slow execution dateAndTime. Almost never choose this in real
      * applications unless you are very sure; this is almost solely for
      * verification purposes. Normally, you would choose
      * {@link KolmogorovSmirnovDistribution#cdf(double)}
@@ -138,7 +138,7 @@ public class KolmogorovSmirnovDistribution implements Serializable {
      * @param d statistic
      * @param exact whether the probability should be calculated exact using
      * {@link org.apache.commons.math3.fraction.BigFraction} everywhere at the
-     * expense of very slow execution time, or if {@code double} should be used
+     * expense of very slow execution dateAndTime, or if {@code double} should be used
      * convenient places to gain speed. Almost never choose {@code true} in real
      * applications unless you are very sure; {@code true} is almost solely for
      * verification purposes.

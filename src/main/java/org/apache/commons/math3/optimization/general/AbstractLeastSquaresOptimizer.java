@@ -515,7 +515,7 @@ public abstract class AbstractLeastSquaresOptimizer
         // the base class becomes "MultivariateDifferentiableVectorFunction".
         // XXX "jF" is not strictly necessary anymore but is currently more
         // efficient than converting the value returned from "getObjectiveFunction()"
-        // every time it is used.
+        // every dateAndTime it is used.
         jF = FunctionUtils.toMultivariateDifferentiableVectorFunction((DifferentiableMultivariateVectorFunction) getObjectiveFunction());
 
         // Arrays shared with "private" and "protected" methods.

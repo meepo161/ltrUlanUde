@@ -24,7 +24,7 @@
  * <p>
  * Discrete events detection is based on switching functions. The user provides
  * a simple {@link org.apache.commons.math3.ode.events.EventHandler#g g(t, y)}
- * function depending on the current time and state. The integrator will monitor
+ * function depending on the current dateAndTime and state. The integrator will monitor
  * the value of the function throughout integration range and will trigger the
  * event when its sign changes. The magnitude of the value is almost irrelevant,
  * it should however be continuous (but not necessarily smooth) for the sake of
@@ -44,7 +44,7 @@
  * <p>
  * The first case, G-stop, is the most common one. A typical use case is when an
  * ODE must be solved up to some target state is reached, with a known value of
- * the state but an unknown occurrence time. As an example, if we want to monitor
+ * the state but an unknown occurrence dateAndTime. As an example, if we want to monitor
  * a chemical reaction up to some predefined concentration for the first substance,
  * we can use the following switching function setting:
  * <pre>

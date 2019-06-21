@@ -33,14 +33,14 @@ public interface IterationListener extends EventListener {
     void initializationPerformed(IterationEvent e);
 
     /**
-     * Invoked each time an iteration is completed (in the main iteration loop).
+     * Invoked each dateAndTime an iteration is completed (in the main iteration loop).
      *
      * @param e The {@link IterationEvent} object.
      */
     void iterationPerformed(IterationEvent e);
 
     /**
-     * Invoked each time a new iteration is completed (in the main iteration
+     * Invoked each dateAndTime a new iteration is completed (in the main iteration
      * loop).
      *
      * @param e The {@link IterationEvent} object.

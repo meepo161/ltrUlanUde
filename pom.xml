@@ -55,8 +55,8 @@
                     <mainClass>ru.avem.posum.Main</mainClass>
                     <bundler>EXE</bundler>
                     <jvmArgs>
-                        <argument>-Xmx1024m</argument>
-                        <argument>-Xms1024m</argument>
+                        <argument>-Xmx4096m</argument>
+                        <argument>-Xms4096m</argument>
                     </jvmArgs>
                 </configuration>
             </plugin>

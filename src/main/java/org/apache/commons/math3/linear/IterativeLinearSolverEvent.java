@@ -35,7 +35,7 @@ public abstract class IterativeLinearSolverEvent
      *
      * @param source the iterative algorithm on which the event initially
      * occurred
-     * @param iterations the number of iterations performed at the time
+     * @param iterations the number of iterations performed at the dateAndTime
      * {@code this} event is created
      */
     public IterativeLinearSolverEvent(final Object source, final int iterations) {

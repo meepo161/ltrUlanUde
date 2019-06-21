@@ -26,10 +26,10 @@ import org.apache.commons.math3.RealFieldElement;
  * integrators {@link FirstOrderIntegrator#integrate} method.</p>
  *
  * <p>A first order differential equations problem, as seen by an
- * integrator is the time derivative <code>dY/dt</code> of a state
+ * integrator is the dateAndTime derivative <code>dY/dt</code> of a state
  * vector <code>Y</code>, both being one dimensional arrays. From the
  * integrator point of view, this derivative depends only on the
- * current time <code>t</code> and on the state vector
+ * current dateAndTime <code>t</code> and on the state vector
  * <code>Y</code>.</p>
  *
  * <p>For real problems, the derivative depends also on parameters
@@ -57,16 +57,16 @@ public interface FirstOrderFieldDifferentialEquations<T extends RealFieldElement
      * may be used by the equations to initialize some internal data
      * if needed.
      * </p>
-     * @param t0 value of the independent <I>time</I> variable at integration start
+     * @param t0 value of the independent <I>dateAndTime</I> variable at integration start
      * @param y0 array containing the value of the state vector at integration start
-     * @param finalTime target time for the integration
+     * @param finalTime target dateAndTime for the integration
      */
     void init(T t0, T[] y0, T finalTime);
 
-    /** Get the current time derivative of the state vector.
-     * @param t current value of the independent <I>time</I> variable
+    /** Get the current dateAndTime derivative of the state vector.
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the state vector
-     * @return time derivative of the state vector
+     * @return dateAndTime derivative of the state vector
      */
     T[] computeDerivatives(T t, T[] y);
 

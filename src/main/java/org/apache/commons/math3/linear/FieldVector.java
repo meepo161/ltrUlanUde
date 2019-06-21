@@ -34,7 +34,7 @@ import org.apache.commons.math3.exception.OutOfRangeException;
  * The various <code>mapXxx</code> and <code>mapXxxToSelf</code> methods operate
  * on vectors element-wise, i.e. they perform the same operation (adding a scalar,
  * applying a function ...) on each element in turn. The <code>mapXxx</code>
- * versions create a new vector to hold the result and do not change the instance.
+ * versions createJson a new vector to hold the result and do not change the instance.
  * The <code>mapXxxToSelf</code> versions use the instance itself to store the
  * results, so the instance is changed by these methods. In both cases, the result
  * vector is returned by the methods, this allows to use the <i>fluent API</i>

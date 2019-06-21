@@ -40,7 +40,7 @@ import org.apache.commons.math3.util.FastMath;
  * later use. Once the integration process is over, the user can use
  * the {@link #setInterpolatedTime setInterpolatedTime} and {@link
  * #getInterpolatedState getInterpolatedState} to retrieve this
- * information at any time. It is important to wait for the
+ * information at any dateAndTime. It is important to wait for the
  * integration to be over before attempting to call {@link
  * #setInterpolatedTime setInterpolatedTime} because some internal
  * variables are set only once the last step has been handled.</p>
@@ -49,7 +49,7 @@ import org.apache.commons.math3.util.FastMath;
  * application should remain independent from the integration process
  * or if one needs to mimic the behaviour of an analytical model
  * despite a numerical model is used (i.e. one needs the ability to
- * get the model value at any time or to navigate through the
+ * get the model value at any dateAndTime or to navigate through the
  * data).</p>
  *
  * <p>If problem modeling is done with several separate
@@ -92,10 +92,10 @@ public class ContinuousOutputModel
     /** Serializable version identifier */
     private static final long serialVersionUID = -1417964919405031606L;
 
-    /** Initial integration time. */
+    /** Initial integration dateAndTime. */
     private double initialTime;
 
-    /** Final integration time. */
+    /** Final integration dateAndTime. */
     private double finalTime;
 
     /** Integration direction indicator. */
@@ -203,46 +203,46 @@ public class ContinuousOutputModel
   }
 
   /**
-   * Get the initial integration time.
-   * @return initial integration time
+   * Get the initial integration dateAndTime.
+   * @return initial integration dateAndTime
    */
   public double getInitialTime() {
     return initialTime;
   }
 
   /**
-   * Get the final integration time.
-   * @return final integration time
+   * Get the final integration dateAndTime.
+   * @return final integration dateAndTime
    */
   public double getFinalTime() {
     return finalTime;
   }
 
   /**
-   * Get the time of the interpolated point.
+   * Get the dateAndTime of the interpolated point.
    * If {@link #setInterpolatedTime} has not been called, it returns
-   * the final integration time.
-   * @return interpolation point time
+   * the final integration dateAndTime.
+   * @return interpolation point dateAndTime
    */
   public double getInterpolatedTime() {
     return steps.get(index).getInterpolatedTime();
   }
 
-  /** Set the time of the interpolated point.
+  /** Set the dateAndTime of the interpolated point.
    * <p>This method should <strong>not</strong> be called before the
    * integration is over because some internal variables are set only
    * once the last step has been handled.</p>
-   * <p>Setting the time outside of the integration interval is now
+   * <p>Setting the dateAndTime outside of the integration interval is now
    * allowed, but should be used with care since the accuracy of the
    * interpolator will probably be very poor far from this interval.
    * This allowance has been added to simplify implementation of search
    * algorithms near the interval endpoints.</p>
-   * <p>Note that each time this method is called, the internal arrays
+   * <p>Note that each dateAndTime this method is called, the internal arrays
    * returned in {@link #getInterpolatedState()}, {@link
    * #getInterpolatedDerivatives()} and {@link #getInterpolatedSecondaryState(int)}
    * <em>will</em> be overwritten. So if their content must be preserved
    * across several calls, user must copy them.</p>
-   * @param time time of the interpolated point
+   * @param time dateAndTime of the interpolated point
    * @see #getInterpolatedState()
    * @see #getInterpolatedDerivatives()
    * @see #getInterpolatedSecondaryState(int)
@@ -300,7 +300,7 @@ public class ContinuousOutputModel
         } else {
           // estimate the index using a reverse quadratic polynom
           // (reverse means we have i = P(t), thus allowing to simply
-          // compute index = P(time) rather than solving a quadratic equation)
+          // compute index = P(dateAndTime) rather than solving a quadratic equation)
           final double d12 = tMax - tMed;
           final double d23 = tMed - tMin;
           final double d13 = tMax - tMin;
@@ -341,7 +341,7 @@ public class ContinuousOutputModel
    * it should not be modified and it should be copied if it needs
    * to be preserved across several calls to the associated
    * {@link #setInterpolatedTime(double)} method.</p>
-   * @return state vector at time {@link #getInterpolatedTime}
+   * @return state vector at dateAndTime {@link #getInterpolatedTime}
    * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    * @see #setInterpolatedTime(double)
    * @see #getInterpolatedDerivatives()
@@ -358,7 +358,7 @@ public class ContinuousOutputModel
    * it should not be modified and it should be copied if it needs
    * to be preserved across several calls to the associated
    * {@link #setInterpolatedTime(double)} method.</p>
-   * @return derivatives of the state vector at time {@link #getInterpolatedTime}
+   * @return derivatives of the state vector at dateAndTime {@link #getInterpolatedTime}
    * @exception MaxCountExceededException if the number of functions evaluations is exceeded
    * @see #setInterpolatedTime(double)
    * @see #getInterpolatedState()

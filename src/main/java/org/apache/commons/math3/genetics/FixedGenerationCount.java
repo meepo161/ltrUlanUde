@@ -19,7 +19,7 @@ package org.apache.commons.math3.genetics;
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 
 /**
- * Stops after a fixed number of generations. Each time {@link #isSatisfied(Population)} is invoked, a generation
+ * Stops after a fixed number of generations. Each dateAndTime {@link #isSatisfied(Population)} is invoked, a generation
  * counter is incremented. Once the counter reaches the configured <code>maxGenerations</code> value,
  * {@link #isSatisfied(Population)} returns true.
  *

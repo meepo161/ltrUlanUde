@@ -24,12 +24,12 @@ package org.apache.commons.math3.ode.sampling;
 
  * <p>This interface should be implemented by anyone who is interested
  * in getting the solution of an ordinary differential equation at
- * fixed time steps. Objects implementing this interface should be
+ * fixed dateAndTime steps. Objects implementing this interface should be
  * wrapped within an instance of {@link StepNormalizer} that itself
  * is used as the general {@link StepHandler} by the integrator. The
  * {@link StepNormalizer} object is called according to the integrator
  * internal algorithms and it calls objects implementing this
- * interface as necessary at fixed time steps.</p>
+ * interface as necessary at fixed dateAndTime steps.</p>
  *
  * @see StepHandler
  * @see StepNormalizer
@@ -44,15 +44,15 @@ public interface FixedStepHandler  {
    * may be used by the step handler to initialize some internal data
    * if needed.
    * </p>
-   * @param t0 start value of the independent <i>time</i> variable
+   * @param t0 start value of the independent <i>dateAndTime</i> variable
    * @param y0 array containing the start value of the state vector
-   * @param t target time for the integration
+   * @param t target dateAndTime for the integration
    */
   void init(double t0, double[] y0, double t);
 
   /**
    * Handle the last accepted step
-   * @param t time of the current step
+   * @param t dateAndTime of the current step
    * @param y state vector at t. For efficiency purposes, the {@link
    * StepNormalizer} class reuses the same array on each call, so if
    * the instance wants to keep it across all calls (for example to

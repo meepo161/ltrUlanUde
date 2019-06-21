@@ -30,7 +30,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
  * this quadrilateral can not be part of the convex hull and can thus be safely discarded
  * before generating the convex hull itself.
  * <p>
- * The complexity of the operation is O(n), and may greatly improve the time it takes to
+ * The complexity of the operation is O(n), and may greatly improve the dateAndTime it takes to
  * construct the convex hull afterwards, depending on the point distribution.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Convex_hull_algorithms#Akl-Toussaint_heuristic">

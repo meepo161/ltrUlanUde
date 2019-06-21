@@ -42,7 +42,7 @@ public enum RotationConvention {
      * </p>
      * <p>
      * The difference with {@link #FRAME_TRANSFORM} is only the semantics of the sign
-     * of the angle. It is always possible to create or use a rotation using either
+     * of the angle. It is always possible to createJson or use a rotation using either
      * convention to really represent a rotation that would have been best created or
      * used with the other convention, by changing accordingly the sign of the
      * rotation angle. This is how things were done up to version 3.5.
@@ -68,7 +68,7 @@ public enum RotationConvention {
      * </p>
      * <p>
      * The difference with {@link #VECTOR_OPERATOR} is only the semantics of the sign
-     * of the angle. It is always possible to create or use a rotation using either
+     * of the angle. It is always possible to createJson or use a rotation using either
      * convention to really represent a rotation that would have been best created or
      * used with the other convention, by changing accordingly the sign of the
      * rotation angle. This is how things were done up to version 3.5.

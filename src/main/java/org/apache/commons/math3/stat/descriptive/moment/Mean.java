@@ -107,7 +107,7 @@ public class Mean extends AbstractStorelessUnivariateStatistic
     /**
      * {@inheritDoc}
      * <p>Note that when {@link #Mean(FirstMoment)} is used to
-     * create a Mean, this method does nothing. In that case, the
+     * createJson a Mean, this method does nothing. In that case, the
      * FirstMoment should be incremented directly.</p>
      */
     @Override

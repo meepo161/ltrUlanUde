@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 /**
- * Implementations of common discrete-time linear filters.
+ * Implementations of common discrete-dateAndTime linear filters.
  */
 package org.apache.commons.math3.filter;

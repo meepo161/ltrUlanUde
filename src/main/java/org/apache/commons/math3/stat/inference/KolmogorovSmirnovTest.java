@@ -474,7 +474,7 @@ public class KolmogorovSmirnovTest {
 
     /**
      * Calculates {@code P(D_n < d)}. The result is exact in the sense that BigFraction/BigReal is
-     * used everywhere at the expense of very slow execution time. Almost never choose this in real
+     * used everywhere at the expense of very slow execution dateAndTime. Almost never choose this in real
      * applications unless you are very sure; this is almost solely for verification purposes.
      * Normally, you would choose {@link #cdf(double, int)}. See the class
      * javadoc for definitions and algorithm description.
@@ -499,7 +499,7 @@ public class KolmogorovSmirnovTest {
      * @param n sample size
      * @param exact whether the probability should be calculated exact using
      *        {@link org.apache.commons.math3.fraction.BigFraction} everywhere at the expense of
-     *        very slow execution time, or if {@code double} should be used convenient places to
+     *        very slow execution dateAndTime, or if {@code double} should be used convenient places to
      *        gain speed. Almost never choose {@code true} in real applications unless you are very
      *        sure; {@code true} is almost solely for verification purposes.
      * @return \(P(D_n < d)\)
@@ -692,7 +692,7 @@ public class KolmogorovSmirnovTest {
         // Again, adjust coefficients instead of doubling sum, sum2
         ret += (sqrtHalfPi / n) * (sum / (36 * z2 * z2 * z2 * z) - sum2 / (18 * z2 * z));
 
-        // K_3(z) One more time with feeling - two doubly infinite sums, all k powers even.
+        // K_3(z) One more dateAndTime with feeling - two doubly infinite sums, all k powers even.
         // Multiply coefficient denominators by 2, so omit doubling sums.
         final double pi6 = pi4 * MathUtils.PI_SQUARED;
         sum = 0;
@@ -1250,7 +1250,7 @@ public class KolmogorovSmirnovTest {
     private static double n(int i, int j, int m, int n, long cnm, boolean strict) {
         /*
          * Unwind the recursive definition given in [4].
-         * Compute n(1,1), n(1,2)...n(2,1), n(2,2)... up to n(i,j), one row at a time.
+         * Compute n(1,1), n(1,2)...n(2,1), n(2,2)... up to n(i,j), one row at a dateAndTime.
          * When n(i,*) are being computed, lag[] holds the values of n(i - 1, *).
          */
         final double[] lag = new double[n];

@@ -1052,7 +1052,7 @@ public class FieldRotation<T extends RealFieldElement<T>> implements Serializabl
         final T q2q3  = q2.multiply(q3);
         final T q3q3  = q3.multiply(q3);
 
-        // create the matrix
+        // createJson the matrix
         final T[][] m = MathArrays.buildArray(q0.getField(), 3, 3);
 
         m [0][0] = q0q0.add(q1q1).multiply(2).subtract(1);

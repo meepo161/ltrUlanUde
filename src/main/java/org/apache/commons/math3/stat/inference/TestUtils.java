@@ -33,7 +33,7 @@ import org.apache.commons.math3.exception.ZeroException;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
 /**
- * A collection of static methods to create inference test instances or to
+ * A collection of static methods to createJson inference test instances or to
  * perform inference tests.
  *
  * @since 1.1

@@ -85,7 +85,7 @@ public class BesselJ
     /**
      * Decimal significance desired. Should be set to (INT(log_{10}(2) * (it)+1)).
      * Setting NSIG lower will result in decreased accuracy while setting
-     * NSIG higher will increase CPU time without increasing accuracy.
+     * NSIG higher will increase CPU dateAndTime without increasing accuracy.
      * The truncation error is limited to a relative error of
      * T=.5(10^(-NSIG)).
      */

@@ -224,7 +224,7 @@ public class SphericalPolygonsSet extends AbstractRegion<Sphere2D, Sphere1D> {
                 circle = new Circle(start.getLocation(), end.getLocation(), hyperplaneThickness);
             }
 
-            // create the edge and store it
+            // createJson the edge and store it
             edges.add(new Edge(start, end,
                                Vector3D.angle(start.getLocation().getVector(),
                                               end.getLocation().getVector()),

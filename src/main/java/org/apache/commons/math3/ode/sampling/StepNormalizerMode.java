@@ -30,7 +30,7 @@ public enum StepNormalizerMode {
      * Steps are fixed increments of the start value. In other words, they
      * are relative to the start value.
      *
-     * <p>If the integration start time is t0, then the points handled by
+     * <p>If the integration start dateAndTime is t0, then the points handled by
      * the underlying fixed step size step handler are t0 (depending on
      * the {@link StepNormalizerBounds bounds settings}), t0+h, t0+2h, ...</p>
      *
@@ -50,7 +50,7 @@ public enum StepNormalizerMode {
      * relative to the first multiple of the step size that is encountered
      * after the start value.
      *
-     * <p>If the integration start time is t0, and the first multiple of
+     * <p>If the integration start dateAndTime is t0, and the first multiple of
      * the fixed step size that is encountered is t1, then the points
      * handled by the underlying fixed step size step handler are t0
      * (depending on the {@link StepNormalizerBounds bounds settings}), t1,

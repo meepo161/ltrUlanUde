@@ -54,7 +54,7 @@ public class ClassicalRungeKuttaFieldIntegrator<T extends RealFieldElement<T>>
 
     /** Simple constructor.
      * Build a fourth-order Runge-Kutta integrator with the given step.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param step integration step
      */
     public ClassicalRungeKuttaFieldIntegrator(final Field<T> field, final T step) {

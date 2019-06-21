@@ -386,7 +386,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
             // Inner loop.
             for (double ratio = 0; ratio < 1.0e-4;) {
 
-                // save the state
+                // write the state
                 for (int j = 0; j < solvedCols; ++j) {
                     int pj = permutation[j];
                     oldX[pj] = currentPoint[pj];
@@ -725,7 +725,7 @@ public class LevenbergMarquardtOptimizer extends AbstractLeastSquaresOptimizer {
                                       double[] lmDiag, double[] work) {
 
         // copy R and Qty to preserve input and initialize s
-        //  in particular, save the diagonal elements of R in lmDir
+        //  in particular, write the diagonal elements of R in lmDir
         for (int j = 0; j < solvedCols; ++j) {
             int pj = permutation[j];
             for (int i = j + 1; i < solvedCols; ++i) {

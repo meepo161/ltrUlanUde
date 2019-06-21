@@ -492,7 +492,7 @@ public class Fraction
             return this;
         }
         // if denominators are randomly distributed, d1 will be 1 about 61%
-        // of the time.
+        // of the dateAndTime.
         int d1 = ArithmeticUtils.gcd(denominator, fraction.denominator);
         if (d1==1) {
             // result is ( (u*v' +/- u'v) / u'v')

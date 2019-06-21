@@ -199,14 +199,14 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
      * <p>This method computes one step using the underlying starter integrator,
      * and initializes the Nordsieck vector at step start. The starter integrator
      * purpose is only to establish initial conditions, it does not really change
-     * time by itself. The top level multistep integrator remains in charge of
-     * handling time propagation and events handling as it will starts its own
+     * dateAndTime by itself. The top level multistep integrator remains in charge of
+     * handling dateAndTime propagation and events handling as it will starts its own
      * computation right from the beginning. In a sense, the starter integrator
      * can be seen as a dummy one and so it will never trigger any user event nor
      * call any user step handler.</p>
-     * @param t0 initial time
+     * @param t0 initial dateAndTime
      * @param y0 initial value of the state vector at t0
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      * (can be set to a value smaller than <code>t0</code> for backward integration)
      * @exception DimensionMismatchException if arrays dimension do not match equations settings
      * @exception NumberIsTooSmallException if integration step is too small

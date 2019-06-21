@@ -55,7 +55,7 @@ public class ExponentialDistribution extends AbstractRealDistribution {
     private static final double[] EXPONENTIAL_SA_QI;
     /** The mean of this distribution. */
     private final double mean;
-    /** The logarithm of the mean, stored to reduce computing time. **/
+    /** The logarithm of the mean, stored to reduce computing dateAndTime. **/
     private final double logMean;
     /** Inverse cumulative probability accuracy. */
     private final double solverAbsoluteAccuracy;
@@ -92,7 +92,7 @@ public class ExponentialDistribution extends AbstractRealDistribution {
     /**
      * Create an exponential distribution with the given mean.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}
@@ -108,7 +108,7 @@ public class ExponentialDistribution extends AbstractRealDistribution {
     /**
      * Create an exponential distribution with the given mean.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}

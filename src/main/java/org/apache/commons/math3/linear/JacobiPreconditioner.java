@@ -49,7 +49,7 @@ public class JacobiPreconditioner extends RealLinearOperator {
      * extend {@link AbstractRealMatrix}, then the coefficients of the
      * underlying matrix are not accessible, coefficient extraction is made by
      * matrix-vector products with the basis vectors (and might therefore take
-     * some time). With matrices, direct entry access is carried out.
+     * some dateAndTime). With matrices, direct entry access is carried out.
      *
      * @param a the linear operator for which the preconditioner should be built
      * @return the diagonal preconditioner made of the inverse of the diagonal

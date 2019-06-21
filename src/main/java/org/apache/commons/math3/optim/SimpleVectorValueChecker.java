@@ -98,7 +98,7 @@ public class SimpleVectorValueChecker
      * last two points.
      * This method may be called several times from the same algorithm
      * iteration with different points. This can be detected by checking the
-     * iteration number at each call if needed. Each time this method is
+     * iteration number at each call if needed. Each dateAndTime this method is
      * called, the previous and current point correspond to points with the
      * same role at each iteration, so they can be compared. As an example,
      * simplex-based algorithms call this method for all points of the simplex,

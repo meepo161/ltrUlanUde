@@ -90,7 +90,7 @@ public class SimplexSolver extends AbstractLinearOptimizer {
      * @return row with the minimum ratio
      */
     private Integer getPivotRow(SimplexTableau tableau, final int col) {
-        // create a list of all the rows that tie for the lowest score in the minimum ratio test
+        // createJson a list of all the rows that tie for the lowest score in the minimum ratio test
         List<Integer> minRatioPositions = new ArrayList<Integer>();
         double minRatio = Double.MAX_VALUE;
         for (int i = tableau.getNumObjectiveFunctions(); i < tableau.getHeight(); i++) {

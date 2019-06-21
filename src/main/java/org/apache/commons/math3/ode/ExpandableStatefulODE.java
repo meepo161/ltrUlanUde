@@ -103,10 +103,10 @@ public class ExpandableStatefulODE {
         }
     }
 
-    /** Get the current time derivative of the complete state vector.
-     * @param t current value of the independent <I>time</I> variable
+    /** Get the current dateAndTime derivative of the complete state vector.
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the complete state vector
-     * @param yDot placeholder array where to put the time derivative of the complete state vector
+     * @param yDot placeholder array where to put the dateAndTime derivative of the complete state vector
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */
@@ -171,15 +171,15 @@ public class ExpandableStatefulODE {
         return mappers;
     }
 
-    /** Set current time.
-     * @param time current time
+    /** Set current dateAndTime.
+     * @param time current dateAndTime
      */
     public void setTime(final double time) {
         this.time = time;
     }
 
-    /** Get current time.
-     * @return current time
+    /** Get current dateAndTime.
+     * @return current dateAndTime
      */
     public double getTime() {
         return time;

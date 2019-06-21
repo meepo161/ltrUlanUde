@@ -21,7 +21,7 @@ import org.apache.commons.math3.exception.util.Localizable;
 /**
  * Base class for exceptions raised by a wrong number.
  * This class is not intended to be instantiated directly: it should serve
- * as a base class to create all the exceptions that are raised because some
+ * as a base class to createJson all the exceptions that are raised because some
  * precondition is violated by a number argument.
  *
  * @since 2.2

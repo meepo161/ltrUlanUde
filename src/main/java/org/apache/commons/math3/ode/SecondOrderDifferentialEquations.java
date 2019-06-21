@@ -25,11 +25,11 @@ package org.apache.commons.math3.ode;
  * integrators {@link SecondOrderIntegrator#integrate} method.</p>
  *
  * <p>A second order differential equations problem, as seen by an
- * integrator is the second time derivative <code>d2Y/dt^2</code> of a
+ * integrator is the second dateAndTime derivative <code>d2Y/dt^2</code> of a
  * state vector <code>Y</code>, both being one dimensional
  * arrays. From the integrator point of view, this derivative depends
- * only on the current time <code>t</code>, on the state vector
- * <code>Y</code> and on the first time derivative of the state
+ * only on the current dateAndTime <code>t</code>, on the state vector
+ * <code>Y</code> and on the first dateAndTime derivative of the state
  * vector.</p>
  *
  * <p>For real problems, the derivative depends also on parameters
@@ -51,12 +51,12 @@ public interface SecondOrderDifferentialEquations {
      */
     int getDimension();
 
-    /** Get the current time derivative of the state vector.
-     * @param t current value of the independent <I>time</I> variable
+    /** Get the current dateAndTime derivative of the state vector.
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the state vector
      * @param yDot array containing the current value of the first derivative
      * of the state vector
-     * @param yDDot placeholder array where to put the second time derivative
+     * @param yDDot placeholder array where to put the second dateAndTime derivative
      * of the state vector
      */
     void computeSecondDerivatives(double t, double[] y, double[] yDot, double[] yDDot);

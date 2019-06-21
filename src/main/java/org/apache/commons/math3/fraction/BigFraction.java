@@ -159,7 +159,7 @@ public class BigFraction
      * <p>
      * Since this conversion is exact and since double numbers are sometimes
      * approximated, the fraction created may seem strange in some cases. For example,
-     * calling <code>new BigFraction(1.0 / 3.0)</code> does <em>not</em> create
+     * calling <code>new BigFraction(1.0 / 3.0)</code> does <em>not</em> createJson
      * the fraction 1/3, but the fraction 6004799503160661 / 18014398509481984
      * because the double number passed to the constructor is not exactly 1/3
      * (this number cannot be stored exactly in IEEE754).

@@ -93,9 +93,9 @@ public class FieldExpandableODE<T extends RealFieldElement<T>> {
     }
 
     /** Initialize equations at the start of an ODE integration.
-     * @param t0 value of the independent <I>time</I> variable at integration start
+     * @param t0 value of the independent <I>dateAndTime</I> variable at integration start
      * @param y0 array containing the value of the state vector at integration start
-     * @param finalTime target time for the integration
+     * @param finalTime target dateAndTime for the integration
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */
@@ -114,10 +114,10 @@ public class FieldExpandableODE<T extends RealFieldElement<T>> {
 
     }
 
-    /** Get the current time derivative of the complete state vector.
-     * @param t current value of the independent <I>time</I> variable
+    /** Get the current dateAndTime derivative of the complete state vector.
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the complete state vector
-     * @return time derivative of the complete state vector
+     * @return dateAndTime derivative of the complete state vector
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      */

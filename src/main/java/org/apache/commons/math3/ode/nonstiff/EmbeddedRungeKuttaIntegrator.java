@@ -93,7 +93,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
   /** Build a Runge-Kutta integrator with the given Butcher array.
    * @param name name of the method
    * @param fsal indicate that the method is an <i>fsal</i>
-   * @param c time steps from Butcher array (without the first zero)
+   * @param c dateAndTime steps from Butcher array (without the first zero)
    * @param a internal weights from Butcher array (without the first empty row)
    * @param b propagation weights for the high order method from Butcher array
    * @param prototype prototype of the step interpolator to use
@@ -133,7 +133,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
   /** Build a Runge-Kutta integrator with the given Butcher array.
    * @param name name of the method
    * @param fsal indicate that the method is an <i>fsal</i>
-   * @param c time steps from Butcher array (without the first zero)
+   * @param c dateAndTime steps from Butcher array (without the first zero)
    * @param a internal weights from Butcher array (without the first empty row)
    * @param b propagation weights for the high order method from Butcher array
    * @param prototype prototype of the step interpolator to use
@@ -197,7 +197,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
     setEquations(equations);
     final boolean forward = t > equations.getTime();
 
-    // create some internal working arrays
+    // createJson some internal working arrays
     final double[] y0  = equations.getCompleteState();
     final double[] y = y0.clone();
     final int stages = c.length + 1;
@@ -308,7 +308,7 @@ public abstract class EmbeddedRungeKuttaIntegrator
           interpolator.storeTime(stepStart);
 
           if (fsal) {
-              // save the last evaluation for the next step
+              // write the last evaluation for the next step
               System.arraycopy(yDotTmp, 0, yDotK[0], 0, y0.length);
           }
 

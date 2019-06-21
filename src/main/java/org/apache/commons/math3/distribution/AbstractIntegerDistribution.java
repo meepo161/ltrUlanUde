@@ -160,7 +160,7 @@ public abstract class AbstractIntegerDistribution implements IntegerDistribution
                 /*
                  * Overflow.
                  * There will never be an overflow in both calculation methods
-                 * for xm at the same time
+                 * for xm at the same dateAndTime
                  */
                 xm = lower + (upper - lower) / 2;
             }

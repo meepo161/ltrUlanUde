@@ -83,7 +83,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * respectively. In other words, the scale of the returned distribution is
      * {@code 0}, while its shape is {@code 1}.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}
@@ -97,7 +97,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
     /**
      * Create a log-normal distribution using the specified scale and shape.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}
@@ -117,7 +117,7 @@ public class LogNormalDistribution extends AbstractRealDistribution {
      * Create a log-normal distribution using the specified scale, shape and
      * inverse cumulative distribution accuracy.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}

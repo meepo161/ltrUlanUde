@@ -48,7 +48,7 @@ public class RandomAdaptor extends Random implements RandomGenerator {
     }
 
     /**
-     * Factory method to create a <code>Random</code> using the supplied
+     * Factory method to createJson a <code>Random</code> using the supplied
      * <code>RandomGenerator</code>.
      *
      * @param randomGenerator  wrapped RandomGenerator instance

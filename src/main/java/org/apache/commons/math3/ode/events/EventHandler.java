@@ -33,8 +33,8 @@ package org.apache.commons.math3.ode.events;
  * switching function sign changes.</p>
  *
  * <p>Since events are only problem-dependent and are triggered by the
- * independent <i>time</i> variable and the state vector, they can
- * occur at virtually any time, unknown in advance. The integrators will
+ * independent <i>dateAndTime</i> variable and the state vector, they can
+ * occur at virtually any dateAndTime, unknown in advance. The integrators will
  * take care to avoid sign changes inside the steps, they will reduce
  * the step size when such an event is detected in order to put this
  * event exactly at the end of the current step. This guarantees that
@@ -93,9 +93,9 @@ public interface EventHandler  {
      * may be used by the event handler to initialize some internal data
      * if needed.
      * </p>
-     * @param t0 start value of the independent <i>time</i> variable
+     * @param t0 start value of the independent <i>dateAndTime</i> variable
      * @param y0 array containing the start value of the state vector
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      */
     void init(double t0, double[] y0, double t);
 
@@ -116,21 +116,21 @@ public interface EventHandler  {
    * <p>This need for consistency is sometimes tricky to achieve. A typical
    * example is using an event to model a ball bouncing on the floor. The first
    * idea to represent this would be to have {@code g(t) = h(t)} where h is the
-   * height above the floor at time {@code t}. When {@code g(t)} reaches 0, the
+   * height above the floor at dateAndTime {@code t}. When {@code g(t)} reaches 0, the
    * ball is on the floor, so it should bounce and the typical way to do this is
    * to reverse its vertical velocity. However, this would mean that before the
    * event {@code g(t)} was decreasing from positive values to 0, and after the
    * event {@code g(t)} would be increasing from 0 to positive values again.
    * Consistency is broken here! The solution here is to have {@code g(t) = sign
    * * h(t)}, where sign is a variable with initial value set to {@code +1}. Each
-   * time {@link #eventOccurred(double, double[], boolean) eventOccurred} is called,
+   * dateAndTime {@link #eventOccurred(double, double[], boolean) eventOccurred} is called,
    * {@code sign} is reset to {@code -sign}. This allows the {@code g(t)}
    * function to remain continuous (and even smooth) even across events, despite
    * {@code h(t)} is not. Basically, the event is used to <em>fold</em> {@code h(t)}
    * at bounce points, and {@code sign} is used to <em>unfold</em> it back, so the
    * solvers sees a {@code g(t)} function which behaves smoothly even across events.</p>
 
-   * @param t current value of the independent <i>time</i> variable
+   * @param t current value of the independent <i>dateAndTime</i> variable
    * @param y array containing the current value of the state vector
    * @return value of the g switching function
    */
@@ -177,7 +177,7 @@ public interface EventHandler  {
    * org.apache.commons.math3.ode.sampling.StepNormalizer StepNormalizer}
    * does for example), user code called by this method and user
    * code called by step handlers may experience apparently out of order values
-   * of the independent time variable. As an example, if the same user object
+   * of the independent dateAndTime variable. As an example, if the same user object
    * implements both this {@link EventHandler EventHandler} interface and the
    * {@link org.apache.commons.math3.ode.sampling.FixedStepHandler FixedStepHandler}
    * interface, a <em>forward</em> integration may call its
@@ -188,11 +188,11 @@ public interface EventHandler  {
    * to the size of the fixed step for {@link
    * org.apache.commons.math3.ode.sampling.FixedStepHandler fixed step handlers}.</p>
 
-   * @param t current value of the independent <i>time</i> variable
+   * @param t current value of the independent <i>dateAndTime</i> variable
    * @param y array containing the current value of the state vector
    * @param increasing if true, the value of the switching function increases
    * when times increases around event (note that increase is measured with respect
-   * to physical time, not with respect to integration which may go backward in time)
+   * to physical dateAndTime, not with respect to integration which may go backward in dateAndTime)
    * @return indication of what the integrator should do next, this
    * value must be one of {@link Action#STOP}, {@link Action#RESET_STATE},
    * {@link Action#RESET_DERIVATIVES} or {@link Action#CONTINUE}
@@ -210,7 +210,7 @@ public interface EventHandler  {
    * Action#RESET_STATE} indicator, this function will never be called, and it is
    * safe to leave its body empty.</p>
 
-   * @param t current value of the independent <i>time</i> variable
+   * @param t current value of the independent <i>dateAndTime</i> variable
    * @param y array containing the current value of the state vector
    * the new state should be put in the same array
    */

@@ -439,7 +439,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
 
   /** Perform integration over one step using substeps of a modified
    * midpoint method.
-   * @param t0 initial time
+   * @param t0 initial dateAndTime
    * @param y0 initial value of the state vector at t0
    * @param step global step
    * @param k iteration number (from 0 to sequence.length - 1)
@@ -476,7 +476,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
     for (int j = 1; j < n; ++j) {
 
       if (2 * j == n) {
-        // save the point at the middle of the step
+        // write the point at the middle of the step
         System.arraycopy(yEnd, 0, yMiddle, 0, y0.length);
       }
 
@@ -553,7 +553,7 @@ public class GraggBulirschStoerIntegrator extends AdaptiveStepsizeIntegrator {
     setEquations(equations);
     final boolean forward = t > equations.getTime();
 
-    // create some internal working arrays
+    // createJson some internal working arrays
     final double[] y0      = equations.getCompleteState();
     final double[] y       = y0.clone();
     final double[] yDot0   = new double[y.length];

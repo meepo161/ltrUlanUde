@@ -35,7 +35,7 @@ public class IterationEvent extends EventObject {
      *
      * @param source the iterative algorithm on which the event initially
      * occurred
-     * @param iterations the number of iterations performed at the time
+     * @param iterations the number of iterations performed at the dateAndTime
      * {@code this} event is created
      */
     public IterationEvent(final Object source, final int iterations) {
@@ -44,7 +44,7 @@ public class IterationEvent extends EventObject {
     }
 
     /**
-     * Returns the number of iterations performed at the time {@code this} event
+     * Returns the number of iterations performed at the dateAndTime {@code this} event
      * is created.
      *
      * @return the number of iterations performed

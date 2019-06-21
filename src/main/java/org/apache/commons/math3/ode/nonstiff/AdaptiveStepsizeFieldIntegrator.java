@@ -96,7 +96,7 @@ public abstract class AdaptiveStepsizeFieldIntegrator<T extends RealFieldElement
 
     /** Build an integrator with the given stepsize bounds.
      * The default step handler does nothing.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param minStep minimal step (sign is irrelevant, regardless of
      * integration direction, forward or backward), the last step can
@@ -120,7 +120,7 @@ public abstract class AdaptiveStepsizeFieldIntegrator<T extends RealFieldElement
 
     /** Build an integrator with the given stepsize bounds.
      * The default step handler does nothing.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param minStep minimal step (sign is irrelevant, regardless of
      * integration direction, forward or backward), the last step can
@@ -243,7 +243,7 @@ public abstract class AdaptiveStepsizeFieldIntegrator<T extends RealFieldElement
      * @param forward forward integration indicator
      * @param order order of the method
      * @param scale scaling vector for the state vector (can be shorter than state vector)
-     * @param state0 state at integration start time
+     * @param state0 state at integration start dateAndTime
      * @param mapper mapper for all the equations
      * @return first integration step
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded

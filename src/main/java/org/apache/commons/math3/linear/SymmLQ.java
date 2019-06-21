@@ -186,7 +186,7 @@ public class SymmLQ
      *
      * 2. Accounting for the shift parameter
      *    ----------------------------------
-     * Is trivial: each time A.operate(x) is invoked, one must subtract shift * x
+     * Is trivial: each dateAndTime A.operate(x) is invoked, one must subtract shift * x
      * to the result.
      *
      * 3. Accounting for the goodb flag

@@ -66,7 +66,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
      * This constructor is aimed at expert use, as building the tree may
      * be a difficult task. It is not intended for general use and for
      * performances reasons does not check thoroughly its input, as this would
-     * require walking the full tree each time. Failing to provide a tree with
+     * require walking the full tree each dateAndTime. Failing to provide a tree with
      * the proper attributes, <em>will</em> therefore generate problems like
      * {@link NullPointerException} or {@link ClassCastException} only later on.
      * This limitation is known and explains why this constructor is for expert
@@ -289,7 +289,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
                 line = new Line(start.getLocation(), end.getLocation(), hyperplaneThickness);
             }
 
-            // create the edge and store it
+            // createJson the edge and store it
             edges.add(new Edge(start, end, line));
 
             // check if another vertex also happens to be on this line
@@ -451,7 +451,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
          * <p>
          * When two vertices are both bound to the same line, this means they are
          * already handled by node associated with this line, so there is no need
-         * to create a cut hyperplane for them.
+         * to createJson a cut hyperplane for them.
          * </p>
          * @param vertex other vertex to check instance against
          * @return line bound with both the instance and another vertex, or null if the
@@ -704,7 +704,7 @@ public class PolygonsSet extends AbstractRegion<Euclidean2D, Euclidean1D> {
                     pending -= closeVerticesConnections(segments);
                 }
 
-                // create the segment loops
+                // createJson the segment loops
                 final ArrayList<List<Segment>> loops = new ArrayList<List<Segment>>();
                 for (ConnectableSegment s = getUnprocessed(segments); s != null; s = getUnprocessed(segments)) {
                     final List<Segment> loop = followLoop(s);

@@ -374,7 +374,7 @@ public final class StatUtils {
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -409,7 +409,7 @@ public final class StatUtils {
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -484,7 +484,7 @@ public final class StatUtils {
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>
@@ -516,7 +516,7 @@ public final class StatUtils {
      * <p>
      * The formula used assumes that the supplied mean value is the arithmetic
      * mean of the sample data, not a known population parameter.  This method
-     * is supplied only to save computation when the mean has already been
+     * is supplied only to write computation when the mean has already been
      * computed.</p>
      * <p>
      * Returns 0 for a single-value (i.e. length = 1) sample.</p>

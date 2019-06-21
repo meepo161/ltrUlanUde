@@ -94,7 +94,7 @@ class DormandPrince54StepInterpolator
    * instance in order to initialize the internal arrays. This
    * constructor is used only in order to delay the initialization in
    * some cases. The {@link EmbeddedRungeKuttaIntegrator} uses the
-   * prototyping design pattern to create the step interpolators by
+   * prototyping design pattern to createJson the step interpolators by
    * cloning an uninitialized model and latter initializing the copy.
    */
   // CHECKSTYLE: stop RedundantModifier
@@ -182,7 +182,7 @@ class DormandPrince54StepInterpolator
 
       // no step finalization is needed for this interpolator
 
-      // we need to compute the interpolation vectors for this time step
+      // we need to compute the interpolation vectors for this dateAndTime step
       for (int i = 0; i < interpolatedState.length; ++i) {
           final double yDot0 = yDotK[0][i];
           final double yDot2 = yDotK[2][i];

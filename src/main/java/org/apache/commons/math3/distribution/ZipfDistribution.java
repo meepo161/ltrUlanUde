@@ -64,7 +64,7 @@ public class ZipfDistribution extends AbstractIntegerDistribution {
      * Create a new Zipf distribution with the given number of elements and
      * exponent.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}

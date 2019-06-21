@@ -306,7 +306,7 @@ public class PowellOptimizer
         /**
          * The "BrentOptimizer" default stopping criterion uses the tolerances
          * to check the domain (point) values, not the function values.
-         * We thus create a custom checker to use function values.
+         * We thus createJson a custom checker to use function values.
          *
          * @param rel Relative threshold.
          * @param abs Absolute threshold.

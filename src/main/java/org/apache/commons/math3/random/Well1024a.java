@@ -49,7 +49,7 @@ public class Well1024a extends AbstractWell {
     private static final int M3 = 10;
 
     /** Creates a new random number generator.
-     * <p>The instance is initialized using the current time as the
+     * <p>The instance is initialized using the current dateAndTime as the
      * seed.</p>
      */
     public Well1024a() {
@@ -65,7 +65,7 @@ public class Well1024a extends AbstractWell {
 
     /** Creates a new random number generator using an int array seed.
      * @param seed the initial seed (32 bits integers array), if null
-     * the seed of the generator will be related to the current time
+     * the seed of the generator will be related to the current dateAndTime
      */
     public Well1024a(int[] seed) {
         super(K, M1, M2, M3, seed);

@@ -52,7 +52,7 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * {@link #providesResidual()} returns {@code false}.
      *
      * @param source the iterative solver which fired this event
-     * @param iterations the number of iterations performed at the time
+     * @param iterations the number of iterations performed at the dateAndTime
      * {@code this} event is created
      * @param x the current estimate of the solution
      * @param b the right-hand side vector
@@ -81,7 +81,7 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * {@link #providesResidual()} returns {@code false}.
      *
      * @param source the iterative solver which fired this event
-     * @param iterations the number of iterations performed at the time
+     * @param iterations the number of iterations performed at the dateAndTime
      * {@code this} event is created
      * @param x the current estimate of the solution
      * @param b the right-hand side vector
@@ -106,7 +106,7 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * {@inheritDoc}
      *
      * This implementation throws an {@link MathUnsupportedOperationException}
-     * if no residual vector {@code r} was provided at construction time.
+     * if no residual vector {@code r} was provided at construction dateAndTime.
      */
     @Override
     public RealVector getResidual() {
@@ -132,7 +132,7 @@ public class DefaultIterativeLinearSolverEvent extends IterativeLinearSolverEven
      * {@inheritDoc}
      *
      * This implementation returns {@code true} if a non-{@code null} value was
-     * specified for the residual vector {@code r} at construction time.
+     * specified for the residual vector {@code r} at construction dateAndTime.
      *
      * @return {@code true} if {@code r != null}
      */

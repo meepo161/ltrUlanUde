@@ -378,7 +378,7 @@ public final class CombinatoricsUtils {
                 }
             }
 
-            // atomically save the cache
+            // atomically write the cache
             STIRLING_S2.compareAndSet(null, stirlingS2);
 
         }

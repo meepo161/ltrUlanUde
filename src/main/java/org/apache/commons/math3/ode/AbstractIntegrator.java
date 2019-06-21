@@ -50,7 +50,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     /** Step handler. */
     protected Collection<StepHandler> stepHandlers;
 
-    /** Current step start time. */
+    /** Current step start dateAndTime. */
     protected double stepStart;
 
     /** Current stepsize. */
@@ -176,9 +176,9 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
     }
 
     /** Prepare the start of an integration.
-     * @param t0 start value of the independent <i>time</i> variable
+     * @param t0 start value of the independent <i>dateAndTime</i> variable
      * @param y0 array containing the start value of the state vector
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      */
     protected void initIntegration(final double t0, final double[] y0, final double t) {
 
@@ -257,18 +257,18 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
     }
 
-    /** Integrate a set of differential equations up to the given time.
+    /** Integrate a set of differential equations up to the given dateAndTime.
      * <p>This method solves an Initial Value Problem (IVP).</p>
      * <p>The set of differential equations is composed of a main set, which
      * can be extended by some sets of secondary equations. The set of
-     * equations must be already set up with initial time and partial states.
-     * At integration completion, the final time and partial states will be
+     * equations must be already set up with initial dateAndTime and partial states.
+     * At integration completion, the final dateAndTime and partial states will be
      * available in the same object.</p>
      * <p>Since this method stores some internal state variables made
      * available in its public interface during integration ({@link
      * #getCurrentSignedStepsize()}), it is <em>not</em> thread-safe.</p>
      * @param equations complete set of differential equations to integrate
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      * (can be set to a value smaller than <code>t0</code> for backward integration)
      * @exception NumberIsTooSmallException if integration step is too small
      * @throws DimensionMismatchException if the dimension of the complete state does not
@@ -281,9 +281,9 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                MaxCountExceededException, NoBracketingException;
 
     /** Compute the derivatives and check the number of evaluations.
-     * @param t current value of the independent <I>time</I> variable
+     * @param t current value of the independent <I>dateAndTime</I> variable
      * @param y array containing the current value of the state vector
-     * @param yDot placeholder array where to put the time derivative of the state vector
+     * @param yDot placeholder array where to put the dateAndTime derivative of the state vector
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      * @exception DimensionMismatchException if arrays dimensions do not match equations settings
      * @exception NullPointerException if the ODE equations have not been set (i.e. if this method
@@ -309,11 +309,11 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
     /** Accept a step, triggering events and step handlers.
      * @param interpolator step interpolator
-     * @param y state vector at step end time, must be reset if an event
+     * @param y state vector at step end dateAndTime, must be reset if an event
      * asks for resetting or if an events stops integration during the step
-     * @param yDot placeholder array where to put the time derivative of the state vector
-     * @param tEnd final integration time
-     * @return time at end of step
+     * @param yDot placeholder array where to put the dateAndTime derivative of the state vector
+     * @param tEnd final integration dateAndTime
+     * @return dateAndTime at end of step
      * @exception MaxCountExceededException if the interpolator throws one because
      * the number of functions evaluations is exceeded
      * @exception NoBracketingException if the location of an event cannot be bracketed
@@ -365,7 +365,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                 interpolator.setSoftPreviousTime(previousT);
                 interpolator.setSoftCurrentTime(eventT);
 
-                // get state at event time
+                // get state at event dateAndTime
                 interpolator.setInterpolatedTime(eventT);
                 final double[] eventYComplete = new double[y.length];
                 expandable.getPrimaryMapper().insertEquationData(interpolator.getInterpolatedState(),
@@ -376,7 +376,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
                                                  eventYComplete);
                 }
 
-                // advance all event states to current time
+                // advance all event states to current dateAndTime
                 for (final EventState state : eventsStates) {
                     state.stepAccepted(eventT, eventYComplete);
                     isLastStep = isLastStep || state.stop();
@@ -446,7 +446,7 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
 
     /** Check the integration span.
      * @param equations set of differential equations
-     * @param t target time for the integration
+     * @param t target dateAndTime for the integration
      * @exception NumberIsTooSmallException if integration span is too small
      * @exception DimensionMismatchException if adaptive step size integrators
      * tolerance arrays dimensions are not compatible with equations settings

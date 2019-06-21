@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
  * name as the key and the property value as the message format.
  * The source English format is provided in the constants themselves
  * to serve both as a reminder for developers to understand the parameters
- * needed by each format, as a basis for translators to create
+ * needed by each format, as a basis for translators to createJson
  * localized properties files, and as a default format if some
  * translation is missing.
  * </p>
@@ -117,7 +117,7 @@ public enum LocalizedFormats implements Localizable {
     FUNCTION_NOT_POLYNOMIAL("function is not polynomial"),
     GCD_OVERFLOW_32_BITS("overflow: gcd({0}, {1}) is 2^31"),
     GCD_OVERFLOW_64_BITS("overflow: gcd({0}, {1}) is 2^63"),
-    HOLE_BETWEEN_MODELS_TIME_RANGES("{0} wide hole between models time ranges"),
+    HOLE_BETWEEN_MODELS_TIME_RANGES("{0} wide hole between models dateAndTime ranges"),
     ILL_CONDITIONED_OPERATOR("condition number {1} is too high "),
     INCONSISTENT_STATE_AT_2_PI_WRAPPING("inconsistent state at 2\u03c0 wrapping"),
     INDEX_LARGER_THAN_MAX("the index specified: {0} is larger than the current maximal index {1}"),

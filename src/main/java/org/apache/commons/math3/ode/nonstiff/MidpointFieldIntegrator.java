@@ -51,7 +51,7 @@ public class MidpointFieldIntegrator<T extends RealFieldElement<T>> extends Rung
 
     /** Simple constructor.
      * Build a midpoint integrator with the given step.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param step integration step
      */
     public MidpointFieldIntegrator(final Field<T> field, final T step) {

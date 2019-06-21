@@ -81,7 +81,7 @@ class LutherFieldStepInterpolator<T extends RealFieldElement<T>>
     private final T d6c;
 
     /** Simple constructor.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param forward integration direction indicator
      * @param yDotK slopes at the intermediate points
      * @param globalPreviousState start of the global step

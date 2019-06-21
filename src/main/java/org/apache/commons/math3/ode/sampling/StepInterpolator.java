@@ -48,39 +48,39 @@ import org.apache.commons.math3.exception.MaxCountExceededException;
 public interface StepInterpolator extends Externalizable {
 
   /**
-   * Get the previous grid point time.
-   * @return previous grid point time
+   * Get the previous grid point dateAndTime.
+   * @return previous grid point dateAndTime
    */
   double getPreviousTime();
 
   /**
-   * Get the current grid point time.
-   * @return current grid point time
+   * Get the current grid point dateAndTime.
+   * @return current grid point dateAndTime
    */
   double getCurrentTime();
 
   /**
-   * Get the time of the interpolated point.
+   * Get the dateAndTime of the interpolated point.
    * If {@link #setInterpolatedTime} has not been called, it returns
-   * the current grid point time.
-   * @return interpolation point time
+   * the current grid point dateAndTime.
+   * @return interpolation point dateAndTime
    */
   double getInterpolatedTime();
 
   /**
-   * Set the time of the interpolated point.
-   * <p>Setting the time outside of the current step is now allowed, but
+   * Set the dateAndTime of the interpolated point.
+   * <p>Setting the dateAndTime outside of the current step is now allowed, but
    * should be used with care since the accuracy of the interpolator will
    * probably be very poor far from this step. This allowance has been
    * added to simplify implementation of search algorithms near the
    * step endpoints.</p>
-   * <p>Setting the time changes the instance internal state. This includes
+   * <p>Setting the dateAndTime changes the instance internal state. This includes
    * the internal arrays returned in {@link #getInterpolatedState()},
    * {@link #getInterpolatedDerivatives()}, {@link
    * #getInterpolatedSecondaryState(int)} and {@link
    * #getInterpolatedSecondaryDerivatives(int)}. So if their content must be preserved
    * across several calls, user must copy them.</p>
-   * @param time time of the interpolated point
+   * @param time dateAndTime of the interpolated point
    * @see #getInterpolatedState()
    * @see #getInterpolatedDerivatives()
    * @see #getInterpolatedSecondaryState(int)
@@ -94,7 +94,7 @@ public interface StepInterpolator extends Externalizable {
    * it should not be modified and it should be copied if it needs
    * to be preserved across several calls to the associated
    * {@link #setInterpolatedTime(double)} method.</p>
-   * @return state vector at time {@link #getInterpolatedTime}
+   * @return state vector at dateAndTime {@link #getInterpolatedTime}
    * @see #getInterpolatedDerivatives()
    * @see #getInterpolatedSecondaryState(int)
    * @see #getInterpolatedSecondaryDerivatives(int)
@@ -109,7 +109,7 @@ public interface StepInterpolator extends Externalizable {
    * it should not be modified and it should be copied if it needs
    * to be preserved across several calls to the associated
    * {@link #setInterpolatedTime(double)} method.</p>
-   * @return derivatives of the state vector at time {@link #getInterpolatedTime}
+   * @return derivatives of the state vector at dateAndTime {@link #getInterpolatedTime}
    * @see #getInterpolatedState()
    * @see #getInterpolatedSecondaryState(int)
    * @see #getInterpolatedSecondaryDerivatives(int)
@@ -162,7 +162,7 @@ public interface StepInterpolator extends Externalizable {
    * degenerated cases like null steps due to cancellation at step
    * initialization, step control or discrete events
    * triggering.</p>
-   * @return true if the integration variable (time) increases during
+   * @return true if the integration variable (dateAndTime) increases during
    * integration
    */
   boolean isForward();
@@ -170,7 +170,7 @@ public interface StepInterpolator extends Externalizable {
   /** Copy the instance.
    * <p>The copied instance is guaranteed to be independent from the
    * original one. Both can be used with different settings for
-   * interpolated time without any side effect.</p>
+   * interpolated dateAndTime without any side effect.</p>
    * @return a deep copy of the instance, which can be used independently.
    * @see #setInterpolatedTime(double)
    * @exception MaxCountExceededException if the number of functions evaluations is exceeded

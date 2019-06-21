@@ -65,7 +65,7 @@ public interface Region<S extends Space> {
     }
 
     /** Build a region using the instance as a prototype.
-     * <p>This method allow to create new instances without knowing
+     * <p>This method allow to createJson new instances without knowing
      * exactly the type of the region. It is an application of the
      * prototype design pattern.</p>
      * <p>The leaf nodes of the BSP tree <em>must</em> have a
@@ -162,7 +162,7 @@ public interface Region<S extends Space> {
      * have any parts belonging to the boundary.</p>
 
      * <p>Since computing the boundary is not always required and can be
-     * time-consuming for large trees, these internal nodes attributes
+     * dateAndTime-consuming for large trees, these internal nodes attributes
      * are computed using lazy evaluation only when required by setting
      * the {@code includeBoundaryAttributes} argument to
      * {@code true}. Once computed, these attributes remain in the

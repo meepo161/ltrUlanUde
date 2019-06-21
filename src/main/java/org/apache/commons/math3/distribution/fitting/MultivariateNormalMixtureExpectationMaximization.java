@@ -282,7 +282,7 @@ public class MultivariateNormalMixtureExpectationMaximization {
     }
 
     /**
-     * Helper method to create a multivariate normal mixture model which can be
+     * Helper method to createJson a multivariate normal mixture model which can be
      * used to initialize {@link #fit(MixtureMultivariateNormalDistribution)}.
      *
      * This method uses the data supplied to the constructor to try to determine
@@ -330,7 +330,7 @@ public class MultivariateNormalMixtureExpectationMaximization {
         final List<Pair<Double, MultivariateNormalDistribution>> components =
                 new ArrayList<Pair<Double, MultivariateNormalDistribution>>(numComponents);
 
-        // create a component based on data in each bin
+        // createJson a component based on data in each bin
         for (int binIndex = 0; binIndex < numComponents; binIndex++) {
             // minimum index (inclusive) from sorted data for this bin
             final int minIndex = (binIndex * numRows) / numComponents;
@@ -347,7 +347,7 @@ public class MultivariateNormalMixtureExpectationMaximization {
             // mean of each column for the data in the this bin
             final double[] columnMeans = new double[numCols];
 
-            // populate bin and create component
+            // populate bin and createJson component
             for (int i = minIndex, iBin = 0; i < maxIndex; i++, iBin++) {
                 for (int j = 0; j < numCols; j++) {
                     final double val = sortedData[i].getRow()[j];

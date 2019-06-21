@@ -94,7 +94,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements S
     /**
      * {@inheritDoc}
      * <p>Note that when {@link #Kurtosis(FourthMoment)} is used to
-     * create a Variance, this method does nothing. In that case, the
+     * createJson a Variance, this method does nothing. In that case, the
      * FourthMoment should be incremented directly.</p>
      */
     @Override

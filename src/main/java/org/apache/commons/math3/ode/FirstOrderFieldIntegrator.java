@@ -75,12 +75,12 @@ public interface FirstOrderFieldIntegrator<T extends RealFieldElement<T>> {
      * org.apache.commons.math3.analysis.solvers.FieldBracketingNthOrderBrentSolver}.
      * </p>
      * @param handler event handler
-     * @param maxCheckInterval maximal time interval between switching
+     * @param maxCheckInterval maximal dateAndTime interval between switching
      * function checks (this interval prevents missing sign changes in
      * case the integration steps becomes very large)
-     * @param convergence convergence threshold in the event time search
+     * @param convergence convergence threshold in the event dateAndTime search
      * @param maxIterationCount upper limit of the iteration count in
-     * the event time search events.
+     * the event dateAndTime search events.
      * @see #addEventHandler(FieldEventHandler, double, double, int,
      * org.apache.commons.math3.analysis.solvers.BracketedRealFieldUnivariateSolver)
      * @see #getEventHandlers()
@@ -91,12 +91,12 @@ public interface FirstOrderFieldIntegrator<T extends RealFieldElement<T>> {
 
     /** Add an event handler to the integrator.
      * @param handler event handler
-     * @param maxCheckInterval maximal time interval between switching
+     * @param maxCheckInterval maximal dateAndTime interval between switching
      * function checks (this interval prevents missing sign changes in
      * case the integration steps becomes very large)
-     * @param convergence convergence threshold in the event time search
+     * @param convergence convergence threshold in the event dateAndTime search
      * @param maxIterationCount upper limit of the iteration count in
-     * the event time search events.
+     * the event dateAndTime search events.
      * @param solver solver to use to locate the event
      * @see #addEventHandler(FieldEventHandler, double, double, int)
      * @see #getEventHandlers()
@@ -119,14 +119,14 @@ public interface FirstOrderFieldIntegrator<T extends RealFieldElement<T>> {
      */
     void clearEventHandlers();
 
-    /** Get the current value of the step start time t<sub>i</sub>.
+    /** Get the current value of the step start dateAndTime t<sub>i</sub>.
      * <p>This method can be called during integration (typically by
      * the object implementing the {@link FirstOrderDifferentialEquations
      * differential equations} problem) if the value of the current step that
      * is attempted is needed.</p>
      * <p>The result is undefined if the method is called outside of
      * calls to <code>integrate</code>.</p>
-     * @return current value of the state at step start time t<sub>i</sub>
+     * @return current value of the state at step start dateAndTime t<sub>i</sub>
      */
     FieldODEStateAndDerivative<T> getCurrentStepStart();
 
@@ -165,16 +165,16 @@ public interface FirstOrderFieldIntegrator<T extends RealFieldElement<T>> {
      */
     int getEvaluations();
 
-    /** Integrate the differential equations up to the given time.
+    /** Integrate the differential equations up to the given dateAndTime.
      * <p>This method solves an Initial Value Problem (IVP).</p>
      * <p>Since this method stores some internal state variables made
      * available in its public interface during integration ({@link
      * #getCurrentSignedStepsize()}), it is <em>not</em> thread-safe.</p>
      * @param equations differential equations to integrate
-     * @param initialState initial state (time, primary and secondary state vectors)
-     * @param finalTime target time for the integration
+     * @param initialState initial state (dateAndTime, primary and secondary state vectors)
+     * @param finalTime target dateAndTime for the integration
      * (can be set to a value smaller than {@code t0} for backward integration)
-     * @return final state, its time will be the same as {@code finalTime} if
+     * @return final state, its dateAndTime will be the same as {@code finalTime} if
      * integration reached its target, but may be different if some {@link
      * org.apache.commons.math3.ode.events.FieldEventHandler} stops it at some point.
      * @exception NumberIsTooSmallException if integration step is too small

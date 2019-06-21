@@ -353,7 +353,7 @@ public class NonLinearConjugateGradientOptimizer
     }
 
     // Class is not used anymore (cf. MATH-1092). However, it might
-    // be interesting to create a class similar to "LineSearch", but
+    // be interesting to createJson a class similar to "LineSearch", but
     // that will take advantage that the model's gradient is available.
 //     /**
 //      * Internal class for line search.

@@ -79,7 +79,7 @@ public class DormandPrince54FieldIntegrator<T extends RealFieldElement<T>>
 
     /** Simple constructor.
      * Build a fifth order Dormand-Prince integrator with the given step bounds
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param minStep minimal step (sign is irrelevant, regardless of
      * integration direction, forward or backward), the last step can
      * be smaller than this
@@ -105,7 +105,7 @@ public class DormandPrince54FieldIntegrator<T extends RealFieldElement<T>>
 
     /** Simple constructor.
      * Build a fifth order Dormand-Prince integrator with the given step bounds
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param minStep minimal step (sign is irrelevant, regardless of
      * integration direction, forward or backward), the last step can
      * be smaller than this

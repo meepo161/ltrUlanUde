@@ -566,7 +566,7 @@ public class Frequency implements Serializable {
     public List<Comparable<?>> getMode() {
         long mostPopular = 0; // frequencies are always positive
 
-        // Get the max count first, so we avoid having to recreate the List each time
+        // Get the max count first, so we avoid having to recreate the List each dateAndTime
         for(Long l : freqTable.values()) {
             long frequency = l.longValue();
             if (frequency > mostPopular) {

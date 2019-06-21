@@ -34,7 +34,7 @@ public abstract class Chromosome implements Comparable<Chromosome>,Fitness {
     /**
      * Access the fitness of this chromosome. The bigger the fitness, the better the chromosome.
      * <p>
-     * Computation of fitness is usually very time-consuming task, therefore the fitness is cached.
+     * Computation of fitness is usually very dateAndTime-consuming task, therefore the fitness is cached.
      *
      * @return the fitness
      */

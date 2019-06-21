@@ -17,6 +17,9 @@ import java.io.FileOutputStream
 import org.apache.poi.ss.usermodel.charts.DataSources
 import org.apache.poi.xssf.usermodel.*
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean
+import ru.avem.posum.models.process.ChannelModel
+import java.io.FileInputStream
+
 class ProtocolController(val processController: ProcessController) {
     private val amplitudeColumnIndex = 3
     private val dcColumnIndex = 4
@@ -27,11 +30,12 @@ class ProtocolController(val processController: ProcessController) {
     private val rmsColumnIndex = 6
     private val timeColumnIndex = 1
     private var workbook = XSSFWorkbook()
+    private val cellStyles = HashMap<CellStyles, XSSFCellStyle>()
+
 
     fun createProtocol(testProgramId: Long, testProgramTitle: String, isPointData: Boolean, isShort: Boolean,
                        rarefactionCoefficient: Long, vararg sheetsNames: ProtocolSheets) {
 
-        // Prepare data
         val headers = mutableListOf<Array<String>>()
         val data = mutableListOf<List<List<String>>>()
         val colors = mutableListOf<List<Short>>()
@@ -47,8 +51,8 @@ class ProtocolController(val processController: ProcessController) {
                 }
                 ProtocolSheets.CHANNELS_DATA -> {
                     headers.add(processController.tableController.columnsHeaders)
-                    data.add(processController.tableController.getChannelsData(isPointData, isShort, rarefactionCoefficient))
-                    colors.add(processController.tableController.getColorsForProtocol(isPointData, isShort, rarefactionCoefficient))
+                    data.add(listOf())
+                    colors.add(listOf())
                     cellsToMerge.add(processController.tableController.cellsToMerge)
                 }
                 ProtocolSheets.JOURNAL -> {
@@ -70,12 +74,15 @@ class ProtocolController(val processController: ProcessController) {
         val sheets = sheetsNames.map { it.sheetName }.toTypedArray()
         createWorkBook(sheets, testProgramTitle, cellsToMerge.toIntArray())
         fillWorkBook(sheets, headers.toTypedArray(), data, colors)
-        if (!isPointData && sheetsNames.any { it == ProtocolSheets.CHANNELS_DATA }) drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
+//        if (!isPointData && sheetsNames.any { it == ProtocolSheets.CHANNELS_DATA }) drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
+        processController.jsonControllerTwo.parse(false)
+        autosizeColumns(ProtocolSheets.CHANNELS_DATA.sheetName)
     }
 
     private fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
         createProtocol(*sheets)
         createTitle(title, titleCellsToMerge, *sheets)
+        createDataCellsStyles()
     }
 
     private fun createProtocol(vararg sheetNames: String) {
@@ -173,32 +180,29 @@ class ProtocolController(val processController: ProcessController) {
 
     private fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
         val sheet = workbook.getSheet(sheetName)
-        val constrain = 2 // miss the title and headers rows
 
         for ((columnIndex, data) in dataForColumns.withIndex()) {
-            for (rowIndex in constrain until (data.size + constrain)) {
+            for (rowIndex in firstRowIndex until (data.size + firstRowIndex)) {
                 val row = if (sheet.getRow(rowIndex) == null) sheet.createRow(rowIndex) else sheet.getRow(rowIndex)
                 row.heightInPoints = 16.0f
                 val cell = if (row.getCell(columnIndex) == null) row.createCell(columnIndex) else row.getCell(columnIndex)
-                val value = data[rowIndex - constrain]
+                val value = data[rowIndex - firstRowIndex]
                 cell.setCellValue(value)
-                cell.cellStyle = getDataCellStyle(colors[rowIndex - constrain])
+                cell.cellStyle = createDataCellStyle(colors[rowIndex - firstRowIndex])
             }
         }
     }
 
-    private fun getDataCellStyle(color: Short): XSSFCellStyle {
-        val cellStyle = workbook.createCellStyle()
-        cellStyle.borderTop = BorderStyle.THIN
-        cellStyle.borderRight = BorderStyle.THIN
-        cellStyle.borderBottom = BorderStyle.THIN
-        cellStyle.borderLeft = BorderStyle.THIN
-        cellStyle.fillForegroundColor = color
-        cellStyle.fillPattern = FillPatternType.SOLID_FOREGROUND
+    fun fillChannelData(channelData: List<String>) {
+        val sheet = workbook.getSheet(ProtocolSheets.CHANNELS_DATA.sheetName)
+        val row = sheet.createRow(sheet.lastRowNum + 1)
+        row.heightInPoints = 16.0f
 
-        val font = getFont("Times New Roman", 14, false)
-        cellStyle.setFont(font)
-        return cellStyle
+        for ((columnIndex, data) in channelData.withIndex()) {
+            val cell = row.createCell(columnIndex)
+            cell.setCellValue(data)
+            cell.cellStyle = cellStyles[CellStyles.LOG]
+        }
     }
 
     fun showFileSaver(windowTitle: String, initialFileName: String): File? {
@@ -221,7 +225,7 @@ class ProtocolController(val processController: ProcessController) {
             workbook.write(outputStream)
             workbook.close()
             processController.statusBarLine.setStatus(successfulStatus + path, true)
-        } catch (e: FileNotFoundException){
+        } catch (e: FileNotFoundException) {
             processController.statusBarLine.setStatus("Ошибка сохранения - файл занят другим процессом", false)
         }
     }
@@ -369,5 +373,27 @@ class ProtocolController(val processController: ProcessController) {
 
     private fun getLastRowIndex(sheet: XSSFSheet): Int {
         return sheet.lastRowNum - 1
+    }
+
+    private fun createDataCellsStyles() {
+        cellStyles[CellStyles.ERROR] = createDataCellStyle(IndexedColors.RED.index)
+        cellStyles[CellStyles.LOG] = createDataCellStyle(IndexedColors.WHITE.index)
+        cellStyles[CellStyles.OK] = createDataCellStyle(IndexedColors.GREEN.index)
+        cellStyles[CellStyles.WARNING] = createDataCellStyle(IndexedColors.YELLOW.index)
+    }
+
+
+    private fun createDataCellStyle(color: Short): XSSFCellStyle {
+        val cellStyle = workbook.createCellStyle()
+        cellStyle.borderTop = BorderStyle.THIN
+        cellStyle.borderRight = BorderStyle.THIN
+        cellStyle.borderBottom = BorderStyle.THIN
+        cellStyle.borderLeft = BorderStyle.THIN
+        cellStyle.fillForegroundColor = color
+        cellStyle.fillPattern = FillPatternType.SOLID_FOREGROUND
+
+        val font = getFont("Times New Roman", 14, false)
+        cellStyle.setFont(font)
+        return cellStyle
     }
 }

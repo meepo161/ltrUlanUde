@@ -26,9 +26,9 @@ import org.apache.commons.math3.complex.ComplexUtils;
 
 /**
  *         User facing class which contains all the methods the user uses
- *         to create Butterworth filters. This done in this way:
+ *         to createJson Butterworth filters. This done in this way:
  *         Butterworth butterworth = new Butterworth(); 
- *         Then call one of the methods below to create
+ *         Then call one of the methods below to createJson
  *         low-,high-,band-, or stopband filters. For example:
  *         butterworth.bandPass(2,250,50,5);
  */

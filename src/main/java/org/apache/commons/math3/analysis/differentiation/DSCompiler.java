@@ -65,7 +65,7 @@ import org.apache.commons.math3.util.MathArrays;
  * <p>
  * Given this structure, users can perform some simple operations like adding, subtracting
  * or multiplying constants and negating the elements by themselves, knowing if they want to
- * mutate their array or create a new array. These simple operations are not provided by
+ * mutate their array or createJson a new array. These simple operations are not provided by
  * the compiler. The compiler provides only the more complex operations between several arrays.
  * </p>
  * <p>This class is mainly used as the engine for scalar variable {@link DerivativeStructure}.
@@ -196,7 +196,7 @@ public class DSCompiler {
             return cache[parameters][order];
         }
 
-        // we need to create more compilers
+        // we need to createJson more compilers
         final int maxParameters = FastMath.max(parameters, cache == null ? 0 : cache.length);
         final int maxOrder      = FastMath.max(order,     cache == null ? 0 : cache[0].length);
         final DSCompiler[][] newCache = new DSCompiler[maxParameters + 1][maxOrder + 1];
@@ -208,7 +208,7 @@ public class DSCompiler {
             }
         }
 
-        // create the array in increasing diagonal order
+        // createJson the array in increasing diagonal order
         for (int diag = 0; diag <= parameters + order; ++diag) {
             for (int o = FastMath.max(0, diag - parameters); o <= FastMath.min(order, diag); ++o) {
                 final int p = diag - o;
@@ -846,7 +846,7 @@ public class DSCompiler {
                     final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         // [a^x, ln(a) a^x, ln(a)^2 a^x,, ln(a)^3 a^x, ... ]
         final double[] function = new double[1 + order];
         if (a == 0) {
@@ -886,7 +886,7 @@ public class DSCompiler {
     public void pow(final double[] operand, final int operandOffset, final double p,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         // [x^p, px^(p-1), p(p-1)x^(p-2), ... ]
         double[] function = new double[1 + order];
         double xk = FastMath.pow(operand[operandOffset], p - order);
@@ -925,7 +925,7 @@ public class DSCompiler {
             return;
         }
 
-        // create the power function value and derivatives
+        // createJson the power function value and derivatives
         // [x^n, nx^(n-1), n(n-1)x^(n-2), ... ]
         double[] function = new double[1 + order];
 
@@ -991,7 +991,7 @@ public class DSCompiler {
     public void rootN(final double[] operand, final int operandOffset, final int n,
                       final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         // [x^(1/n), (1/n)x^((1/n)-1), (1-n)/n^2x^((1/n)-2), ... ]
         double[] function = new double[1 + order];
         double xk;
@@ -1028,7 +1028,7 @@ public class DSCompiler {
     public void exp(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         Arrays.fill(function, FastMath.exp(operand[operandOffset]));
 
@@ -1048,7 +1048,7 @@ public class DSCompiler {
     public void expm1(final double[] operand, final int operandOffset,
                       final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.expm1(operand[operandOffset]);
         Arrays.fill(function, 1, 1 + order, FastMath.exp(operand[operandOffset]));
@@ -1069,7 +1069,7 @@ public class DSCompiler {
     public void log(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.log(operand[operandOffset]);
         if (order > 0) {
@@ -1096,7 +1096,7 @@ public class DSCompiler {
     public void log1p(final double[] operand, final int operandOffset,
                       final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.log1p(operand[operandOffset]);
         if (order > 0) {
@@ -1123,7 +1123,7 @@ public class DSCompiler {
     public void log10(final double[] operand, final int operandOffset,
                       final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.log10(operand[operandOffset]);
         if (order > 0) {
@@ -1151,7 +1151,7 @@ public class DSCompiler {
     public void cos(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.cos(operand[operandOffset]);
         if (order > 0) {
@@ -1177,7 +1177,7 @@ public class DSCompiler {
     public void sin(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.sin(operand[operandOffset]);
         if (order > 0) {
@@ -1203,7 +1203,7 @@ public class DSCompiler {
     public void tan(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         final double[] function = new double[1 + order];
         final double t = FastMath.tan(operand[operandOffset]);
         function[0] = t;
@@ -1258,7 +1258,7 @@ public class DSCompiler {
     public void acos(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         final double x = operand[operandOffset];
         function[0] = FastMath.acos(x);
@@ -1315,7 +1315,7 @@ public class DSCompiler {
     public void asin(final double[] operand, final int operandOffset,
                     final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         final double x = operand[operandOffset];
         function[0] = FastMath.asin(x);
@@ -1372,7 +1372,7 @@ public class DSCompiler {
     public void atan(final double[] operand, final int operandOffset,
                      final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         final double x = operand[operandOffset];
         function[0] = FastMath.atan(x);
@@ -1480,7 +1480,7 @@ public class DSCompiler {
     public void cosh(final double[] operand, final int operandOffset,
                      final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.cosh(operand[operandOffset]);
         if (order > 0) {
@@ -1506,7 +1506,7 @@ public class DSCompiler {
     public void sinh(final double[] operand, final int operandOffset,
                      final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         function[0] = FastMath.sinh(operand[operandOffset]);
         if (order > 0) {
@@ -1532,7 +1532,7 @@ public class DSCompiler {
     public void tanh(final double[] operand, final int operandOffset,
                      final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         final double[] function = new double[1 + order];
         final double t = FastMath.tanh(operand[operandOffset]);
         function[0] = t;
@@ -1587,7 +1587,7 @@ public class DSCompiler {
     public void acosh(final double[] operand, final int operandOffset,
                      final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         final double x = operand[operandOffset];
         function[0] = FastMath.acosh(x);
@@ -1644,7 +1644,7 @@ public class DSCompiler {
     public void asinh(final double[] operand, final int operandOffset,
                      final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         final double x = operand[operandOffset];
         function[0] = FastMath.asinh(x);
@@ -1701,7 +1701,7 @@ public class DSCompiler {
     public void atanh(final double[] operand, final int operandOffset,
                       final double[] result, final int resultOffset) {
 
-        // create the function value and derivatives
+        // createJson the function value and derivatives
         double[] function = new double[1 + order];
         final double x = operand[operandOffset];
         function[0] = FastMath.atanh(x);

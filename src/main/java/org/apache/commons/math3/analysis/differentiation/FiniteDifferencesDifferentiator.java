@@ -194,7 +194,7 @@ public class FiniteDifferencesDifferentiator
                                          final double[] y)
         throws NumberIsTooLargeException {
 
-        // create divided differences diagonal arrays
+        // createJson divided differences diagonal arrays
         final double[] top    = new double[nbPoints];
         final double[] bottom = new double[nbPoints];
 

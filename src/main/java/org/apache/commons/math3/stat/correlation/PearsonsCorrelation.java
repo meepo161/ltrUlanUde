@@ -44,7 +44,7 @@ import org.apache.commons.math3.util.FastMath;
  * Correlation matrices can also be computed directly from an instance with no data using
  * {@link #computeCorrelationMatrix(double[][])}. In order to use {@link #getCorrelationMatrix()},
  * {@link #getCorrelationPValues()},  or {@link #getCorrelationStandardErrors()}; however, one of the
- * constructors supplying data or a covariance matrix must be used to create the instance.</p>
+ * constructors supplying data or a covariance matrix must be used to createJson the instance.</p>
  *
  * @since 2.0
  */
@@ -133,7 +133,7 @@ public class PearsonsCorrelation {
      * Returns the correlation matrix.
      *
      * <p>This method will return null if the argumentless constructor was used
-     * to create this instance, even if {@link #computeCorrelationMatrix(double[][])}
+     * to createJson this instance, even if {@link #computeCorrelationMatrix(double[][])}
      * has been called before it is activated.</p>
      *
      * @return correlation matrix
@@ -154,7 +154,7 @@ public class PearsonsCorrelation {
      * <code>n</code> is the number of observations in the source dataset.</p>
      *
      * <p>To use this method, one of the constructors that supply an input
-     * matrix must have been used to create this instance.</p>
+     * matrix must have been used to createJson this instance.</p>
      *
      * @return matrix of correlation standard errors
      * @throws NullPointerException if this instance was created with no data
@@ -184,7 +184,7 @@ public class PearsonsCorrelation {
      * <i>significance</i> of the corresponding correlation coefficients.</p>
      *
      * <p>To use this method, one of the constructors that supply an input
-     * matrix must have been used to create this instance.</p>
+     * matrix must have been used to createJson this instance.</p>
      *
      * @return matrix of p-values
      * @throws org.apache.commons.math3.exception.MaxCountExceededException

@@ -101,7 +101,7 @@ public class GammaDistribution extends AbstractRealDistribution {
      * Creates a new gamma distribution with specified values of the shape and
      * scale parameters.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}
@@ -121,7 +121,7 @@ public class GammaDistribution extends AbstractRealDistribution {
      * Creates a new gamma distribution with specified values of the shape and
      * scale parameters.
      * <p>
-     * <b>Note:</b> this constructor will implicitly create an instance of
+     * <b>Note:</b> this constructor will implicitly createJson an instance of
      * {@link Well19937c} as random generator to be used for sampling only (see
      * {@link #sample()} and {@link #sample(int)}). In case no sampling is
      * needed for the created distribution, it is advised to pass {@code null}

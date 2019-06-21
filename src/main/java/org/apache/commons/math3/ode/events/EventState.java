@@ -33,7 +33,7 @@ import org.apache.commons.math3.util.FastMath;
 /** This class handles the state for one {@link EventHandler
  * event handler} during integration steps.
  *
- * <p>Each time the integrator proposes a step, the event handler
+ * <p>Each dateAndTime the integrator proposes a step, the event handler
  * switching function should be checked. This class handles the state
  * of one handler during one integration step, with references to the
  * state at the end of the preceding step. This information is used to
@@ -47,7 +47,7 @@ public class EventState {
     /** Event handler. */
     private final EventHandler handler;
 
-    /** Maximal time interval between events handler checks. */
+    /** Maximal dateAndTime interval between events handler checks. */
     private final double maxCheckInterval;
 
     /** Convergence threshold for event localization. */
@@ -71,10 +71,10 @@ public class EventState {
     /** Indicator of event expected during the step. */
     private boolean pendingEvent;
 
-    /** Occurrence time of the pending event. */
+    /** Occurrence dateAndTime of the pending event. */
     private double pendingEventTime;
 
-    /** Occurrence time of the previous event. */
+    /** Occurrence dateAndTime of the previous event. */
     private double previousEventTime;
 
     /** Integration direction. */
@@ -93,12 +93,12 @@ public class EventState {
 
     /** Simple constructor.
      * @param handler event handler
-     * @param maxCheckInterval maximal time interval between switching
+     * @param maxCheckInterval maximal dateAndTime interval between switching
      * function checks (this interval prevents missing sign changes in
      * case the integration steps becomes very large)
-     * @param convergence convergence threshold in the event time search
+     * @param convergence convergence threshold in the event dateAndTime search
      * @param maxIterationCount upper limit of the iteration count in
-     * the event time search
+     * the event dateAndTime search
      * @param solver Root-finding algorithm to use to detect state events
      */
     public EventState(final EventHandler handler, final double maxCheckInterval,
@@ -137,8 +137,8 @@ public class EventState {
         this.expandable = expandable;
     }
 
-    /** Get the maximal time interval between events handler checks.
-     * @return maximal time interval between events handler checks
+    /** Get the maximal dateAndTime interval between events handler checks.
+     * @return maximal dateAndTime interval between events handler checks
      */
     public double getMaxCheckInterval() {
         return maxCheckInterval;
@@ -176,7 +176,7 @@ public class EventState {
             // the expected behavior). If however the user wants to restart the
             // solver from the final state reached at the event with the same
             // configuration (expecting the event to be triggered again at a
-            // later time), then the integrator may fail to start. It can get stuck
+            // later dateAndTime), then the integrator may fail to start. It can get stuck
             // at the previous event. The use case for the bug MATH-421 is fairly
             // general, so events occurring exactly at start in the first step should
             // be ignored.
@@ -263,7 +263,7 @@ public class EventState {
                     // variation direction, with respect to the integration direction
                     increasing = gb >= ga;
 
-                    // find the event time making sure we select a solution just at or past the exact root
+                    // find the event dateAndTime making sure we select a solution just at or past the exact root
                     final double root;
                     if (solver instanceof BracketedUnivariateSolver<?>) {
                         @SuppressWarnings("unchecked")
@@ -339,8 +339,8 @@ public class EventState {
 
     }
 
-    /** Get the occurrence time of the event triggered in the current step.
-     * @return occurrence time of the event triggered in the current
+    /** Get the occurrence dateAndTime of the event triggered in the current step.
+     * @return occurrence dateAndTime of the event triggered in the current
      * step or infinity if no events are triggered
      */
     public double getEventTime() {
@@ -350,7 +350,7 @@ public class EventState {
     }
 
     /** Acknowledge the fact the step has been accepted by the integrator.
-     * @param t value of the independent <i>time</i> variable at the
+     * @param t value of the independent <i>dateAndTime</i> variable at the
      * end of the step
      * @param y array containing the current value of the state vector
      * at the end of the step
@@ -380,7 +380,7 @@ public class EventState {
     }
 
     /** Let the event handler reset the state if it wants.
-     * @param t value of the independent <i>time</i> variable at the
+     * @param t value of the independent <i>dateAndTime</i> variable at the
      * beginning of the next step
      * @param y array were to put the desired state vector at the beginning
      * of the next step

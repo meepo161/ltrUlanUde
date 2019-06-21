@@ -49,8 +49,8 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
     /** Step size used in the first scaled derivative and Nordsieck vector. */
     private double scalingH;
 
-    /** Reference time for all arrays.
-     * <p>Sometimes, the reference time is the same as previousTime,
+    /** Reference dateAndTime for all arrays.
+     * <p>Sometimes, the reference dateAndTime is the same as previousTime,
      * sometimes it is the same as currentTime, so we use a separate
      * field to avoid any confusion.
      * </p>
@@ -119,7 +119,7 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
     /** Reinitialize the instance.
      * <p>Beware that all arrays <em>must</em> be references to integrator
      * arrays, in order to ensure proper update without copy.</p>
-     * @param time time at which all arrays are defined
+     * @param time dateAndTime at which all arrays are defined
      * @param stepSize step size used in the scaled and Nordsieck arrays
      * @param scaledDerivative reference to the integrator array holding the first
      * scaled derivative
@@ -173,7 +173,7 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
      * <p>The returned vector is a reference to a reused array, so
      * it should not be modified and it should be copied if it needs
      * to be preserved across several calls.</p>
-     * @return state vector at time {@link #getInterpolatedTime}
+     * @return state vector at dateAndTime {@link #getInterpolatedTime}
      * @see #getInterpolatedDerivatives()
      * @exception MaxCountExceededException if the number of functions evaluations is exceeded
      */
@@ -222,10 +222,10 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
     public void writeExternal(final ObjectOutput out)
         throws IOException {
 
-        // save the state of the base class
+        // write the state of the base class
         writeBaseExternal(out);
 
-        // save the local attributes
+        // write the local attributes
         out.writeDouble(scalingH);
         out.writeDouble(referenceTime);
 
@@ -246,7 +246,7 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
             out.writeObject(nordsieck);
         }
 
-        // we don't save state variation, it will be recomputed
+        // we don't write state variation, it will be recomputed
 
     }
 
@@ -281,7 +281,7 @@ public class NordsieckStepInterpolator extends AbstractStepInterpolator {
         }
 
         if (hasScaled && hasNordsieck) {
-            // we can now set the interpolated time and state
+            // we can now set the interpolated dateAndTime and state
             stateVariation = new double[n];
             setInterpolatedTime(t);
         } else {

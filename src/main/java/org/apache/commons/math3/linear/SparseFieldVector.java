@@ -111,7 +111,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      * Only non-zero entries will be stored.
      *
      * @param field Field to which the elements belong.
-     * @param values Set of values to create from.
+     * @param values Set of values to createJson from.
      * @exception NullArgumentException if values is null
      */
     public SparseFieldVector(Field<T> field, T[] values) throws NullArgumentException {

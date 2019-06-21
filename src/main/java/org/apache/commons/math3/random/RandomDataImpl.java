@@ -69,7 +69,7 @@ import org.apache.commons.math3.exception.OutOfRangeException;
  * When a new <code>RandomDataGenerator</code> is created, the underlying random
  * number generators are <strong>not</strong> initialized. If you do not
  * explicitly seed the default non-secure generator, it is seeded with the
- * current time in milliseconds plus the system identity hash code on first use.
+ * current dateAndTime in milliseconds plus the system identity hash code on first use.
  * The same holds for the secure generator. If you provide a <code>RandomGenerator</code>
  * to the constructor, however, this generator is not reseeded by the constructor
  * nor is it reseeded on first use.</li>
@@ -450,7 +450,7 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * Reseeds the random number generator with the supplied seed.
      * <p>
-     * Will create and initialize if null.
+     * Will createJson and initialize if null.
      * </p>
      *
      * @param seed
@@ -461,10 +461,10 @@ public class RandomDataImpl implements RandomData, Serializable {
     }
 
     /**
-     * Reseeds the secure random number generator with the current time in
+     * Reseeds the secure random number generator with the current dateAndTime in
      * milliseconds.
      * <p>
-     * Will create and initialize if null.
+     * Will createJson and initialize if null.
      * </p>
      */
     public void reSeedSecure() {
@@ -474,7 +474,7 @@ public class RandomDataImpl implements RandomData, Serializable {
     /**
      * Reseeds the secure random number generator with the supplied seed.
      * <p>
-     * Will create and initialize if null.
+     * Will createJson and initialize if null.
      * </p>
      *
      * @param seed

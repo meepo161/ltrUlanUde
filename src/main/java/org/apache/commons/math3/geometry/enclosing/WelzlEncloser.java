@@ -23,7 +23,7 @@ import org.apache.commons.math3.exception.MathInternalError;
 import org.apache.commons.math3.geometry.Point;
 import org.apache.commons.math3.geometry.Space;
 
-/** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear time.
+/** Class implementing Emo Welzl algorithm to find the smallest enclosing ball in linear dateAndTime.
  * <p>
  * The class implements the algorithm described in paper <a
  * href="http://www.inf.ethz.ch/personal/emo/PublFiles/SmallEnclDisk_LNCS555_91.pdf">Smallest
@@ -124,7 +124,7 @@ public class WelzlEncloser<S extends Space, P extends Point<S>> implements Enclo
     private EnclosingBall<S, P> moveToFrontBall(final List<P> extreme, final int nbExtreme,
                                                 final List<P> support) {
 
-        // create a new ball on the prescribed support
+        // createJson a new ball on the prescribed support
         EnclosingBall<S, P> ball = generator.ballOnSupport(support);
 
         if (ball.getSupportSize() <= ball.getCenter().getSpace().getDimension()) {

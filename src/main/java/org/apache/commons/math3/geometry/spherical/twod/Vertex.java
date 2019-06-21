@@ -66,7 +66,7 @@ public class Vertex {
      * <p>
      * When two vertices are both bound to the same circle, this means they are
      * already handled by node associated with this circle, so there is no need
-     * to create a cut hyperplane for them.
+     * to createJson a cut hyperplane for them.
      * </p>
      * @param vertex other vertex to check instance against
      * @return circle bound with both the instance and another vertex, or null if the

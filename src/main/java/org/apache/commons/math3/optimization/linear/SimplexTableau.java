@@ -181,7 +181,7 @@ class SimplexTableau implements Serializable {
      */
     protected RealMatrix createTableau(final boolean maximize) {
 
-        // create a matrix of the correct size
+        // createJson a matrix of the correct size
         int width = numDecisionVariables + numSlackVariables +
         numArtificialVariables + getNumObjectiveFunctions() + 1; // + 1 is for RHS
         int height = constraints.size() + getNumObjectiveFunctions();

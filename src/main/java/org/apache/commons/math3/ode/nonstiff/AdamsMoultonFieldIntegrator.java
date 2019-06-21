@@ -167,7 +167,7 @@ public class AdamsMoultonFieldIntegrator<T extends RealFieldElement<T>> extends 
 
     /**
      * Build an Adams-Moulton integrator with the given order and error control parameters.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param nSteps number of steps of the method excluding the one being computed
      * @param minStep minimal step (sign is irrelevant, regardless of
      * integration direction, forward or backward), the last step can
@@ -190,7 +190,7 @@ public class AdamsMoultonFieldIntegrator<T extends RealFieldElement<T>> extends 
 
     /**
      * Build an Adams-Moulton integrator with the given order and error control parameters.
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param nSteps number of steps of the method excluding the one being computed
      * @param minStep minimal step (sign is irrelevant, regardless of
      * integration direction, forward or backward), the last step can

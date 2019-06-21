@@ -399,7 +399,7 @@ public class Gamma {
             // case.
             ret = 1.0 - regularizedGammaP(a, x, epsilon, maxIterations);
         } else {
-            // create continued fraction
+            // createJson continued fraction
             ContinuedFraction cf = new ContinuedFraction() {
 
                 /** {@inheritDoc} */
@@ -430,7 +430,7 @@ public class Gamma {
      * Jose Bernardo, Algorithm AS 103: Psi (Digamma) Function, Applied Statistics, 1976.</p>
      *
      * <p>Some of the constants have been changed to increase accuracy at the moderate expense
-     * of run-time.  The result should be accurate to within 10^-8 absolute tolerance for
+     * of run-dateAndTime.  The result should be accurate to within 10^-8 absolute tolerance for
      * x >= 10^-5 and within 10^-8 relative tolerance for x > 0.</p>
      *
      * <p>Performance for large negative values of x will be quite expensive (proportional to

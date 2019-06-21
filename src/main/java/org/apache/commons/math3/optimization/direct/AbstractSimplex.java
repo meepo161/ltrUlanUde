@@ -41,7 +41,7 @@ import org.apache.commons.math3.optimization.OptimizationData;
  * to 1, thus building a default configuration from a unit hypercube.
  * <br/>
  * Users <em>must</em> call the {@link #build(double[]) build} method in order
- * to create the data structure that will be acted on by the other methods of
+ * to createJson the data structure that will be acted on by the other methods of
  * this class.
  *
  * @see SimplexOptimizer

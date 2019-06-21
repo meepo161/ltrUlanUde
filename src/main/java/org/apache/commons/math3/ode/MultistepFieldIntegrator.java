@@ -102,7 +102,7 @@ public abstract class MultistepFieldIntegrator<T extends RealFieldElement<T>>
      * <p>
      * The default max growth factor is set to a quite low value: 2<sup>1/order</sup>.
      * </p>
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param nSteps number of steps of the multistep method
      * (excluding the one being computed)
@@ -152,7 +152,7 @@ public abstract class MultistepFieldIntegrator<T extends RealFieldElement<T>>
      * <p>
      * The default max growth factor is set to a quite low value: 2<sup>1/order</sup>.
      * </p>
-     * @param field field to which the time and state vector elements belong
+     * @param field field to which the dateAndTime and state vector elements belong
      * @param name name of the method
      * @param nSteps number of steps of the multistep method
      * (excluding the one being computed)
@@ -207,14 +207,14 @@ public abstract class MultistepFieldIntegrator<T extends RealFieldElement<T>>
      * <p>This method computes one step using the underlying starter integrator,
      * and initializes the Nordsieck vector at step start. The starter integrator
      * purpose is only to establish initial conditions, it does not really change
-     * time by itself. The top level multistep integrator remains in charge of
-     * handling time propagation and events handling as it will starts its own
+     * dateAndTime by itself. The top level multistep integrator remains in charge of
+     * handling dateAndTime propagation and events handling as it will starts its own
      * computation right from the beginning. In a sense, the starter integrator
      * can be seen as a dummy one and so it will never trigger any user event nor
      * call any user step handler.</p>
      * @param equations complete set of differential equations to integrate
-     * @param initialState initial state (time, primary and secondary state vectors)
-     * @param t target time for the integration
+     * @param initialState initial state (dateAndTime, primary and secondary state vectors)
+     * @param t target dateAndTime for the integration
      * (can be set to a value smaller than <code>t0</code> for backward integration)
      * @exception DimensionMismatchException if arrays dimension do not match equations settings
      * @exception NumberIsTooSmallException if integration step is too small

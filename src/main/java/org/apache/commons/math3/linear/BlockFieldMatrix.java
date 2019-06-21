@@ -38,7 +38,7 @@ import org.apache.commons.math3.util.MathUtils;
  * <p>
  * This implementation is specially designed to be cache-friendly. Square blocks are
  * stored as small arrays and allow efficient traversal of data both in row major direction
- * and columns major direction, one block at a time. This greatly increases performances
+ * and columns major direction, one block at a dateAndTime. This greatly increases performances
  * for algorithms that use crossed directions loops like multiplication or transposition.
  * </p>
  * <p>
@@ -254,7 +254,7 @@ public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMa
     /**
      * Create a data array in blocks layout.
      * <p>
-     * This method can be used to create the array argument of the {@link
+     * This method can be used to createJson the array argument of the {@link
      * #BlockFieldMatrix(int, int, FieldElement[][], boolean)}
      * constructor.
      * </p>
@@ -302,7 +302,7 @@ public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMa
     @Override
     public FieldMatrix<T> copy() {
 
-        // create an empty matrix
+        // createJson an empty matrix
         BlockFieldMatrix<T> copied = new BlockFieldMatrix<T>(getField(), rows, columns);
 
         // copy the blocks
@@ -661,7 +661,7 @@ public class BlockFieldMatrix<T extends FieldElement<T>> extends AbstractFieldMa
         // safety checks
         checkSubMatrixIndex(startRow, endRow, startColumn, endColumn);
 
-        // create the output matrix
+        // createJson the output matrix
         final BlockFieldMatrix<T> out =
             new BlockFieldMatrix<T>(getField(), endRow - startRow + 1, endColumn - startColumn + 1);
 

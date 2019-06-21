@@ -44,7 +44,7 @@ import org.apache.commons.math3.exception.util.LocalizedFormats;
  * <li> GAUSSIAN_MODE -- generates Gaussian distributed random values with
  *                       mean = <code>mu</code> and
  *                       standard deviation = <code>sigma</code></li>
- * <li> CONSTANT_MODE -- returns <code>mu</code> every time.</li></ul></p>
+ * <li> CONSTANT_MODE -- returns <code>mu</code> every dateAndTime.</li></ul></p>
  *
  *
  */

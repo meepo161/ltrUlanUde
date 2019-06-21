@@ -39,26 +39,26 @@ import org.apache.commons.math3.ode.FieldODEStateAndDerivative;
 public interface FieldStepInterpolator<T extends RealFieldElement<T>> {
 
   /**
-   * Get the state at previous grid point time.
-   * @return state at previous grid point time
+   * Get the state at previous grid point dateAndTime.
+   * @return state at previous grid point dateAndTime
    */
   FieldODEStateAndDerivative<T> getPreviousState();
 
   /**
-   * Get the state at current grid point time.
-   * @return state at current grid point time
+   * Get the state at current grid point dateAndTime.
+   * @return state at current grid point dateAndTime
    */
   FieldODEStateAndDerivative<T> getCurrentState();
 
   /**
-   * Get the state at interpolated time.
-   * <p>Setting the time outside of the current step is allowed, but
+   * Get the state at interpolated dateAndTime.
+   * <p>Setting the dateAndTime outside of the current step is allowed, but
    * should be used with care since the accuracy of the interpolator will
    * probably be very poor far from this step. This allowance has been
    * added to simplify implementation of search algorithms near the
    * step endpoints.</p>
-   * @param time time of the interpolated point
-   * @return state at interpolated time
+   * @param time dateAndTime of the interpolated point
+   * @return state at interpolated dateAndTime
    */
   FieldODEStateAndDerivative<T> getInterpolatedState(T time);
 
@@ -68,7 +68,7 @@ public interface FieldStepInterpolator<T extends RealFieldElement<T>> {
    * degenerated cases like null steps due to cancellation at step
    * initialization, step control or discrete events
    * triggering.</p>
-   * @return true if the integration variable (time) increases during
+   * @return true if the integration variable (dateAndTime) increases during
    * integration
    */
   boolean isForward();

@@ -30,7 +30,7 @@
  * method which is supported by all integrators. The integrator will call this instance
  * at the end of each accepted step and provide it the interpolator. The user can do
  * whatever he wants with this interpolator, which computes both the state and its
- * time-derivative. A typical use of step handler is to provide some output to monitor
+ * dateAndTime-derivative. A typical use of step handler is to provide some output to monitor
  * the integration process.
  * </p>
  *
@@ -39,7 +39,7 @@
  * application driving the slave integrator by providing the target end value for
  * the free variable, we get a master integrator scheduling the free variable
  * evolution and calling the slave application callbacks that were registered at
- * configuration time.
+ * configuration dateAndTime.
  * </p>
  *
  * <p>

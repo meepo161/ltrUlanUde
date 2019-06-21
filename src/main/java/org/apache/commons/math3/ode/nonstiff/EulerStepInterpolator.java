@@ -56,7 +56,7 @@ class EulerStepInterpolator
    * initialize the internal arrays. This constructor is used only
    * in order to delay the initialization in some cases. The {@link
    * RungeKuttaIntegrator} class uses the prototyping design pattern
-   * to create the step interpolators by cloning an uninitialized model
+   * to createJson the step interpolators by cloning an uninitialized model
    * and later initializing the copy.
    */
   // CHECKSTYLE: stop RedundantModifier

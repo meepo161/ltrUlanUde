@@ -243,7 +243,7 @@ public abstract class BitsStreamGenerator
         // with two least significant bits unset).
         final int indexLoopLimit = index + (len & 0x7ffffffc);
 
-        // Start filling in the byte array, 4 bytes at a time.
+        // Start filling in the byte array, 4 bytes at a dateAndTime.
         while (index < indexLoopLimit) {
             final int random = next(32);
             bytes[index++] = (byte) random;

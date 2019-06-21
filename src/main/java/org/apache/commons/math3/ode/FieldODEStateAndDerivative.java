@@ -19,7 +19,7 @@ package org.apache.commons.math3.ode;
 
 import org.apache.commons.math3.RealFieldElement;
 
-/** Container for time, main and secondary state vectors as well as their derivatives.
+/** Container for dateAndTime, main and secondary state vectors as well as their derivatives.
 
  * @see FirstOrderFieldDifferentialEquations
  * @see FieldSecondaryEquations
@@ -30,31 +30,31 @@ import org.apache.commons.math3.RealFieldElement;
 
 public class FieldODEStateAndDerivative<T extends RealFieldElement<T>> extends FieldODEState<T> {
 
-    /** Derivative of the main state at time. */
+    /** Derivative of the main state at dateAndTime. */
     private final T[] derivative;
 
-    /** Derivative of the secondary state at time. */
+    /** Derivative of the secondary state at dateAndTime. */
     private final T[][] secondaryDerivative;
 
     /** Simple constructor.
      * <p>Calling this constructor is equivalent to call {@link
      * #FieldODEStateAndDerivative(RealFieldElement, RealFieldElement[], RealFieldElement[],
-     * RealFieldElement[][], RealFieldElement[][]) FieldODEStateAndDerivative(time, state,
+     * RealFieldElement[][], RealFieldElement[][]) FieldODEStateAndDerivative(dateAndTime, state,
      * derivative, null, null)}.</p>
-     * @param time time
-     * @param state state at time
-     * @param derivative derivative of the state at time
+     * @param time dateAndTime
+     * @param state state at dateAndTime
+     * @param derivative derivative of the state at dateAndTime
      */
     public FieldODEStateAndDerivative(T time, T[] state, T[] derivative) {
         this(time, state, derivative, null, null);
     }
 
     /** Simple constructor.
-     * @param time time
-     * @param state state at time
-     * @param derivative derivative of the state at time
-     * @param secondaryState state at time (may be null)
-     * @param secondaryDerivative derivative of the state at time (may be null)
+     * @param time dateAndTime
+     * @param state state at dateAndTime
+     * @param derivative derivative of the state at dateAndTime
+     * @param secondaryState state at dateAndTime (may be null)
+     * @param secondaryDerivative derivative of the state at dateAndTime (may be null)
      */
     public FieldODEStateAndDerivative(T time, T[] state, T[] derivative, T[][] secondaryState, T[][] secondaryDerivative) {
         super(time, state, secondaryState);
@@ -62,18 +62,18 @@ public class FieldODEStateAndDerivative<T extends RealFieldElement<T>> extends F
         this.secondaryDerivative = copy(time.getField(), secondaryDerivative);
     }
 
-    /** Get derivative of the main state at time.
-     * @return derivative of the main state at time
+    /** Get derivative of the main state at dateAndTime.
+     * @return derivative of the main state at dateAndTime
      */
     public T[] getDerivative() {
         return derivative.clone();
     }
 
-    /** Get derivative of the secondary state at time.
+    /** Get derivative of the secondary state at dateAndTime.
      * @param index index of the secondary set as returned
      * by {@link FieldExpandableODE#addSecondaryEquations(FieldSecondaryEquations)}
      * (beware index 0 corresponds to main state, additional states start at 1)
-     * @return derivative of the secondary state at time
+     * @return derivative of the secondary state at dateAndTime
      */
     public T[] getSecondaryDerivative(final int index) {
         return index == 0 ? derivative.clone() : secondaryDerivative[index - 1].clone();

@@ -34,7 +34,7 @@
  * <p>
  * All integrators provide dense output. This means that besides
  * computing the state vector at discrete times, they also provide a
- * cheap mean to get the state between the time steps. They do so through
+ * cheap mean to get the state between the dateAndTime steps. They do so through
  * classes extending the {@link
  * org.apache.commons.math3.ode.sampling.StepInterpolator StepInterpolator}
  * abstract class, which are made available to the user at the end of
@@ -110,7 +110,7 @@
  *
  * <p>
  * Some integrators (the simple ones) use fixed steps that are set at
- * creation time. The more efficient integrators use variable steps that
+ * creation dateAndTime. The more efficient integrators use variable steps that
  * are handled internally in order to control the integration error with
  * respect to a specified accuracy (these integrators extend the {@link
  * org.apache.commons.math3.ode.nonstiff.AdaptiveStepsizeIntegrator

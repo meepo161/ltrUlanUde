@@ -49,7 +49,7 @@ import org.apache.commons.math3.util.MathUtils;
  * on the derivation order despite no requiring users to compute the derivatives by
  * themselves. Implementing complex expression can also be done by developing computation
  * code using standard primitive double values and to use {@link
- * UnivariateFunctionDifferentiator differentiators} to create the {@link
+ * UnivariateFunctionDifferentiator differentiators} to createJson the {@link
  * DerivativeStructure}-based instances. This method is simpler but may be limited in
  * the accuracy and derivation orders and may be computationally intensive (this is
  * typically the case for {@link FiniteDifferencesDifferentiator finite differences
@@ -920,7 +920,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
             simpleValue = simpleValue.add(a[i].multiply(b[i]));
         }
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(simpleValue.getFreeParameters(), simpleValue.getOrder(), all);
@@ -948,7 +948,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
             simpleValue = simpleValue.add(b[i].multiply(a[i]));
         }
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(simpleValue.getFreeParameters(), simpleValue.getOrder(), all);
@@ -971,7 +971,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
         // compute a simple value, with all partial derivatives
         final DerivativeStructure simpleValue = a1.multiply(b1).add(a2.multiply(b2));
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(getFreeParameters(), getOrder(), all);
@@ -994,7 +994,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
         // compute a simple value, with all partial derivatives
         final DerivativeStructure simpleValue = b1.multiply(a1).add(b2.multiply(a2));
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(getFreeParameters(), getOrder(), all);
@@ -1019,7 +1019,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
         // compute a simple value, with all partial derivatives
         final DerivativeStructure simpleValue = a1.multiply(b1).add(a2.multiply(b2)).add(a3.multiply(b3));
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(getFreeParameters(), getOrder(), all);
@@ -1044,7 +1044,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
         // compute a simple value, with all partial derivatives
         final DerivativeStructure simpleValue = b1.multiply(a1).add(b2.multiply(a2)).add(b3.multiply(a3));
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(getFreeParameters(), getOrder(), all);
@@ -1071,7 +1071,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
         // compute a simple value, with all partial derivatives
         final DerivativeStructure simpleValue = a1.multiply(b1).add(a2.multiply(b2)).add(a3.multiply(b3)).add(a4.multiply(b4));
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(getFreeParameters(), getOrder(), all);
@@ -1098,7 +1098,7 @@ public class DerivativeStructure implements RealFieldElement<DerivativeStructure
         // compute a simple value, with all partial derivatives
         final DerivativeStructure simpleValue = b1.multiply(a1).add(b2.multiply(a2)).add(b3.multiply(a3)).add(b4.multiply(a4));
 
-        // create a result with accurate value and all derivatives (not necessarily as accurate as the value)
+        // createJson a result with accurate value and all derivatives (not necessarily as accurate as the value)
         final double[] all = simpleValue.getAllDerivatives();
         all[0] = accurateValue;
         return new DerivativeStructure(getFreeParameters(), getOrder(), all);
