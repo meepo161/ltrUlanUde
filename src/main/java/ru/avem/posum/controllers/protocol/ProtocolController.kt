@@ -73,10 +73,7 @@ class ProtocolController(val processController: ProcessController) {
         // Create the workbook
         val sheets = sheetsNames.map { it.sheetName }.toTypedArray()
         createWorkBook(sheets, testProgramTitle, cellsToMerge.toIntArray())
-        fillWorkBook(sheets, headers.toTypedArray(), data, colors)
-//        if (!isPointData && sheetsNames.any { it == ProtocolSheets.CHANNELS_DATA }) drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
-        processController.jsonControllerTwo.parse(false)
-        autosizeColumns(ProtocolSheets.CHANNELS_DATA.sheetName)
+        fillWorkBook(sheets, headers.toTypedArray(), data, colors, rarefactionCoefficient)
     }
 
     private fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
@@ -142,13 +139,19 @@ class ProtocolController(val processController: ProcessController) {
     }
 
     private fun fillWorkBook(sheets: Array<String>, headers: Array<Array<String>>, data: List<List<List<String>>>,
-                             colors: List<List<Short>>) {
+                             colors: List<List<Short>>, rarefactionCoefficient: Long) {
         for (index in headers.indices) {
             createHeaders(sheets[index], *headers[index])
         }
         for (index in sheets.indices) {
             fill(sheets[index], colors[index], data[index])
             autosizeColumns(sheets[index])
+        }
+
+        if (sheets.any { it == ProtocolSheets.CHANNELS_DATA.sheetName }) {
+            processController.jsonControllerTwo.parse(false, rarefactionCoefficient)
+            autosizeColumns(ProtocolSheets.CHANNELS_DATA.sheetName)
+            drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
         }
     }
 

@@ -607,9 +607,11 @@ public class ProcessController implements BaseController {
             Platform.runLater(() -> {
                 saveUiElementsState();
                 toggleUiElements(true);
+
                 File selectedDirectory = protocolController.showFileSaver("Сохранение протокола испытаний", "Protocol.xlsx");
                 if (selectedDirectory != null) {
                     statusBarLine.setStatusOfProgress("Сохранение протокола испытаний");
+
                     new Thread(() -> {
                         ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
                         protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, false, rarefactionCoefficient, sheetsNames);

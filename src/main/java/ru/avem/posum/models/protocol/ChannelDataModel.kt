@@ -36,7 +36,7 @@ class ChannelDataModel(
             dateAndTime = SimpleDateFormat("dd.MM.yyy HH:mm:ss").format(System.currentTimeMillis())
     )
 
-    fun toList(): List<String> {
+    fun toList(chosenParameters: Array<Boolean>): List<String> {
         val outputList = mutableListOf(
                 getDate(),
                 getTime(),
@@ -49,7 +49,7 @@ class ChannelDataModel(
         )
 
         if (chosenParameterIndex.toInt() != -1) {
-            outputList.addAll(getChosenParameterValue())
+            outputList.addAll(getChosenParametersValues(chosenParameters))
         }
 
         return outputList
@@ -59,25 +59,27 @@ class ChannelDataModel(
         return dateAndTime.split(" ")[0]
     }
 
-    private fun getTime(): String {
+    fun getTime(): String {
         return dateAndTime.split(" ")[1]
     }
 
-    private fun getChosenParameterValue(): List<String> {
+    private fun getChosenParametersValues(chosenParameters: Array<Boolean>): List<String> {
         val outputList = mutableListOf<String>()
 
-        when (chosenParameterIndex.toInt()) {
-            0 -> {
-                outputList.add(neededAmplitude)
-                outputList.add(relativeResponseAmplitude)
-            }
-            1 -> {
-                outputList.add(neededDc)
-                outputList.add(relativeResponseDc)
-            }
-            2 -> {
-                outputList.add(neededFrequency)
-                outputList.add(relativeResponseFrequency)
+        for ((index, isChosen) in chosenParameters.withIndex()) {
+            when (index) {
+                0 -> if (isChosen) {
+                    outputList.add(neededAmplitude)
+                    outputList.add(relativeResponseAmplitude)
+                }
+                1 -> if (isChosen) {
+                    outputList.add(neededDc)
+                    outputList.add(relativeResponseDc)
+                }
+                2 -> if (isChosen) {
+                    outputList.add(neededFrequency)
+                    outputList.add(relativeResponseFrequency)
+                }
             }
         }
 

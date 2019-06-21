@@ -583,15 +583,66 @@ public class TableController {
     }
 
     public String[] getColumnsHeaders() {
-        List<String> columnHeaders = new ArrayList<>();
-        columnHeaders.add("Дата");
-        columnHeaders.add("Время");
-        for (int columnIndex = 0; columnIndex < table.getColumns().size(); columnIndex++) {
-            if (!table.getColumns().get(columnIndex).getText().equals("Отклик")) {
-                columnHeaders.add(table.getColumns().get(columnIndex).getText());
+        List<String> headers = new ArrayList<>();
+        headers.add("Дата");
+        headers.add("Время");
+        headers.add("Каналы");
+        headers.add("Амплитуда");
+        headers.add("Статика");
+        headers.add("Частота");
+        headers.add("Rms");
+        headers.add("Нагружений");
+        headers.addAll(getChosenParameters());
+
+        return headers.toArray(new String[0]);
+    }
+
+    private List<String> getChosenParameters() {
+        List<String> outputList = new ArrayList<>();
+        boolean[] chosenParameters = new boolean[3];
+        for (TableColumn<ChannelModel, ?> column : table.getColumns()) {
+            switch (column.getText()) {
+                case "Амплитуда норма": {
+                    chosenParameters[0] = true;
+                    break;
+                }
+                case "Статика норма": {
+                    chosenParameters[1] = true;
+                    break;
+                }
+                case "Частота норма": {
+                    chosenParameters[2] = true;
+                    break;
+                }
             }
         }
-        return columnHeaders.toArray(new String[0]);
+
+        for (int i = 0; i < chosenParameters.length; i++) {
+            switch (i) {
+                case 0: {
+                    if (chosenParameters[i]) {
+                        outputList.add("Амплитуда норма");
+                        outputList.add("Амплитуда отклик, %");
+                    }
+                    break;
+                }
+                case 1: {
+                    if (chosenParameters[i]) {
+                        outputList.add("Статика норма");
+                        outputList.add("Статика отклик, %");
+                    }
+                    break;
+                }
+                case 2: {
+                    if (chosenParameters[i]) {
+                        outputList.add("Частота норма");
+                        outputList.add("Частота отклик, %");
+                    }
+                    break;
+                }
+            }
+        }
+        return outputList;
     }
 
     public int getCellsToMerge() {
