@@ -74,6 +74,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createLinkingScene();
         createProcessScene();
         createLTR24Scene();
+        createLTR27Scene();
         createLTR34Scene();
         createLTR212Scene();
         createSignalGraphScene();
@@ -136,6 +137,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createLTR24Scene() throws IOException {
         ltr24Settings = (LTR24Settings) getController("/layouts/LTR24SettingView.fxml");
         ltr24Scene = createScene(1280, 720);
+    }
+
+    private void createLTR27Scene() throws IOException {
+        ltr27Settings = (LTR27Settings) getController("/layouts/LTR27SettingView.fxml");
+        ltr27Scene = createScene(1280, 720);
     }
 
     private void createLTR34Scene() throws IOException {
@@ -369,6 +375,10 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 ltr24Settings = (LTR24Settings) modulesPairs.get(id).getKey();
                 ltr24Settings.loadSettings(moduleName);
                 break;
+            case Crate.LTR27:
+                ltr27Settings = (LTR27Settings) modulesPairs.get(id).getKey();
+                ltr27Settings.loadSettings(moduleName);
+                break;
             case Crate.LTR34:
                 ltr34Settings = (LTR34Settings) modulesPairs.get(id).getKey();
                 ltr34Settings.loadSettings(moduleName);
@@ -448,6 +458,10 @@ public class Main extends Application implements WindowsManager, ControllerManag
             case LTR24_SCENE:
                 primaryStage.setTitle("Настройки модуля LTR24");
                 primaryStage.setScene(ltr24Scene);
+                break;
+            case LTR27_SCENE:
+                primaryStage.setTitle("Настройки модуля LTR27");
+                primaryStage.setScene(ltr27Scene);
                 break;
             case LTR34_SCENE:
                 primaryStage.setTitle("Настройки модуля LTR34");

@@ -25,6 +25,10 @@ public abstract class Module {
         }
     }
 
+    public String encode(String string) {
+        return textEncoder.cp2utf(string);
+    }
+
     public abstract void openConnection();
 
     public abstract void checkConnection();

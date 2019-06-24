@@ -106,6 +106,11 @@ public class Crate {
         return modulesNames;
     }
 
+    public static String[][] getLTR27Info() {
+        LTR27 ltr27 = new LTR27();
+        return ltr27.getInfo();
+    }
+
     public native String initialize(String crateSN);
 
     public native String fillCratesList(String[] crates);
