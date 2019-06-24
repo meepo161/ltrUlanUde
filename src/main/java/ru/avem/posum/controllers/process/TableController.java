@@ -649,17 +649,6 @@ public class TableController {
         return table.getColumns().size() + 1;
     }
 
-    public List<Short> getColorsForProtocol(boolean isPointData, boolean isShort, long rarefactionCoefficient) {
-        int size = isPointData ? table.getItems().size() : processController.getJsonController().parse(isPointData, isShort, rarefactionCoefficient).size();
-        List<Short> colors = new ArrayList<>();
-
-        for (int index = 0; index < size; index++) {
-            colors.add(IndexedColors.WHITE.index);
-        }
-
-        return colors;
-    }
-
     public RegulatorController getRegulatorController() {
         return regulatorController;
     }
