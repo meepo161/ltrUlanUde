@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import ru.avem.posum.hardware.LTR27;
@@ -13,12 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR27SubmodulesSettings {
+    private int average = 1;
     private LTR27Settings ltr27Settings;
     private List<Label> channelOneLabels;
     private List<Label> channelTwoLabels;
     private List<TextField> channelOneTextFields;
     private List<TextField> channelTwoTextFields;
     private List<CheckBox> checkBoxes;
+    private int rarefactionCoefficient = 1;
     private final String submoduleIsAbsentee = "Субмодуль отсутствует";
 
     public LTR27SubmodulesSettings(LTR27Settings ltr27Settings) {
@@ -28,6 +31,10 @@ public class LTR27SubmodulesSettings {
     public void initializeView() {
         fillUiElementsLists();
         setFrequencies();
+        setRarefactionCoefficients();
+        listenCheckBoxes();
+        listen(ltr27Settings.getRarefactionComboBox());
+        listen(ltr27Settings.getAverageTextField());
     }
 
     private void fillUiElementsLists() {
@@ -36,7 +43,6 @@ public class LTR27SubmodulesSettings {
         fillListOfChannelTwoLabels();
         fillListOfChannelOneTextFields();
         fillListOfChannelTwoTextFields();
-        listenCheckBoxes();
     }
 
     private void fillListOfCheckBoxes() {
@@ -99,6 +105,58 @@ public class LTR27SubmodulesSettings {
         channelTwoTextFields.add(ltr27Settings.getSubModuleEightChannelTwoTextField());
     }
 
+    private void listenCheckBoxes() {
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            CheckBox checkBox = checkBoxes.get(channelIndex);
+            int finalChannelIndex = channelIndex;
+            checkBox.selectedProperty().addListener(observable -> {
+                toggleSubmoduleUiElements(finalChannelIndex, !checkBox.isSelected());
+                toggleSettingsUiElements();
+            });
+        }
+    }
+
+    private void setFrequencies() {
+        ObservableList<String> frequencies = FXCollections.observableArrayList();
+        final double MAX_FREQUENCY = 1000;
+        for (int i = 0; i < 256; i++) {
+            String frequency = String.format("%.2f Гц", MAX_FREQUENCY / (i + 1));
+            frequencies.add(frequency);
+        }
+        ltr27Settings.getFrequencyComboBox().getItems().addAll(frequencies);
+        ltr27Settings.getFrequencyComboBox().getSelectionModel().select(0);
+    }
+
+    private void setRarefactionCoefficients() {
+        ObservableList<String> coefficients = FXCollections.observableArrayList();
+        for (int i = 1; i < 8; i++) {
+            coefficients.add(String.valueOf(i));
+        }
+        ltr27Settings.getRarefactionComboBox().setItems(coefficients);
+        ltr27Settings.getRarefactionComboBox().getSelectionModel().select(0);
+    }
+
+    private void listen(ComboBox<String> comboBox) {
+        comboBox.valueProperty().addListener(observable -> {
+            rarefactionCoefficient = Integer.parseInt(comboBox.getSelectionModel().getSelectedItem());
+        });
+    }
+
+    private void listen(TextField textField) {
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            String digits = newValue.replaceAll("[^\\d]", "");
+            textField.setText(digits);
+
+            if (!newValue.matches("^[\\d]+|$")) {
+                textField.setText(oldValue);
+            }
+
+            if (!textField.getText().isEmpty()) {
+                average = Integer.parseInt(textField.getText());
+            }
+        });
+    }
+
     public void setSubmodulesNames() {
         String[][] descriptions = ltr27Settings.getSubmodulesDescriptions();
 
@@ -124,28 +182,6 @@ public class LTR27SubmodulesSettings {
         String oldText = label.getText();
         if (!label.getText().contains(unit)) {
             label.setText(String.format("%s, %s:", oldText.substring(0, oldText.length() - 1), unit));
-        }
-    }
-
-    private void setFrequencies() {
-        ObservableList<String> frequencies = FXCollections.observableArrayList();
-        final double MAX_FREQUENCY = 1000;
-        for (int i = 0; i < 256; i++) {
-            String frequency = String.format("%.2f Гц", MAX_FREQUENCY / (i + 1));
-            frequencies.add(frequency);
-        }
-        ltr27Settings.getFrequencyComboBox().getItems().addAll(frequencies);
-        ltr27Settings.getFrequencyComboBox().getSelectionModel().select(0);
-    }
-
-    private void listenCheckBoxes() {
-        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-            CheckBox checkBox = checkBoxes.get(channelIndex);
-            int finalChannelIndex = channelIndex;
-            checkBox.selectedProperty().addListener(observable -> {
-                toggleSubmoduleUiElements(finalChannelIndex, !checkBox.isSelected());
-                toggleSettingsUiElements();
-            });
         }
     }
 
@@ -208,9 +244,10 @@ public class LTR27SubmodulesSettings {
                     if (!checkBoxes.get(submodelIndex).getText().equals(submoduleIsAbsentee) && checkBoxes.get(submodelIndex).isSelected()) {
                         int finalSubmodelIndex = submodelIndex;
                         int finalChannelIndex = channelIndex;
+
                         Platform.runLater(() -> {
-                            String channelOneValue = String.valueOf(Utils.roundValue(data[finalChannelIndex], 10000));
-                            String channelTwoValue = String.valueOf(Utils.roundValue(data[finalChannelIndex + 1], 10000));
+                            String channelOneValue = String.valueOf(Utils.roundValue(data[finalChannelIndex], Utils.getRounder(rarefactionCoefficient)));
+                            String channelTwoValue = String.valueOf(Utils.roundValue(data[finalChannelIndex + 1], Utils.getRounder(rarefactionCoefficient)));
                             channelOneTextFields.get(finalSubmodelIndex).setText(channelOneValue);
                             channelTwoTextFields.get(finalSubmodelIndex).setText(channelTwoValue);
                         });

@@ -165,7 +165,7 @@
                </GridPane.margin>
             </ComboBox>
             <Label fx:id="averageLabel" disable="true" text="Усреднять по:" GridPane.columnIndex="9" GridPane.rowIndex="21" />
-            <TextField fx:id="averageTextField" disable="true" maxWidth="200.0" GridPane.columnIndex="9" GridPane.halignment="RIGHT" GridPane.rowIndex="21">
+            <TextField fx:id="averageTextField" disable="true" maxWidth="200.0" text="1" GridPane.columnIndex="9" GridPane.halignment="RIGHT" GridPane.rowIndex="21">
                <GridPane.margin>
                   <Insets left="115.0" />
                </GridPane.margin>
