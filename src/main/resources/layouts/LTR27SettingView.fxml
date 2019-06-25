@@ -133,11 +133,11 @@
             <Label fx:id="subModuleEightChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="13" GridPane.rowIndex="16" />
             <TextField fx:id="subModuleEightChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="17" />
                 <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="15" GridPane.rowIndex="20" GridPane.rowSpan="3" />
-                <ComboBox fx:id="frequencyComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="21">
+                <ComboBox fx:id="frequencyComboBox" maxWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="21">
                <GridPane.margin>
-                  <Insets />
+                  <Insets left="126.0" />
                </GridPane.margin></ComboBox>
-                <Label text="Частота дискретизации:" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.halignment="RIGHT" GridPane.rowIndex="21">
+                <Label fx:id="frequencyLabel" text="Частота дискр.:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="21">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin></Label>
@@ -158,6 +158,19 @@
                     <GridPane.margin>
                         <Insets left="15.0" />
                     </GridPane.margin></StatusBar>
+            <Label fx:id="rarefactionLabel" disable="true" text="Знаков после запятой:" GridPane.columnIndex="5" GridPane.rowIndex="21" />
+            <ComboBox fx:id="rarefactionComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="21">
+               <GridPane.margin>
+                  <Insets left="178.0" />
+               </GridPane.margin>
+            </ComboBox>
+            <Label fx:id="averageLabel" disable="true" text="Усреднять по:" GridPane.columnIndex="9" GridPane.rowIndex="21" />
+            <TextField fx:id="averageTextField" disable="true" maxWidth="200.0" GridPane.columnIndex="9" GridPane.halignment="RIGHT" GridPane.rowIndex="21">
+               <GridPane.margin>
+                  <Insets left="115.0" />
+               </GridPane.margin>
+            </TextField>
+            <Button fx:id="enableAllButton" disable="true" mnemonicParsing="false" onAction="#handleEnableAll" text="Включить все" GridPane.columnIndex="13" GridPane.rowIndex="21" />
             </children>
         </GridPane>
     </children>
