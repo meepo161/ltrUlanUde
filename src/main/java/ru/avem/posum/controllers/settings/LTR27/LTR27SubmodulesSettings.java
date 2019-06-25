@@ -14,15 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR27SubmodulesSettings {
-    private int average = 1;
     private LTR27Settings ltr27Settings;
     private List<Label> channelOneLabels;
     private List<Label> channelTwoLabels;
     private List<TextField> channelOneTextFields;
     private List<TextField> channelTwoTextFields;
     private List<CheckBox> checkBoxes;
-    private int rarefactionCoefficient = 1;
+    private int rarefactionCoefficient = 2;
     private final String submoduleIsAbsentee = "Субмодуль отсутствует";
+
+    private int average = 1;
+    private int averageCount;
+    private double[] bufferedData;
 
     public LTR27SubmodulesSettings(LTR27Settings ltr27Settings) {
         this.ltr27Settings = ltr27Settings;
@@ -133,7 +136,7 @@ public class LTR27SubmodulesSettings {
             coefficients.add(String.valueOf(i));
         }
         ltr27Settings.getRarefactionComboBox().setItems(coefficients);
-        ltr27Settings.getRarefactionComboBox().getSelectionModel().select(0);
+        ltr27Settings.getRarefactionComboBox().getSelectionModel().select(1);
     }
 
     private void listen(ComboBox<String> comboBox) {
@@ -236,8 +239,10 @@ public class LTR27SubmodulesSettings {
 
     public void showValues() {
         new Thread(() -> {
+            double[] data = ltr27Settings.getData();
+            bufferedData = new double[data.length];
+
             while (!ltr27Settings.isStopped()) {
-                double[] data = ltr27Settings.getData();
                 int channelIndex = 0;
 
                 for (int submodelIndex = 0; submodelIndex < LTR27.MAX_SUBMODULES; submodelIndex++) {
@@ -245,14 +250,37 @@ public class LTR27SubmodulesSettings {
                         int finalSubmodelIndex = submodelIndex;
                         int finalChannelIndex = channelIndex;
 
-                        Platform.runLater(() -> {
-                            String channelOneValue = String.valueOf(Utils.roundValue(data[finalChannelIndex], Utils.getRounder(rarefactionCoefficient)));
-                            String channelTwoValue = String.valueOf(Utils.roundValue(data[finalChannelIndex + 1], Utils.getRounder(rarefactionCoefficient)));
-                            channelOneTextFields.get(finalSubmodelIndex).setText(channelOneValue);
-                            channelTwoTextFields.get(finalSubmodelIndex).setText(channelTwoValue);
-                        });
+                        if (average == 1) {
+                            Platform.runLater(() -> {
+                                String channelOneValue = String.valueOf(Utils.roundValue(data[finalChannelIndex], Utils.getRounder(rarefactionCoefficient)));
+                                String channelTwoValue = String.valueOf(Utils.roundValue(data[finalChannelIndex + 1], Utils.getRounder(rarefactionCoefficient)));
+                                channelOneTextFields.get(finalSubmodelIndex).setText(channelOneValue);
+                                channelTwoTextFields.get(finalSubmodelIndex).setText(channelTwoValue);
+                            });
+                        } else if (averageCount < average) {
+                            bufferedData[finalChannelIndex] += data[finalChannelIndex];
+                            bufferedData[finalChannelIndex + 1] += data[finalChannelIndex + 1];
+                        } else {
+                                double channelOneAverageValue = bufferedData[finalChannelIndex] / (double) average;
+                                double channelTwoAverageValue = bufferedData[finalChannelIndex + 1] / (double) average;
+                            Platform.runLater(() -> {
+                                String channelOneValue = String.valueOf(Utils.roundValue(channelOneAverageValue, Utils.getRounder(rarefactionCoefficient)));
+                                String channelTwoValue = String.valueOf(Utils.roundValue(channelTwoAverageValue, Utils.getRounder(rarefactionCoefficient)));
+                                channelOneTextFields.get(finalSubmodelIndex).setText(channelOneValue);
+                                channelTwoTextFields.get(finalSubmodelIndex).setText(channelTwoValue);
+                            });
+                        }
                     }
                     channelIndex += 2;
+                }
+
+                if (averageCount < average) {
+                    averageCount++;
+                } else {
+                    averageCount = 0;
+                    for (int i = 0; i < bufferedData.length; i++) {
+                        bufferedData[i] = 0;
+                    }
                 }
                 Utils.sleep(200);
             }
