@@ -6,7 +6,6 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.LTR27;
 import ru.avem.posum.models.settings.LTR27SettignsModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -17,6 +16,8 @@ public class LTR27Settings implements BaseController {
     private Label checkIcon;
     @FXML
     private ComboBox<String> frequencyComboBox;
+    @FXML
+    private Button initializeButton;
     @FXML
     private ProgressIndicator progressIndicator;
     @FXML
@@ -127,16 +128,30 @@ public class LTR27Settings implements BaseController {
         ltr27SettingsModel.setModuleName(moduleName);
         ltr27SettingsModel.setSlot(Utils.parseSlotNumber(moduleName));
         ltr27SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
-        ltr27SubmodulesSettings.setSubmodulesNames();
-        ltr27SubmodulesSettings.enableUielements();
+        ltr27SubmodulesSettings.initializeView();
     }
 
     public void handleInitialize() {
+        statusBarLine.setStatusOfProgress("Инициализация модуля");
+
+        new Thread(() -> {
+            boolean isSuccessful = ltr27SettingsModel.initModule(frequencyComboBox.getSelectionModel().getSelectedIndex());
+
+            if (isSuccessful) {
+                ltr27SubmodulesSettings.toggleCheckBoxes(false);
+            }
+
+            statusBarLine.setStatus(ltr27SettingsModel.getModuleInstance().getStatus(), isSuccessful);
+        }).start();
 
     }
 
     public void handleBack() {
         wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+    }
+
+    public ComboBox<String> getFrequencyComboBox() {
+        return frequencyComboBox;
     }
 
     public String[][] getSubmodulesDescriptions() {

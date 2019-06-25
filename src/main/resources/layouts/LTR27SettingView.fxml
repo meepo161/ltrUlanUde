@@ -77,7 +77,7 @@
                     </GridPane.margin>
                 </TextField>
             <Label fx:id="subModuleOneChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <TextField fx:id="subModuleOneChannelTwoTextField" disable="true" maxWidth="210.0" minWidth="200.0" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="subModuleOneChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="210.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.rowSpan="8" />
                 <CheckBox fx:id="submoduleTwoCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="5" GridPane.rowIndex="2">
                     <GridPane.margin>
@@ -141,7 +141,7 @@
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin></Label>
-                <Button fx:id="initializeButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
+                <Button fx:id="initializeButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
                     <GridPane.margin>
                         <Insets left="270.0" />
                     </GridPane.margin>
@@ -153,7 +153,7 @@
                 </Button>
                 <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
                 <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
-                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
+                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
                 <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="25">
                     <GridPane.margin>
                         <Insets left="15.0" />

@@ -1,5 +1,7 @@
 package ru.avem.posum.controllers.settings.LTR27;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,15 +22,19 @@ public class LTR27SubmodulesSettings {
         this.ltr27Settings = ltr27Settings;
     }
 
-    public void setSubmodulesNames() {
-        fillListOfCheckBoxes();
-        String[][] descriptions = ltr27Settings.getSubmodulesDescriptions();
+    public void initializeView() {
+        fillUiElementsLists();
+        setSubmodulesNames();
+        setFrequencies();
+    }
 
-        for (int submoduleIndex = 0; submoduleIndex < descriptions.length; submoduleIndex++) {
-            String description = String.format("Субмодуль %s (%s)", descriptions[submoduleIndex][0], descriptions[submoduleIndex][1]);
-            description = description.contains("EMPTY ()") ? submoduleIsAbsentee : description;
-            checkBoxes.get(submoduleIndex).setText(description);
-        }
+    private void fillUiElementsLists() {
+        fillListOfCheckBoxes();
+        fillListOfChannelOneLabels();
+        fillListOfChannelTwoLabels();
+        fillListOfChannelOneTextFields();
+        fillListOfChannelTwoTextFields();
+        listenCheckBoxes();
     }
 
     private void fillListOfCheckBoxes() {
@@ -40,17 +46,6 @@ public class LTR27SubmodulesSettings {
         checkBoxes.add(ltr27Settings.getSubmoduleSixCheckBox());
         checkBoxes.add(ltr27Settings.getSubmoduleSevenCheckBox());
         checkBoxes.add(ltr27Settings.getSubmoduleEightCheckBox());
-    }
-
-    public void enableUielements() {
-        fillListOfChannelOneLabels();
-        fillListOfChannelTwoLabels();
-        fillListOfChannelOneTextFields();
-        fillListOfChannelTwoTextFields();
-
-        for (CheckBox checkBox : checkBoxes) {
-            checkBox.setDisable(checkBox.getText().equals(submoduleIsAbsentee));
-        }
     }
 
     private void fillListOfChannelOneLabels() {
@@ -95,5 +90,51 @@ public class LTR27SubmodulesSettings {
         channelTwoTextFields.add(ltr27Settings.getSubModuleSixChannelTwoTextField());
         channelTwoTextFields.add(ltr27Settings.getSubModuleSevenChannelTwoTextField());
         channelTwoTextFields.add(ltr27Settings.getSubModuleEightChannelTwoTextField());
+    }
+
+    private void setSubmodulesNames() {
+        String[][] descriptions = ltr27Settings.getSubmodulesDescriptions();
+
+        for (int submoduleIndex = 0; submoduleIndex < descriptions.length; submoduleIndex++) {
+            String description = String.format("Субмодуль %s (%s)", descriptions[submoduleIndex][0], descriptions[submoduleIndex][1]);
+            description = description.contains("EMPTY ()") ? submoduleIsAbsentee : description;
+            checkBoxes.get(submoduleIndex).setText(description);
+        }
+    }
+
+    private void setFrequencies() {
+        ObservableList<String> frequencies = FXCollections.observableArrayList();
+        final double MAX_FREQUENCY = 1000;
+        for (int i = 0; i < 256; i++) {
+            String frequency = String.format("%.2f Гц", MAX_FREQUENCY / (i + 1));
+            frequencies.add(frequency);
+        }
+        ltr27Settings.getFrequencyComboBox().getItems().addAll(frequencies);
+        ltr27Settings.getFrequencyComboBox().getSelectionModel().select(0);
+    }
+
+    private void listenCheckBoxes() {
+        for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
+            CheckBox checkBox = checkBoxes.get(channelIndex);
+            int finalChannelIndex = channelIndex;
+            checkBox.selectedProperty().addListener(observable -> {
+                toggleSubmoduleUiElements(finalChannelIndex, !checkBox.isSelected());
+            });
+        }
+    }
+
+    public void toggleCheckBoxes(boolean isDisable) {
+        for (CheckBox checkBox : checkBoxes) {
+            if (!checkBox.getText().equals(submoduleIsAbsentee)) {
+                checkBox.setDisable(isDisable);
+            }
+        }
+    }
+
+    private void toggleSubmoduleUiElements(int channelIndex, boolean isDisable) {
+        channelOneLabels.get(channelIndex).setDisable(isDisable);
+        channelOneTextFields.get(channelIndex).setDisable(isDisable);
+        channelTwoLabels.get(channelIndex).setDisable(isDisable);
+        channelTwoTextFields.get(channelIndex).setDisable(isDisable);
     }
 }
