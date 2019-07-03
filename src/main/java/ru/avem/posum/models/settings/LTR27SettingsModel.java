@@ -43,7 +43,7 @@ public class LTR27SettingsModel {
 
     public void receiveData() {
         new Thread(() -> {
-            data = new double[(int) ltr27.getFrequency() * LTR27.MAX_SUBMODULES];
+            data = new double[1000 * LTR27.MAX_SUBMODULES];
             timeMarks = new double[data.length];
             while (!ltr27Settings.isStopped()) {
                 ltr27.write(data, timeMarks);
