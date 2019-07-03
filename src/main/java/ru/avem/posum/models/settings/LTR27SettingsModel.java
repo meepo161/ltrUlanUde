@@ -42,15 +42,19 @@ public class LTR27SettingsModel {
     }
 
     public void receiveData() {
-        data = new double[LTR27.MAX_SUBMODULES * 2];
-        timeMarks = new double[data.length];
-
         new Thread(() -> {
+            data = new double[(int) ltr27.getFrequency() * LTR27.MAX_SUBMODULES];
+            timeMarks = new double[data.length];
             while (!ltr27Settings.isStopped()) {
                 ltr27.write(data, timeMarks);
-                Utils.sleep(1000);
+                Utils.sleep(100);
             }
         }).start();
+    }
+
+    public void stop() {
+        ltr27.stop();
+        ltr27.closeConnection();
     }
 
     public double[] getData() {
@@ -61,7 +65,9 @@ public class LTR27SettingsModel {
         return descriptions;
     }
 
-    public LTR27 getModuleInstance() { return ltr27; }
+    public LTR27 getModuleInstance() {
+        return ltr27;
+    }
 
     private void setFrequency(int frequencyIndex) {
         ltr27.getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequencyIndex);
