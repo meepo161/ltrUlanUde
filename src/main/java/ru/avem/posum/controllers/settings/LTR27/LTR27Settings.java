@@ -1,24 +1,40 @@
 package ru.avem.posum.controllers.settings.LTR27;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.LTR27;
-import ru.avem.posum.models.settings.LTR27SettignsModel;
+import ru.avem.posum.models.settings.LTR27SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
 public class LTR27Settings implements BaseController {
     @FXML
+    private Label averageLabel;
+    @FXML
+    private TextField averageTextField;
+    @FXML
+    private Button backButton;
+    @FXML
     private Label checkIcon;
+    @FXML
+    private Button enableAllButton;
     @FXML
     private ComboBox<String> frequencyComboBox;
     @FXML
+    private Button initializeButton;
+    @FXML
+    private Label frequencyLabel;
+    @FXML
     private ProgressIndicator progressIndicator;
+    @FXML
+    private ComboBox<String> rarefactionComboBox;
+    @FXML
+    private Label rarefactionLabel;
     @FXML
     private Label sceneTitleLabel;
     @FXML
@@ -108,8 +124,9 @@ public class LTR27Settings implements BaseController {
 
     private ControllerManager cm;
     private LTR27 ltr27 = new LTR27();
-    private LTR27SettignsModel ltr27SettingsModel;
+    private LTR27SettingsModel ltr27SettingsModel;
     private LTR27SubmodulesSettings ltr27SubmodulesSettings;
+    private boolean stoped;
     private String[][] submodulesDescription;
     private StatusBarLine statusBarLine;
     private WindowsManager wm;
@@ -118,8 +135,9 @@ public class LTR27Settings implements BaseController {
     private void initialize() {
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar,
                 warningIcon);
-        ltr27SettingsModel = new LTR27SettignsModel();
+        ltr27SettingsModel = new LTR27SettingsModel(this);
         ltr27SubmodulesSettings = new LTR27SubmodulesSettings(this);
+        ltr27SubmodulesSettings.initializeView();
     }
 
     public void loadSettings(String moduleName) {
@@ -128,15 +146,78 @@ public class LTR27Settings implements BaseController {
         ltr27SettingsModel.setSlot(Utils.parseSlotNumber(moduleName));
         ltr27SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
         ltr27SubmodulesSettings.setSubmodulesNames();
-        ltr27SubmodulesSettings.enableUielements();
+        ltr27SubmodulesSettings.setSubmodulesUnits();
     }
 
     public void handleInitialize() {
+        statusBarLine.setStatusOfProgress("Инициализация модуля");
+
+        new Thread(() -> {
+            initializeButton.setDisable(true);
+            backButton.setDisable(true);
+            boolean isSuccessful = ltr27SettingsModel.initModule(frequencyComboBox.getSelectionModel().getSelectedIndex());
+
+            if (isSuccessful) {
+                stoped = false;
+                ltr27SettingsModel.receiveData();
+                ltr27SubmodulesSettings.showValues();
+                ltr27SubmodulesSettings.toggleCheckBoxesState(false);
+                toggleUiElements(true);
+                backButton.setDisable(false);
+            }
+
+            statusBarLine.setStatus(ltr27SettingsModel.getModuleInstance().getStatus(), isSuccessful);
+        }).start();
 
     }
 
+    private void toggleUiElements(boolean isInit) {
+        frequencyComboBox.setDisable(isInit);
+        frequencyLabel.setDisable(isInit);
+        enableAllButton.setDisable(!isInit);
+        initializeButton.setDisable(isInit);
+    }
+
+    public void handleEnableAll() {
+        ltr27SubmodulesSettings.enableAll();
+    }
+
     public void handleBack() {
-        wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE);
+        statusBarLine.setStatusOfProgress("Загрузка");
+
+        new Thread(() -> {
+            stoped = true;
+            ltr27SubmodulesSettings.toggleCheckBoxes(false);
+            ltr27SubmodulesSettings.toggleCheckBoxesState(true);
+            toggleUiElements(false);
+            statusBarLine.toggleProgressIndicator(true);
+            statusBarLine.clear();
+            Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE));
+        }).start();
+    }
+
+    public Label getAverageLabel() {
+        return averageLabel;
+    }
+
+    public TextField getAverageTextField() {
+        return averageTextField;
+    }
+
+    public double[] getData() {
+        return ltr27SettingsModel.getData();
+    }
+
+    public ComboBox<String> getFrequencyComboBox() {
+        return frequencyComboBox;
+    }
+
+    public ComboBox<String> getRarefactionComboBox() {
+        return rarefactionComboBox;
+    }
+
+    public Label getRarefactionLabel() {
+        return rarefactionLabel;
     }
 
     public String[][] getSubmodulesDescriptions() {
@@ -301,6 +382,10 @@ public class LTR27Settings implements BaseController {
 
     public TextField getSubModuleEightChannelTwoTextField() {
         return subModuleEightChannelTwoTextField;
+    }
+
+    public boolean isStopped() {
+        return stoped || cm.isClosed();
     }
 
     @Override

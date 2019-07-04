@@ -202,10 +202,14 @@ public class Settings implements BaseController {
         if (modulesListView.getSelectionModel().getSelectedIndex() == -1) {
             statusBarLine.setStatus("Выберите модуль", false);
         } else {
+            statusBarLine.setStatusOfProgress("Загрузка настроек модуля");
+
             new Thread(() -> {
                 for (int i = 0; i < hardwareSettings.getModulesNames().size(); i++) {
                     if (modulesListView.getSelectionModel().isSelected(i)) {
                         hardwareSettings.loadModuleSettings();
+                        statusBarLine.toggleProgressIndicator(true);
+                        statusBarLine.clear();
                         Platform.runLater(() -> wm.setModuleScene(hardwareSettings.getModuleName(),
                                 hardwareSettings.getSelectedModuleIndex()));
                         break;

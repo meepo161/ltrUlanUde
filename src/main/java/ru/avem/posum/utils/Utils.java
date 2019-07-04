@@ -55,4 +55,6 @@ public class Utils {
     public static int getDecimalScaleLimit() {
         return DECIMAL_SCALE_LIMIT;
     }
+
+    public static int getRounder(int rarefactionCoefficient) { return (int) Math.pow(10, rarefactionCoefficient); }
 }
