@@ -8,17 +8,14 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.util.Pair;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import ru.avem.posum.db.ChannelsRepository;
 import ru.avem.posum.db.models.Channels;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.process.ChannelModel;
 import ru.avem.posum.models.process.SignalParametersModel;
-import ru.avem.posum.models.protocol.ChannelDataModel;
 import ru.avem.posum.utils.Utils;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -298,7 +295,7 @@ public class TableController {
                 signalParametersModel.setData(processController.getCalibrationModel().getCalibratedData());
                 signalParametersModel.setAdcFrequencies(processController.getProcessModel().getModules());
                 signalParametersModel.calculateParameters();
-                processController.getJsonControllerTwo().write(table.getItems());
+                processController.getJsonController().write(table.getItems());
 
                 new Thread(() -> regulatorController.setResponse()).start();
                 new Thread(this::show).start();

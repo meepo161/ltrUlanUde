@@ -13,7 +13,7 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.controllers.protocol.JsonControllerTwo;
+import ru.avem.posum.controllers.protocol.JsonController;
 import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.controllers.protocol.ProtocolSheets;
 import ru.avem.posum.db.models.TestProgram;
@@ -176,7 +176,7 @@ public class ProcessController implements BaseController {
     private EventsController eventsController;
     private GraphController graphController;
     private String path = System.getProperty("user.dir") + "\\channelsData.txt";
-    private JsonControllerTwo jsonControllerTwo = new JsonControllerTwo(this);
+    private JsonController jsonController = new JsonController(this);
     private boolean initialized;
     private LinkingController linkingController;
     private Process process = new Process();
@@ -457,7 +457,7 @@ public class ProcessController implements BaseController {
             tableController.initRegulator();
             calibrationModel.loadCalibrations(table.getItems(), processModel.getModules());
             commandsController.executeCommands();
-            jsonControllerTwo.createJson();
+            jsonController.createJson();
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
             while (!process.isStopped()) {
@@ -700,8 +700,8 @@ public class ProcessController implements BaseController {
         return graphController;
     }
 
-    public JsonControllerTwo getJsonControllerTwo() {
-        return jsonControllerTwo;
+    public JsonController getJsonController() {
+        return jsonController;
     }
 
     public LinkingController getLinkingController() {

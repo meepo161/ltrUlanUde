@@ -12,7 +12,8 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 
-class JsonControllerTwo(private val processController: ProcessController) {
+class JsonController(private val processController: ProcessController) {
+    private var channelsCount = 0
     private val file = File(System.getProperty("user.dir") + "\\json.txt")
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     private val channelsDataAdapter = moshi.adapter(ChannelDataModel::class.java)
@@ -47,7 +48,10 @@ class JsonControllerTwo(private val processController: ProcessController) {
         val reader = getReader(false)
 
         var firstTime: Long = 0
+        var rarefactions = 0
+        var iterations = 0
         while (!reader.exhausted()) {
+            iterations++
             val line: String = reader.readUtf8Line() ?: break
             val json = if (line.first() != '{') line.substring(1) else line
             val channelDataModel = channelsDataAdapter.fromJson(json)
@@ -56,12 +60,16 @@ class JsonControllerTwo(private val processController: ProcessController) {
             if (firstTime == 0.toLong()) firstTime = time
             val isFirstValues = simpleTimeFormat.parse(channelDataModel.getTime()).time == firstTime
             val doNotThinOut = (rarefactionCoefficient == 1000.toLong())
-            val thinnedChannelDataModel = simpleTimeFormat.parse(channelDataModel.getTime()).time == (firstTime + rarefactionCoefficient)
+            val thinnedChannelDataModel = time == (firstTime + rarefactionCoefficient * rarefactions)
+            if ((iterations % channelsCount == 0) && ((time - firstTime) % rarefactionCoefficient == 0.toLong())) {
+                rarefactions++
+            }
 
             if (isFirstValues || doNotThinOut || thinnedChannelDataModel) {
                 processController.protocolController.fillChannelData(channelDataModel.toList(chosenParameters))
             }
         }
+        channelsCount = 0
     }
 
     private fun getReader(aCopy: Boolean): BufferedSource {
@@ -76,6 +84,8 @@ class JsonControllerTwo(private val processController: ProcessController) {
         val reader = getReader(aCopy)
         val simpleTimeFormat = SimpleDateFormat("HH:mm:ss")
         var lines = 0
+        var firstTime: Long = 0
+        var time: Long = 0
 
         while (!reader.exhausted()) {
             val line: String = reader.readUtf8Line() ?: break
@@ -85,9 +95,16 @@ class JsonControllerTwo(private val processController: ProcessController) {
             if (chosenParameterIndex != -1) {
                 chosenParameters[chosenParameterIndex] = true
             }
-            lastTime = simpleTimeFormat.parse(channelsDataAdapter.fromJson(json)?.getTime()).time
+            time = simpleTimeFormat.parse(channelsDataAdapter.fromJson(json)?.getTime()).time
+            if (firstTime == 0.toLong()) {
+                firstTime = time
+            }
+            if (time == firstTime) {
+                channelsCount++
+            }
             lines++
         }
+        lastTime = time
         linesCount = lines
     }
 

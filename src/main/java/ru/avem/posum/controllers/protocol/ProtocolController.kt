@@ -148,13 +148,13 @@ class ProtocolController(val processController: ProcessController) {
 
         if (sheets.any { it == ProtocolSheets.CHANNELS_DATA.sheetName }) {
             when {
-                isPointData -> processController.jsonControllerTwo.parseOneSecond()
+                isPointData -> processController.jsonController.parseOneSecond()
                 isShort -> {
-                    processController.jsonControllerTwo.parsePieceOfFile()
+                    processController.jsonController.parsePieceOfFile()
                     drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
                 }
                 else -> {
-                    processController.jsonControllerTwo.parseFullFile(rarefactionCoefficient)
+                    processController.jsonController.parseFullFile(rarefactionCoefficient)
                     drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
                 }
             }
