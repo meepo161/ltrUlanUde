@@ -126,13 +126,13 @@ public class ProperFractionFormat extends FractionFormat {
      * "-3 1/2" is legitimate and denotes -7/2, but "-3 -1/2" is invalid and
      * will result in a <code>ParseException</code>.</p>
      *
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link Fraction} object.
      */
     @Override
     public Fraction parse(String source, ParsePosition pos) {
-        // try to parse improper fraction
+        // try to parseFullFile improper fraction
         Fraction ret = super.parse(source, pos);
         if (ret != null) {
             return ret;
@@ -140,10 +140,10 @@ public class ProperFractionFormat extends FractionFormat {
 
         int initialIndex = pos.getIndex();
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse whole
+        // parseFullFile whole
         Number whole = getWholeFormat().parse(source, pos);
         if (whole == null) {
             // invalid integer number
@@ -153,10 +153,10 @@ public class ProperFractionFormat extends FractionFormat {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse numerator
+        // parseFullFile numerator
         Number num = getNumeratorFormat().parse(source, pos);
         if (num == null) {
             // invalid integer number
@@ -172,7 +172,7 @@ public class ProperFractionFormat extends FractionFormat {
             return null;
         }
 
-        // parse '/'
+        // parseFullFile '/'
         int startIndex = pos.getIndex();
         char c = parseNextCharacter(source, pos);
         switch (c) {
@@ -192,10 +192,10 @@ public class ProperFractionFormat extends FractionFormat {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse denominator
+        // parseFullFile denominator
         Number den = getDenominatorFormat().parse(source, pos);
         if (den == null) {
             // invalid integer number

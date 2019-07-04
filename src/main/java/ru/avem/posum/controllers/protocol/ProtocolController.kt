@@ -17,8 +17,6 @@ import java.io.FileOutputStream
 import org.apache.poi.ss.usermodel.charts.DataSources
 import org.apache.poi.xssf.usermodel.*
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean
-import ru.avem.posum.models.process.ChannelModel
-import java.io.FileInputStream
 
 class ProtocolController(val processController: ProcessController) {
     private val amplitudeColumnIndex = 3
@@ -73,7 +71,7 @@ class ProtocolController(val processController: ProcessController) {
         // Create the workbook
         val sheets = sheetsNames.map { it.sheetName }.toTypedArray()
         createWorkBook(sheets, testProgramTitle, cellsToMerge.toIntArray())
-        fillWorkBook(sheets, headers.toTypedArray(), data, colors, rarefactionCoefficient)
+        fillWorkBook(sheets, headers.toTypedArray(), data, colors, isPointData, isShort, rarefactionCoefficient)
     }
 
     private fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
@@ -139,7 +137,7 @@ class ProtocolController(val processController: ProcessController) {
     }
 
     private fun fillWorkBook(sheets: Array<String>, headers: Array<Array<String>>, data: List<List<List<String>>>,
-                             colors: List<List<Short>>, rarefactionCoefficient: Long) {
+                             colors: List<List<Short>>, isPointData: Boolean, isShort: Boolean, rarefactionCoefficient: Long) {
         for (index in headers.indices) {
             createHeaders(sheets[index], *headers[index])
         }
@@ -149,22 +147,33 @@ class ProtocolController(val processController: ProcessController) {
         }
 
         if (sheets.any { it == ProtocolSheets.CHANNELS_DATA.sheetName }) {
-            processController.jsonControllerTwo.parse(false, rarefactionCoefficient)
+            when {
+                isPointData -> processController.jsonControllerTwo.parseOneSecond()
+                isShort -> {
+                    processController.jsonControllerTwo.parsePieceOfFile()
+                    drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
+                }
+                else -> {
+                    processController.jsonControllerTwo.parseFullFile(rarefactionCoefficient)
+                    drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
+                }
+            }
+
             autosizeColumns(ProtocolSheets.CHANNELS_DATA.sheetName)
-            drawLineChart(ProtocolSheets.CHANNELS_DATA.sheetName)
         }
     }
 
     private fun createHeaders(sheetName: String, vararg headers: String) {
+        val sheet = workbook.getSheet(sheetName)
         val rowNumber = 1 // row for headers
         for ((index, header) in headers.withIndex()) {
-            val sheet = workbook.getSheet(sheetName)
             val row = if (sheet.getRow(rowNumber) == null) sheet.createRow(rowNumber) else sheet.getRow(rowNumber)
             row.heightInPoints = 20.0f
             val cell = row.createCell(index)
             cell.setCellValue(header)
             cell.cellStyle = getHeaderStyle()
         }
+        sheet.createFreezePane(0, 2)
     }
 
     private fun getHeaderStyle(): XSSFCellStyle {

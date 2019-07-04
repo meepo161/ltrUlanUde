@@ -342,7 +342,7 @@ public class ComplexFormat {
     /**
      * Parses a string to produce a {@link Complex} object.
      *
-     * @param source the string to parse.
+     * @param source the string to parseFullFile.
      * @return the parsed {@link Complex} object.
      * @throws MathParseException if the beginning of the specified string
      * cannot be parsed.
@@ -361,17 +361,17 @@ public class ComplexFormat {
     /**
      * Parses a string to produce a {@link Complex} object.
      *
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link Complex} object.
      */
     public Complex parse(String source, ParsePosition pos) {
         int initialIndex = pos.getIndex();
 
-        // parse whitespace
+        // parseFullFile whitespace
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
 
-        // parse real
+        // parseFullFile real
         Number re = CompositeFormat.parseNumber(source, getRealFormat(), pos);
         if (re == null) {
             // invalid real number
@@ -380,7 +380,7 @@ public class ComplexFormat {
             return null;
         }
 
-        // parse sign
+        // parseFullFile sign
         int startIndex = pos.getIndex();
         char c = CompositeFormat.parseNextCharacter(source, pos);
         int sign = 0;
@@ -404,10 +404,10 @@ public class ComplexFormat {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
 
-        // parse imaginary
+        // parseFullFile imaginary
         Number im = CompositeFormat.parseNumber(source, getRealFormat(), pos);
         if (im == null) {
             // invalid imaginary number
@@ -416,7 +416,7 @@ public class ComplexFormat {
             return null;
         }
 
-        // parse imaginary character
+        // parseFullFile imaginary character
         if (!CompositeFormat.parseFixedstring(source, getImaginaryCharacter(), pos)) {
             return null;
         }

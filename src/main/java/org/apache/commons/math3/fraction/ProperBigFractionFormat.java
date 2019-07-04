@@ -126,13 +126,13 @@ public class ProperBigFractionFormat extends BigFractionFormat {
      * "-3 1/2" is legitimate and denotes -7/2, but "-3 -1/2" is invalid and
      * will result in a <code>ParseException</code>.</p>
      *
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link BigFraction} object.
      */
     @Override
     public BigFraction parse(final String source, final ParsePosition pos) {
-        // try to parse improper BigFraction
+        // try to parseFullFile improper BigFraction
         BigFraction ret = super.parse(source, pos);
         if (ret != null) {
             return ret;
@@ -140,10 +140,10 @@ public class ProperBigFractionFormat extends BigFractionFormat {
 
         final int initialIndex = pos.getIndex();
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse whole
+        // parseFullFile whole
         BigInteger whole = parseNextBigInteger(source, pos);
         if (whole == null) {
             // invalid integer number
@@ -153,10 +153,10 @@ public class ProperBigFractionFormat extends BigFractionFormat {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse numerator
+        // parseFullFile numerator
         BigInteger num = parseNextBigInteger(source, pos);
         if (num == null) {
             // invalid integer number
@@ -172,7 +172,7 @@ public class ProperBigFractionFormat extends BigFractionFormat {
             return null;
         }
 
-        // parse '/'
+        // parseFullFile '/'
         final int startIndex = pos.getIndex();
         final char c = parseNextCharacter(source, pos);
         switch (c) {
@@ -192,10 +192,10 @@ public class ProperBigFractionFormat extends BigFractionFormat {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse denominator
+        // parseFullFile denominator
         final BigInteger den = parseNextBigInteger(source, pos);
         if (den == null) {
             // invalid integer number

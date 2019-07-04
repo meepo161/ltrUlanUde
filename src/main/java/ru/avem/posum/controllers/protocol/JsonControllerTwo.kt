@@ -16,6 +16,7 @@ class JsonControllerTwo(private val processController: ProcessController) {
     private val file = File(System.getProperty("user.dir") + "\\json.txt")
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     private val channelsDataAdapter = moshi.adapter(ChannelDataModel::class.java)
+    private var lastTime: Long = 0
     private var linesCount = 0
     private val chosenParameters = arrayOf(false, false, false)
 
@@ -41,9 +42,9 @@ class JsonControllerTwo(private val processController: ProcessController) {
     }
 
 
-    fun parse(aCopy: Boolean, rarefactionCoefficient: Long) {
-        estimateJson(aCopy)
-        val reader = getReader(aCopy)
+    fun parseFullFile(rarefactionCoefficient: Long) {
+        estimateJson(false)
+        val reader = getReader(false)
 
         var firstTime: Long = 0
         while (!reader.exhausted()) {
@@ -63,25 +64,68 @@ class JsonControllerTwo(private val processController: ProcessController) {
         }
     }
 
-    private fun estimateJson(aCopy: Boolean) {
-        val reader = getReader(aCopy)
-        var lines = 0
-        while (!reader.exhausted()) {
-            lines++
-            val line: String = reader.readUtf8Line() ?: break
-            val json = if (line.first() != '{') line.substring(1) else line
-            val channelDataModel = channelsDataAdapter.fromJson(json)
-            val chosenParameterIndex = channelDataModel!!.chosenParameterIndex.toInt()
-            if (chosenParameterIndex != -1) { chosenParameters[chosenParameterIndex] = true}
-        }
-        linesCount = lines
-    }
-
     private fun getReader(aCopy: Boolean): BufferedSource {
         return if (aCopy) {
             Okio.buffer(Okio.source(File("${file.path}.tmp")))
         } else {
             Okio.buffer(Okio.source(file))
+        }
+    }
+
+    private fun estimateJson(aCopy: Boolean) {
+        val reader = getReader(aCopy)
+        val simpleTimeFormat = SimpleDateFormat("HH:mm:ss")
+        var lines = 0
+
+        while (!reader.exhausted()) {
+            val line: String = reader.readUtf8Line() ?: break
+            val json = if (line.first() != '{') line.substring(1) else line
+            val channelDataModel = channelsDataAdapter.fromJson(json)
+            val chosenParameterIndex = channelDataModel!!.chosenParameterIndex.toInt()
+            if (chosenParameterIndex != -1) {
+                chosenParameters[chosenParameterIndex] = true
+            }
+            lastTime = simpleTimeFormat.parse(channelsDataAdapter.fromJson(json)?.getTime()).time
+            lines++
+        }
+        linesCount = lines
+    }
+
+    fun parsePieceOfFile() {
+        copy()
+        val reader = getReader(true)
+        estimateJson(true)
+        val simpleTimeFormat = SimpleDateFormat("HH:mm:ss")
+        val timeLimit: Long = lastTime - 60_000
+
+        while (!reader.exhausted()) {
+            val line: String = reader.readUtf8Line() ?: break
+            val json = if (line.first() != '{') line.substring(1) else line
+            val channelDataModel = channelsDataAdapter.fromJson(json)
+            val time = simpleTimeFormat.parse(channelDataModel!!.getTime()).time
+            val isLastValues = time in timeLimit until lastTime
+
+            if (isLastValues) {
+                processController.protocolController.fillChannelData(channelDataModel.toList(chosenParameters))
+            }
+        }
+    }
+
+    fun parseOneSecond() {
+        copy()
+        val reader = getReader(true)
+        estimateJson(true)
+        val simpleTimeFormat = SimpleDateFormat("HH:mm:ss")
+
+        while (!reader.exhausted()) {
+            val line: String = reader.readUtf8Line() ?: break
+            val json = if (line.first() != '{') line.substring(1) else line
+            val channelDataModel = channelsDataAdapter.fromJson(json)
+            val time = simpleTimeFormat.parse(channelDataModel!!.getTime()).time
+
+            if (time == lastTime) {
+                processController.protocolController.fillChannelData(channelDataModel.toList(chosenParameters))
+            }
         }
     }
 

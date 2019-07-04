@@ -181,7 +181,7 @@ public class BigFractionFormat extends AbstractFormat implements Serializable {
 
     /**
      * Parses a string to produce a {@link BigFraction} object.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @return the parsed {@link BigFraction} object.
      * @exception MathParseException if the beginning of the specified string
      *            cannot be parsed.
@@ -199,7 +199,7 @@ public class BigFractionFormat extends AbstractFormat implements Serializable {
     /**
      * Parses a string to produce a {@link BigFraction} object.
      * This method expects the string to be formatted as an improper BigFraction.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return the parsed {@link BigFraction} object.
      */
@@ -207,10 +207,10 @@ public class BigFractionFormat extends AbstractFormat implements Serializable {
     public BigFraction parse(final String source, final ParsePosition pos) {
         final int initialIndex = pos.getIndex();
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse numerator
+        // parseFullFile numerator
         final BigInteger num = parseNextBigInteger(source, pos);
         if (num == null) {
             // invalid integer number
@@ -220,7 +220,7 @@ public class BigFractionFormat extends AbstractFormat implements Serializable {
             return null;
         }
 
-        // parse '/'
+        // parseFullFile '/'
         final int startIndex = pos.getIndex();
         final char c = parseNextCharacter(source, pos);
         switch (c) {
@@ -240,10 +240,10 @@ public class BigFractionFormat extends AbstractFormat implements Serializable {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse denominator
+        // parseFullFile denominator
         final BigInteger den = parseNextBigInteger(source, pos);
         if (den == null) {
             // invalid integer number
@@ -258,7 +258,7 @@ public class BigFractionFormat extends AbstractFormat implements Serializable {
 
     /**
      * Parses a string to produce a <code>BigInteger</code>.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return a parsed <code>BigInteger</code> or null if string does not
      * contain a BigInteger at the specified position

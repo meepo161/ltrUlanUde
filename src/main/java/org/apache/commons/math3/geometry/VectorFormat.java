@@ -29,11 +29,11 @@ import org.apache.commons.math3.exception.MathParseException;
  * Formats a vector in components list format "{x; y; ...}".
  * <p>The prefix and suffix "{" and "}" and the separator "; " can be replaced by
  * any user-defined strings. The number format for components can be configured.</p>
- * <p>White space is ignored at parse dateAndTime, even if it is in the prefix, suffix
+ * <p>White space is ignored at parseFullFile dateAndTime, even if it is in the prefix, suffix
  * or separator specifications. So even if the default separator does include a space
  * character that is used at format dateAndTime, both input string "{1;1;1}" and
  * " { 1 ; 1 ; 1 } " will be parsed without error and the same vector will be
- * returned. In the second case, however, the parse position after parsing will be
+ * returned. In the second case, however, the parseFullFile position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  * <p><b>Note:</b> using "," as a separator may interfere with the grouping separator
  * of the default {@link NumberFormat} for the current locale. Thus it is advised
@@ -217,7 +217,7 @@ public abstract class VectorFormat<S extends Space> {
 
     /**
      * Parses a string to produce a {@link Vector} object.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @return the parsed {@link Vector} object.
      * @throws MathParseException if the beginning of the specified string
      * cannot be parsed.
@@ -226,7 +226,7 @@ public abstract class VectorFormat<S extends Space> {
 
     /**
      * Parses a string to produce a {@link Vector} object.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return the parsed {@link Vector} object.
      */
@@ -235,7 +235,7 @@ public abstract class VectorFormat<S extends Space> {
     /**
      * Parses a string to produce an array of coordinates.
      * @param dimension dimension of the space
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return coordinates array.
      */
@@ -244,7 +244,7 @@ public abstract class VectorFormat<S extends Space> {
         int initialIndex = pos.getIndex();
         double[] coordinates = new double[dimension];
 
-        // parse prefix
+        // parseFullFile prefix
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
         if (!CompositeFormat.parseFixedstring(source, trimmedPrefix, pos)) {
             return null;
@@ -255,7 +255,7 @@ public abstract class VectorFormat<S extends Space> {
             // skip whitespace
             CompositeFormat.parseAndIgnoreWhitespace(source, pos);
 
-            // parse separator
+            // parseFullFile separator
             if (i > 0 && !CompositeFormat.parseFixedstring(source, trimmedSeparator, pos)) {
                 return null;
             }
@@ -263,7 +263,7 @@ public abstract class VectorFormat<S extends Space> {
             // skip whitespace
             CompositeFormat.parseAndIgnoreWhitespace(source, pos);
 
-            // parse coordinate
+            // parseFullFile coordinate
             Number c = CompositeFormat.parseNumber(source, format, pos);
             if (c == null) {
                 // invalid coordinate
@@ -277,7 +277,7 @@ public abstract class VectorFormat<S extends Space> {
 
         }
 
-        // parse suffix
+        // parseFullFile suffix
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
         if (!CompositeFormat.parseFixedstring(source, trimmedSuffix, pos)) {
             return null;

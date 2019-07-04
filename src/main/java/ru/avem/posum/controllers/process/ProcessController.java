@@ -13,7 +13,6 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.controllers.protocol.JsonController;
 import ru.avem.posum.controllers.protocol.JsonControllerTwo;
 import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.controllers.protocol.ProtocolSheets;
@@ -177,7 +176,6 @@ public class ProcessController implements BaseController {
     private EventsController eventsController;
     private GraphController graphController;
     private String path = System.getProperty("user.dir") + "\\channelsData.txt";
-    private JsonController jsonController = new JsonController(path);
     private JsonControllerTwo jsonControllerTwo = new JsonControllerTwo(this);
     private boolean initialized;
     private LinkingController linkingController;
@@ -459,7 +457,6 @@ public class ProcessController implements BaseController {
             tableController.initRegulator();
             calibrationModel.loadCalibrations(table.getItems(), processModel.getModules());
             commandsController.executeCommands();
-            jsonController.createFile();
             jsonControllerTwo.createJson();
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
@@ -570,7 +567,6 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSavePoint() {
-        jsonController.shortClose();
         statusBarLine.setStatusOfProgress("Подготовка данных для сохранения текущей нагрузки на каналах");
 
         new Thread(() -> {
@@ -585,19 +581,22 @@ public class ProcessController implements BaseController {
     }
 
     public void handleSaveWaveformButton() {
-        jsonController.shortClose();
-        statusBarLine.setStatusOfProgress("Подготовка данных для сохранения осциллограммы");
+        Platform.runLater(() -> {
+            saveUiElementsState();
+            toggleUiElements(true);
 
-        new Thread(() -> {
-            ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
-            protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, true, 1000, sheetsNames);
+            File selectedDirectory = protocolController.showFileSaver("Сохранение осциллограммы", "Waveform.xlsx");
+            if (selectedDirectory != null) {
+                statusBarLine.setStatusOfProgress("Сохранение осциллограммы");
 
-            Platform.runLater(() -> {
-                File selectedDirectory = protocolController.showFileSaver("Сохранение файла", "Waveform.xlsx");
-                if (selectedDirectory != null)
+                new Thread(() -> {
+                    ProtocolSheets[] sheetsNames = {ProtocolSheets.GENERAL_DESCRIPTION, ProtocolSheets.CHANNELS_DATA, ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
+                    protocolController.createProtocol(testProgram.getId(), testProgram.getName(), false, true, 1, sheetsNames);
                     protocolController.saveProtocol(selectedDirectory, "Осциллограмма сохранена в ");
-            });
-        }).start();
+                    loadUiElementsState();
+                }).start();
+            }
+        });
     }
 
     public void handleSaveProtocol() {
@@ -699,10 +698,6 @@ public class ProcessController implements BaseController {
 
     public GraphController getGraphController() {
         return graphController;
-    }
-
-    public JsonController getJsonController() {
-        return jsonController;
     }
 
     public JsonControllerTwo getJsonControllerTwo() {

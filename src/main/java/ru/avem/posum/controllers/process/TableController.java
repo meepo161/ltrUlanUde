@@ -301,9 +301,6 @@ public class TableController {
                 processController.getJsonControllerTwo().write(table.getItems());
 
                 new Thread(() -> regulatorController.setResponse()).start();
-//                processController.getJsonController().save(getChannelsDataList());
-
-
                 new Thread(this::show).start();
                 Utils.sleep(1000);
             }
@@ -495,93 +492,6 @@ public class TableController {
         return table.getItems();
     }
 
-    public List<List<String>> getChannelsData(boolean isPointData, boolean isShort, long rarefactionCoefficient) {
-        List<ChannelModel> channelModels;
-        if (isPointData) {
-            channelModels = table.getItems();
-        } else {
-            channelModels = processController.getJsonController().parse(isPointData, isShort, rarefactionCoefficient);
-        }
-
-        List<String> names = new ArrayList<>();
-        List<String> amplitudes = new ArrayList<>();
-        List<String> dc = new ArrayList<>();
-        List<String> frequency = new ArrayList<>();
-        List<String> rms = new ArrayList<>();
-        List<String> loadsCounters = new ArrayList<>();
-        List<String> neededAmlitudes = new ArrayList<>();
-        List<String> neededDc = new ArrayList<>();
-        List<String> neededFrequency = new ArrayList<>();
-        List<String> relativeResponseAmplitudes = new ArrayList<>();
-        List<String> relativeResponseDc = new ArrayList<>();
-        List<String> relativeResponseFrequency = new ArrayList<>();
-        List<String> date = new ArrayList<>();
-        List<String> time = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm:ss");
-
-        for (ChannelModel channelModel : channelModels) {
-            names.add(channelModel.getName());
-            amplitudes.add(channelModel.getResponseAmplitude());
-            dc.add(channelModel.getResponseDc());
-            frequency.add(channelModel.getResponseFrequency());
-            rms.add(channelModel.getRms());
-            loadsCounters.add(channelModel.getLoadsCounter());
-            neededAmlitudes.add(channelModel.getChosenParameterIndex().equals("0") ? channelModel.getChosenParameterValue() : "0.0");
-            neededDc.add(channelModel.getChosenParameterIndex().equals("1") ? channelModel.getChosenParameterValue() : "0.0");
-            neededFrequency.add(channelModel.getChosenParameterIndex().equals("2") ? channelModel.getChosenParameterValue() : "0.0");
-            relativeResponseAmplitudes.add(channelModel.getRelativeResponseAmplitude());
-            relativeResponseDc.add(channelModel.getRelativeResponseDc());
-            relativeResponseFrequency.add(channelModel.getRelativeResponseFrequency());
-            String channelDate = isPointData ? simpleDateFormat.format(System.currentTimeMillis()) : channelModel.getDate();
-            date.add(channelDate);
-            String channelTime = isPointData ? simpleTimeFormat.format(System.currentTimeMillis()) : channelModel.getTime();
-            time.add(channelTime);
-        }
-
-        List<List<String>> output = new ArrayList<>();
-        output.add(date);
-        output.add(time);
-        output.add(names);
-        output.add(amplitudes);
-        output.add(dc);
-        output.add(frequency);
-        output.add(rms);
-        output.add(loadsCounters);
-
-        boolean[] chosenParameters = {false, false, false};
-        for (ChannelModel channelModel : channelModels) {
-            switch (Integer.parseInt(channelModel.getChosenParameterIndex())) {
-                case 0:
-                    chosenParameters[0] = true;
-                    break;
-                case 1:
-                    chosenParameters[1] = true;
-                    break;
-                case 2:
-                    chosenParameters[2] = true;
-                    break;
-            }
-        }
-
-        for (int i = 0; i < chosenParameters.length; i++) {
-            if (chosenParameters[i]) {
-                if (i == 0) {
-                    output.add(neededAmlitudes);
-                    output.add(relativeResponseAmplitudes);
-                } else if (i == 1) {
-                    output.add(neededDc);
-                    output.add(relativeResponseDc);
-                } else {
-                    output.add(neededFrequency);
-                    output.add(relativeResponseFrequency);
-                }
-            }
-        }
-
-        return output;
-    }
-
     public String[] getColumnsHeaders() {
         List<String> headers = new ArrayList<>();
         headers.add("Дата");
@@ -647,17 +557,6 @@ public class TableController {
 
     public int getCellsToMerge() {
         return table.getColumns().size() + 1;
-    }
-
-    public List<Short> getColorsForProtocol(boolean isPointData, boolean isShort, long rarefactionCoefficient) {
-        int size = isPointData ? table.getItems().size() : processController.getJsonController().parse(isPointData, isShort, rarefactionCoefficient).size();
-        List<Short> colors = new ArrayList<>();
-
-        for (int index = 0; index < size; index++) {
-            colors.add(IndexedColors.WHITE.index);
-        }
-
-        return colors;
     }
 
     public RegulatorController getRegulatorController() {

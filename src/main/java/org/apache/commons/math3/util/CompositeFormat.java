@@ -58,7 +58,7 @@ public class CompositeFormat {
     /**
      * Parses <code>source</code> until a non-whitespace character is found.
      *
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.  On output, <code>pos</code>
      *        holds the index of the next non-whitespace character.
      */
@@ -71,7 +71,7 @@ public class CompositeFormat {
     /**
      * Parses <code>source</code> until a non-whitespace character is found.
      *
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return the first non-whitespace character.
      */
@@ -100,8 +100,8 @@ public class CompositeFormat {
      * Parses <code>source</code> for special double values.  These values
      * include Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY.
      *
-     * @param source the string to parse
-     * @param value the special value to parse.
+     * @param source the string to parseFullFile
+     * @param value the special value to parseFullFile.
      * @param pos input/output parsing parameter.
      * @return the special number.
      */
@@ -127,12 +127,12 @@ public class CompositeFormat {
     }
 
     /**
-     * Parses <code>source</code> for a number.  This method can parse normal,
+     * Parses <code>source</code> for a number.  This method can parseFullFile normal,
      * numeric values as well as special values.  These special values include
      * Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY.
      *
-     * @param source the string to parse
-     * @param format the number format used to parse normal, numeric values.
+     * @param source the string to parseFullFile
+     * @param format the number format used to parseFullFile normal, numeric values.
      * @param pos input/output parsing parameter.
      * @return the parsed number.
      */
@@ -161,7 +161,7 @@ public class CompositeFormat {
 
     /**
      * Parse <code>source</code> for an expected fixed string.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param expected expected string
      * @param pos input/output parsing parameter.
      * @return true if the expected string was there

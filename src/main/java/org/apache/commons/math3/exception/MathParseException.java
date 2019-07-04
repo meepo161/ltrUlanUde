@@ -20,7 +20,7 @@ import org.apache.commons.math3.exception.util.ExceptionContextProvider;
 import org.apache.commons.math3.exception.util.LocalizedFormats;
 
 /**
- * Class to signal parse failures.
+ * Class to signal parseFullFile failures.
  *
  * @since 2.2
  */

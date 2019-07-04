@@ -31,11 +31,11 @@ import org.apache.commons.math3.util.CompositeFormat;
  * Formats a vector in components list format "{v0; v1; ...; vk-1}".
  * <p>The prefix and suffix "{" and "}" and the separator "; " can be replaced by
  * any user-defined strings. The number format for components can be configured.</p>
- * <p>White space is ignored at parse dateAndTime, even if it is in the prefix, suffix
+ * <p>White space is ignored at parseFullFile dateAndTime, even if it is in the prefix, suffix
  * or separator specifications. So even if the default separator does include a space
  * character that is used at format dateAndTime, both input string "{1;1;1}" and
  * " { 1 ; 1 ; 1 } " will be parsed without error and the same vector will be
- * returned. In the second case, however, the parse position after parsing will be
+ * returned. In the second case, however, the parseFullFile position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
  * @since 2.0
@@ -214,7 +214,7 @@ public class RealVectorFormat {
     /**
      * Parse a string to produce a {@link RealVector} object.
      *
-     * @param source String to parse.
+     * @param source String to parseFullFile.
      * @return the parsed {@link RealVector} object.
      * @throws MathParseException if the beginning of the specified string
      * cannot be parsed.
@@ -233,20 +233,20 @@ public class RealVectorFormat {
     /**
      * Parse a string to produce a {@link RealVector} object.
      *
-     * @param source String to parse.
+     * @param source String to parseFullFile.
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link RealVector} object.
      */
     public ArrayRealVector parse(String source, ParsePosition pos) {
         int initialIndex = pos.getIndex();
 
-        // parse prefix
+        // parseFullFile prefix
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
         if (!CompositeFormat.parseFixedstring(source, trimmedPrefix, pos)) {
             return null;
         }
 
-        // parse components
+        // parseFullFile components
         List<Number> components = new ArrayList<Number>();
         for (boolean loop = true; loop;){
 
@@ -272,7 +272,7 @@ public class RealVectorFormat {
 
         }
 
-        // parse suffix
+        // parseFullFile suffix
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
         if (!CompositeFormat.parseFixedstring(source, trimmedSuffix, pos)) {
             return null;

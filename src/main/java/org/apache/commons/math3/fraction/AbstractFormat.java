@@ -136,7 +136,7 @@ public abstract class AbstractFormat extends NumberFormat implements Serializabl
 
     /**
      * Parses <code>source</code> until a non-whitespace character is found.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.  On output, <code>pos</code>
      *        holds the index of the next non-whitespace character.
      */
@@ -148,7 +148,7 @@ public abstract class AbstractFormat extends NumberFormat implements Serializabl
 
     /**
      * Parses <code>source</code> until a non-whitespace character is found.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return the first non-whitespace character.
      */

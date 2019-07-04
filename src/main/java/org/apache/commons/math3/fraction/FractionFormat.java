@@ -186,7 +186,7 @@ public class FractionFormat extends AbstractFormat {
 
     /**
      * Parses a string to produce a {@link Fraction} object.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @return the parsed {@link Fraction} object.
      * @exception MathParseException if the beginning of the specified string
      *            cannot be parsed.
@@ -204,7 +204,7 @@ public class FractionFormat extends AbstractFormat {
     /**
      * Parses a string to produce a {@link Fraction} object.  This method
      * expects the string to be formatted as an improper fraction.
-     * @param source the string to parse
+     * @param source the string to parseFullFile
      * @param pos input/output parsing parameter.
      * @return the parsed {@link Fraction} object.
      */
@@ -212,10 +212,10 @@ public class FractionFormat extends AbstractFormat {
     public Fraction parse(final String source, final ParsePosition pos) {
         final int initialIndex = pos.getIndex();
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse numerator
+        // parseFullFile numerator
         final Number num = getNumeratorFormat().parse(source, pos);
         if (num == null) {
             // invalid integer number
@@ -225,7 +225,7 @@ public class FractionFormat extends AbstractFormat {
             return null;
         }
 
-        // parse '/'
+        // parseFullFile '/'
         final int startIndex = pos.getIndex();
         final char c = parseNextCharacter(source, pos);
         switch (c) {
@@ -245,10 +245,10 @@ public class FractionFormat extends AbstractFormat {
             return null;
         }
 
-        // parse whitespace
+        // parseFullFile whitespace
         parseAndIgnoreWhitespace(source, pos);
 
-        // parse denominator
+        // parseFullFile denominator
         final Number den = getDenominatorFormat().parse(source, pos);
         if (den == null) {
             // invalid integer number

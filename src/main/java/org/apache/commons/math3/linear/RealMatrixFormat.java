@@ -38,11 +38,11 @@ import org.apache.commons.math3.util.CompositeFormat;
  * the row separator "," and the column separator "," can be replaced by any
  * user-defined strings. The number format for components can be configured.</p>
  *
- * <p>White space is ignored at parse dateAndTime, even if it is in the prefix, suffix
+ * <p>White space is ignored at parseFullFile dateAndTime, even if it is in the prefix, suffix
  * or separator specifications. So even if the default separator does include a space
  * character that is used at format dateAndTime, both input string "{{1,1,1}}" and
  * " { { 1 , 1 , 1 } } " will be parsed without error and the same matrix will be
- * returned. In the second case, however, the parse position after parsing will be
+ * returned. In the second case, however, the parseFullFile position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
  * <p><b>Note:</b> the grouping functionality of the used {@link NumberFormat} is
@@ -275,7 +275,7 @@ public class RealMatrixFormat {
     /**
      * Parse a string to produce a {@link RealMatrix} object.
      *
-     * @param source String to parse.
+     * @param source String to parseFullFile.
      * @return the parsed {@link RealMatrix} object.
      * @throws MathParseException if the beginning of the specified string
      * cannot be parsed.
@@ -294,7 +294,7 @@ public class RealMatrixFormat {
     /**
      * Parse a string to produce a {@link RealMatrix} object.
      *
-     * @param source String to parse.
+     * @param source String to parseFullFile.
      * @param pos input/ouput parsing parameter.
      * @return the parsed {@link RealMatrix} object.
      */
@@ -308,13 +308,13 @@ public class RealMatrixFormat {
         final String trimmedColumnSeparator = columnSeparator.trim();
         final String trimmedRowSeparator = rowSeparator.trim();
 
-        // parse prefix
+        // parseFullFile prefix
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
         if (!CompositeFormat.parseFixedstring(source, trimmedPrefix, pos)) {
             return null;
         }
 
-        // parse components
+        // parseFullFile components
         List<List<Number>> matrix = new ArrayList<List<Number>>();
         List<Number> rowComponents = new ArrayList<Number>();
         for (boolean loop = true; loop;){
@@ -367,7 +367,7 @@ public class RealMatrixFormat {
             matrix.add(rowComponents);
         }
 
-        // parse suffix
+        // parseFullFile suffix
         CompositeFormat.parseAndIgnoreWhitespace(source, pos);
         if (!CompositeFormat.parseFixedstring(source, trimmedSuffix, pos)) {
             return null;
