@@ -17,6 +17,7 @@ import ru.avem.posum.controllers.calibration.CalibrationController;
 import ru.avem.posum.controllers.calibration.LTR27CalibrationController;
 import ru.avem.posum.controllers.process.LinkingController;
 import ru.avem.posum.controllers.process.ProcessController;
+import ru.avem.posum.controllers.settings.HardwareSettings;
 import ru.avem.posum.controllers.settings.LTR212.LTR212Settings;
 import ru.avem.posum.controllers.settings.LTR24.LTR24Settings;
 import ru.avem.posum.controllers.settings.LTR27.LTR27Settings;
@@ -504,5 +505,10 @@ public class Main extends Application implements WindowsManager, ControllerManag
     @Override
     public void initLtr27CalibrationView(String title) {
         ltr27CalibrationController.setTitle(title);
+    }
+
+    @Override
+    public HardwareSettings getHardwareSettings() {
+        return settings.getHardwareSettings();
     }
 }

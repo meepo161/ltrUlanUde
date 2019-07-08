@@ -10,7 +10,7 @@ import ru.avem.posum.WindowsManager
 import ru.avem.posum.controllers.BaseController
 import ru.avem.posum.utils.StatusBarLine
 
-class LTR27CalibrationController: BaseController {
+class LTR27CalibrationController : BaseController {
     @FXML
     private lateinit var titleLabel: Label
     @FXML
@@ -106,7 +106,9 @@ class LTR27CalibrationController: BaseController {
     }
 
     fun handleBackButton() {
-        Platform.runLater { wm.setScene(WindowsManager.Scenes.LTR27_SCENE) }
+        val moduleName = cm.hardwareSettings.moduleName
+        val selectedModuleIndex = cm.hardwareSettings.selectedModuleIndex
+        wm.setModuleScene(moduleName, selectedModuleIndex)
     }
 
     override fun setControllerManager(cm: ControllerManager) {
