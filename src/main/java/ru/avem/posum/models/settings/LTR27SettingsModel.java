@@ -47,6 +47,7 @@ public class LTR27SettingsModel {
             timeMarks = new double[data.length];
             while (!ltr27Settings.isStopped()) {
                 ltr27.write(data, timeMarks);
+
                 Utils.sleep(100);
             }
         }).start();

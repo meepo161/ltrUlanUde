@@ -251,10 +251,10 @@ public class LTR27SubmodulesSettings {
 
     public void showValues() {
         new Thread(() -> {
-            double[] data = ltr27Settings.getData();
-            bufferedData = new double[data.length];
-
             while (!ltr27Settings.isStopped()) {
+                double[] data = ltr27Settings.getData();
+                bufferedData = new double[data.length];
+
                 int channelIndex = 0;
 
                 for (int submodelIndex = 0; submodelIndex < LTR27.MAX_SUBMODULES; submodelIndex++) {
@@ -273,8 +273,8 @@ public class LTR27SubmodulesSettings {
                             bufferedData[finalChannelIndex] += data[finalChannelIndex];
                             bufferedData[finalChannelIndex + 1] += data[finalChannelIndex + 1];
                         } else {
-                                double channelOneAverageValue = bufferedData[finalChannelIndex] / (double) average;
-                                double channelTwoAverageValue = bufferedData[finalChannelIndex + 1] / (double) average;
+                            double channelOneAverageValue = bufferedData[finalChannelIndex] / (double) average;
+                            double channelTwoAverageValue = bufferedData[finalChannelIndex + 1] / (double) average;
                             Platform.runLater(() -> {
                                 String channelOneValue = String.valueOf(Utils.roundValue(channelOneAverageValue, Utils.getRounder(rarefactionCoefficient)));
                                 String channelTwoValue = String.valueOf(Utils.roundValue(channelTwoAverageValue, Utils.getRounder(rarefactionCoefficient)));

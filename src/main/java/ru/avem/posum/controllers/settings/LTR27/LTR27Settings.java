@@ -165,6 +165,7 @@ public class LTR27Settings implements BaseController {
         ltr27SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
         ltr27SubmodulesSettings.setSubmodulesNames();
         ltr27SubmodulesSettings.setSubmodulesUnits();
+        loadInitialStateOfUi();
     }
 
     public void handleInitialize() {
@@ -182,6 +183,8 @@ public class LTR27Settings implements BaseController {
                 ltr27SubmodulesSettings.toggleCheckBoxesState(false);
                 toggleUiElements(true);
                 backButton.setDisable(false);
+            } else {
+                System.out.println("Not initialized");
             }
 
             statusBarLine.setStatus(ltr27SettingsModel.getModuleInstance().getStatus(), isSuccessful);
@@ -251,12 +254,33 @@ public class LTR27Settings implements BaseController {
         new Thread(() -> {
             stoped = true;
             ltr27SubmodulesSettings.toggleCheckBoxes(false);
-            ltr27SubmodulesSettings.toggleCheckBoxesState(true);
-            toggleUiElements(false);
+            disableUiElements();
+            ltr27SettingsModel.stop();
             statusBarLine.toggleProgressIndicator(true);
             statusBarLine.clear();
             Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.SETTINGS_SCENE));
         }).start();
+    }
+
+    private void disableUiElements() {
+        ltr27SubmodulesSettings.toggleCheckBoxesState(true);
+        toggleUi(true);
+    }
+
+    private void toggleUi(boolean isDisable) {
+        frequencyComboBox.setDisable(isDisable);
+        rarefactionComboBox.setDisable(isDisable);
+        averageTextField.setDisable(isDisable);
+        enableAllButton.setDisable(isDisable);
+        initializeButton.setDisable(isDisable);
+        backButton.setDisable(isDisable);
+    }
+
+    private void loadInitialStateOfUi() {
+        frequencyLabel.setDisable(false);
+        frequencyComboBox.setDisable(false);
+        backButton.setDisable(false);
+        initializeButton.setDisable(false);
     }
 
     public Label getAverageLabel() {
