@@ -9,6 +9,8 @@ import ru.avem.posum.ControllerManager
 import ru.avem.posum.WindowsManager
 import ru.avem.posum.controllers.BaseController
 import ru.avem.posum.utils.StatusBarLine
+import ru.avem.posum.utils.Utils
+import java.lang.Thread.sleep
 
 class LTR27CalibrationController : BaseController {
     @FXML
@@ -87,6 +89,8 @@ class LTR27CalibrationController : BaseController {
     private lateinit var cm: ControllerManager
     private lateinit var wm: WindowsManager
     private lateinit var statusBarLine: StatusBarLine
+    var submoduleIndex = 0
+    private var stopped = false
 
     @FXML
     fun initialize() {
@@ -95,6 +99,23 @@ class LTR27CalibrationController : BaseController {
 
     fun setTitle(title: String) {
         Platform.runLater { titleLabel.text = title }
+    }
+
+    fun showValuesOfChannels() {
+        stopped = false
+
+        Thread {
+            while (!stopped) {
+                Platform.runLater {
+                    val rarefactionCoefficient = cm.ltr27Settings.rarefactionComboBox.selectionModel.selectedIndex + 1
+                    val channelOneValue = Utils.roundValue(cm.ltr27Settings.data[submoduleIndex * 2], Utils.getRounder(rarefactionCoefficient))
+                    val channelTwoValue = Utils.roundValue(cm.ltr27Settings.data[submoduleIndex * 2 + 1], Utils.getRounder(rarefactionCoefficient))
+                    valueOfChannelOneTextField.text = channelOneValue.toString()
+                    valueOfChannelTwoTextField.text = channelTwoValue.toString()
+                }
+                sleep(1000)
+            }
+        }.start()
     }
 
     fun handleAddPoint() {

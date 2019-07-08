@@ -200,47 +200,60 @@ public class LTR27Settings implements BaseController {
     }
 
     public void handleCalibrateSubmoduleOne() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[0], 1);
-        showCalibrationView(title);
+        int submoduleIndex = 0;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
+    }
+
+    private String createTitle(int submoduleIndex) {
+        return String.format("Градуировка субмодуля %s (слот %d)",
+                ltr27SubmodulesSettings.getSubmodulesNames()[submoduleIndex], submoduleIndex + 1);
     }
 
     public void handleCalibrateSubmoduleTwo() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[1], 2);
-        showCalibrationView(title);
+        int submoduleIndex = 1;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
     public void handleCalibrateSubmoduleThree() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[2], 3);
-        showCalibrationView(title);
+        int submoduleIndex = 2;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
     public void handleCalibrateSubmoduleFour() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[3], 4);
-        showCalibrationView(title);
+        int submoduleIndex = 3;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
     public void handleCalibrateSubmoduleFive() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[4], 5);
-        showCalibrationView(title);
+        int submoduleIndex = 4;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
     public void handleCalibrateSubmoduleSix() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[5], 6);
-        showCalibrationView(title);
+        int submoduleIndex = 5;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
     public void handleCalibrateSubmoduleSeven() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[6], 7);
-        showCalibrationView(title);
+        int submoduleIndex = 6;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
     public void handleCalibrateSubmoduleEight() {
-        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[7], 8);
-        showCalibrationView(title);
+        int submoduleIndex = 7;
+        String title = createTitle(submoduleIndex);
+        showCalibrationView(title, submoduleIndex);
     }
 
-    public void showCalibrationView(String title) {
-        cm.initLtr27CalibrationView(title);
+    public void showCalibrationView(String title, int submoduleIndex) {
+        cm.initLtr27CalibrationView(title, submoduleIndex);
         wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE);
     }
 

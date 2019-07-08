@@ -503,8 +503,15 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void initLtr27CalibrationView(String title) {
+    public void initLtr27CalibrationView(String title, int submoduleIndex) {
         ltr27CalibrationController.setTitle(title);
+        ltr27CalibrationController.setSubmoduleIndex(submoduleIndex);
+        ltr27CalibrationController.showValuesOfChannels();
+    }
+
+    @Override
+    public LTR27Settings getLtr27Settings() {
+        return ltr27Settings;
     }
 
     @Override
