@@ -452,7 +452,6 @@ public class CalibrationController implements BaseController {
 
     @FXML
     public void handleBackButton() {
-        statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
         backButton.setDisable(true);
         saveButton.setDisable(true);

@@ -62,4 +62,6 @@ public interface ControllerManager {
     void showTestProgram(TestProgram testProgram);
 
     void stopAllModules();
+
+    void initLtr27CalibrationView(String title);
 }

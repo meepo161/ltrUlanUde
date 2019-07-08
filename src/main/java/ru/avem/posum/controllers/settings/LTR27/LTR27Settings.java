@@ -196,7 +196,48 @@ public class LTR27Settings implements BaseController {
         initializeButton.setDisable(isInit);
     }
 
-    public void handleCalibrate() {
+    public void handleCalibrateSubmoduleOne() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[0], 1);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleTwo() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[1], 2);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleThree() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[2], 3);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleFour() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[3], 4);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleFive() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[4], 5);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleSix() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[5], 6);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleSeven() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[6], 7);
+        showCalibrationView(title);
+    }
+
+    public void handleCalibrateSubmoduleEight() {
+        String title = String.format("Градуировка субмодуля %s (слот %d)", ltr27SubmodulesSettings.getSubmodulesNames()[7], 8);
+        showCalibrationView(title);
+    }
+
+    public void showCalibrationView(String title) {
+        cm.initLtr27CalibrationView(title);
         wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE);
     }
 

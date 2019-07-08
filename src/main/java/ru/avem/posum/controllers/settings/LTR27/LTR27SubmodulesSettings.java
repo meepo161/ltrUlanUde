@@ -306,4 +306,15 @@ public class LTR27SubmodulesSettings {
             }
         }
     }
+
+    public String[] getSubmodulesNames() {
+        String[][] descriptions = ltr27Settings.getSubmodulesDescriptions();
+        String[] names = new String[descriptions.length];
+
+        for (int nameIndex = 0; nameIndex < names.length; nameIndex++) {
+            names[nameIndex] = descriptions[nameIndex][0];
+        }
+
+        return names;
+    }
 }

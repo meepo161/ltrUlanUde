@@ -23,6 +23,13 @@
       <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
+            <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
@@ -32,7 +39,7 @@
           <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-                <Label fx:id="titleLabel" styleClass="title" text="Градуировка канала" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label fx:id="titleLabel" styleClass="title" text="Градуировка субмодуля" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
             <SplitPane dividerPositions="1.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" style="-fx-background-insets: 0; -fx-border-color: #7D7D7D; -fx-border-radius: 5px;" GridPane.rowIndex="2">
               <items>
                     <GridPane minHeight="0.0">
@@ -51,6 +58,8 @@
                             <ColumnConstraints />
                         </columnConstraints>
                         <rowConstraints>
+                        <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
                             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
@@ -67,55 +76,56 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="50.0" minHeight="50.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                        <RowConstraints />
                         </rowConstraints>
                         <children>
-                            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #7D7D7D; -fx-border-radius: 0;" styleClass="wrapper" GridPane.columnSpan="12" GridPane.rowSpan="7">
+                            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #7D7D7D; -fx-border-radius: 0;" styleClass="wrapper" GridPane.columnSpan="12" GridPane.rowIndex="2" GridPane.rowSpan="7">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
                         </AnchorPane>
-                            <Label fx:id="dcLabel" text="Значение, В:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                            <Label fx:id="valueOfChannelOneLabel" text="Значение, В:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                                 <GridPane.margin>
                                     <Insets right="10.0" />
                                 </GridPane.margin>
                             </Label>
-                            <TextField fx:id="dcTextField" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                            <Label fx:id="loadValueLabel" text="Нагрузка:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                            <TextField fx:id="valueOfChannelOneTextField" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                            <Label fx:id="loadOfChannelOneLabel" text="Нагрузка:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                 <GridPane.margin>
                                     <Insets right="10.0" />
                                 </GridPane.margin>
                             </Label>
-                            <TextField fx:id="loadValueTextField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                            <Label fx:id="loadValueNameLabel" text="Ед. изм.:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                            <TextField fx:id="loadOfChannelOneTextField" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                            <Label fx:id="valueNameOfChannelOneLabel" text="Ед. изм.:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                                 <GridPane.margin>
                                     <Insets right="10.0" />
                                 </GridPane.margin>
                         </Label>
-                            <TextField fx:id="loadValueNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                            <Label fx:id="dcCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                            <TextField fx:id="valueNameOfChannelOneTextField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                            <Label fx:id="valueOfChannelOneCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                                 <GridPane.margin>
                                     <Insets right="10.0" />
                                 </GridPane.margin>
                             </Label>
-                            <ComboBox fx:id="dcMultipliersComboBox" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                            <Label fx:id="loadValueMultiplierLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                            <ComboBox fx:id="valueOfChannelOneMultipliersComboBox" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+                            <Label fx:id="loadOfChannelOneCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                                 <GridPane.margin>
                                     <Insets right="10.0" />
                                 </GridPane.margin>
                             </Label>
-                            <ComboBox fx:id="loadValueMultiplierComboBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-                            <CheckBox fx:id="setChannelValueCheckBox" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.rowIndex="5" GridPane.valignment="TOP">
+                            <ComboBox fx:id="loadOfChannelOneMultipliersComboBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+                            <CheckBox fx:id="setValueOfChannelOneCheckBox" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.rowIndex="7" GridPane.valignment="TOP">
                                 <GridPane.margin>
                                     <Insets left="260.0" />
                                 </GridPane.margin>
                             </CheckBox>
-                            <CheckBox fx:id="setNulCheckBox" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.rowIndex="5" GridPane.valignment="BOTTOM">
+                            <CheckBox fx:id="setNulOfChannelOneCheckBox" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
                                 <GridPane.margin>
                                     <Insets left="260.0" />
                                 </GridPane.margin>
                             </CheckBox>
-                            <Button fx:id="addToTableButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.halignment="LEFT" GridPane.rowIndex="5" />
-                            <TableView fx:id="calibrationTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 0 0 5px 5px; -fx-border-radius: 0 0 5px 5px;" GridPane.columnIndex="7" GridPane.rowIndex="1" GridPane.rowSpan="5">
+                            <Button fx:id="addToTableOfChannelOneButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
+                            <TableView fx:id="calibrationOfChannelOneTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 0 0 5px 5px; -fx-border-radius: 0 0 5px 5px;" GridPane.columnIndex="7" GridPane.rowIndex="3" GridPane.rowSpan="5">
                                 <placeholder>
                                     <Label text="Нет данных для отображения" />
                                 </placeholder>
@@ -130,8 +140,8 @@
                                     <Insets right="10.0" top="4.0" />
                                 </GridPane.margin>
                             </TableView>
-                        <Label fx:id="titleLabel1" styleClass="title" text="Градуировка канала" GridPane.columnSpan="8" GridPane.halignment="CENTER" GridPane.rowIndex="8" />
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #7D7D7D; -fx-border-radius: 0;" styleClass="wrapper" GridPane.columnSpan="8" GridPane.rowIndex="9" GridPane.rowSpan="8">
+                        <Label fx:id="heaaderOfChannelTwoLabel" styleClass="title" text="Второй канал" GridPane.columnSpan="8" GridPane.halignment="CENTER" GridPane.rowIndex="10" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: #7D7D7D; -fx-border-radius: 0;" styleClass="wrapper" GridPane.columnSpan="8" GridPane.rowIndex="11" GridPane.rowSpan="8">
                            <opaqueInsets>
                               <Insets />
                            </opaqueInsets>
@@ -139,52 +149,52 @@
                               <Insets bottom="-1.0" />
                            </GridPane.margin>
                         </AnchorPane>
-                        <Label fx:id="dcLabel1" text="Значение, В:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+                        <Label fx:id="valueOfChannelTwoLabel" text="Значение, В:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="12">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="dcTextField1" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-                        <Label fx:id="loadValueLabel1" text="Нагрузка:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+                        <TextField fx:id="valueOfChannelTwoTextField" editable="false" focusTraversable="false" mouseTransparent="true" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+                        <Label fx:id="loadOfChannelTwoLabel" text="Нагрузка:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="13">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="loadValueTextField1" GridPane.columnIndex="2" GridPane.rowIndex="11" />
-                        <Label fx:id="loadValueNameLabel1" text="Ед. изм.:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="12">
+                        <TextField fx:id="loadOfChannelTwoTextField" GridPane.columnIndex="2" GridPane.rowIndex="13" />
+                        <Label fx:id="valueNameOfChannelTwoLabel" text="Ед. изм.:" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="14">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <TextField fx:id="loadValueNameTextField1" GridPane.columnIndex="2" GridPane.rowIndex="12" />
-                        <Label fx:id="dcCoefficientLabel1" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="10">
+                        <TextField fx:id="valueNameOfChannelTwoTextField" GridPane.columnIndex="2" GridPane.rowIndex="14" />
+                        <Label fx:id="valueOfChannelTwoCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="12">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <ComboBox fx:id="dcMultipliersComboBox1" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="10" />
-                        <Label fx:id="loadValueMultiplierLabel1" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="11">
+                        <ComboBox fx:id="valueOfChannelTwoMultipliersComboBox" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="12" />
+                        <Label fx:id="loadOfChannelTwoCoefficientLabel" text="Множитель:" GridPane.columnIndex="4" GridPane.halignment="RIGHT" GridPane.rowIndex="13">
                            <GridPane.margin>
                               <Insets right="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <ComboBox fx:id="loadValueMultiplierComboBox1" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="11" />
-                        <CheckBox fx:id="setChannelValueCheckBox1" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="14" GridPane.valignment="TOP">
+                        <ComboBox fx:id="loadOfChannelTwoMultipliersComboBox" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="13" />
+                        <CheckBox fx:id="setValueOfChannelTwoCheckBox" mnemonicParsing="false" text="Задать значение" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="16" GridPane.valignment="TOP">
                            <GridPane.margin>
                               <Insets left="260.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <CheckBox fx:id="setNulCheckBox1" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+                        <CheckBox fx:id="setNulOfChannelTwoCheckBox" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="16" GridPane.valignment="BOTTOM">
                            <GridPane.margin>
                               <Insets left="260.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <Button fx:id="addToTableButton1" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.rowIndex="14">
+                        <Button fx:id="addToTableOfChannelTwoButton" disable="true" maxHeight="30.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleAddPoint" text="Добавить" GridPane.rowIndex="16">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Button>
-                        <TableView fx:id="calibrationTableView1" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 0 0 5px 5px; -fx-border-radius: 0 0 5px 5px;" GridPane.columnIndex="7" GridPane.rowIndex="10" GridPane.rowSpan="5">
+                        <TableView fx:id="calibrationOfChannelTwoTableView" focusTraversable="false" prefHeight="200.0" prefWidth="200.0" style="-fx-background-radius: 0 0 5px 5px; -fx-border-radius: 0 0 5px 5px;" GridPane.columnIndex="7" GridPane.rowIndex="12" GridPane.rowSpan="5">
                            <placeholder>
                               <Label text="Нет данных для отображения" />
                            </placeholder>
@@ -199,6 +209,7 @@
                               <Insets right="10.0" />
                            </GridPane.margin>
                         </TableView>
+                            <Label fx:id="headerOfChannelOneLabel" styleClass="title" text="Первый канал" GridPane.columnSpan="8" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                         </children>
                      <padding>
                         <Insets left="-1.0" right="-1.0" top="-1.0" />

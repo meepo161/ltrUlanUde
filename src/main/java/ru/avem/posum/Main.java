@@ -500,4 +500,9 @@ public class Main extends Application implements WindowsManager, ControllerManag
         primaryStage.setTitle("Настройки модуля " + moduleName);
         primaryStage.setScene(modulesPairs.get(id).getValue());
     }
+
+    @Override
+    public void initLtr27CalibrationView(String title) {
+        ltr27CalibrationController.setTitle(title);
+    }
 }
