@@ -28,7 +28,7 @@
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="270.0" minWidth="270.0" prefWidth="270.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="270.0" minWidth="270.0" prefWidth="270.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="10.0" minWidth="10.0" prefWidth="10.0" />
@@ -38,21 +38,21 @@
                 <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="5.0" minHeight="5.0" prefHeight="5.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="20.0" minHeight="20.0" prefHeight="20.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
                 <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -70,68 +70,76 @@
                         <Insets />
                     </GridPane.margin>
                 </CheckBox>
-            <Label fx:id="subModuleOneChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <TextField fx:id="subModuleOneChannelOneTextField" disable="true" focusTraversable="false" maxWidth="210.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <Label fx:id="subModuleOneChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <TextField fx:id="subModuleOneChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </TextField>
-            <Label fx:id="subModuleOneChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-            <TextField fx:id="subModuleOneChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="210.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Label fx:id="subModuleOneChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField fx:id="subModuleOneChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Button fx:id="calibrateSubmoduleOneButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.rowSpan="8" />
                 <CheckBox fx:id="submoduleTwoCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="5" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </CheckBox>
-            <Label fx:id="subModuleTwoChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="5" GridPane.rowIndex="4" />
-            <TextField fx:id="subModuleTwoChannelOneTextField" disable="true" focusTraversable="false" maxWidth="210.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="5" />
-            <Label fx:id="subModuleTwoChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="5" GridPane.rowIndex="7" />
-            <TextField fx:id="subModuleTwoChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="210.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="8" />
+            <Label fx:id="subModuleTwoChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+            <TextField fx:id="subModuleTwoChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+            <Label fx:id="subModuleTwoChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+            <TextField fx:id="subModuleTwoChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="6" />
+            <Button fx:id="calibrateSubmoduleTwoButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="5" GridPane.rowIndex="8" />
             <AnchorPane minWidth="210.0" prefHeight="210.0" styleClass="wrapper" GridPane.columnIndex="8" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.rowSpan="8" />
                 <CheckBox fx:id="submoduleThreeCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="9" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </CheckBox>
-            <Label fx:id="subModuleThreeChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="9" GridPane.rowIndex="4" />
-            <TextField fx:id="subModuleThreeChannelOneTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="5" />
-            <Label fx:id="subModuleThreeChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="9" GridPane.rowIndex="7" />
-            <TextField fx:id="subModuleThreeChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="8" />
+            <Label fx:id="subModuleThreeChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="9" GridPane.rowIndex="3" />
+            <TextField fx:id="subModuleThreeChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="4" />
+            <Label fx:id="subModuleThreeChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="9" GridPane.rowIndex="5" />
+            <TextField fx:id="subModuleThreeChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="6" />
+            <Button fx:id="calibrateSubmoduleThreeButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="9" GridPane.rowIndex="8" />
             <AnchorPane minWidth="210.0" prefHeight="210.0" styleClass="wrapper" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="2" GridPane.rowSpan="8" />
                 <CheckBox fx:id="submoduleFourCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль стсутствует" GridPane.columnIndex="13" GridPane.rowIndex="2">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </CheckBox>
-            <Label fx:id="subModuleFourChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="13" GridPane.rowIndex="4" />
-            <TextField fx:id="subModuleFourChannelOneTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="5" />
-            <Label fx:id="subModuleFourChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="13" GridPane.rowIndex="7" />
-            <TextField fx:id="subModuleFourChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="8" />
+            <Label fx:id="subModuleFourChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="13" GridPane.rowIndex="3" />
+            <TextField fx:id="subModuleFourChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="4" />
+            <Label fx:id="subModuleFourChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="13" GridPane.rowIndex="5" />
+            <TextField fx:id="subModuleFourChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="6" />
+            <Button fx:id="calibrateSubmoduleFourButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="13" GridPane.rowIndex="8" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="3" GridPane.rowIndex="11" GridPane.rowSpan="8" />
             <CheckBox fx:id="submoduleFiveCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-            <Label fx:id="subModuleFiveChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="1" GridPane.rowIndex="13" />
-            <TextField fx:id="subModuleFiveChannelOneTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-            <Label fx:id="subModuleFiveChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="1" GridPane.rowIndex="16" />
-            <TextField fx:id="subModuleFiveChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="17" />
+            <Label fx:id="subModuleFiveChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+            <TextField fx:id="subModuleFiveChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+            <Label fx:id="subModuleFiveChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+            <TextField fx:id="subModuleFiveChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <Button fx:id="calibrateSubmoduleFiveButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="1" GridPane.rowIndex="17" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnIndex="4" GridPane.columnSpan="3" GridPane.rowIndex="11" GridPane.rowSpan="8" />
             <CheckBox fx:id="submoduleSixCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="5" GridPane.rowIndex="11" />
-            <Label fx:id="subModuleSixChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="5" GridPane.rowIndex="13" />
-            <TextField fx:id="subModuleSixChannelOneTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="14" />
-            <Label fx:id="subModuleSixChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="5" GridPane.rowIndex="16" />
-            <TextField fx:id="subModuleSixChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="17" />
+            <Label fx:id="subModuleSixChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="5" GridPane.rowIndex="12" />
+            <TextField fx:id="subModuleSixChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="13" />
+            <Label fx:id="subModuleSixChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="5" GridPane.rowIndex="14" />
+            <TextField fx:id="subModuleSixChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="5" GridPane.rowIndex="15" />
+            <Button fx:id="calibrateSubmoduleSixButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="5" GridPane.rowIndex="17" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnIndex="8" GridPane.columnSpan="3" GridPane.rowIndex="11" GridPane.rowSpan="8" />
             <CheckBox fx:id="submoduleSevenCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="9" GridPane.rowIndex="11" />
-            <Label fx:id="subModuleSevenChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="9" GridPane.rowIndex="13" />
-            <TextField fx:id="subModuleSevenChannelOneTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="14" />
-            <Label fx:id="subModuleSevenChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="9" GridPane.rowIndex="16" />
-            <TextField fx:id="subModuleSevenChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="17" />
+            <Label fx:id="subModuleSevenChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="9" GridPane.rowIndex="12" />
+            <TextField fx:id="subModuleSevenChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="13" />
+            <Label fx:id="subModuleSevenChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="9" GridPane.rowIndex="14" />
+            <TextField fx:id="subModuleSevenChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="9" GridPane.rowIndex="15" />
+            <Button fx:id="calibrateSubmoduleSevenButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="9" GridPane.rowIndex="17" />
             <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnIndex="12" GridPane.columnSpan="3" GridPane.rowIndex="11" GridPane.rowSpan="8" />
             <CheckBox fx:id="submoduleEightCheckBox" disable="true" mnemonicParsing="false" text="Субмодуль отсутствует" GridPane.columnIndex="13" GridPane.rowIndex="11" />
-            <Label fx:id="subModuleEightChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="13" GridPane.rowIndex="13" />
-            <TextField fx:id="subModuleEightChannelOneTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="14" />
-            <Label fx:id="subModuleEightChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="13" GridPane.rowIndex="16" />
-            <TextField fx:id="subModuleEightChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="200.0" minWidth="200.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="17" />
+            <Label fx:id="subModuleEightChannelOneLabel" disable="true" text="Канал 1:" GridPane.columnIndex="13" GridPane.rowIndex="12" />
+            <TextField fx:id="subModuleEightChannelOneTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="13" />
+            <Label fx:id="subModuleEightChannelTwoLabel" disable="true" text="Канал 2:" GridPane.columnIndex="13" GridPane.rowIndex="14" />
+            <TextField fx:id="subModuleEightChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="15" />
+            <Button fx:id="calibrateSubmoduleEightButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrate" text="Градуировка" GridPane.columnIndex="13" GridPane.rowIndex="17" />
                 <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="15" GridPane.rowIndex="20" GridPane.rowSpan="3" />
                 <ComboBox fx:id="frequencyComboBox" maxWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="21">
                <GridPane.margin>

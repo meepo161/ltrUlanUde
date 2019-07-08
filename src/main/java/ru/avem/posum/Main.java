@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.controllers.calibration.CalibrationController;
+import ru.avem.posum.controllers.calibration.LTR27CalibrationController;
 import ru.avem.posum.controllers.process.LinkingController;
 import ru.avem.posum.controllers.process.ProcessController;
 import ru.avem.posum.controllers.settings.LTR212.LTR212Settings;
@@ -36,7 +37,9 @@ import java.util.List;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
     private CalibrationController calibrationController;
+    private LTR27CalibrationController ltr27CalibrationController;
     private Scene calibrationScene;
+    private Scene ltr27CalibrationScene;
     private volatile boolean closed;
     private LoginController loginController;
     private LinkingController linkingController;
@@ -79,6 +82,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createLTR212Scene();
         createSignalGraphScene();
         createCalibrationScene();
+        createLtr27CalibrationScene();
     }
 
     private void crateLoginScene() throws IOException {
@@ -135,22 +139,22 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createLTR24Scene() throws IOException {
-        ltr24Settings = (LTR24Settings) getController("/layouts/LTR24SettingView.fxml");
+        ltr24Settings = (LTR24Settings) getController("/layouts/ltr24SettingView.fxml");
         ltr24Scene = createScene(1280, 720);
     }
 
     private void createLTR27Scene() throws IOException {
-        ltr27Settings = (LTR27Settings) getController("/layouts/LTR27SettingView.fxml");
+        ltr27Settings = (LTR27Settings) getController("/layouts/ltr27SettingView.fxml");
         ltr27Scene = createScene(1280, 720);
     }
 
     private void createLTR34Scene() throws IOException {
-        ltr34Settings = (LTR34Settings) getController("/layouts/LTR34SettingView.fxml");
+        ltr34Settings = (LTR34Settings) getController("/layouts/ltr34SettingView.fxml");
         ltr34Scene = createScene(1280, 720);
     }
 
     private void createLTR212Scene() throws IOException {
-        ltr212Settings = (LTR212Settings) getController("/layouts/LTR212SettingView.fxml");
+        ltr212Settings = (LTR212Settings) getController("/layouts/ltr212SettingView.fxml");
         ltr212Scene = createScene(1280, 720);
     }
 
@@ -162,6 +166,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createCalibrationScene() throws IOException {
         calibrationController = (CalibrationController) getController("/layouts/calibrationView.fxml");
         calibrationScene = createScene(1280, 720);
+    }
+
+    private void createLtr27CalibrationScene() throws IOException {
+        ltr27CalibrationController = (LTR27CalibrationController) getController("/layouts/ltr27CalibrationView.fxml");
+        ltr27CalibrationScene = createScene(1280, 720);
     }
 
     @Override
@@ -229,16 +238,16 @@ public class Main extends Application implements WindowsManager, ControllerManag
             String layoutPath = null;
             switch (Utils.parseModuleType(module)) {
                 case Crate.LTR24:
-                    layoutPath = "/layouts/LTR24SettingView.fxml";
+                    layoutPath = "/layouts/ltr24SettingView.fxml";
                     break;
                 case Crate.LTR27:
-                    layoutPath = "/layouts/LTR27SettingView.fxml";
+                    layoutPath = "/layouts/ltr27SettingView.fxml";
                     break;
                 case Crate.LTR34:
-                    layoutPath = "/layouts/LTR34SettingView.fxml";
+                    layoutPath = "/layouts/ltr34SettingView.fxml";
                     break;
                 case Crate.LTR212:
-                    layoutPath = "/layouts/LTR212SettingView.fxml";
+                    layoutPath = "/layouts/ltr212SettingView.fxml";
                     break;
             }
             try {
@@ -269,7 +278,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     public void stop() {
         closed = true;
         stopAllModules();
-        System.out.println("Version_1.0 closed");
+        System.out.println("Version_1.1 closed");
     }
 
     @Override
@@ -478,6 +487,10 @@ public class Main extends Application implements WindowsManager, ControllerManag
             case CALIBRATION_SCENE:
                 primaryStage.setTitle("Градуировка канала");
                 primaryStage.setScene(calibrationScene);
+                break;
+            case LTR27_CALIBRATION_SCENE:
+                primaryStage.setTitle("Градуировка каналов");
+                primaryStage.setScene(ltr27CalibrationScene);
                 break;
         }
     }

@@ -3,10 +3,7 @@ package ru.avem.posum.controllers.settings.LTR27;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import ru.avem.posum.hardware.LTR27;
 import ru.avem.posum.utils.Utils;
 
@@ -15,6 +12,7 @@ import java.util.List;
 
 public class LTR27SubmodulesSettings {
     private LTR27Settings ltr27Settings;
+    private List<Button> calibrationButtons;
     private List<Label> channelOneLabels;
     private List<Label> channelTwoLabels;
     private List<TextField> channelOneTextFields;
@@ -46,6 +44,7 @@ public class LTR27SubmodulesSettings {
         fillListOfChannelTwoLabels();
         fillListOfChannelOneTextFields();
         fillListOfChannelTwoTextFields();
+        fillListOfCalibrationButtons();
     }
 
     private void fillListOfCheckBoxes() {
@@ -108,6 +107,18 @@ public class LTR27SubmodulesSettings {
         channelTwoTextFields.add(ltr27Settings.getSubModuleEightChannelTwoTextField());
     }
 
+    private void fillListOfCalibrationButtons() {
+        calibrationButtons = new ArrayList<>();
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleOneButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleTwoButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleThreeButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleFourButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleFiveButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleSixButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleSevenButton());
+        calibrationButtons.add(ltr27Settings.getCalibrateSubmoduleEightButton());
+    }
+
     private void listenCheckBoxes() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             CheckBox checkBox = checkBoxes.get(channelIndex);
@@ -117,6 +128,40 @@ public class LTR27SubmodulesSettings {
                 toggleSettingsUiElements();
             });
         }
+    }
+
+    private void toggleSubmoduleUiElements(int channelIndex, boolean isDisable) {
+        channelOneLabels.get(channelIndex).setDisable(isDisable);
+        channelOneTextFields.get(channelIndex).setDisable(isDisable);
+        channelTwoLabels.get(channelIndex).setDisable(isDisable);
+        channelTwoTextFields.get(channelIndex).setDisable(isDisable);
+        calibrationButtons.get(channelIndex).setDisable(isDisable);
+
+        if (isDisable) {
+            clearTextFields(channelIndex);
+        }
+    }
+
+    private void clearTextFields(int channelIndex) {
+        channelOneTextFields.get(channelIndex).setText("");
+        channelTwoTextFields.get(channelIndex).setText("");
+    }
+
+    private void toggleSettingsUiElements() {
+        for (CheckBox checkBox : checkBoxes) {
+            if (checkBox.isSelected()) {
+                toggle(false);
+                return;
+            }
+        }
+        toggle(true);
+    }
+
+    private void toggle(boolean isDisable) {
+        ltr27Settings.getAverageLabel().setDisable(isDisable);
+        ltr27Settings.getAverageTextField().setDisable(isDisable);
+        ltr27Settings.getRarefactionLabel().setDisable(isDisable);
+        ltr27Settings.getRarefactionComboBox().setDisable(isDisable);
     }
 
     private void setFrequencies() {
@@ -202,39 +247,6 @@ public class LTR27SubmodulesSettings {
                 checkBox.setSelected(isSelected);
             }
         }
-    }
-
-    private void toggleSubmoduleUiElements(int channelIndex, boolean isDisable) {
-        channelOneLabels.get(channelIndex).setDisable(isDisable);
-        channelOneTextFields.get(channelIndex).setDisable(isDisable);
-        channelTwoLabels.get(channelIndex).setDisable(isDisable);
-        channelTwoTextFields.get(channelIndex).setDisable(isDisable);
-
-        if (isDisable) {
-            clearTextFields(channelIndex);
-        }
-    }
-
-    private void toggleSettingsUiElements() {
-        for (CheckBox checkBox : checkBoxes) {
-            if (checkBox.isSelected()) {
-                toggle(false);
-                return;
-            }
-        }
-        toggle(true);
-    }
-
-    private void toggle(boolean isDisable) {
-        ltr27Settings.getAverageLabel().setDisable(isDisable);
-        ltr27Settings.getAverageTextField().setDisable(isDisable);
-        ltr27Settings.getRarefactionLabel().setDisable(isDisable);
-        ltr27Settings.getRarefactionComboBox().setDisable(isDisable);
-    }
-
-    private void clearTextFields(int channelIndex) {
-        channelOneTextFields.get(channelIndex).setText("");
-        channelTwoTextFields.get(channelIndex).setText("");
     }
 
     public void showValues() {

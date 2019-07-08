@@ -1,6 +1,7 @@
 package ru.avem.posum.controllers.settings.LTR27;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
@@ -9,6 +10,7 @@ import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.hardware.LTR27;
 import ru.avem.posum.models.settings.LTR27SettingsModel;
+import ru.avem.posum.models.signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -19,6 +21,22 @@ public class LTR27Settings implements BaseController {
     private TextField averageTextField;
     @FXML
     private Button backButton;
+    @FXML
+    private Button calibrateSubmoduleOneButton;
+    @FXML
+    private Button calibrateSubmoduleTwoButton;
+    @FXML
+    private Button calibrateSubmoduleThreeButton;
+    @FXML
+    private Button calibrateSubmoduleFourButton;
+    @FXML
+    private Button calibrateSubmoduleFiveButton;
+    @FXML
+    private Button calibrateSubmoduleSixButton;
+    @FXML
+    private Button calibrateSubmoduleSevenButton;
+    @FXML
+    private Button calibrateSubmoduleEightButton;
     @FXML
     private Label checkIcon;
     @FXML
@@ -123,9 +141,9 @@ public class LTR27Settings implements BaseController {
     private Label warningIcon;
 
     private ControllerManager cm;
-    private LTR27 ltr27 = new LTR27();
     private LTR27SettingsModel ltr27SettingsModel;
     private LTR27SubmodulesSettings ltr27SubmodulesSettings;
+    private SignalModel signalModel = new SignalModel();
     private boolean stoped;
     private String[][] submodulesDescription;
     private StatusBarLine statusBarLine;
@@ -178,6 +196,10 @@ public class LTR27Settings implements BaseController {
         initializeButton.setDisable(isInit);
     }
 
+    public void handleCalibrate() {
+        wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE);
+    }
+
     public void handleEnableAll() {
         ltr27SubmodulesSettings.enableAll();
     }
@@ -202,6 +224,38 @@ public class LTR27Settings implements BaseController {
 
     public TextField getAverageTextField() {
         return averageTextField;
+    }
+
+    public Button getCalibrateSubmoduleOneButton() {
+        return calibrateSubmoduleOneButton;
+    }
+
+    public Button getCalibrateSubmoduleTwoButton() {
+        return calibrateSubmoduleTwoButton;
+    }
+
+    public Button getCalibrateSubmoduleThreeButton() {
+        return calibrateSubmoduleThreeButton;
+    }
+
+    public Button getCalibrateSubmoduleFourButton() {
+        return calibrateSubmoduleFourButton;
+    }
+
+    public Button getCalibrateSubmoduleFiveButton() {
+        return calibrateSubmoduleFiveButton;
+    }
+
+    public Button getCalibrateSubmoduleSixButton() {
+        return calibrateSubmoduleSixButton;
+    }
+
+    public Button getCalibrateSubmoduleSevenButton() {
+        return calibrateSubmoduleSevenButton;
+    }
+
+    public Button getCalibrateSubmoduleEightButton() {
+        return calibrateSubmoduleEightButton;
     }
 
     public double[] getData() {
