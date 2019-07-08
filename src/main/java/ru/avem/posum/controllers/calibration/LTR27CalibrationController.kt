@@ -1,6 +1,7 @@
 package ru.avem.posum.controllers.calibration
 
 import javafx.application.Platform
+import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.control.*
@@ -95,6 +96,28 @@ class LTR27CalibrationController : BaseController {
     @FXML
     fun initialize() {
         statusBarLine = StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon)
+
+        setMultipliers(valueOfChannelOneMultipliersComboBox)
+        setMultipliers(loadOfChannelOneMultipliersComboBox)
+        setMultipliers(valueOfChannelTwoMultipliersComboBox)
+        setMultipliers(loadOfChannelTwoMultipliersComboBox)
+    }
+
+    private fun setMultipliers(comboBox: ComboBox<String>) {
+        val multipliers = FXCollections.observableArrayList<String>()
+        multipliers.add("0.00001")
+        multipliers.add("0.0001")
+        multipliers.add("0.001")
+        multipliers.add("0.01")
+        multipliers.add("0.1")
+        multipliers.add("1")
+        multipliers.add("10")
+        multipliers.add("100")
+        multipliers.add("1000")
+        multipliers.add("10000")
+        multipliers.add("100000")
+        comboBox.items = multipliers
+        comboBox.selectionModel.select(5)
     }
 
     fun setTitle(title: String) {
