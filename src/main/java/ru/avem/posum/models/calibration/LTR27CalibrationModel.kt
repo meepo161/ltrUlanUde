@@ -3,8 +3,9 @@ package ru.avem.posum.models.calibration
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
+import ru.avem.posum.controllers.calibration.LTR27CalibrationManager
 
-class LTR27CalibrationModel {
+class LTR27CalibrationModel : LTR27CalibrationManager {
     val calibrationPointsOfChannelOne: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val calibrationPointsOfChannelTwo: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val lineChartSeriesOfChannelOne = XYChart.Series<Number, Number>()
@@ -23,5 +24,32 @@ class LTR27CalibrationModel {
     fun addPointToGraphOfChannelTwo(calibrationPoint: CalibrationPoint) {
         val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
         lineChartSeriesOfChannelTwo.data.add(point)
+    }
+
+    override fun calibrate(value: Double, isChannelOne: Boolean): Double {
+        return if (isChannelOne) {
+            getCalibrated(value, calibrationPointsOfChannelOne)
+        } else {
+            getCalibrated(value, calibrationPointsOfChannelTwo)
+        }
+    }
+
+    private fun getCalibrated(value: Double, calibrationPoints: List<CalibrationPoint>): Double {
+        return if (calibrationPoints.isNotEmpty()) {
+            calibrationPoints.sortedBy { it.channelValue }
+            calibrate(value, calibrationPoints)
+        } else {
+            value
+        }
+    }
+
+    private fun calibrate(value: Double, calibrationPoints: List<CalibrationPoint>): Double {
+        val lowerBound = calibrationPoints.first().valueOfChannel
+        val upperBound = calibrationPoints.last().valueOfChannel
+        return when {
+            value < lowerBound -> calibrationPoints.first().loadOfChannel
+            value > upperBound -> calibrationPoints.last().loadOfChannel
+            else -> value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
+        }
     }
 }

@@ -1,8 +1,9 @@
 package ru.avem.posum;
 
+import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.controllers.process.LinkingController;
 import ru.avem.posum.controllers.settings.HardwareSettings;
-import ru.avem.posum.controllers.settings.LTR27.LTR27Settings;
+import ru.avem.posum.controllers.settings.LTR27.LTR27SettingsController;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.signal.SignalModel;
@@ -67,7 +68,7 @@ public interface ControllerManager {
 
     void initLtr27CalibrationView(String title, int submoduleIndex);
 
-    LTR27Settings getLtr27Settings();
+    BaseController getSettingsController();
 
     HardwareSettings getHardwareSettings();
 }

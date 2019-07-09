@@ -12,6 +12,7 @@ import org.controlsfx.control.StatusBar
 import ru.avem.posum.ControllerManager
 import ru.avem.posum.WindowsManager
 import ru.avem.posum.controllers.BaseController
+import ru.avem.posum.controllers.settings.LTR27.LTR27SettingsController
 import ru.avem.posum.models.calibration.CalibrationPoint
 import ru.avem.posum.models.calibration.LTR27CalibrationModel
 import ru.avem.posum.utils.NewUtils
@@ -104,7 +105,9 @@ class LTR27CalibrationController : BaseController {
     private lateinit var cm: ControllerManager
     private lateinit var wm: WindowsManager
     private lateinit var statusBarLine: StatusBarLine
+    private lateinit var ltr27SettingsController: LTR27SettingsController
     private val ltr27CalibrationModel = LTR27CalibrationModel()
+    private val lcm: LTR27CalibrationManager = ltr27CalibrationModel
     var submoduleIndex = 0
     private var showOfChannelOneStopped = false
     private var showOfChannelTwoStopped = false
@@ -113,8 +116,8 @@ class LTR27CalibrationController : BaseController {
     fun initialize() {
         statusBarLine = StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon)
 
-        add(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
-        add(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
+        listen(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
+        listen(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
         setMultipliers(valueOfChannelOneMultipliersComboBox)
         setMultipliers(loadOfChannelOneMultipliersComboBox)
         setMultipliers(valueOfChannelTwoMultipliersComboBox)
@@ -124,7 +127,7 @@ class LTR27CalibrationController : BaseController {
         initCheckBoxes()
     }
 
-    private fun add(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
+    private fun listen(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
         setDigitFilterTo(valueOfChannel, loadOfChannel, valueName, button)
         setDigitFilterTo(loadOfChannel, valueOfChannel, valueName, button)
 
@@ -265,9 +268,29 @@ class LTR27CalibrationController : BaseController {
         }
     }
 
+    fun setManagers() {
+        ltr27SettingsController = cm.settingsController as LTR27SettingsController
+        ltr27SettingsController.submoduleSettings.setLTR27CalibrationManager(lcm)
+    }
+
     fun initView(title: String) {
         Platform.runLater { titleLabel.text = title }
+        setValueName()
         showValuesOfChannels()
+    }
+
+    private fun setValueName() {
+        val label = String.format("Значение, %s", ltr27SettingsController.submodulesDescriptions[submoduleIndex][2])
+        Platform.runLater {
+            valueOfChannelOneLabel.text = label
+            valueOfChannelTwoLabel.text = label
+        }
+
+        val header = String.format("Значение на канале, %s", ltr27SettingsController.submodulesDescriptions[submoduleIndex][2])
+        Platform.runLater {
+            valueOfChannelOneColumn.text = header
+            valueOfChannelTwoColumn.text = header
+        }
     }
 
     private fun showValuesOfChannels() {
@@ -277,10 +300,10 @@ class LTR27CalibrationController : BaseController {
         Thread {
             while (!cm.isClosed && !showOfChannelOneStopped || !showOfChannelTwoStopped) {
                 if (!showOfChannelOneStopped) {
-                    show(cm.ltr27Settings.data[submoduleIndex * 2], valueOfChannelOneTextField)
+                    show(ltr27SettingsController.data[submoduleIndex * 2], valueOfChannelOneTextField)
                 }
                 if (!showOfChannelTwoStopped) {
-                    show(cm.ltr27Settings.data[submoduleIndex * 2 + 1], valueOfChannelTwoTextField)
+                    show(ltr27SettingsController.data[submoduleIndex * 2 + 1], valueOfChannelTwoTextField)
                 }
                 sleep(200)
             }
@@ -289,7 +312,7 @@ class LTR27CalibrationController : BaseController {
 
     private fun show(valueOfChannel: Double, textField: TextField) {
         Platform.runLater {
-            val rarefactionCoefficient = cm.ltr27Settings.rarefactionComboBox.selectionModel.selectedIndex + 1
+            val rarefactionCoefficient = ltr27SettingsController.rarefactionComboBox.selectionModel.selectedIndex + 1
             val channelValue = Utils.roundValue(valueOfChannel, Utils.getRounder(rarefactionCoefficient))
             textField.text = channelValue.toString()
         }
@@ -314,8 +337,7 @@ class LTR27CalibrationController : BaseController {
     private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
                       loadOfChannel: TextField, loadOfChannelMultipliers: ComboBox<String>,
                       valueName: TextField): CalibrationPoint {
-
-        val digits = cm.ltr27Settings.rarefactionComboBox.selectionModel.selectedIndex + 1
+        val digits = ltr27SettingsController.rarefactionComboBox.selectionModel.selectedIndex + 1
         val channelValueMultiplier = valueOfChannelMultipliers.selectionModel.selectedItem.toDouble()
         val channelValue = valueOfChannel.text.replace(",", ".").toDouble()
         val convertedChannelValue = NewUtils.convertFromExponentialFormat(channelValue * channelValueMultiplier, digits)

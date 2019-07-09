@@ -20,7 +20,7 @@ import ru.avem.posum.controllers.process.ProcessController;
 import ru.avem.posum.controllers.settings.HardwareSettings;
 import ru.avem.posum.controllers.settings.LTR212.LTR212Settings;
 import ru.avem.posum.controllers.settings.LTR24.LTR24Settings;
-import ru.avem.posum.controllers.settings.LTR27.LTR27Settings;
+import ru.avem.posum.controllers.settings.LTR27.LTR27SettingsController;
 import ru.avem.posum.controllers.settings.LTR34.LTR34Settings;
 import ru.avem.posum.controllers.settings.Settings;
 import ru.avem.posum.controllers.signal.SignalController;
@@ -49,7 +49,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Stage loginStage;
     private LTR24Settings ltr24Settings;
     private Scene ltr24Scene;
-    private LTR27Settings ltr27Settings;
+    private LTR27SettingsController ltr27SettingsController;
     private Scene ltr27Scene;
     private LTR34Settings ltr34Settings;
     private Scene ltr34Scene;
@@ -145,8 +145,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     private void createLTR27Scene() throws IOException {
-        ltr27Settings = (LTR27Settings) getController("/layouts/ltr27SettingView.fxml");
-        ltr27Scene = createScene(1280, 720);
+//        ltr27SettingsController = (LTR27SettingsController) getController("/layouts/ltr27SettingView.fxml");
+//        ltr27Scene = createScene(1280, 720);
     }
 
     private void createLTR34Scene() throws IOException {
@@ -386,8 +386,9 @@ public class Main extends Application implements WindowsManager, ControllerManag
                 ltr24Settings.loadSettings(moduleName);
                 break;
             case Crate.LTR27:
-                ltr27Settings = (LTR27Settings) modulesPairs.get(id).getKey();
-                ltr27Settings.loadSettings(moduleName);
+                ltr27SettingsController = (LTR27SettingsController) modulesPairs.get(id).getKey();
+                ltr27CalibrationController.setManagers();
+                ltr27SettingsController.loadSettings(moduleName);
                 break;
             case Crate.LTR34:
                 ltr34Settings = (LTR34Settings) modulesPairs.get(id).getKey();
@@ -504,13 +505,13 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     @Override
     public void initLtr27CalibrationView(String title, int submoduleIndex) {
-        ltr27CalibrationController.initView(title);
         ltr27CalibrationController.setSubmoduleIndex(submoduleIndex);
+        ltr27CalibrationController.initView(title);
     }
 
     @Override
-    public LTR27Settings getLtr27Settings() {
-        return ltr27Settings;
+    public BaseController getSettingsController() {
+        return modulesPairs.get(settings.getHardwareSettings().getSelectedModuleIndex()).getKey();
     }
 
     @Override

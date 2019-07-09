@@ -1,20 +1,18 @@
 package ru.avem.posum.controllers.settings.LTR27;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.hardware.LTR27;
 import ru.avem.posum.models.settings.LTR27SettingsModel;
 import ru.avem.posum.models.signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
-public class LTR27Settings implements BaseController {
+public class LTR27SettingsController implements BaseController {
     @FXML
     private Label averageLabel;
     @FXML
@@ -516,6 +514,10 @@ public class LTR27Settings implements BaseController {
         return subModuleEightChannelTwoTextField;
     }
 
+    public LTR27SubmodulesSettings getSubmoduleSettings() {
+        return ltr27SubmodulesSettings;
+    }
+
     public boolean isStopped() {
         return stoped || cm.isClosed();
     }
@@ -528,5 +530,6 @@ public class LTR27Settings implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
+        System.out.println("Inited-------------------------------CM-------------------------------------");
     }
 }
