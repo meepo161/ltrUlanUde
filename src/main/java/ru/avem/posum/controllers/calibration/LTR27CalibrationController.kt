@@ -243,10 +243,24 @@ class LTR27CalibrationController : BaseController {
         val isChannelOneCheckBox = checkBox.id.contains("One")
         if (isChannelOneCheckBox) {
             showOfChannelOneStopped = checkBox.isSelected
-            if (checkBox.isSelected) { valueOfChannelOneTextField.text = "" }
+            if (checkBox.isSelected) {
+                Platform.runLater {
+                    valueOfChannelOneTextField.text = ""
+                    valueOfChannelOneTextField.isMouseTransparent = !checkBox.isSelected
+                    valueOfChannelOneTextField.isFocusTraversable = checkBox.isSelected
+                    valueOfChannelOneTextField.isEditable = checkBox.isSelected
+                }
+            }
         } else {
             showOfChannelTwoStopped = checkBox.isSelected
-            if (checkBox.isSelected) { valueOfChannelTwoTextField.text = "" }
+            if (checkBox.isSelected) {
+                Platform.runLater {
+                    valueOfChannelTwoTextField.text = ""
+                    valueOfChannelTwoTextField.isMouseTransparent = !checkBox.isSelected
+                    valueOfChannelTwoTextField.isFocusTraversable = checkBox.isSelected
+                    valueOfChannelTwoTextField.isEditable = checkBox.isSelected
+                }
+            }
         }
     }
 
