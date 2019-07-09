@@ -122,24 +122,21 @@ class LTR27CalibrationController : BaseController {
     }
 
     private fun add(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
-        valueOfChannel.textProperty().addListener { _, oldValue, newValue ->
-            valueOfChannel.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
-            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
-                valueOfChannel.text = oldValue
-            }
-            toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
-        }
-
-        loadOfChannel.textProperty().addListener { _, oldValue, newValue ->
-            loadOfChannel.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
-            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
-                loadOfChannel.text = oldValue
-            }
-            toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
-        }
+        setDigitFilterTo(valueOfChannel, loadOfChannel, valueName, button)
+        setDigitFilterTo(loadOfChannel, valueOfChannel, valueName, button)
 
         valueName.textProperty().addListener { _ ->
             toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
+        }
+    }
+
+    private fun setDigitFilterTo(textField: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
+        textField.textProperty().addListener { _, oldValue, newValue ->
+            textField.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
+            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
+                textField.text = oldValue
+            }
+            toggleStateOf(button, textField, loadOfChannel, valueName)
         }
     }
 
