@@ -105,7 +105,8 @@ class LTR27CalibrationController : BaseController {
     private lateinit var statusBarLine: StatusBarLine
     private val ltr27CalibrationModel = LTR27CalibrationModel()
     var submoduleIndex = 0
-    private var stopped = false
+    private var showOfChannelOneStopped = false
+    private var showOfChannelTwoStopped = false
 
     @FXML
     fun initialize() {
@@ -119,6 +120,7 @@ class LTR27CalibrationController : BaseController {
         setMultipliers(loadOfChannelTwoMultipliersComboBox)
         initTables()
         initGraph()
+        initCheckBoxes()
     }
 
     private fun add(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
@@ -130,18 +132,18 @@ class LTR27CalibrationController : BaseController {
         }
     }
 
-    private fun setDigitFilterTo(textField: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
+    private fun setDigitFilterTo(textField: TextField, secondTextField: TextField, valueName: TextField, button: Button) {
         textField.textProperty().addListener { _, oldValue, newValue ->
             textField.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
             if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
                 textField.text = oldValue
             }
-            toggleStateOf(button, textField, loadOfChannel, valueName)
+            toggleStateOf(button, textField, secondTextField, valueName)
         }
     }
 
-    private fun toggleStateOf(button: Button, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField) {
-        button.isDisable = valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
+    private fun toggleStateOf(button: Button, firstTextField: TextField, secondTextField: TextField, valueName: TextField) {
+        button.isDisable = firstTextField.text.isEmpty() || secondTextField.text.isEmpty() || valueName.text.isEmpty()
     }
 
     private fun setMultipliers(comboBox: ComboBox<String>) {
@@ -218,26 +220,64 @@ class LTR27CalibrationController : BaseController {
         calibrationGraph.data.addAll(ltr27CalibrationModel.lineChartSeriesOfChannelOne, ltr27CalibrationModel.lineChartSeriesOfChannelTwo)
     }
 
+    private fun initCheckBoxes() {
+        listen(setValueOfChannelOneCheckBox)
+        listen(setValueOfChannelTwoCheckBox)
+    }
+
+    private fun listen(checkBox: CheckBox) {
+        checkBox.selectedProperty().addListener { _ ->
+            if (!setValueOfChannelOneCheckBox.isSelected || !setValueOfChannelTwoCheckBox.isSelected) {
+                if (showOfChannelOneStopped && showOfChannelTwoStopped) {
+                    showValuesOfChannels()
+                    toggleShoeThreadState(setValueOfChannelOneCheckBox)
+                    toggleShoeThreadState(setValueOfChannelTwoCheckBox)
+                }
+            }
+
+            toggleShoeThreadState(checkBox)
+        }
+    }
+
+    private fun toggleShoeThreadState(checkBox: CheckBox) {
+        val isChannelOneCheckBox = checkBox.id.contains("One")
+        if (isChannelOneCheckBox) {
+            showOfChannelOneStopped = checkBox.isSelected
+            if (checkBox.isSelected) { valueOfChannelOneTextField.text = "" }
+        } else {
+            showOfChannelTwoStopped = checkBox.isSelected
+            if (checkBox.isSelected) { valueOfChannelTwoTextField.text = "" }
+        }
+    }
+
     fun initView(title: String) {
         Platform.runLater { titleLabel.text = title }
         showValuesOfChannels()
     }
 
     private fun showValuesOfChannels() {
-        stopped = false
+        showOfChannelOneStopped = false
+        showOfChannelTwoStopped = false
 
         Thread {
-            while (!stopped) {
-                Platform.runLater {
-                    val rarefactionCoefficient = cm.ltr27Settings.rarefactionComboBox.selectionModel.selectedIndex + 1
-                    val channelOneValue = Utils.roundValue(cm.ltr27Settings.data[submoduleIndex * 2], Utils.getRounder(rarefactionCoefficient))
-                    val channelTwoValue = Utils.roundValue(cm.ltr27Settings.data[submoduleIndex * 2 + 1], Utils.getRounder(rarefactionCoefficient))
-                    valueOfChannelOneTextField.text = channelOneValue.toString()
-                    valueOfChannelTwoTextField.text = channelTwoValue.toString()
+            while (!cm.isClosed && !showOfChannelOneStopped || !showOfChannelTwoStopped) {
+                if (!showOfChannelOneStopped) {
+                    show(cm.ltr27Settings.data[submoduleIndex * 2], valueOfChannelOneTextField)
                 }
-                sleep(1000)
+                if (!showOfChannelTwoStopped) {
+                    show(cm.ltr27Settings.data[submoduleIndex * 2 + 1], valueOfChannelTwoTextField)
+                }
+                sleep(200)
             }
         }.start()
+    }
+
+    private fun show(valueOfChannel: Double, textField: TextField) {
+        Platform.runLater {
+            val rarefactionCoefficient = cm.ltr27Settings.rarefactionComboBox.selectionModel.selectedIndex + 1
+            val channelValue = Utils.roundValue(valueOfChannel, Utils.getRounder(rarefactionCoefficient))
+            textField.text = channelValue.toString()
+        }
     }
 
     fun handleAddCalibrationPointOfChannelOne() {
@@ -266,6 +306,9 @@ class LTR27CalibrationController : BaseController {
     }
 
     fun handleBackButton() {
+        showOfChannelOneStopped = true
+        showOfChannelTwoStopped = true
+
         val moduleName = cm.hardwareSettings.moduleName
         val selectedModuleIndex = cm.hardwareSettings.selectedModuleIndex
         wm.setModuleScene(moduleName, selectedModuleIndex)
