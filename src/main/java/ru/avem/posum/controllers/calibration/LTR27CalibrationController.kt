@@ -230,16 +230,16 @@ class LTR27CalibrationController : BaseController {
             if (!setValueOfChannelOneCheckBox.isSelected || !setValueOfChannelTwoCheckBox.isSelected) {
                 if (showOfChannelOneStopped && showOfChannelTwoStopped) {
                     showValuesOfChannels()
-                    toggleShoeThreadState(setValueOfChannelOneCheckBox)
-                    toggleShoeThreadState(setValueOfChannelTwoCheckBox)
+                    toggleShowThreadState(setValueOfChannelOneCheckBox)
+                    toggleShowThreadState(setValueOfChannelTwoCheckBox)
                 }
             }
 
-            toggleShoeThreadState(checkBox)
+            toggleShowThreadState(checkBox)
         }
     }
 
-    private fun toggleShoeThreadState(checkBox: CheckBox) {
+    private fun toggleShowThreadState(checkBox: CheckBox) {
         val isChannelOneCheckBox = checkBox.id.contains("One")
         if (isChannelOneCheckBox) {
             showOfChannelOneStopped = checkBox.isSelected
@@ -295,24 +295,31 @@ class LTR27CalibrationController : BaseController {
     }
 
     fun handleAddCalibrationPointOfChannelOne() {
-        val calibrationPoint = parse(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField)
+        val calibrationPoint = parse(valueOfChannelOneTextField, valueOfChannelOneMultipliersComboBox,
+                loadOfChannelOneTextField, loadOfChannelOneMultipliersComboBox, valueNameOfChannelOneTextField)
         calibrationPoint.channelNumber = 1
         ltr27CalibrationModel.calibrationPointsOfChannelOne.add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
     }
 
     fun handleAddCalibrationPointOfChannelTwo() {
-        val calibrationPoint = parse(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
+        val calibrationPoint = parse(valueOfChannelTwoTextField, valueOfChannelTwoMultipliersComboBox,
+                loadOfChannelTwoTextField, loadOfChannelTwoMultipliersComboBox, valueNameOfChannelTwoTextField)
         calibrationPoint.channelNumber = 2
         ltr27CalibrationModel.calibrationPointsOfChannelTwo.add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
     }
 
-    private fun parse(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField): CalibrationPoint {
-        val channelValue = valueOfChannel.text
-        val loadValue = loadOfChannel.text
-        val valueName = valueName.text
-        return CalibrationPoint(loadValue, channelValue, valueName)
+    private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
+                      loadOfChannel: TextField, loadOfChannelMultipliers: ComboBox<String>,
+                      valueName: TextField): CalibrationPoint {
+
+        val channelValueMultiplier = valueOfChannelMultipliers.selectionModel.selectedItem.toDouble()
+        val channelValue = valueOfChannel.text.toDouble() * channelValueMultiplier
+        val loadValueMultiplier = loadOfChannelMultipliers.selectionModel.selectedItem.toDouble()
+        val loadValue = loadOfChannel.text.toDouble() * loadValueMultiplier
+        val name = valueName.text
+        return CalibrationPoint(loadValue.toString(), channelValue.toString(), name)
     }
 
     fun handleSaveButton() {
