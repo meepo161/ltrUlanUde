@@ -7,6 +7,8 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.controllers.calibration.LTR27CalibrationController;
+import ru.avem.posum.controllers.calibration.LTR27CalibrationManager;
 import ru.avem.posum.models.settings.LTR27SettingsModel;
 import ru.avem.posum.models.signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -139,6 +141,7 @@ public class LTR27SettingsController implements BaseController {
     private Label warningIcon;
 
     private ControllerManager cm;
+    private LTR27CalibrationManager lcm;
     private LTR27SettingsModel ltr27SettingsModel;
     private LTR27SubmodulesSettings ltr27SubmodulesSettings;
     private SignalModel signalModel = new SignalModel();
@@ -251,7 +254,7 @@ public class LTR27SettingsController implements BaseController {
     }
 
     public void showCalibrationView(String title, int submoduleIndex) {
-        cm.initLtr27CalibrationView(title, submoduleIndex);
+        lcm.initCalibrationView(title, submoduleIndex);
         wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE);
     }
 
@@ -522,6 +525,10 @@ public class LTR27SettingsController implements BaseController {
         return stoped || cm.isClosed();
     }
 
+    public void setLTR27CalibrationManager(LTR27CalibrationManager lcm) {
+        this.lcm = lcm;
+    }
+
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
@@ -530,6 +537,5 @@ public class LTR27SettingsController implements BaseController {
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
-        System.out.println("Inited-------------------------------CM-------------------------------------");
     }
 }

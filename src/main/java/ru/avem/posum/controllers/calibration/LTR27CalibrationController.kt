@@ -20,7 +20,7 @@ import ru.avem.posum.utils.StatusBarLine
 import ru.avem.posum.utils.Utils
 import java.lang.Thread.sleep
 
-class LTR27CalibrationController : BaseController {
+class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     @FXML
     private lateinit var titleLabel: Label
     @FXML
@@ -107,8 +107,7 @@ class LTR27CalibrationController : BaseController {
     private lateinit var statusBarLine: StatusBarLine
     private lateinit var ltr27SettingsController: LTR27SettingsController
     private val ltr27CalibrationModel = LTR27CalibrationModel()
-    private val lcm: LTR27CalibrationManager = ltr27CalibrationModel
-    var submoduleIndex = 0
+    private var submoduleIndex = 0
     private var showOfChannelOneStopped = false
     private var showOfChannelTwoStopped = false
 
@@ -270,11 +269,13 @@ class LTR27CalibrationController : BaseController {
 
     fun setManagers() {
         ltr27SettingsController = cm.settingsController as LTR27SettingsController
-        ltr27SettingsController.submoduleSettings.setLTR27CalibrationManager(lcm)
+        ltr27SettingsController.setLTR27CalibrationManager(this)
+        ltr27SettingsController.submoduleSettings.setLTR27CalibrationManager(this)
     }
 
-    fun initView(title: String) {
+    override fun initCalibrationView(title: String, submoduleIndex: Int) {
         Platform.runLater { titleLabel.text = title }
+        this.submoduleIndex = submoduleIndex
         setValueName()
         showValuesOfChannels()
     }
@@ -359,6 +360,10 @@ class LTR27CalibrationController : BaseController {
         val moduleName = cm.hardwareSettings.moduleName
         val selectedModuleIndex = cm.hardwareSettings.selectedModuleIndex
         wm.setModuleScene(moduleName, selectedModuleIndex)
+    }
+
+    override fun calibrate(value: Double, isChannelOne: Boolean): Double {
+        return ltr27CalibrationModel.calibrate(value, isChannelOne)
     }
 
     override fun setControllerManager(cm: ControllerManager) {

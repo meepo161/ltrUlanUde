@@ -3,9 +3,8 @@ package ru.avem.posum.models.calibration
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
-import ru.avem.posum.controllers.calibration.LTR27CalibrationManager
 
-class LTR27CalibrationModel : LTR27CalibrationManager {
+class LTR27CalibrationModel {
     val calibrationPointsOfChannelOne: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val calibrationPointsOfChannelTwo: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val lineChartSeriesOfChannelOne = XYChart.Series<Number, Number>()
@@ -26,7 +25,7 @@ class LTR27CalibrationModel : LTR27CalibrationManager {
         lineChartSeriesOfChannelTwo.data.add(point)
     }
 
-    override fun calibrate(value: Double, isChannelOne: Boolean): Double {
+    fun calibrate(value: Double, isChannelOne: Boolean): Double {
         return if (isChannelOne) {
             getCalibrated(value, calibrationPointsOfChannelOne)
         } else {

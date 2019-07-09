@@ -66,8 +66,6 @@ public interface ControllerManager {
 
     void stopAllModules();
 
-    void initLtr27CalibrationView(String title, int submoduleIndex);
-
     BaseController getSettingsController();
 
     HardwareSettings getHardwareSettings();

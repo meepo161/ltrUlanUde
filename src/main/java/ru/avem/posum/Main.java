@@ -504,12 +504,6 @@ public class Main extends Application implements WindowsManager, ControllerManag
     }
 
     @Override
-    public void initLtr27CalibrationView(String title, int submoduleIndex) {
-        ltr27CalibrationController.setSubmoduleIndex(submoduleIndex);
-        ltr27CalibrationController.initView(title);
-    }
-
-    @Override
     public BaseController getSettingsController() {
         return modulesPairs.get(settings.getHardwareSettings().getSelectedModuleIndex()).getKey();
     }
