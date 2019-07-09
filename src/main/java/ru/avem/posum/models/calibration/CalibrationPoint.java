@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class CalibrationPoint {
     private int channelNumber;
-    private String loadValue;
     private String channelValue;
+    private String loadValue;
     private String valueName;
 
     public CalibrationPoint(int channelNumber, CalibrationModel calibrationModel) {
@@ -20,6 +20,12 @@ public class CalibrationPoint {
         this.loadValue = Utils.convertFromExponentialFormat(loadValue, decimalFormatScale);
         this.channelValue = Utils.convertFromExponentialFormat(channelValue, decimalFormatScale);
         this.valueName = calibrationModel.getValueName();
+    }
+
+    public CalibrationPoint(String loadValue, String channelValue, String valueName) {
+        this.channelValue = channelValue;
+        this.loadValue = loadValue;
+        this.valueName = valueName;
     }
 
     public static ArrayList<String> toString(ObservableList<CalibrationPoint> points) {
@@ -43,8 +49,16 @@ public class CalibrationPoint {
         return channelValue.replaceAll(",", ".");
     }
 
+    public double getValueOfChannel() {
+        return Double.parseDouble(channelValue);
+    }
+
     public String getLoadValue() {
         return loadValue.replaceAll(",", ".");
+    }
+
+    public double getLoadOfChannel() {
+        return Double.parseDouble(loadValue);
     }
 
     public String getValueName() {
@@ -71,5 +85,9 @@ public class CalibrationPoint {
         } else {
             return "";
         }
+    }
+
+    public void setChannelNumber(int channelNumber) {
+        this.channelNumber = channelNumber;
     }
 }

@@ -184,7 +184,7 @@ public class LTR27Settings implements BaseController {
                 toggleUiElements(true);
                 backButton.setDisable(false);
             } else {
-                System.out.println("Not initialized");
+                loadInitialStateOfUi();
             }
 
             statusBarLine.setStatus(ltr27SettingsModel.getModuleInstance().getStatus(), isSuccessful);

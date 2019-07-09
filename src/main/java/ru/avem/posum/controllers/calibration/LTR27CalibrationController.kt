@@ -5,10 +5,14 @@ import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.control.*
+import javafx.scene.control.cell.PropertyValueFactory
+import org.apache.poi.ss.formula.functions.Column
 import org.controlsfx.control.StatusBar
 import ru.avem.posum.ControllerManager
 import ru.avem.posum.WindowsManager
 import ru.avem.posum.controllers.BaseController
+import ru.avem.posum.models.calibration.CalibrationPoint
+import ru.avem.posum.models.calibration.LTR27CalibrationModel
 import ru.avem.posum.utils.StatusBarLine
 import ru.avem.posum.utils.Utils
 import java.lang.Thread.sleep
@@ -43,7 +47,11 @@ class LTR27CalibrationController : BaseController {
     @FXML
     private lateinit var addToTableOfChannelOneButton: Button
     @FXML
-    private lateinit var calibrationOfChannelOneTableView: TableView<String> // TODO: change this generic
+    private lateinit var calibrationOfChannelOneTableView: TableView<CalibrationPoint> // TODO: change this generic
+    @FXML
+    private lateinit var loadOfChannelOneColumn: TableColumn<CalibrationPoint, String>
+    @FXML
+    private lateinit var valueOfChannelOneColumn: TableColumn<CalibrationPoint, String>
     @FXML
     private lateinit var valueOfChannelTwoLabel: Label
     @FXML
@@ -71,7 +79,11 @@ class LTR27CalibrationController : BaseController {
     @FXML
     private lateinit var addToTableOfChannelTwoButton: Button
     @FXML
-    private lateinit var calibrationOfChannelTwoTableView: TableView<String> // TODO: change this generic
+    private lateinit var calibrationOfChannelTwoTableView: TableView<CalibrationPoint> // TODO: change this generic
+    @FXML
+    private lateinit var loadOfChannelTwoColumn: TableColumn<CalibrationPoint, String>
+    @FXML
+    private lateinit var valueOfChannelTwoColumn: TableColumn<CalibrationPoint, String>
     @FXML
     private lateinit var calibrationGraph: LineChart<Number, Number>
     @FXML
@@ -90,6 +102,7 @@ class LTR27CalibrationController : BaseController {
     private lateinit var cm: ControllerManager
     private lateinit var wm: WindowsManager
     private lateinit var statusBarLine: StatusBarLine
+    private val ltr27CalibrationModel = LTR27CalibrationModel()
     var submoduleIndex = 0
     private var stopped = false
 
@@ -97,10 +110,40 @@ class LTR27CalibrationController : BaseController {
     fun initialize() {
         statusBarLine = StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon)
 
+        listen(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
+        listen(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
         setMultipliers(valueOfChannelOneMultipliersComboBox)
         setMultipliers(loadOfChannelOneMultipliersComboBox)
         setMultipliers(valueOfChannelTwoMultipliersComboBox)
         setMultipliers(loadOfChannelTwoMultipliersComboBox)
+        initTables()
+        initGraph()
+    }
+
+    private fun listen(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField,  button: Button) {
+        valueOfChannel.textProperty().addListener { _, oldValue, newValue ->
+            valueOfChannel.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
+            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
+                valueOfChannel.text = oldValue
+            }
+            toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
+        }
+
+        loadOfChannel.textProperty().addListener { _, oldValue, newValue ->
+            loadOfChannel.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
+            if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
+                loadOfChannel.text = oldValue
+            }
+            toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
+        }
+
+        valueName.textProperty().addListener { _ ->
+            toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
+        }
+    }
+
+    private fun toggleStateOf(button: Button, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField) {
+        button.isDisable = valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
     }
 
     private fun setMultipliers(comboBox: ComboBox<String>) {
@@ -120,11 +163,25 @@ class LTR27CalibrationController : BaseController {
         comboBox.selectionModel.select(5)
     }
 
-    fun setTitle(title: String) {
-        Platform.runLater { titleLabel.text = title }
+    private fun initTables() {
+        loadOfChannelOneColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("loadValue")
+        valueOfChannelOneColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
+        loadOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("loadValue")
+        valueOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
+        calibrationOfChannelOneTableView.items = ltr27CalibrationModel.calibrationPointsOfChannelOne
+        calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.calibrationPointsOfChannelTwo
     }
 
-    fun showValuesOfChannels() {
+    private fun initGraph() {
+        calibrationGraph.data.addAll(ltr27CalibrationModel.lineChartSeriesOfChannelOne, ltr27CalibrationModel.lineChartSeriesOfChannelTwo)
+    }
+
+    fun initView(title: String) {
+        Platform.runLater { titleLabel.text = title }
+        showValuesOfChannels()
+    }
+
+    private fun showValuesOfChannels() {
         stopped = false
 
         Thread {
@@ -141,8 +198,25 @@ class LTR27CalibrationController : BaseController {
         }.start()
     }
 
-    fun handleAddPoint() {
+    fun handleAddCalibrationPointOfChannelOne() {
+        val calibrationPoint = parse(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField)
+        calibrationPoint.channelNumber = 1
+        ltr27CalibrationModel.calibrationPointsOfChannelOne.add(calibrationPoint)
+        ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
+    }
 
+    fun handleAddCalibrationPointOfChannelTwo() {
+        val calibrationPoint = parse(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
+        calibrationPoint.channelNumber = 2
+        ltr27CalibrationModel.calibrationPointsOfChannelTwo.add(calibrationPoint)
+        ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
+    }
+
+    private fun parse(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField): CalibrationPoint {
+        val channelValue = valueOfChannel.text
+        val loadValue = loadOfChannel.text
+        val valueName = valueName.text
+        return CalibrationPoint(loadValue, channelValue, valueName)
     }
 
     fun handleSaveButton() {
