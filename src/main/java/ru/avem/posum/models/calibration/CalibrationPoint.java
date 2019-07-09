@@ -23,8 +23,8 @@ public class CalibrationPoint {
     }
 
     public CalibrationPoint(String loadValue, String channelValue, String valueName) {
-        this.channelValue = channelValue;
         this.loadValue = loadValue;
+        this.channelValue = channelValue;
         this.valueName = valueName;
     }
 
@@ -50,7 +50,7 @@ public class CalibrationPoint {
     }
 
     public double getValueOfChannel() {
-        return Double.parseDouble(channelValue);
+        return Double.parseDouble(channelValue.replaceAll(",", "."));
     }
 
     public String getLoadValue() {
@@ -58,7 +58,7 @@ public class CalibrationPoint {
     }
 
     public double getLoadOfChannel() {
-        return Double.parseDouble(loadValue);
+        return Double.parseDouble(loadValue.replaceAll(",", "."));
     }
 
     public String getValueName() {

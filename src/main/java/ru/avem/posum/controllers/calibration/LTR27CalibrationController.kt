@@ -14,6 +14,7 @@ import ru.avem.posum.WindowsManager
 import ru.avem.posum.controllers.BaseController
 import ru.avem.posum.models.calibration.CalibrationPoint
 import ru.avem.posum.models.calibration.LTR27CalibrationModel
+import ru.avem.posum.utils.NewUtils
 import ru.avem.posum.utils.StatusBarLine
 import ru.avem.posum.utils.Utils
 import java.lang.Thread.sleep
@@ -314,12 +315,15 @@ class LTR27CalibrationController : BaseController {
                       loadOfChannel: TextField, loadOfChannelMultipliers: ComboBox<String>,
                       valueName: TextField): CalibrationPoint {
 
+        val digits = cm.ltr27Settings.rarefactionComboBox.selectionModel.selectedIndex + 1
         val channelValueMultiplier = valueOfChannelMultipliers.selectionModel.selectedItem.toDouble()
-        val channelValue = valueOfChannel.text.toDouble() * channelValueMultiplier
+        val channelValue = valueOfChannel.text.replace(",", ".").toDouble()
+        val convertedChannelValue = NewUtils.convertFromExponentialFormat(channelValue * channelValueMultiplier, digits)
         val loadValueMultiplier = loadOfChannelMultipliers.selectionModel.selectedItem.toDouble()
-        val loadValue = loadOfChannel.text.toDouble() * loadValueMultiplier
+        val loadValue = loadOfChannel.text.replace(",", ".").toDouble()
+        val convertedLoadValue = NewUtils.convertFromExponentialFormat(loadValue * loadValueMultiplier, digits)
         val name = valueName.text
-        return CalibrationPoint(loadValue.toString(), channelValue.toString(), name)
+        return CalibrationPoint(convertedLoadValue, convertedChannelValue, name)
     }
 
     fun handleSaveButton() {
