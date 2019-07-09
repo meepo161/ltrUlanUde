@@ -4,9 +4,10 @@ import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
+import javafx.scene.chart.XYChart
 import javafx.scene.control.*
 import javafx.scene.control.cell.PropertyValueFactory
-import org.apache.poi.ss.formula.functions.Column
+import javafx.scene.input.MouseButton
 import org.controlsfx.control.StatusBar
 import ru.avem.posum.ControllerManager
 import ru.avem.posum.WindowsManager
@@ -110,8 +111,8 @@ class LTR27CalibrationController : BaseController {
     fun initialize() {
         statusBarLine = StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon)
 
-        listen(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
-        listen(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
+        add(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
+        add(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
         setMultipliers(valueOfChannelOneMultipliersComboBox)
         setMultipliers(loadOfChannelOneMultipliersComboBox)
         setMultipliers(valueOfChannelTwoMultipliersComboBox)
@@ -120,7 +121,7 @@ class LTR27CalibrationController : BaseController {
         initGraph()
     }
 
-    private fun listen(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField,  button: Button) {
+    private fun add(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
         valueOfChannel.textProperty().addListener { _, oldValue, newValue ->
             valueOfChannel.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
             if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
@@ -170,6 +171,50 @@ class LTR27CalibrationController : BaseController {
         valueOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
         calibrationOfChannelOneTableView.items = ltr27CalibrationModel.calibrationPointsOfChannelOne
         calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.calibrationPointsOfChannelTwo
+
+        val contextMenuOfChannelOne = getNewContextMenu(
+                { deletePoint(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne) },
+                { clearPoints(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne) })
+        val contextMenuOfChannelTwo = getNewContextMenu(
+                { deletePoint(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo) },
+                { clearPoints(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo) })
+        add(contextMenuOfChannelOne, calibrationOfChannelOneTableView)
+        add(contextMenuOfChannelTwo, calibrationOfChannelTwoTableView)
+    }
+
+    private fun getNewContextMenu(deleteOperation: () -> Unit, clearOperation: () -> Unit): ContextMenu {
+        val menuItemDelete = MenuItem("Удалить")
+        val menuItemClear = MenuItem("Удалить все")
+
+        menuItemDelete.setOnAction { deleteOperation() }
+        menuItemClear.setOnAction { clearOperation() }
+
+        return ContextMenu(menuItemDelete, menuItemClear)
+    }
+
+    private fun deletePoint(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>) {
+        val selectedIndex = tableView.selectionModel.selectedIndex
+        tableView.items.removeAt(selectedIndex)
+        graphSeries.data.removeAt(selectedIndex)
+    }
+
+    private fun clearPoints(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>) {
+        tableView.items.clear()
+        graphSeries.data.clear()
+    }
+
+    private fun add(contextMenu: ContextMenu, tableView: TableView<CalibrationPoint>) {
+        tableView.setRowFactory({ tv ->
+            val row = TableRow<CalibrationPoint>()
+            row.setOnMouseClicked { event ->
+                if (event.button == MouseButton.SECONDARY && !row.isEmpty) {
+                    contextMenu.show(tableView, event.screenX, event.screenY)
+                } else if (event.clickCount == 1) {
+                    contextMenu.hide()
+                }
+            }
+            row
+        })
     }
 
     private fun initGraph() {

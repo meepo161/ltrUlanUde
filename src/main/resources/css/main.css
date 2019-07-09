@@ -62,7 +62,7 @@
     -fx-background-insets: 0 0 0 0;
 }
 
-.table-view:focused .table-row-cell:focused {
+.table-view:focused .table-row-cell:focused, .list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused {
     -fx-background-color: -fx-background, -fx-selection-bar-non-focused, -fx-background;
     -fx-background-insets: 0 0.5 0.5 0.5;
 }
