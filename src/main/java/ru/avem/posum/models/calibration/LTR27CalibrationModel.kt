@@ -1,12 +1,13 @@
 package ru.avem.posum.models.calibration
 
+import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
 
 class LTR27CalibrationModel {
-    val calibrationPointsOfChannelOne = mutableListOf<CalibrationPoint>()
-    val calibrationPointsOfChannelTwo = mutableListOf<CalibrationPoint>()
+    private val calibrationPointsOfChannelOne = mutableListOf<CalibrationPoint>()
+    private val calibrationPointsOfChannelTwo = mutableListOf<CalibrationPoint>()
     val bufferedCalibrationPointsOfChannelOne: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val bufferedCalibrationPointsOfChannelTwo: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val lineChartSeriesOfChannelOne = XYChart.Series<Number, Number>()
@@ -17,33 +18,25 @@ class LTR27CalibrationModel {
         lineChartSeriesOfChannelTwo.name = "Второй канал"
     }
 
-    fun updateGraph() {
-        lineChartSeriesOfChannelOne.data.clear()
-        lineChartSeriesOfChannelTwo.data.clear()
-
-        for (calibrationPoint in calibrationPointsOfChannelOne) {
-            addPointToGraphOfChannelOne(calibrationPoint)
-        }
-        for (calibrationPoint in calibrationPointsOfChannelTwo) {
-            addPointToGraphOfChannelTwo(calibrationPoint)
-        }
-    }
-
     fun addPointToGraphOfChannelOne(calibrationPoint: CalibrationPoint) {
-        val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
-        lineChartSeriesOfChannelOne.data.add(point)
+        Platform.runLater {
+            val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
+            lineChartSeriesOfChannelOne.data.add(point)
+        }
     }
 
     fun addPointToGraphOfChannelTwo(calibrationPoint: CalibrationPoint) {
-        val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
-        lineChartSeriesOfChannelTwo.data.add(point)
+        Platform.runLater {
+            val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
+            lineChartSeriesOfChannelTwo.data.add(point)
+        }
     }
 
     fun calibrate(value: Double, isChannelOne: Boolean): Double {
         return if (isChannelOne) {
-            getCalibrated(value, bufferedCalibrationPointsOfChannelOne)
+            getCalibrated(value, calibrationPointsOfChannelOne)
         } else {
-            getCalibrated(value, bufferedCalibrationPointsOfChannelTwo)
+            getCalibrated(value, calibrationPointsOfChannelTwo)
         }
     }
 
@@ -72,5 +65,29 @@ class LTR27CalibrationModel {
     fun clearBuffer() {
         bufferedCalibrationPointsOfChannelOne.clear()
         bufferedCalibrationPointsOfChannelTwo.clear()
+    }
+
+    fun updateGraph() {
+        lineChartSeriesOfChannelOne.data.clear()
+        lineChartSeriesOfChannelTwo.data.clear()
+
+        for (calibrationPoint in calibrationPointsOfChannelOne) {
+            addPointToGraphOfChannelOne(calibrationPoint)
+        }
+        for (calibrationPoint in calibrationPointsOfChannelTwo) {
+            addPointToGraphOfChannelTwo(calibrationPoint)
+        }
+    }
+
+    fun save() {
+        calibrationPointsOfChannelOne.clear()
+        calibrationPointsOfChannelTwo.clear()
+        calibrationPointsOfChannelOne.addAll(bufferedCalibrationPointsOfChannelOne)
+        calibrationPointsOfChannelTwo.addAll(bufferedCalibrationPointsOfChannelTwo)
+    }
+
+    fun load() {
+        bufferedCalibrationPointsOfChannelOne.addAll(calibrationPointsOfChannelOne)
+        bufferedCalibrationPointsOfChannelTwo.addAll(calibrationPointsOfChannelTwo)
     }
 }

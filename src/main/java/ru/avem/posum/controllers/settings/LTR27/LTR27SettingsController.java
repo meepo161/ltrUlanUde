@@ -288,8 +288,8 @@ public class LTR27SettingsController implements BaseController {
 
     private void showCalibrationView(String title, int submoduleIndex) {
         lcm.initCalibrationView(title, submoduleIndex);
-        statusBarLine.toggleProgressIndicator(true);
         statusBarLine.clear();
+        statusBarLine.toggleProgressIndicator(true);
         Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE));
     }
 

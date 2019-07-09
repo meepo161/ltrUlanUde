@@ -276,6 +276,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     override fun initCalibrationView(title: String, submoduleIndex: Int) {
         Platform.runLater { titleLabel.text = title }
         this.submoduleIndex = submoduleIndex
+        ltr27CalibrationModel.load()
         setValueName()
         showValuesOfChannels()
     }
@@ -350,7 +351,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     }
 
     fun handleSaveButton() {
-
+        ltr27CalibrationModel.save()
     }
 
     fun handleBackButton() {
@@ -389,6 +390,9 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
             valueOfChannelTwoMultipliersComboBox.selectionModel.select(5)
             loadOfChannelTwoMultipliersComboBox.selectionModel.select(5)
         }
+
+        statusBarLine.clear()
+        statusBarLine.toggleProgressIndicator(true)
     }
 
     override fun calibrate(value: Double, isChannelOne: Boolean): Double {
