@@ -5,14 +5,28 @@ import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
 
 class LTR27CalibrationModel {
-    val calibrationPointsOfChannelOne: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
-    val calibrationPointsOfChannelTwo: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
+    val calibrationPointsOfChannelOne = mutableListOf<CalibrationPoint>()
+    val calibrationPointsOfChannelTwo = mutableListOf<CalibrationPoint>()
+    val bufferedCalibrationPointsOfChannelOne: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
+    val bufferedCalibrationPointsOfChannelTwo: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
     val lineChartSeriesOfChannelOne = XYChart.Series<Number, Number>()
     val lineChartSeriesOfChannelTwo = XYChart.Series<Number, Number>()
 
     init {
         lineChartSeriesOfChannelOne.name = "Первый канал"
         lineChartSeriesOfChannelTwo.name = "Второй канал"
+    }
+
+    fun updateGraph() {
+        lineChartSeriesOfChannelOne.data.clear()
+        lineChartSeriesOfChannelTwo.data.clear()
+
+        for (calibrationPoint in calibrationPointsOfChannelOne) {
+            addPointToGraphOfChannelOne(calibrationPoint)
+        }
+        for (calibrationPoint in calibrationPointsOfChannelTwo) {
+            addPointToGraphOfChannelTwo(calibrationPoint)
+        }
     }
 
     fun addPointToGraphOfChannelOne(calibrationPoint: CalibrationPoint) {
@@ -27,9 +41,9 @@ class LTR27CalibrationModel {
 
     fun calibrate(value: Double, isChannelOne: Boolean): Double {
         return if (isChannelOne) {
-            getCalibrated(value, calibrationPointsOfChannelOne)
+            getCalibrated(value, bufferedCalibrationPointsOfChannelOne)
         } else {
-            getCalibrated(value, calibrationPointsOfChannelTwo)
+            getCalibrated(value, bufferedCalibrationPointsOfChannelTwo)
         }
     }
 
@@ -53,5 +67,10 @@ class LTR27CalibrationModel {
             value > upperBound -> calibrationPoints.last().loadOfChannel
             else -> value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
         }
+    }
+
+    fun clearBuffer() {
+        bufferedCalibrationPointsOfChannelOne.clear()
+        bufferedCalibrationPointsOfChannelTwo.clear()
     }
 }

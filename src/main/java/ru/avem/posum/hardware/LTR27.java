@@ -7,6 +7,7 @@ import java.util.List;
 
 public class LTR27 extends ADC {
     private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
+    public static final int MAX_FREQUENCY = 1000; // максимальная частота дискретизации модуля
     public static final int MAX_SUBMODULES = 8; // максимальное количество мезонинов в модуле
     private final int DESCRIPTIONS = 3; // количество строк описания мезонина
     private String[][] submodulesDescription = new String[MAX_SUBMODULES][DESCRIPTIONS];

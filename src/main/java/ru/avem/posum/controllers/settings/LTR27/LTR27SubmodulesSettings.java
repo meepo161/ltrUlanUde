@@ -255,7 +255,7 @@ public class LTR27SubmodulesSettings {
         new Thread(() -> {
             while (!ltr27SettingsController.isStopped()) {
                 double[] data = ltr27SettingsController.getData();
-                bufferedData = new double[data.length];
+                bufferedData = new double[LTR27.MAX_FREQUENCY * LTR27.MAX_SUBMODULES];
 
                 int channelIndex = 0;
 

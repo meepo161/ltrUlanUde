@@ -141,31 +141,14 @@
             <TextField fx:id="subModuleEightChannelTwoTextField" disable="true" focusTraversable="false" maxWidth="270.0" minWidth="270.0" mouseTransparent="true" promptText="Значение" GridPane.columnIndex="13" GridPane.rowIndex="15" />
             <Button fx:id="calibrateSubmoduleEightButton" disable="true" maxWidth="270.0" minWidth="270.0" mnemonicParsing="false" onAction="#handleCalibrateSubmoduleEight" text="Градуировка" GridPane.columnIndex="13" GridPane.rowIndex="17" />
                 <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="15" GridPane.rowIndex="20" GridPane.rowSpan="3" />
-                <ComboBox fx:id="frequencyComboBox" maxWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="21">
-               <GridPane.margin>
-                  <Insets left="126.0" />
-               </GridPane.margin></ComboBox>
                 <Label fx:id="frequencyLabel" text="Частота дискр.:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="21">
                <GridPane.margin>
                   <Insets right="10.0" />
                </GridPane.margin></Label>
-                <Button fx:id="initializeButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
-                    <GridPane.margin>
-                        <Insets left="270.0" />
-                    </GridPane.margin>
-                </Button>
-                <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBack" text="Назад" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
-                    <GridPane.margin>
-                        <Insets right="270.0" />
-                    </GridPane.margin>
-                </Button>
-                <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
-                <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
-                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
-                <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="25">
-                    <GridPane.margin>
-                        <Insets left="15.0" />
-                    </GridPane.margin></StatusBar>
+                <ComboBox fx:id="frequencyComboBox" maxWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="21">
+               <GridPane.margin>
+                  <Insets left="126.0" />
+               </GridPane.margin></ComboBox>
             <Label fx:id="rarefactionLabel" disable="true" text="Знаков после запятой:" GridPane.columnIndex="5" GridPane.rowIndex="21" />
             <ComboBox fx:id="rarefactionComboBox" disable="true" prefWidth="150.0" GridPane.columnIndex="5" GridPane.rowIndex="21">
                <GridPane.margin>
@@ -179,6 +162,24 @@
                </GridPane.margin>
             </TextField>
             <Button fx:id="enableAllButton" disable="true" mnemonicParsing="false" onAction="#handleEnableAll" text="Включить все" GridPane.columnIndex="13" GridPane.rowIndex="21" />
+            <CheckBox fx:id="calibrationCheckBox" disable="true" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="13" GridPane.halignment="RIGHT" GridPane.rowIndex="21" />
+                <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBack" text="Назад" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
+                    <GridPane.margin>
+                        <Insets right="270.0" />
+                    </GridPane.margin>
+                </Button>
+                <Button fx:id="initializeButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
+                    <GridPane.margin>
+                        <Insets left="270.0" />
+                    </GridPane.margin>
+                </Button>
+                <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
+                <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
+                <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" mouseTransparent="true" style="-fx-opacity: 0;" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="25" />
+                <StatusBar fx:id="statusBar" text="" GridPane.columnSpan="10" GridPane.rowIndex="25">
+                    <GridPane.margin>
+                        <Insets left="15.0" />
+                    </GridPane.margin></StatusBar>
             </children>
         </GridPane>
     </children>

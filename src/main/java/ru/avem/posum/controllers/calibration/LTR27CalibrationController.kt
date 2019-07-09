@@ -171,8 +171,8 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         valueOfChannelOneColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
         loadOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("loadValue")
         valueOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
-        calibrationOfChannelOneTableView.items = ltr27CalibrationModel.calibrationPointsOfChannelOne
-        calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.calibrationPointsOfChannelTwo
+        calibrationOfChannelOneTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne
+        calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo
 
         val contextMenuOfChannelOne = getNewContextMenu(
                 { deletePoint(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne) },
@@ -299,7 +299,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         showOfChannelTwoStopped = false
 
         Thread {
-            while (!cm.isClosed && !showOfChannelOneStopped || !showOfChannelTwoStopped) {
+            while (!cm.isClosed && (!showOfChannelOneStopped || !showOfChannelTwoStopped)) {
                 if (!showOfChannelOneStopped) {
                     show(ltr27SettingsController.data[submoduleIndex * 2], valueOfChannelOneTextField)
                 }
@@ -323,7 +323,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         val calibrationPoint = parse(valueOfChannelOneTextField, valueOfChannelOneMultipliersComboBox,
                 loadOfChannelOneTextField, loadOfChannelOneMultipliersComboBox, valueNameOfChannelOneTextField)
         calibrationPoint.channelNumber = 1
-        ltr27CalibrationModel.calibrationPointsOfChannelOne.add(calibrationPoint)
+        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne.add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
     }
 
@@ -331,7 +331,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         val calibrationPoint = parse(valueOfChannelTwoTextField, valueOfChannelTwoMultipliersComboBox,
                 loadOfChannelTwoTextField, loadOfChannelTwoMultipliersComboBox, valueNameOfChannelTwoTextField)
         calibrationPoint.channelNumber = 2
-        ltr27CalibrationModel.calibrationPointsOfChannelTwo.add(calibrationPoint)
+        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo.add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
     }
 
@@ -354,12 +354,41 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     }
 
     fun handleBackButton() {
-        showOfChannelOneStopped = true
-        showOfChannelTwoStopped = true
+        statusBarLine.setStatusOfProgress("Загрузка настроек модуля")
 
-        val moduleName = cm.hardwareSettings.moduleName
-        val selectedModuleIndex = cm.hardwareSettings.selectedModuleIndex
-        wm.setModuleScene(moduleName, selectedModuleIndex)
+        Thread {
+            showOfChannelOneStopped = true
+            showOfChannelTwoStopped = true
+            clearView()
+            Platform.runLater {
+                val moduleName = cm.hardwareSettings.moduleName
+                val selectedModuleIndex = cm.hardwareSettings.selectedModuleIndex
+                wm.setModuleScene(moduleName, selectedModuleIndex)
+            }
+        }.start()
+    }
+
+    private fun clearView() {
+        ltr27CalibrationModel.clearBuffer()
+        ltr27CalibrationModel.updateGraph()
+
+        Platform.runLater {
+            setValueOfChannelOneCheckBox.isSelected = false
+            setNulOfChannelOneCheckBox.isSelected = false
+            valueOfChannelOneTextField.text = ""
+            loadOfChannelOneTextField.text = ""
+            valueNameOfChannelOneTextField.text = ""
+            valueOfChannelOneMultipliersComboBox.selectionModel.select(5)
+            loadOfChannelOneMultipliersComboBox.selectionModel.select(5)
+
+            setValueOfChannelTwoCheckBox.isSelected = false
+            setNulOfChannelTwoCheckBox.isSelected = false
+            valueOfChannelTwoTextField.text = ""
+            loadOfChannelTwoTextField.text = ""
+            valueNameOfChannelTwoTextField.text = ""
+            valueOfChannelTwoMultipliersComboBox.selectionModel.select(5)
+            loadOfChannelTwoMultipliersComboBox.selectionModel.select(5)
+        }
     }
 
     override fun calibrate(value: Double, isChannelOne: Boolean): Double {

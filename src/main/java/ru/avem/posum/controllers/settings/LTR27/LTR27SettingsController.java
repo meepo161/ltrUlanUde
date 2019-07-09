@@ -7,7 +7,6 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
-import ru.avem.posum.controllers.calibration.LTR27CalibrationController;
 import ru.avem.posum.controllers.calibration.LTR27CalibrationManager;
 import ru.avem.posum.models.settings.LTR27SettingsModel;
 import ru.avem.posum.models.signal.SignalModel;
@@ -21,6 +20,8 @@ public class LTR27SettingsController implements BaseController {
     private TextField averageTextField;
     @FXML
     private Button backButton;
+    @FXML
+    private CheckBox calibrationCheckBox;
     @FXML
     private Button calibrateSubmoduleOneButton;
     @FXML
@@ -212,50 +213,84 @@ public class LTR27SettingsController implements BaseController {
     }
 
     public void handleCalibrateSubmoduleTwo() {
-        int submoduleIndex = 1;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 1;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
     public void handleCalibrateSubmoduleThree() {
-        int submoduleIndex = 2;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 2;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
     public void handleCalibrateSubmoduleFour() {
-        int submoduleIndex = 3;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 3;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
     public void handleCalibrateSubmoduleFive() {
-        int submoduleIndex = 4;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 4;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
     public void handleCalibrateSubmoduleSix() {
-        int submoduleIndex = 5;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 5;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
     public void handleCalibrateSubmoduleSeven() {
-        int submoduleIndex = 6;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 6;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
     public void handleCalibrateSubmoduleEight() {
-        int submoduleIndex = 7;
-        String title = createTitle(submoduleIndex);
-        showCalibrationView(title, submoduleIndex);
+        showStatusOfCalibrationLoading();
+
+        new Thread(() -> {
+            int submoduleIndex = 7;
+            String title = createTitle(submoduleIndex);
+            showCalibrationView(title, submoduleIndex);
+        }).start();
     }
 
-    public void showCalibrationView(String title, int submoduleIndex) {
+    private void showStatusOfCalibrationLoading() {
+        statusBarLine.setStatusOfProgress("Загрузка грудуировок");
+    }
+
+    private void showCalibrationView(String title, int submoduleIndex) {
         lcm.initCalibrationView(title, submoduleIndex);
-        wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE);
+        statusBarLine.toggleProgressIndicator(true);
+        statusBarLine.clear();
+        Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE));
     }
 
     public void handleEnableAll() {
