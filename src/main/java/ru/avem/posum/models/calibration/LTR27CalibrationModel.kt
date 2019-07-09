@@ -34,9 +34,12 @@ class LTR27CalibrationModel {
     }
 
     private fun getCalibrated(value: Double, calibrationPoints: List<CalibrationPoint>): Double {
-        return if (calibrationPoints.isNotEmpty()) {
-            calibrationPoints.sortedBy { it.channelValue }
-            calibrate(value, calibrationPoints)
+        return if (calibrationPoints.isNotEmpty() && calibrationPoints.size % 2 == 0) {
+            if (calibrationPoints.first().valueOfChannel > calibrationPoints.last().valueOfChannel) {
+                calibrate(value, calibrationPoints.asReversed())
+            } else {
+                calibrate(value, calibrationPoints)
+            }
         } else {
             value
         }
