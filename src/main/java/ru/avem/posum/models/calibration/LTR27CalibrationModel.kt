@@ -56,13 +56,7 @@ class LTR27CalibrationModel {
     }
 
     private fun calibrate(value: Double, calibrationPoints: List<CalibrationPoint>): Double {
-        val lowerBound = calibrationPoints.first().valueOfChannel
-        val upperBound = calibrationPoints.last().valueOfChannel
-        return when {
-            value < lowerBound -> calibrationPoints.first().loadOfChannel
-            value > upperBound -> calibrationPoints.last().loadOfChannel
-            else -> value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
-        }
+        return value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
     }
 
     fun clearBuffer(submoduleIndex: Int) {
