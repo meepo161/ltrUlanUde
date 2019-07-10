@@ -2,6 +2,7 @@ package ru.avem.posum.controllers.calibration
 
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart
@@ -178,11 +179,11 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex]
 
         val contextMenuOfChannelOne = getNewContextMenu(
-                { deletePoint(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne) },
-                { clearPoints(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne) })
+                { deletePoint(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne, valueNameOfChannelOneTextField) },
+                { clearPoints(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne, valueNameOfChannelOneTextField) })
         val contextMenuOfChannelTwo = getNewContextMenu(
-                { deletePoint(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo) },
-                { clearPoints(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo) })
+                { deletePoint(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo, valueNameOfChannelTwoTextField) },
+                { clearPoints(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo, valueNameOfChannelTwoTextField) })
         add(contextMenuOfChannelOne, calibrationOfChannelOneTableView)
         add(contextMenuOfChannelTwo, calibrationOfChannelTwoTableView)
     }
@@ -197,15 +198,17 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         return ContextMenu(menuItemDelete, menuItemClear)
     }
 
-    private fun deletePoint(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>) {
+    private fun deletePoint(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>, textField: TextField) {
         val selectedIndex = tableView.selectionModel.selectedIndex
         tableView.items.removeAt(selectedIndex)
         graphSeries.data.removeAt(selectedIndex)
+        checkValueName(tableView.items, textField, tableView.columns[0] as TableColumn<CalibrationPoint, String>)
     }
 
-    private fun clearPoints(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>) {
+    private fun clearPoints(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>, textField: TextField) {
         tableView.items.clear()
         graphSeries.data.clear()
+        checkValueName(tableView.items, textField, tableView.columns[0] as TableColumn<CalibrationPoint, String>)
     }
 
     private fun add(contextMenu: ContextMenu, tableView: TableView<CalibrationPoint>) {
@@ -331,6 +334,18 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         calibrationPoint.channelNumber = submoduleIndex
         ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex].add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
+        checkValueName(ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex], valueNameOfChannelOneTextField, loadOfChannelOneColumn)
+    }
+
+    private fun checkValueName(calibrationsPoints: List<CalibrationPoint>, textField: TextField, column: TableColumn<CalibrationPoint, String>) {
+        Platform.runLater {
+            textField.isDisable = calibrationsPoints.isNotEmpty()
+            if (calibrationsPoints.isNotEmpty()) {
+                column.text = "Величина нагрузки, ${calibrationsPoints.first().valueName}"
+            } else {
+                column.text = "Величина нагрузки"
+            }
+        }
     }
 
     fun handleAddCalibrationPointOfChannelTwo() {
@@ -339,6 +354,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         calibrationPoint.channelNumber = submoduleIndex + 1
         ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex].add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
+        checkValueName(ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex], valueNameOfChannelTwoTextField, loadOfChannelTwoColumn)
     }
 
     private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
@@ -386,17 +402,21 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
             setNulOfChannelOneCheckBox.isSelected = false
             valueOfChannelOneTextField.text = ""
             loadOfChannelOneTextField.text = ""
+            valueNameOfChannelOneTextField.isDisable = false
             valueNameOfChannelOneTextField.text = ""
             valueOfChannelOneMultipliersComboBox.selectionModel.select(5)
             loadOfChannelOneMultipliersComboBox.selectionModel.select(5)
+            loadOfChannelOneColumn.text = "Величина нагрузки"
 
             setValueOfChannelTwoCheckBox.isSelected = false
             setNulOfChannelTwoCheckBox.isSelected = false
             valueOfChannelTwoTextField.text = ""
             loadOfChannelTwoTextField.text = ""
+            valueNameOfChannelTwoTextField.isDisable = false
             valueNameOfChannelTwoTextField.text = ""
             valueOfChannelTwoMultipliersComboBox.selectionModel.select(5)
             loadOfChannelTwoMultipliersComboBox.selectionModel.select(5)
+            loadOfChannelTwoColumn.text = "Величина нагрузки"
         }
 
         statusBarLine.clear()
