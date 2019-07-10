@@ -171,8 +171,11 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         valueOfChannelOneColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
         loadOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("loadValue")
         valueOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
-        calibrationOfChannelOneTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne
-        calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo
+    }
+
+    private fun loadTablesSettings() {
+        calibrationOfChannelOneTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex]
+        calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex]
 
         val contextMenuOfChannelOne = getNewContextMenu(
                 { deletePoint(calibrationOfChannelOneTableView, ltr27CalibrationModel.lineChartSeriesOfChannelOne) },
@@ -276,7 +279,9 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     override fun initCalibrationView(title: String, submoduleIndex: Int) {
         Platform.runLater { titleLabel.text = title }
         this.submoduleIndex = submoduleIndex
-        ltr27CalibrationModel.load()
+        ltr27CalibrationModel.load(submoduleIndex)
+        ltr27CalibrationModel.updateGraph(submoduleIndex)
+        loadTablesSettings()
         setValueName()
         showValuesOfChannels()
     }
@@ -323,16 +328,16 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     fun handleAddCalibrationPointOfChannelOne() {
         val calibrationPoint = parse(valueOfChannelOneTextField, valueOfChannelOneMultipliersComboBox,
                 loadOfChannelOneTextField, loadOfChannelOneMultipliersComboBox, valueNameOfChannelOneTextField)
-        calibrationPoint.channelNumber = 1
-        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne.add(calibrationPoint)
+        calibrationPoint.channelNumber = submoduleIndex
+        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex].add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
     }
 
     fun handleAddCalibrationPointOfChannelTwo() {
         val calibrationPoint = parse(valueOfChannelTwoTextField, valueOfChannelTwoMultipliersComboBox,
                 loadOfChannelTwoTextField, loadOfChannelTwoMultipliersComboBox, valueNameOfChannelTwoTextField)
-        calibrationPoint.channelNumber = 2
-        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo.add(calibrationPoint)
+        calibrationPoint.channelNumber = submoduleIndex + 1
+        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex].add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
     }
 
@@ -351,7 +356,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     }
 
     fun handleSaveButton() {
-        ltr27CalibrationModel.save()
+        ltr27CalibrationModel.save(submoduleIndex)
     }
 
     fun handleBackButton() {
@@ -370,8 +375,11 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     }
 
     private fun clearView() {
-        ltr27CalibrationModel.clearBuffer()
-        ltr27CalibrationModel.updateGraph()
+        ltr27CalibrationModel.clearBuffer(submoduleIndex)
+        Platform.runLater {
+            ltr27CalibrationModel.lineChartSeriesOfChannelOne.data.clear()
+            ltr27CalibrationModel.lineChartSeriesOfChannelTwo.data.clear()
+        }
 
         Platform.runLater {
             setValueOfChannelOneCheckBox.isSelected = false
@@ -395,8 +403,8 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         statusBarLine.toggleProgressIndicator(true)
     }
 
-    override fun calibrate(value: Double, isChannelOne: Boolean): Double {
-        return ltr27CalibrationModel.calibrate(value, isChannelOne)
+    override fun calibrate(value: Double): Double {
+        return ltr27CalibrationModel.calibrate(value, submoduleIndex)
     }
 
     override fun setControllerManager(cm: ControllerManager) {

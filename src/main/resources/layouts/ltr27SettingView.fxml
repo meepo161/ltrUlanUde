@@ -161,8 +161,8 @@
                   <Insets left="115.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="enableAllButton" disable="true" mnemonicParsing="false" onAction="#handleEnableAll" text="Включить все" GridPane.columnIndex="13" GridPane.rowIndex="21" />
-            <CheckBox fx:id="calibrationCheckBox" disable="true" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="13" GridPane.halignment="RIGHT" GridPane.rowIndex="21" />
+            <Button fx:id="enableAllButton" disable="true" mnemonicParsing="false" onAction="#handleEnableAll" text="Включить все" GridPane.columnIndex="13" GridPane.halignment="RIGHT" GridPane.rowIndex="21" />
+            <CheckBox fx:id="calibrationCheckBox" disable="true" mnemonicParsing="false" text="Градуировать" GridPane.columnIndex="13" GridPane.halignment="LEFT" GridPane.rowIndex="21" />
                 <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBack" text="Назад" GridPane.columnSpan="15" GridPane.halignment="CENTER" GridPane.rowIndex="24" GridPane.valignment="BOTTOM">
                     <GridPane.margin>
                         <Insets right="270.0" />

@@ -4,18 +4,21 @@ import javafx.application.Platform
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.chart.XYChart
+import ru.avem.posum.hardware.LTR27
 
 class LTR27CalibrationModel {
-    private val calibrationPointsOfChannelOne = mutableListOf<CalibrationPoint>()
-    private val calibrationPointsOfChannelTwo = mutableListOf<CalibrationPoint>()
-    val bufferedCalibrationPointsOfChannelOne: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
-    val bufferedCalibrationPointsOfChannelTwo: ObservableList<CalibrationPoint> = FXCollections.observableArrayList()
+    private val calibrationPointsOfChannelOne = Array<MutableList<CalibrationPoint>>(LTR27.MAX_SUBMODULES) { mutableListOf() }
+    private val calibrationPointsOfChannelTwo = Array<MutableList<CalibrationPoint>>(LTR27.MAX_SUBMODULES) { mutableListOf() }
+    val bufferedCalibrationPointsOfChannelOne = Array<ObservableList<CalibrationPoint>>(LTR27.MAX_SUBMODULES) { FXCollections.observableArrayList() }
+    val bufferedCalibrationPointsOfChannelTwo = Array<ObservableList<CalibrationPoint>>(LTR27.MAX_SUBMODULES) { FXCollections.observableArrayList() }
     val lineChartSeriesOfChannelOne = XYChart.Series<Number, Number>()
     val lineChartSeriesOfChannelTwo = XYChart.Series<Number, Number>()
 
     init {
-        lineChartSeriesOfChannelOne.name = "Первый канал"
-        lineChartSeriesOfChannelTwo.name = "Второй канал"
+        for (index in 0 until LTR27.MAX_SUBMODULES) {
+            lineChartSeriesOfChannelOne.name = "Первый канал"
+            lineChartSeriesOfChannelTwo.name = "Второй канал"
+        }
     }
 
     fun addPointToGraphOfChannelOne(calibrationPoint: CalibrationPoint) {
@@ -32,11 +35,11 @@ class LTR27CalibrationModel {
         }
     }
 
-    fun calibrate(value: Double, isChannelOne: Boolean): Double {
-        return if (isChannelOne) {
-            getCalibrated(value, calibrationPointsOfChannelOne)
+    fun calibrate(value: Double, channelIndex: Int): Double {
+        return if (channelIndex % 2 == 0) {
+            getCalibrated(value, calibrationPointsOfChannelOne[channelIndex])
         } else {
-            getCalibrated(value, calibrationPointsOfChannelTwo)
+            getCalibrated(value, calibrationPointsOfChannelTwo[channelIndex - 1])
         }
     }
 
@@ -62,32 +65,32 @@ class LTR27CalibrationModel {
         }
     }
 
-    fun clearBuffer() {
-        bufferedCalibrationPointsOfChannelOne.clear()
-        bufferedCalibrationPointsOfChannelTwo.clear()
+    fun clearBuffer(submoduleIndex: Int) {
+        for (index in 0 until LTR27.MAX_SUBMODULES) {
+            bufferedCalibrationPointsOfChannelOne[submoduleIndex].clear()
+            bufferedCalibrationPointsOfChannelTwo[submoduleIndex].clear()
+        }
     }
 
-    fun updateGraph() {
-        lineChartSeriesOfChannelOne.data.clear()
-        lineChartSeriesOfChannelTwo.data.clear()
+    fun updateGraph(submoduleIndex: Int) {
 
-        for (calibrationPoint in calibrationPointsOfChannelOne) {
+        for (calibrationPoint in calibrationPointsOfChannelOne[submoduleIndex]) {
             addPointToGraphOfChannelOne(calibrationPoint)
         }
-        for (calibrationPoint in calibrationPointsOfChannelTwo) {
+        for (calibrationPoint in calibrationPointsOfChannelTwo[submoduleIndex]) {
             addPointToGraphOfChannelTwo(calibrationPoint)
         }
     }
 
-    fun save() {
-        calibrationPointsOfChannelOne.clear()
-        calibrationPointsOfChannelTwo.clear()
-        calibrationPointsOfChannelOne.addAll(bufferedCalibrationPointsOfChannelOne)
-        calibrationPointsOfChannelTwo.addAll(bufferedCalibrationPointsOfChannelTwo)
+    fun save(submoduleIndex: Int) {
+        calibrationPointsOfChannelOne[submoduleIndex].clear()
+        calibrationPointsOfChannelTwo[submoduleIndex].clear()
+        calibrationPointsOfChannelOne[submoduleIndex].addAll(bufferedCalibrationPointsOfChannelOne[submoduleIndex])
+        calibrationPointsOfChannelTwo[submoduleIndex].addAll(bufferedCalibrationPointsOfChannelTwo[submoduleIndex])
     }
 
-    fun load() {
-        bufferedCalibrationPointsOfChannelOne.addAll(calibrationPointsOfChannelOne)
-        bufferedCalibrationPointsOfChannelTwo.addAll(calibrationPointsOfChannelTwo)
+    fun load(submoduleIndex: Int) {
+        bufferedCalibrationPointsOfChannelOne[submoduleIndex].addAll(calibrationPointsOfChannelOne[submoduleIndex])
+        bufferedCalibrationPointsOfChannelTwo[submoduleIndex].addAll(calibrationPointsOfChannelTwo[submoduleIndex])
     }
 }

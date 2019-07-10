@@ -265,15 +265,15 @@ public class LTR27SubmodulesSettings {
                         int finalChannelIndex = channelIndex;
 
                         if (average == 1) {
-                            double valueOfChannelOne = lcm.calibrate(data[finalChannelIndex], true);
-                            double valueOfChannelTwo = lcm.calibrate(data[finalChannelIndex + 1] / (double) average, false);
+                            double valueOfChannelOne = lcm.calibrate(data[finalChannelIndex]);
+                            double valueOfChannelTwo = lcm.calibrate(data[finalChannelIndex + 1] / (double) average);
                             setValues(valueOfChannelOne, valueOfChannelTwo, finalSubmodelIndex);
                         } else if (averageCount < average) {
                             bufferedData[finalChannelIndex] += data[finalChannelIndex];
                             bufferedData[finalChannelIndex + 1] += data[finalChannelIndex + 1];
                         } else {
-                            double valueOfChannelOne = lcm.calibrate(bufferedData[finalChannelIndex] / (double) average, true);
-                            double valueOfChannelTwo = lcm.calibrate(bufferedData[finalChannelIndex + 1] / (double) average, false);
+                            double valueOfChannelOne = lcm.calibrate(bufferedData[finalChannelIndex] / (double) average);
+                            double valueOfChannelTwo = lcm.calibrate(bufferedData[finalChannelIndex + 1] / (double) average);
                             setValues(valueOfChannelOne, valueOfChannelTwo, finalSubmodelIndex);
                         }
                     }
