@@ -259,22 +259,19 @@ public class LTR27SubmodulesSettings {
 
                 int channelIndex = 0;
 
-                for (int submodelIndex = 0; submodelIndex < LTR27.MAX_SUBMODULES; submodelIndex++) {
-                    if (!checkBoxes.get(submodelIndex).getText().equals(submoduleIsAbsentee) && checkBoxes.get(submodelIndex).isSelected()) {
-                        int finalSubmodelIndex = submodelIndex;
-                        int finalChannelIndex = channelIndex;
-
+                for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
+                    if (!checkBoxes.get(submoduleIndex).getText().equals(submoduleIsAbsentee) && checkBoxes.get(submoduleIndex).isSelected()) {
                         if (average == 1) {
-                            double valueOfChannelOne = lcm.calibrate(data[finalChannelIndex]);
-                            double valueOfChannelTwo = lcm.calibrate(data[finalChannelIndex + 1] / (double) average);
-                            setValues(valueOfChannelOne, valueOfChannelTwo, finalSubmodelIndex);
+                            double valueOfChannelOne = lcm.calibrate(data[channelIndex], submoduleIndex, channelIndex);
+                            double valueOfChannelTwo = lcm.calibrate(data[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
+                            setValues(valueOfChannelOne, valueOfChannelTwo, submoduleIndex);
                         } else if (averageCount < average) {
-                            bufferedData[finalChannelIndex] += data[finalChannelIndex];
-                            bufferedData[finalChannelIndex + 1] += data[finalChannelIndex + 1];
+                            bufferedData[channelIndex] += data[channelIndex];
+                            bufferedData[channelIndex + 1] += data[channelIndex + 1];
                         } else {
-                            double valueOfChannelOne = lcm.calibrate(bufferedData[finalChannelIndex] / (double) average);
-                            double valueOfChannelTwo = lcm.calibrate(bufferedData[finalChannelIndex + 1] / (double) average);
-                            setValues(valueOfChannelOne, valueOfChannelTwo, finalSubmodelIndex);
+                            double valueOfChannelOne = lcm.calibrate(bufferedData[channelIndex] / (double) average, submoduleIndex, channelIndex);
+                            double valueOfChannelTwo = lcm.calibrate(bufferedData[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
+                            setValues(valueOfChannelOne, valueOfChannelTwo, submoduleIndex);
                         }
                     }
                     channelIndex += 2;

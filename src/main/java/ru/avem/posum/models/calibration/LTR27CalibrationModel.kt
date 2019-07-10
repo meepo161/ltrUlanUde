@@ -35,11 +35,11 @@ class LTR27CalibrationModel {
         }
     }
 
-    fun calibrate(value: Double, channelIndex: Int): Double {
+    fun calibrate(value: Double, submoduleIndex: Int, channelIndex: Int): Double {
         return if (channelIndex % 2 == 0) {
-            getCalibrated(value, calibrationPointsOfChannelOne[channelIndex])
+            getCalibrated(value, calibrationPointsOfChannelOne[submoduleIndex])
         } else {
-            getCalibrated(value, calibrationPointsOfChannelTwo[channelIndex - 1])
+            getCalibrated(value, calibrationPointsOfChannelTwo[submoduleIndex])
         }
     }
 
