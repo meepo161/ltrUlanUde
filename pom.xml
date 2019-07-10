@@ -55,8 +55,9 @@
                     <mainClass>ru.avem.posum.Main</mainClass>
                     <bundler>EXE</bundler>
                     <jvmArgs>
-                        <argument>-Xmx4096m</argument>
+                        <argument>-Xmx1024m</argument>
                         <argument>-Xms1024m</argument>
+                        <argument>-XX:MaxMetaspaceSize=512m</argument>
                     </jvmArgs>
                 </configuration>
             </plugin>
