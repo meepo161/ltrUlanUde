@@ -16,6 +16,7 @@ object NewUtils {
 
     fun roundValue(value: Double, digits: Int): Double {
         val rounder = 10.0.pow(digits.toDouble())
+
         return (value * rounder).roundToInt().toDouble() / rounder
     }
 }
