@@ -302,6 +302,7 @@ public class LTR27SettingsController implements BaseController {
     }
 
     private void showCalibrationView(String title, int submoduleIndex) {
+        calibrationCheckBox.setSelected(false);
         lcm.initCalibrationView(title, submoduleIndex);
         statusBarLine.clear();
         statusBarLine.toggleProgressIndicator(true);

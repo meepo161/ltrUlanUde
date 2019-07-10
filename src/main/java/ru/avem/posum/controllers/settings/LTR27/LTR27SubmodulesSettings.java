@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import ru.avem.posum.controllers.calibration.LTR27CalibrationManager;
 import ru.avem.posum.hardware.LTR27;
+import ru.avem.posum.utils.NewUtils;
 import ru.avem.posum.utils.Utils;
 
 import java.util.ArrayList;
@@ -309,8 +310,8 @@ public class LTR27SubmodulesSettings {
 
     private void setValues(double valueOfChannelOne, double valueOfChannelTwo, int submoduleIndex) {
         Platform.runLater(() -> {
-            String channelOneValue = String.valueOf(Utils.roundValue(valueOfChannelOne, Utils.getRounder(rarefactionCoefficient)));
-            String channelTwoValue = String.valueOf(Utils.roundValue(valueOfChannelTwo, Utils.getRounder(rarefactionCoefficient)));
+            String channelOneValue = Utils.convertFromExponentialFormat(valueOfChannelOne, Utils.getRounder(rarefactionCoefficient));
+            String channelTwoValue = Utils.convertFromExponentialFormat(valueOfChannelTwo, Utils.getRounder(rarefactionCoefficient));
             channelOneTextFields.get(submoduleIndex).setText(channelOneValue);
             channelTwoTextFields.get(submoduleIndex).setText(channelTwoValue);
         });
