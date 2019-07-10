@@ -183,6 +183,15 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
                 { clearPoints(calibrationOfChannelTwoTableView, ltr27CalibrationModel.lineChartSeriesOfChannelTwo, valueNameOfChannelTwoTextField) })
         add(contextMenuOfChannelOne, calibrationOfChannelOneTableView)
         add(contextMenuOfChannelTwo, calibrationOfChannelTwoTableView)
+
+        loadValueNames(calibrationOfChannelOneTableView, loadOfChannelOneColumn)
+        loadValueNames(calibrationOfChannelTwoTableView, loadOfChannelTwoColumn)
+    }
+
+    private fun loadValueNames(tableView: TableView<CalibrationPoint>, tableColumn: TableColumn<CalibrationPoint, String>) {
+        if (tableView.items.isNotEmpty()) {
+            tableColumn.text = "Велинича нагрузки, ${tableView.items.first().valueName}"
+        }
     }
 
     private fun getNewContextMenu(deleteOperation: () -> Unit, clearOperation: () -> Unit): ContextMenu {
