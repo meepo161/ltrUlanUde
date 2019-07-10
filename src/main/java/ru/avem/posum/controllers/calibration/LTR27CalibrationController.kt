@@ -209,16 +209,14 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         tableView.items.removeAt(selectedIndex)
         graphSeries.data.removeAt(selectedIndex)
         checkValueName(tableView.items, textField, tableView.columns[0] as TableColumn<CalibrationPoint, String>)
-        checkPointsCount(calibrationOfChannelOneTableView.items)
-        checkPointsCount(calibrationOfChannelTwoTableView.items)
+        checkPointsCount()
     }
 
     private fun clearPoints(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>, textField: TextField) {
         tableView.items.clear()
         graphSeries.data.clear()
         checkValueName(tableView.items, textField, tableView.columns[0] as TableColumn<CalibrationPoint, String>)
-        checkPointsCount(calibrationOfChannelOneTableView.items)
-        checkPointsCount(calibrationOfChannelTwoTableView.items)
+        checkPointsCount()
     }
 
     private fun add(contextMenu: ContextMenu, tableView: TableView<CalibrationPoint>) {
@@ -354,7 +352,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
         checkValueName(calibrationPoints, valueNameOfChannelOneTextField, loadOfChannelOneColumn)
         checkPointsCount(calibrationPoints, addToTableOfChannelOneButton, valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField)
-        checkPointsCount(calibrationPoints)
+        checkPointsCount()
     }
 
     private fun checkValueName(calibrationsPoints: List<CalibrationPoint>, textField: TextField, column: TableColumn<CalibrationPoint, String>) {
@@ -372,8 +370,9 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         addButton.isDisable = calibrationPoints.size >= 2 || valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
     }
 
-    private fun checkPointsCount(calibrationPoints: List<CalibrationPoint>) {
-        saveButton.isDisable = calibrationPoints.size in 1 until 2
+    private fun checkPointsCount() {
+        saveButton.isDisable = (calibrationOfChannelOneTableView.items.size in 1 until 2) ||
+                (calibrationOfChannelTwoTableView.items.size in 1 until 2)
     }
 
     fun handleAddCalibrationPointOfChannelTwo() {
@@ -385,7 +384,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
         checkValueName(calibrationPoints, valueNameOfChannelTwoTextField, loadOfChannelTwoColumn)
         checkPointsCount(calibrationPoints, addToTableOfChannelTwoButton, valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
-        checkPointsCount(calibrationPoints)
+        checkPointsCount()
     }
 
     private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
