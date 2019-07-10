@@ -2,7 +2,6 @@ package ru.avem.posum.controllers.calibration
 
 import javafx.application.Platform
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.scene.chart.LineChart
 import javafx.scene.chart.XYChart
@@ -51,7 +50,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     @FXML
     private lateinit var addToTableOfChannelOneButton: Button
     @FXML
-    private lateinit var calibrationOfChannelOneTableView: TableView<CalibrationPoint> // TODO: change this generic
+    private lateinit var calibrationOfChannelOneTableView: TableView<CalibrationPoint>
     @FXML
     private lateinit var loadOfChannelOneColumn: TableColumn<CalibrationPoint, String>
     @FXML
@@ -83,7 +82,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     @FXML
     private lateinit var addToTableOfChannelTwoButton: Button
     @FXML
-    private lateinit var calibrationOfChannelTwoTableView: TableView<CalibrationPoint> // TODO: change this generic
+    private lateinit var calibrationOfChannelTwoTableView: TableView<CalibrationPoint>
     @FXML
     private lateinit var loadOfChannelTwoColumn: TableColumn<CalibrationPoint, String>
     @FXML
@@ -201,12 +200,16 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         tableView.items.removeAt(selectedIndex)
         graphSeries.data.removeAt(selectedIndex)
         checkValueName(tableView.items, textField, tableView.columns[0] as TableColumn<CalibrationPoint, String>)
+        checkPointsCount(calibrationOfChannelOneTableView.items)
+        checkPointsCount(calibrationOfChannelTwoTableView.items)
     }
 
     private fun clearPoints(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>, textField: TextField) {
         tableView.items.clear()
         graphSeries.data.clear()
         checkValueName(tableView.items, textField, tableView.columns[0] as TableColumn<CalibrationPoint, String>)
+        checkPointsCount(calibrationOfChannelOneTableView.items)
+        checkPointsCount(calibrationOfChannelTwoTableView.items)
     }
 
     private fun add(contextMenu: ContextMenu, tableView: TableView<CalibrationPoint>) {
@@ -342,6 +345,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
         checkValueName(calibrationPoints, valueNameOfChannelOneTextField, loadOfChannelOneColumn)
         checkPointsCount(calibrationPoints, addToTableOfChannelOneButton, valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField)
+        checkPointsCount(calibrationPoints)
     }
 
     private fun checkValueName(calibrationsPoints: List<CalibrationPoint>, textField: TextField, column: TableColumn<CalibrationPoint, String>) {
@@ -355,8 +359,12 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
-    private fun checkPointsCount(calibrationPoints: List<CalibrationPoint>, button: Button, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField) {
-        button.isDisable = calibrationPoints.size >= 2 || valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
+    private fun checkPointsCount(calibrationPoints: List<CalibrationPoint>, addButton: Button, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField) {
+        addButton.isDisable = calibrationPoints.size >= 2 || valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
+    }
+
+    private fun checkPointsCount(calibrationPoints: List<CalibrationPoint>) {
+        saveButton.isDisable = calibrationPoints.size in 1 until 2
     }
 
     fun handleAddCalibrationPointOfChannelTwo() {
@@ -368,6 +376,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
         checkValueName(calibrationPoints, valueNameOfChannelTwoTextField, loadOfChannelTwoColumn)
         checkPointsCount(calibrationPoints, addToTableOfChannelTwoButton, valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
+        checkPointsCount(calibrationPoints)
     }
 
     private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
