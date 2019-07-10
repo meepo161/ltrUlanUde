@@ -239,7 +239,7 @@ public class LTR27SubmodulesSettings {
                 if (channelIndex % 2 == 0) {
                     createNewLabel(channelOneLabels.get(channelIndex / 2), 1, calibratedUnit);
                 } else {
-                    createNewLabel(channelTwoLabels.get(channelIndex / 2), 21, calibratedUnit);
+                    createNewLabel(channelTwoLabels.get(channelIndex / 2), 2, calibratedUnit);
                 }
             }
         }
@@ -277,16 +277,17 @@ public class LTR27SubmodulesSettings {
 
                 for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
                     if (!checkBoxes.get(submoduleIndex).getText().equals(submoduleIsAbsentee) && checkBoxes.get(submoduleIndex).isSelected()) {
+                        boolean isCalibrate = ltr27SettingsController.getCalibrationCheckBox().isSelected();
                         if (average == 1) {
-                            double valueOfChannelOne = lcm.calibrate(data[channelIndex], submoduleIndex, channelIndex);
-                            double valueOfChannelTwo = lcm.calibrate(data[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
+                            double valueOfChannelOne = lcm.calibrate(isCalibrate, data[channelIndex], submoduleIndex, channelIndex);
+                            double valueOfChannelTwo = lcm.calibrate(isCalibrate,data[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
                             setValues(valueOfChannelOne, valueOfChannelTwo, submoduleIndex);
                         } else if (averageCount < average) {
                             bufferedData[channelIndex] += data[channelIndex];
                             bufferedData[channelIndex + 1] += data[channelIndex + 1];
                         } else {
-                            double valueOfChannelOne = lcm.calibrate(bufferedData[channelIndex] / (double) average, submoduleIndex, channelIndex);
-                            double valueOfChannelTwo = lcm.calibrate(bufferedData[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
+                            double valueOfChannelOne = lcm.calibrate(isCalibrate,bufferedData[channelIndex] / (double) average, submoduleIndex, channelIndex);
+                            double valueOfChannelTwo = lcm.calibrate(isCalibrate,bufferedData[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
                             setValues(valueOfChannelOne, valueOfChannelTwo, submoduleIndex);
                         }
                     }

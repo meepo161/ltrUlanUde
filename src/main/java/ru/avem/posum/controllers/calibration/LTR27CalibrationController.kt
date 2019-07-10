@@ -436,8 +436,8 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         statusBarLine.toggleProgressIndicator(true)
     }
 
-    override fun calibrate(value: Double, submoduleIndex: Int, channelIndex: Int): Double {
-        return ltr27CalibrationModel.calibrate(value, submoduleIndex, channelIndex)
+    override fun calibrate(isCalibrate: Boolean, value: Double, submoduleIndex: Int, channelIndex: Int): Double {
+        return ltr27CalibrationModel.calibrate(isCalibrate, value, submoduleIndex, channelIndex)
     }
 
     override fun getCalibratedUnits(): List<String> {
