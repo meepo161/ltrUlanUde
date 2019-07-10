@@ -119,7 +119,7 @@
                                     <Insets left="260.0" />
                                 </GridPane.margin>
                             </CheckBox>
-                            <CheckBox fx:id="setNulOfChannelOneCheckBox" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
+                            <CheckBox fx:id="setNulOfChannelOneCheckBox" disable="true" mnemonicParsing="false" text="Градуировать ноль" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="9" GridPane.rowIndex="7" GridPane.valignment="BOTTOM">
                                 <GridPane.margin>
                                     <Insets left="260.0" />
                                 </GridPane.margin>
@@ -184,7 +184,7 @@
                               <Insets left="260.0" />
                            </GridPane.margin>
                         </CheckBox>
-                        <CheckBox fx:id="setNulOfChannelTwoCheckBox" mnemonicParsing="false" text="Градуировать ноль" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="16" GridPane.valignment="BOTTOM">
+                        <CheckBox fx:id="setNulOfChannelTwoCheckBox" disable="true" mnemonicParsing="false" text="Градуировать ноль" visible="false" GridPane.columnIndex="1" GridPane.columnSpan="5" GridPane.rowIndex="16" GridPane.valignment="BOTTOM">
                            <GridPane.margin>
                               <Insets left="260.0" />
                            </GridPane.margin>
