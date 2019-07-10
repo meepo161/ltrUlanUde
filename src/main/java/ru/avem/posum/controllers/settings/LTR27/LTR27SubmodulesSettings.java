@@ -164,6 +164,7 @@ public class LTR27SubmodulesSettings {
         ltr27SettingsController.getAverageTextField().setDisable(isDisable);
         ltr27SettingsController.getRarefactionLabel().setDisable(isDisable);
         ltr27SettingsController.getRarefactionComboBox().setDisable(isDisable);
+        ltr27SettingsController.getCalibrationCheckBox().setDisable(isDisable);
     }
 
     private void setFrequencies() {
@@ -220,18 +221,33 @@ public class LTR27SubmodulesSettings {
     public void setSubmodulesUnits() {
         String[][] descriptions = ltr27SettingsController.getSubmodulesDescriptions();
 
-        for (int submoduleIndex = 0; submoduleIndex < checkBoxes.size(); submoduleIndex++) {
+        for (int channelIndex = 0; channelIndex < LTR27.MAX_SUBMODULES * 2; channelIndex++) {
+            int submoduleIndex = channelIndex / 2;
             if (!checkBoxes.get(submoduleIndex).getText().equals(submoduleIsAbsentee)) {
-                createNewLabel(channelOneLabels.get(submoduleIndex), descriptions[submoduleIndex][2]);
-                createNewLabel(channelTwoLabels.get(submoduleIndex), descriptions[submoduleIndex][2]);
+                createNewLabel(channelOneLabels.get(submoduleIndex), 1, descriptions[submoduleIndex][2]);
+                createNewLabel(channelTwoLabels.get(submoduleIndex), 2, descriptions[submoduleIndex][2]);
             }
         }
     }
 
-    private void createNewLabel(Label label, String unit) {
-        String oldText = label.getText();
+    public void setCalibratedUnits() {
+        List<String> calibratedUnits = lcm.getCalibratedUnits();
+        for (int channelIndex = 0; channelIndex < LTR27.MAX_SUBMODULES * 2; channelIndex++) {
+            String calibratedUnit = calibratedUnits.get(channelIndex);
+
+            if (!calibratedUnit.isEmpty()) {
+                if (channelIndex % 2 == 0) {
+                    createNewLabel(channelOneLabels.get(channelIndex / 2), 1, calibratedUnit);
+                } else {
+                    createNewLabel(channelTwoLabels.get(channelIndex / 2), 21, calibratedUnit);
+                }
+            }
+        }
+    }
+
+    private void createNewLabel(Label label, int channelNumber, String unit) {
         if (!label.getText().contains(unit)) {
-            label.setText(String.format("%s, %s:", oldText.substring(0, oldText.length() - 1), unit));
+            Platform.runLater(() -> label.setText(String.format("Канал %d, %s:", channelNumber, unit)));
         }
     }
 
@@ -290,12 +306,12 @@ public class LTR27SubmodulesSettings {
         }).start();
     }
 
-    private void setValues(double valueOfChannelOne, double valueOfChannelTwo, int submodelIndex) {
+    private void setValues(double valueOfChannelOne, double valueOfChannelTwo, int submoduleIndex) {
         Platform.runLater(() -> {
             String channelOneValue = String.valueOf(Utils.roundValue(valueOfChannelOne, Utils.getRounder(rarefactionCoefficient)));
             String channelTwoValue = String.valueOf(Utils.roundValue(valueOfChannelTwo, Utils.getRounder(rarefactionCoefficient)));
-            channelOneTextFields.get(submodelIndex).setText(channelOneValue);
-            channelTwoTextFields.get(submodelIndex).setText(channelTwoValue);
+            channelOneTextFields.get(submoduleIndex).setText(channelOneValue);
+            channelTwoTextFields.get(submoduleIndex).setText(channelTwoValue);
         });
     }
 

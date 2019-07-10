@@ -158,6 +158,21 @@ public class LTR27SettingsController implements BaseController {
         ltr27SettingsModel = new LTR27SettingsModel(this);
         ltr27SubmodulesSettings = new LTR27SubmodulesSettings(this);
         ltr27SubmodulesSettings.initializeView();
+        listen(calibrationCheckBox);
+    }
+
+    private void listen(CheckBox checkBox) {
+        checkBox.selectedProperty().addListener(observable -> {
+            setUnits(!checkBox.isSelected());
+        });
+    }
+
+    private void setUnits(boolean isDefaultUnits) {
+        if (isDefaultUnits) {
+            ltr27SubmodulesSettings.setSubmodulesUnits();
+        } else {
+            ltr27SubmodulesSettings.setCalibratedUnits();
+        }
     }
 
     public void loadSettings(String moduleName) {
@@ -320,6 +335,7 @@ public class LTR27SettingsController implements BaseController {
         frequencyComboBox.setDisable(isDisable);
         rarefactionComboBox.setDisable(isDisable);
         averageTextField.setDisable(isDisable);
+        calibrationCheckBox.setDisable(isDisable);
         enableAllButton.setDisable(isDisable);
         initializeButton.setDisable(isDisable);
         backButton.setDisable(isDisable);
@@ -338,6 +354,10 @@ public class LTR27SettingsController implements BaseController {
 
     public TextField getAverageTextField() {
         return averageTextField;
+    }
+
+    public CheckBox getCalibrationCheckBox() {
+        return calibrationCheckBox;
     }
 
     public Button getCalibrateSubmoduleOneButton() {

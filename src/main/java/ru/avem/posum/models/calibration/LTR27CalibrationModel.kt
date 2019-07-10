@@ -87,4 +87,23 @@ class LTR27CalibrationModel {
         bufferedCalibrationPointsOfChannelOne[submoduleIndex].addAll(calibrationPointsOfChannelOne[submoduleIndex])
         bufferedCalibrationPointsOfChannelTwo[submoduleIndex].addAll(calibrationPointsOfChannelTwo[submoduleIndex])
     }
+
+    fun getCalibratedUnits(): List<String> {
+        val calibratedUnits = mutableListOf<String>()
+
+        for (submoduleIndex in 0 until LTR27.MAX_SUBMODULES) {
+            calibratedUnits.add(getUnit(calibrationPointsOfChannelOne[submoduleIndex]))
+            calibratedUnits.add(getUnit(calibrationPointsOfChannelTwo[submoduleIndex]))
+        }
+
+        return calibratedUnits
+    }
+
+    private fun getUnit(calibrationPoints: List<CalibrationPoint>): String {
+        return if (calibrationPoints.isNotEmpty()) {
+            calibrationPoints.first().valueName
+        } else {
+            ""
+        }
+    }
 }

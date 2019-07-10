@@ -440,6 +440,10 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         return ltr27CalibrationModel.calibrate(value, submoduleIndex, channelIndex)
     }
 
+    override fun getCalibratedUnits(): List<String> {
+        return ltr27CalibrationModel.getCalibratedUnits()
+    }
+
     override fun setControllerManager(cm: ControllerManager) {
         this.cm = cm
     }
