@@ -116,8 +116,10 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     fun initialize() {
         statusBarLine = StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon)
 
-        listen(valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
-        listen(valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
+        listen(calibrationOfChannelOneTableView, valueOfChannelOneTextField, loadOfChannelOneTextField,
+                valueNameOfChannelOneTextField, addToTableOfChannelOneButton)
+        listen(calibrationOfChannelTwoTableView,valueOfChannelTwoTextField, loadOfChannelTwoTextField,
+                valueNameOfChannelTwoTextField, addToTableOfChannelTwoButton)
         setMultipliers(valueOfChannelOneMultipliersComboBox)
         setMultipliers(loadOfChannelOneMultipliersComboBox)
         setMultipliers(valueOfChannelTwoMultipliersComboBox)
@@ -127,27 +129,23 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         initCheckBoxes()
     }
 
-    private fun listen(valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
-        setDigitFilterTo(valueOfChannel, loadOfChannel, valueName, button)
-        setDigitFilterTo(loadOfChannel, valueOfChannel, valueName, button)
+    private fun listen(tableView: TableView<CalibrationPoint>, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
+        setDigitFilterTo(tableView, valueOfChannel, loadOfChannel, valueName, button)
+        setDigitFilterTo(tableView, loadOfChannel, valueOfChannel, valueName, button)
 
         valueName.textProperty().addListener { _ ->
-            toggleStateOf(button, valueOfChannel, loadOfChannel, valueName)
+            checkPointsCount(tableView.items, button, valueOfChannel, loadOfChannel, valueName)
         }
     }
 
-    private fun setDigitFilterTo(textField: TextField, secondTextField: TextField, valueName: TextField, button: Button) {
+    private fun setDigitFilterTo(tableView: TableView<CalibrationPoint>, textField: TextField, secondTextField: TextField, valueName: TextField, button: Button) {
         textField.textProperty().addListener { _, oldValue, newValue ->
             textField.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
             if (!newValue.matches("^-?[\\d]+(\\.|,)\\d+|^-?[\\d]+(\\.|,)|^-?[\\d]+|-|$".toRegex())) {
                 textField.text = oldValue
             }
-            toggleStateOf(button, textField, secondTextField, valueName)
+            checkPointsCount(tableView.items, button, textField, secondTextField, valueName)
         }
-    }
-
-    private fun toggleStateOf(button: Button, firstTextField: TextField, secondTextField: TextField, valueName: TextField) {
-        button.isDisable = firstTextField.text.isEmpty() || secondTextField.text.isEmpty() || valueName.text.isEmpty()
     }
 
     private fun setMultipliers(comboBox: ComboBox<String>) {
@@ -230,11 +228,14 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     }
 
     private fun initCheckBoxes() {
-        listen(setValueOfChannelOneCheckBox)
-        listen(setValueOfChannelTwoCheckBox)
+        listen(setValueOfChannelOneCheckBox, calibrationOfChannelOneTableView, addToTableOfChannelOneButton, valueOfChannelOneTextField,
+                loadOfChannelOneTextField, valueNameOfChannelOneTextField)
+        listen(setValueOfChannelTwoCheckBox, calibrationOfChannelTwoTableView, addToTableOfChannelTwoButton, valueOfChannelTwoTextField,
+                loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
     }
 
-    private fun listen(checkBox: CheckBox) {
+    private fun listen(checkBox: CheckBox, tableView: TableView<CalibrationPoint>, button: Button, valueOfChannel: TextField,
+                       loadOfChannel: TextField, valueName: TextField) {
         checkBox.selectedProperty().addListener { _ ->
             if (!setValueOfChannelOneCheckBox.isSelected || !setValueOfChannelTwoCheckBox.isSelected) {
                 if (showOfChannelOneStopped && showOfChannelTwoStopped) {
@@ -245,6 +246,10 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
             }
 
             toggleShowThreadState(checkBox)
+            valueOfChannel.isEditable = checkBox.isSelected
+            valueOfChannel.isMouseTransparent = !checkBox.isSelected
+            valueOfChannel.isFocusTraversable = !checkBox.isSelected
+            checkPointsCount(tableView.items, button, valueOfChannel, loadOfChannel, valueName)
         }
     }
 
@@ -332,9 +337,11 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         val calibrationPoint = parse(valueOfChannelOneTextField, valueOfChannelOneMultipliersComboBox,
                 loadOfChannelOneTextField, loadOfChannelOneMultipliersComboBox, valueNameOfChannelOneTextField)
         calibrationPoint.channelNumber = submoduleIndex
-        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex].add(calibrationPoint)
+        val calibrationPoints = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex]
+        calibrationPoints.add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelOne(calibrationPoint)
-        checkValueName(ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex], valueNameOfChannelOneTextField, loadOfChannelOneColumn)
+        checkValueName(calibrationPoints, valueNameOfChannelOneTextField, loadOfChannelOneColumn)
+        checkPointsCount(calibrationPoints, addToTableOfChannelOneButton, valueOfChannelOneTextField, loadOfChannelOneTextField, valueNameOfChannelOneTextField)
     }
 
     private fun checkValueName(calibrationsPoints: List<CalibrationPoint>, textField: TextField, column: TableColumn<CalibrationPoint, String>) {
@@ -348,13 +355,19 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    private fun checkPointsCount(calibrationPoints: List<CalibrationPoint>, button: Button, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField) {
+        button.isDisable = calibrationPoints.size >= 2 || valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
+    }
+
     fun handleAddCalibrationPointOfChannelTwo() {
         val calibrationPoint = parse(valueOfChannelTwoTextField, valueOfChannelTwoMultipliersComboBox,
                 loadOfChannelTwoTextField, loadOfChannelTwoMultipliersComboBox, valueNameOfChannelTwoTextField)
         calibrationPoint.channelNumber = submoduleIndex + 1
-        ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex].add(calibrationPoint)
+        val calibrationPoints = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex]
+        calibrationPoints.add(calibrationPoint)
         ltr27CalibrationModel.addPointToGraphOfChannelTwo(calibrationPoint)
-        checkValueName(ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex], valueNameOfChannelTwoTextField, loadOfChannelTwoColumn)
+        checkValueName(calibrationPoints, valueNameOfChannelTwoTextField, loadOfChannelTwoColumn)
+        checkPointsCount(calibrationPoints, addToTableOfChannelTwoButton, valueOfChannelTwoTextField, loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
     }
 
     private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
