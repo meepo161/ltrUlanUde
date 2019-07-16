@@ -268,6 +268,23 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    public void loadUiElementsState() {
+        boolean isLeastOneSubmoduleEnabled = false;
+        for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
+            if (checkBoxes.get(submoduleIndex).isSelected()) {
+                isLeastOneSubmoduleEnabled = true;
+                channelOneLabels.get(submoduleIndex).setDisable(false);
+                channelOneTextFields.get(submoduleIndex).setDisable(false);
+                channelTwoLabels.get(submoduleIndex).setDisable(false);
+                channelTwoTextFields.get(submoduleIndex).setDisable(false);
+                calibrationButtons.get(submoduleIndex).setDisable(false);
+            }
+        }
+        if (isLeastOneSubmoduleEnabled) {
+            toggle(false);
+        }
+    }
+
     public void showValues() {
         new Thread(() -> {
             while (!ltr27SettingsController.isStopped()) {

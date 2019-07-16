@@ -202,6 +202,7 @@ public class LTR27SettingsController implements BaseController {
                 ltr27SettingsModel.receiveData();
                 ltr27SubmodulesSettings.showValues();
                 ltr27SubmodulesSettings.toggleCheckBoxesState(false);
+                ltr27SubmodulesSettings.loadUiElementsState();
                 toggleUiElements(true);
                 backButton.setDisable(false);
             } else {
@@ -318,12 +319,11 @@ public class LTR27SettingsController implements BaseController {
     }
 
     public void handleBack() {
-        statusBarLine.setStatusOfProgress("Загрузка");
+        statusBarLine.setStatusOfProgress("Загрузка списка модулей");
 
         new Thread(() -> {
             stoped = true;
             saveSettings();
-            ltr27SubmodulesSettings.toggleCheckBoxes(false);
             disableUiElements();
             ltr27SettingsModel.stop();
             statusBarLine.toggleProgressIndicator(true);
@@ -334,6 +334,7 @@ public class LTR27SettingsController implements BaseController {
 
     private void disableUiElements() {
         ltr27SubmodulesSettings.toggleCheckBoxesState(true);
+        ltr27SubmodulesSettings.disableSubmodulesUiElements();
         toggleUi(true);
     }
 

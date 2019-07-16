@@ -185,11 +185,11 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
     private void setLoginStageSize() {
         this.loginStage.setMinWidth(300);
-        this.loginStage.setMinHeight(250);
+        this.loginStage.setMinHeight(230);
         this.loginStage.setWidth(300);
-        this.loginStage.setHeight(250);
+        this.loginStage.setHeight(230);
         this.loginStage.setMaxWidth(300);
-        this.loginStage.setMaxHeight(250);
+        this.loginStage.setMaxHeight(230);
         this.loginStage.setResizable(false);
     }
 
