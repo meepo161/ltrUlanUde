@@ -41,6 +41,21 @@ public class CalibrationPoint {
         return convertedList;
     }
 
+    public String toString() {
+        return String.format("Channel: %d, load value: %s, channel value: %s, value name: %s",
+                this.getChannelNumber(), this.getLoadValue(), this.getChannelValue(), this.getValueName());
+    }
+
+    public static CalibrationPoint fromString(String rawValue) {
+        int channelNumber = Integer.parseInt(rawValue.split(", ")[0].split("Channel: ")[1]);
+        String loadValue = rawValue.split(", ")[1].split("load value: ")[1];
+        String channelValue = rawValue.split(", ")[2].split("channel value: ")[1];
+        String valueName = rawValue.split(", ")[3].split("value name: ")[1];
+        CalibrationPoint calibrationPoint = new CalibrationPoint(loadValue, channelValue, valueName);
+        calibrationPoint.channelNumber = channelNumber;
+        return calibrationPoint;
+    }
+
     public int getChannelNumber() {
         return channelNumber;
     }

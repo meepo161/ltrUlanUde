@@ -106,4 +106,42 @@ class LTR27CalibrationModel {
             ""
         }
     }
+
+    fun getCalibrationPoints(): ArrayList<List<String>> {
+        val calibrationPoints = ArrayList<List<String>>()
+        for (index in 0 until LTR27.MAX_SUBMODULES) {
+            calibrationPoints.add(toListOfStrings(calibrationPointsOfChannelOne[index]))
+            calibrationPoints.add(toListOfStrings(calibrationPointsOfChannelTwo[index]))
+        }
+        return calibrationPoints
+    }
+
+    private fun toListOfStrings(calibrationPoints: MutableList<CalibrationPoint>): List<String> {
+        val outputList = mutableListOf<String>()
+        for (calibrationPoint in calibrationPoints) {
+            outputList.add(calibrationPoint.toString())
+        }
+        return outputList
+    }
+
+    fun clear() {
+        for (index in 0 until LTR27.MAX_SUBMODULES) {
+            calibrationPointsOfChannelOne[index].clear()
+            calibrationPointsOfChannelTwo[index].clear()
+        }
+    }
+
+    fun setCalibrationPoints(rawData: ArrayList<List<String>>) {
+        for (index in 0 until rawData.size) {
+            if (index % 2 == 0) {
+                for (calibrationPointIndex in 0 until rawData[index].size) {
+                    calibrationPointsOfChannelOne[index / 2].add(CalibrationPoint.fromString(rawData[index][calibrationPointIndex]))
+                }
+            } else {
+                for (calibrationPointIndex in 0 until rawData[index].size) {
+                    calibrationPointsOfChannelTwo[index / 2].add(CalibrationPoint.fromString(rawData[index][calibrationPointIndex]))
+                }
+            }
+        }
+    }
 }

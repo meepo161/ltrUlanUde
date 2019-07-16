@@ -13,6 +13,7 @@ import ru.avem.posum.ControllerManager
 import ru.avem.posum.WindowsManager
 import ru.avem.posum.controllers.BaseController
 import ru.avem.posum.controllers.settings.LTR27.LTR27SettingsController
+import ru.avem.posum.hardware.LTR27
 import ru.avem.posum.models.calibration.CalibrationPoint
 import ru.avem.posum.models.calibration.LTR27CalibrationModel
 import ru.avem.posum.utils.NewUtils
@@ -451,6 +452,16 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
 
         statusBarLine.clear()
         statusBarLine.toggleProgressIndicator(true)
+    }
+
+    override fun saveCalibrationSettings(moduleInstance: LTR27) {
+        moduleInstance.calibrationSettings.clear()
+        moduleInstance.calibrationSettings = ltr27CalibrationModel.getCalibrationPoints()
+    }
+
+    override fun loadCalibrationSettings(moduleInstance: LTR27) {
+        ltr27CalibrationModel.clear()
+        ltr27CalibrationModel.setCalibrationPoints(moduleInstance.calibrationSettings)
     }
 
     override fun calibrate(isCalibrate: Boolean, value: Double, submoduleIndex: Int, channelIndex: Int): Double {

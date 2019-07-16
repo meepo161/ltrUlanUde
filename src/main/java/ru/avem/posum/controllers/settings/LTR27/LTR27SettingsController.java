@@ -185,6 +185,7 @@ public class LTR27SettingsController implements BaseController {
         ltr27SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
         ltr27SubmodulesSettings.setSubmodulesNames();
         ltr27SubmodulesSettings.setSubmodulesUnits();
+        lcm.loadCalibrationSettings(ltr27SettingsModel.getModuleInstance());
         setSettings();
         loadInitialStateOfUi();
     }
@@ -353,6 +354,7 @@ public class LTR27SettingsController implements BaseController {
     private void saveSettings() {
         ltr27SettingsModel.getModuleInstance().setCheckedChannels(ltr27SubmodulesSettings.getCheckedSubmodules());
         ltr27SettingsModel.getModuleInstance().getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequencyComboBox.getSelectionModel().getSelectedIndex());
+        lcm.saveCalibrationSettings(ltr27SettingsModel.getModuleInstance());
     }
 
     private void setSettings() {
