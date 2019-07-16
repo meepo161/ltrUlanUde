@@ -147,6 +147,10 @@ public abstract class ADC extends Module {
         this.iirPath = iirPath;
     }
 
+    public void setMeasuringRanges(int[] measuringRanges) {
+        this.measuringRanges = measuringRanges;
+    }
+
     public void setRingBufferForCalculation(RingBuffer ringBufferForCalculation) {
         this.ringBufferForCalculation = ringBufferForCalculation;
     }
@@ -161,5 +165,9 @@ public abstract class ADC extends Module {
 
     public void setTimeMarksRingBuffer(RingBuffer timeMarksRingBuffer) {
         this.timeMarksRingBuffer = timeMarksRingBuffer;
+    }
+
+    public void setTypeOfChannels(int[] typeOfChannels) {
+        this.typeOfChannels = typeOfChannels;
     }
 }

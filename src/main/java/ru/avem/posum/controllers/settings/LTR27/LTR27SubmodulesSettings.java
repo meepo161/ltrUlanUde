@@ -281,14 +281,14 @@ public class LTR27SubmodulesSettings {
                         boolean isCalibrate = ltr27SettingsController.getCalibrationCheckBox().isSelected();
                         if (average == 1) {
                             double valueOfChannelOne = lcm.calibrate(isCalibrate, data[channelIndex], submoduleIndex, channelIndex);
-                            double valueOfChannelTwo = lcm.calibrate(isCalibrate,data[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
+                            double valueOfChannelTwo = lcm.calibrate(isCalibrate, data[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
                             setValues(valueOfChannelOne, valueOfChannelTwo, submoduleIndex);
                         } else if (averageCount < average) {
                             bufferedData[channelIndex] += data[channelIndex];
                             bufferedData[channelIndex + 1] += data[channelIndex + 1];
                         } else {
-                            double valueOfChannelOne = lcm.calibrate(isCalibrate,bufferedData[channelIndex] / (double) average, submoduleIndex, channelIndex);
-                            double valueOfChannelTwo = lcm.calibrate(isCalibrate,bufferedData[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
+                            double valueOfChannelOne = lcm.calibrate(isCalibrate, bufferedData[channelIndex] / (double) average, submoduleIndex, channelIndex);
+                            double valueOfChannelTwo = lcm.calibrate(isCalibrate, bufferedData[channelIndex + 1] / (double) average, submoduleIndex, channelIndex + 1);
                             setValues(valueOfChannelOne, valueOfChannelTwo, submoduleIndex);
                         }
                     }
@@ -334,6 +334,15 @@ public class LTR27SubmodulesSettings {
         }
 
         return names;
+    }
+
+    public boolean[] getCheckedSubmodules() {
+        boolean[] checkedSubmodules = new boolean[LTR27.MAX_SUBMODULES];
+        for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
+            checkedSubmodules[submoduleIndex] = checkBoxes.get(submoduleIndex).isSelected();
+            System.out.println("CheckBox " + submoduleIndex + " is " + !calibrationButtons.get(submoduleIndex).isDisable());
+        }
+        return checkedSubmodules;
     }
 
     public void setLTR27CalibrationManager(LTR27CalibrationManager lcm) {

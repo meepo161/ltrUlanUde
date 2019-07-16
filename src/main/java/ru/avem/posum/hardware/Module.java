@@ -76,6 +76,10 @@ public abstract class Module {
         return status;
     }
 
+    public void setCheckedChannels(boolean[] checkedChannels) {
+        this.checkedChannels = checkedChannels;
+    }
+
     public void setConnectionOpen(boolean connectionOpen) {
         this.connectionOpen = connectionOpen;
     }
@@ -90,6 +94,10 @@ public abstract class Module {
 
     public void setData(double[] data) {
         this.data = data;
+    }
+
+    public void setDescriptions(String[] descriptions) {
+        this.descriptions = descriptions;
     }
 
     public void setModuleId(long moduleId) {

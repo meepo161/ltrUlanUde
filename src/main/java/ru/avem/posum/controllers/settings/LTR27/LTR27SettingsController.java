@@ -8,6 +8,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.controllers.calibration.LTR27CalibrationManager;
+import ru.avem.posum.hardware.ADC;
 import ru.avem.posum.models.settings.LTR27SettingsModel;
 import ru.avem.posum.models.signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
@@ -318,6 +319,7 @@ public class LTR27SettingsController implements BaseController {
 
         new Thread(() -> {
             stoped = true;
+            saveSettings();
             ltr27SubmodulesSettings.toggleCheckBoxes(false);
             disableUiElements();
             ltr27SettingsModel.stop();
@@ -340,6 +342,11 @@ public class LTR27SettingsController implements BaseController {
         enableAllButton.setDisable(isDisable);
         initializeButton.setDisable(isDisable);
         backButton.setDisable(isDisable);
+    }
+
+    private void saveSettings() {
+        ltr27SettingsModel.getModuleInstance().setCheckedChannels(ltr27SubmodulesSettings.getCheckedSubmodules());
+        ltr27SettingsModel.getModuleInstance().getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequencyComboBox.getSelectionModel().getSelectedIndex());
     }
 
     private void loadInitialStateOfUi() {

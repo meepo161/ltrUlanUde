@@ -250,7 +250,8 @@ public class SettingsModel implements BaseController {
     }
 
     private void saveLTR27Settings() {
-        System.out.println("LTR27 settings saved");
+        getADCInstance();
+        saveADCSettings(Crate.LTR27);
     }
 
     private void saveLTR34Settings() {
