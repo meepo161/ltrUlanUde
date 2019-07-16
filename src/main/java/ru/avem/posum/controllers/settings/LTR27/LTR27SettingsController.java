@@ -14,6 +14,8 @@ import ru.avem.posum.models.signal.SignalModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
+import javax.rmi.CORBA.Util;
+
 public class LTR27SettingsController implements BaseController {
     @FXML
     private Label averageLabel;
@@ -183,6 +185,7 @@ public class LTR27SettingsController implements BaseController {
         ltr27SettingsModel.setModuleInstance(cm.getCrateModelInstance().getModulesList());
         ltr27SubmodulesSettings.setSubmodulesNames();
         ltr27SubmodulesSettings.setSubmodulesUnits();
+        setSettings();
         loadInitialStateOfUi();
     }
 
@@ -336,7 +339,9 @@ public class LTR27SettingsController implements BaseController {
 
     private void toggleUi(boolean isDisable) {
         frequencyComboBox.setDisable(isDisable);
+        rarefactionLabel.setDisable(isDisable);
         rarefactionComboBox.setDisable(isDisable);
+        averageLabel.setDisable(isDisable);
         averageTextField.setDisable(isDisable);
         calibrationCheckBox.setDisable(isDisable);
         enableAllButton.setDisable(isDisable);
@@ -349,7 +354,16 @@ public class LTR27SettingsController implements BaseController {
         ltr27SettingsModel.getModuleInstance().getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequencyComboBox.getSelectionModel().getSelectedIndex());
     }
 
+    private void setSettings() {
+        int frequencyIndex = ltr27SettingsModel.getModuleInstance().getSettingsOfModule().get(ADC.Settings.FREQUENCY);
+        frequencyComboBox.getSelectionModel().select(frequencyIndex);
+        boolean[] checkedSubmodules = ltr27SettingsModel.getModuleInstance().getCheckedChannels();
+        ltr27SubmodulesSettings.setCheckedSubmodules(checkedSubmodules);
+    }
+
     private void loadInitialStateOfUi() {
+        ltr27SubmodulesSettings.disableSubmodulesUiElements();
+        toggleUi(true);
         frequencyLabel.setDisable(false);
         frequencyComboBox.setDisable(false);
         backButton.setDisable(false);

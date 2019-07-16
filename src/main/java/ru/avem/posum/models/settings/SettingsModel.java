@@ -456,13 +456,9 @@ public class SettingsModel implements BaseController {
     private void addLoadModulesInstructions() {
         instructions.clear();
         instructions.put(Crate.LTR24, this::loadADCSettings);
-        instructions.put(Crate.LTR27, this::loadLTR27Settings);
+        instructions.put(Crate.LTR27, this::loadADCSettings);
         instructions.put(Crate.LTR34, this::loadDACSettings);
         instructions.put(Crate.LTR212, this::loadADCSettings);
-    }
-
-    private void loadLTR27Settings() {
-        System.out.println("LTR27 settings loaded");
     }
 
     private void loadADCSettings() {
@@ -484,19 +480,21 @@ public class SettingsModel implements BaseController {
     }
 
     private void parseChannelsSettings(Modules module) {
-        String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 5);
-        String[] parsedChannelsTypes = module.getTypesOfChannels().split(", ", 5);
-        String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", 5);
-        String[] parsedChannelsDescriptions = module.getChannelsDescriptions().split(", ", 5);
+        int channelsCount = module.getChannelsCount();
 
-        adc.setChannelsCount(module.getChannelsCount());
+        String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", channelsCount + 1);
+        String[] parsedChannelsTypes = module.getTypesOfChannels().split(", ", channelsCount + 1);
+        String[] parsedMeasuringRanges = module.getMeasuringRanges().split(", ", channelsCount + 1);
+        String[] parsedChannelsDescriptions = module.getChannelsDescriptions().split(", ", channelsCount + 1);
+
+        adc.setChannelsCount(channelsCount);
         adc.setSlot(slot);
         adc.setModuleId(module.getId());
         adc.setFirPath(module.getFirPath());
         adc.setIirPath(module.getIirPath());
         adc.setData(new double[module.getDataLength()]);
 
-        for (int i = 0; i < channels; i++) {
+        for (int i = 0; i < channelsCount; i++) {
             checkedChannels[i] = Boolean.parseBoolean(parsedCheckedChannels[i]);
             typesOfChannels[i] = Integer.parseInt(parsedChannelsTypes[i]);
             measuringRanges[i] = Integer.parseInt(parsedMeasuringRanges[i]);

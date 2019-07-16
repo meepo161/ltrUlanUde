@@ -117,12 +117,13 @@ public class LTR27 extends ADC {
     private void initializeModuleSettings() {
         getSettingsOfModule().put(Settings.FREQUENCY, 9); // частота дискретизации 100 Гц
         channelsCount = MAX_SUBMODULES;
+        setCheckedChannels(new boolean[MAX_SUBMODULES]);
         setTypeOfChannels(new int[MAX_SUBMODULES]);
         setMeasuringRanges(new int[MAX_SUBMODULES]);
 
         String[] descriptions = new String[MAX_SUBMODULES];
         for (int i = 0; i < descriptions.length; i++) {
-            descriptions[i] = "";
+            descriptions[i] = ", ";
         }
         setDescriptions(descriptions);
     }

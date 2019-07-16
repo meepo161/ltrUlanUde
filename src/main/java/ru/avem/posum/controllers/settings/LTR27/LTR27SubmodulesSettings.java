@@ -340,9 +340,20 @@ public class LTR27SubmodulesSettings {
         boolean[] checkedSubmodules = new boolean[LTR27.MAX_SUBMODULES];
         for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
             checkedSubmodules[submoduleIndex] = checkBoxes.get(submoduleIndex).isSelected();
-            System.out.println("CheckBox " + submoduleIndex + " is " + !calibrationButtons.get(submoduleIndex).isDisable());
         }
         return checkedSubmodules;
+    }
+
+    public void setCheckedSubmodules(boolean[] checkedSubmodules) {
+        for (int submoduleIndex = 0; submoduleIndex < checkedSubmodules.length; submoduleIndex++) {
+            checkBoxes.get(submoduleIndex).setSelected(checkedSubmodules[submoduleIndex]);
+        }
+    }
+
+    public void disableSubmodulesUiElements() {
+        for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
+            toggleSubmoduleUiElements(submoduleIndex, true);
+        }
     }
 
     public void setLTR27CalibrationManager(LTR27CalibrationManager lcm) {
