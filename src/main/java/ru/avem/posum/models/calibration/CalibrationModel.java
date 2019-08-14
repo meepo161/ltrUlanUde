@@ -18,6 +18,7 @@ public class CalibrationModel {
     private double loadValue;
     private String valueName = "";
 
+    // Добавляет градуировочную точку
     public void add(CalibrationPoint calibrationPoint) {
         if (calibrationPoint.getValueName().isEmpty()) {
             calibrationPoints.add(0, calibrationPoint);
@@ -26,6 +27,7 @@ public class CalibrationModel {
         }
     }
 
+    // Градуирует значение
     public void calibrate(ADC adc, int channelNumber) {
         setFields(adc, channelNumber);
         calculateCalibrationCoefficients();
@@ -36,6 +38,7 @@ public class CalibrationModel {
         this.channelNumber = channel;
     }
 
+    // Рассчитыват градуировочные коэффициенты
     private void calculateCalibrationCoefficients() {
         for (String settings : adc.getCalibrationSettings().get(channelNumber)) {
             double loadValue = CalibrationPoint.parseLoadValue(settings);
@@ -48,16 +51,19 @@ public class CalibrationModel {
         }
     }
 
+    // Считывает значения
     public void parse(String calibration) {
         loadValue = CalibrationPoint.parseLoadValue(calibration);
         channelValue = CalibrationPoint.parseChannelValue(calibration);
         valueName = CalibrationPoint.parseValueName(calibration);
     }
 
+    // Возвращает список градуировочных точек
     public List<Double> getCalibrationCoefficients() {
         return calibrationCoefficients;
     }
 
+    // Возвращает список градуировочных точек
     public ObservableList<CalibrationPoint> getCalibrationPoints() {
         return calibrationPoints;
     }

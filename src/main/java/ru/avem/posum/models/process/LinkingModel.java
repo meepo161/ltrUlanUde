@@ -1,6 +1,5 @@
 package ru.avem.posum.models.process;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
@@ -13,13 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class LinkingModel {
-    private HashMap<String, List<Pair<Integer, String>>> channelsHashMap = new HashMap<>();
-    private ObservableList<CheckBox> chosenChannels = FXCollections.observableArrayList();
-    private HashMap<String, Modules> modulesHashMap = new HashMap<>();
-    private ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = FXCollections.observableArrayList();
-    private TestProgram testProgram;
+/**
+ * Модель добавленных и связанных каналов
+ */
 
+public class LinkingModel {
+    private HashMap<String, List<Pair<Integer, String>>> channelsHashMap = new HashMap<>(); // список связанных каналов
+    private ObservableList<CheckBox> chosenChannels = FXCollections.observableArrayList(); // список добавленных каналов
+    private HashMap<String, Modules> modulesHashMap = new HashMap<>(); // список задействованных модулей
+    private ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = FXCollections.observableArrayList(); // список связанных каналов
+    private TestProgram testProgram; // модель программы испытаний
+
+    // Возвращает описания каналов
     public ObservableList<CheckBox> getDescriptionsOfChannels(String... moduleTypes) {
         ObservableList<CheckBox> descriptions = loadDescriptionsOfChannels(moduleTypes);
         checkRemoved(descriptions);
@@ -27,6 +31,7 @@ public class LinkingModel {
         return descriptions;
     }
 
+    // Загружает описания каналов
     private ObservableList<CheckBox> loadDescriptionsOfChannels(String[] moduleTypes) {
         ObservableList<CheckBox> channels = FXCollections.observableArrayList();
 
@@ -49,6 +54,7 @@ public class LinkingModel {
         return channels;
     }
 
+    // Проверяет, какие каналы уже были связаны или добавлены
     private void checkRemoved(ObservableList<CheckBox> channels) {
         List<CheckBox> channelsToRemove = new ArrayList<>();
         // Удаляет из списка связанные каналы ЦАП - АЦП
@@ -76,6 +82,7 @@ public class LinkingModel {
         }
     }
 
+    // Возвращает список задействованных модулей
     private List<Modules> getModules(String modulesType) {
         List<Modules> modules = ModulesRepository.getModules(testProgram.getId());
         List<Modules> outputList = new ArrayList<>();
@@ -89,12 +96,14 @@ public class LinkingModel {
         return outputList;
     }
 
+    // Добавляет в список связанные каналы
     public void saveLinked(Pair<CheckBox, CheckBox> channels) {
         if (!linkedChannels.contains(channels)) {
             linkedChannels.add(channels);
         }
     }
 
+    // Доабвляет в список выбранные каналы
     public void saveChosen(List<CheckBox> channels) {
         for (CheckBox channel : channels) {
             if (!chosenChannels.contains(channel)) {
@@ -103,6 +112,7 @@ public class LinkingModel {
         }
     }
 
+    // Возвращает список модулей, каналы которых были связаны
     public List<Modules> getLinkedModules() {
         List<Modules> modules = new ArrayList<>();
 
@@ -125,6 +135,7 @@ public class LinkingModel {
         return modules;
     }
 
+    // Проверяет, есть ли модуль в списке
     private boolean isPresent(int slot, List<Modules> modules) {
         for (Modules module : modules) {
             if (module.getSlot() == slot) {
@@ -135,6 +146,7 @@ public class LinkingModel {
         return false;
     }
 
+    // Возвращает список модулей, каналы которых были добавлены
     public ObservableList<Modules> getChosenModules() {
         ObservableList<Modules> modules = FXCollections.observableArrayList();
 
@@ -150,14 +162,17 @@ public class LinkingModel {
         return modules;
     }
 
+    // Возвращает список добавленных каналов
     public ObservableList<CheckBox> getChosenChannels() {
         return chosenChannels;
     }
 
+    // Возвращает список связанных каналов
     public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
         return linkedChannels;
     }
 
+    // Задает модель программы испытаний
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
     }

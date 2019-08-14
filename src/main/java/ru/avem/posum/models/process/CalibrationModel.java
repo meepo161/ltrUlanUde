@@ -30,6 +30,7 @@ public class CalibrationModel {
         }
     }
 
+    // Загрузка калибровочных коэффициентов
     private void parseCalibration(ChannelModel channel, List<Modules> modules) {
         String channelDescription = parseDescription(channel);
 
@@ -54,10 +55,9 @@ public class CalibrationModel {
                 }
             }
         }
-
-
     }
 
+    // Считывает описание каналв
     private String parseDescription(ChannelModel channel) {
         if (channel.getName().contains(" => ")) {
             return channel.getName().split(" => ")[1];
@@ -66,10 +66,12 @@ public class CalibrationModel {
         }
     }
 
+    // Считывает название физической величины
     private void parseValueName(String calibrationSettings, int moduleIndex, int channelIndex) {
         valueName[moduleIndex][channelIndex] = CalibrationPoint.parseValueName(calibrationSettings);
     }
 
+    // Считывает градуировочные настройки
     private void parse(List<String> calibrationSettings, int moduleIndex, int channelIndex) {
         for (int settingsIndex = 0; settingsIndex < calibrationSettings.size() - 1; settingsIndex++) {
             if (CalibrationPoint.parseValueName(calibrationSettings.get(settingsIndex)).isEmpty()) { // если градуировка нуля
@@ -89,6 +91,7 @@ public class CalibrationModel {
         defineCalibratedBounds(calibrationSettings, moduleIndex, channelIndex);
     }
 
+    // Определяет градуированные пределы
     private void defineBounds(int moduleIndex, int channelIndex) {
         if (firstPointChannelValue[moduleIndex][channelIndex] > secondPointChannelValue[moduleIndex][channelIndex]) {
             double bufferForChannelValue = firstPointChannelValue[moduleIndex][channelIndex];
@@ -103,6 +106,7 @@ public class CalibrationModel {
         upperBound[moduleIndex][channelIndex] = secondPointChannelValue[moduleIndex][channelIndex];
     }
 
+    // Определяет градуированные пределы
     public void defineCalibratedBounds(List<String> calibrationSettings, int moduleIndex, int channelIndex) {
         if (!calibrationSettings.isEmpty()) {
             double minLoadValue = Double.MAX_VALUE;
@@ -130,6 +134,7 @@ public class CalibrationModel {
         }
     }
 
+    // Градуирует данные
     public void calibrate(double[][] data) {
         for (int moduleIndex = 0; moduleIndex < data.length; moduleIndex++) {
             calibratedData[moduleIndex] = new double[data[moduleIndex].length];
@@ -145,6 +150,7 @@ public class CalibrationModel {
         }
     }
 
+    // Градуирует данные канала
     public double calibrate(double value, int moduleIndex, int channelIndex) {
         double calibratedValue;
         double accuracyCoefficient = 1.2;
@@ -163,16 +169,19 @@ public class CalibrationModel {
         return calibratedValue;
     }
 
+    // Возвращает градуированные данные
     public double[][] getCalibratedData() {
         return calibratedData;
     }
 
+    // Возвращает градуированные данные
     public double[] getCalibratedData(int slot) {
         double[] output = new double[calibratedData[slot].length];
         System.arraycopy(calibratedData[slot], 0, output, 0, output.length);
         return output;
     }
 
+    // Возвращает минимальное значение вертикальной оси графика
     public double getLowerBound(int slot, int channel) {
         if (isCalibrationsExists[slot][channel]) {
             return calibratedLowerBound[slot][channel];
@@ -181,6 +190,7 @@ public class CalibrationModel {
         }
     }
 
+    // Возвращает максимальное значение вертикальной оси графика
     public double getUpperBound(int slot, int channel) {
         if (isCalibrationsExists[slot][channel]) {
             return calibratedUpperBound[slot][channel];
@@ -197,6 +207,7 @@ public class CalibrationModel {
         }
     }
 
+    // Возвращает название величины вертикальной оси
     public String getValueName(int slot, int channel) {
         if (isCalibrationsExists[slot][channel]) {
             return valueName[slot][channel];

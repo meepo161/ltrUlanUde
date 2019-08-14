@@ -10,25 +10,25 @@ public class SignalParametersModel {
     private final int SLOTS = 16; // максимальное количество слотов
     private final int CHANNELS = 4; // количество каналов АЦП
 
-    private double[] adcFrequencies;
-    private double[][] amplitudes = new double[SLOTS][];
-    private double[][] bufferedFrequency = new double[SLOTS][];
-    private double[][] bufferedRms = new double[SLOTS][];
-    private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][];
+    private double[] adcFrequencies; // частоты дискретизации модулей
+    private double[][] amplitudes = new double[SLOTS][]; // амплитуды каналов модулей
+    private double[][] bufferedFrequency = new double[SLOTS][]; // сохраненные частоты каналов модулей
+    private double[][] bufferedRms = new double[SLOTS][]; // сохраненные действующие значения модулей
+    private int[][] bufferedSamplesPerSemiPeriods = new int[SLOTS][]; // сохраненные значения количества сэмплов в полупериоде
     private int[][] frequencyCalculationCounters = new int[SLOTS][CHANNELS]; // счетчик для перезапуска расчета частоты
-    private double[][] data = new double[SLOTS][];
-    private double[][] dc = new double[SLOTS][];
-    private double[][] frequencies = new double[SLOTS][];
-    private Butterworth iir = new Butterworth();
-    private double[][] loadsCounter = new double[SLOTS][];
-    private double[][] maxSignalValues = new double[SLOTS][];
-    private double[][] minSignalValues = new double[SLOTS][];
-    private int[][] periods = new int[SLOTS][];
-    private double[][] rms = new double[SLOTS][];
-    private double[][] samplesPerSemiPeriod = new double[SLOTS][];
-    private int[][] samplesPerSemiPeriods = new int[SLOTS][];
-    private String[] typesOfModules = new String[SLOTS];
-    private double[][] zeroTransitionCounter = new double[SLOTS][];
+    private double[][] data = new double[SLOTS][]; // данные модулей
+    private double[][] dc = new double[SLOTS][]; // постоянные составляющие каналов модулей
+    private double[][] frequencies = new double[SLOTS][]; // частоты каналов модулей
+    private Butterworth iir = new Butterworth(); // фильтр
+    private double[][] loadsCounter = new double[SLOTS][]; // счетчик нагружений каналов модулей
+    private double[][] maxSignalValues = new double[SLOTS][]; // максимальные значения на каналах модулей
+    private double[][] minSignalValues = new double[SLOTS][]; // минимальные значения на каналах модулей
+    private int[][] periods = new int[SLOTS][]; // количество периодов каналов модулей
+    private double[][] rms = new double[SLOTS][]; // действующие значения каналов модулей
+    private double[][] samplesPerSemiPeriod = new double[SLOTS][]; // количество сэмплов в полупериоде каналов модулей
+    private int[][] samplesPerSemiPeriods = new int[SLOTS][]; // количество сэмплов в полупериодах каналов модулей
+    private String[] typesOfModules = new String[SLOTS]; // список модулей
+    private double[][] zeroTransitionCounter = new double[SLOTS][]; // количество переходов через 0 на каналах  модулей
 
     public SignalParametersModel() {
         initArrays();
@@ -54,16 +54,19 @@ public class SignalParametersModel {
         }
     }
 
+    // Задает данные модулей
     public void setData(double[][] data) {
         this.data = data;
     }
 
+    // Задает частоты дискеризации модулей
     public void setAdcFrequencies(List<Modules> modules) {
         for (int moduleIndex = 0; moduleIndex < modules.size(); moduleIndex++) {
             adcFrequencies[moduleIndex] = modules.get(moduleIndex).getDataLength() / CHANNELS; // TODO: change this shit
         }
     }
 
+    // Рассчитывает параметры измеренного сигнала на каналах модулей
     public void calculateParameters() {
         for (int moduleIndex = 0; moduleIndex < SLOTS; moduleIndex++) {
             if (!typesOfModules[moduleIndex].equals(Crate.LTR34)) {
@@ -77,6 +80,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Рассчитывает минимальное и максимальное значения
     private void calculateMinAndMaxValues(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             double min = Integer.MAX_VALUE;
@@ -102,6 +106,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Более точный расчет минимального и максимального значений
     private void calculateAverageMinAndMaxValues(int moduleIndex, int channelIndex) {
         double[] channelData = new double[data[moduleIndex].length / CHANNELS];
         List<Double> maxs = new ArrayList<>();
@@ -159,6 +164,7 @@ public class SignalParametersModel {
         minSignalValues[moduleIndex][channelIndex] = min;
     }
 
+    // Рассчитывает аплитуду
     private void calculateAmplitudes(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             double amplitude = (maxSignalValues[moduleIndex][channelIndex] - minSignalValues[moduleIndex][channelIndex]) / 2;
@@ -166,6 +172,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Рассчитывает постоянную составляющую
     private void calculateDC(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             double dc = (maxSignalValues[moduleIndex][channelIndex] + minSignalValues[moduleIndex][channelIndex]) / 2;
@@ -173,6 +180,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Рассчитывает действующее значение
     private void calculateRms(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             double summ = 0;
@@ -193,6 +201,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Рассчитывает частоту
     private void calculateFrequencies(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             int estimatedFrequency = estimateFrequency(moduleIndex, channelIndex);
@@ -222,6 +231,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Возвращает минимальное значение амплитуды
     private double getLowerLimitOfAmplitude(int moduleIndex) {
         switch (typesOfModules[moduleIndex]) {
             case Crate.LTR24:
@@ -233,6 +243,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Оценивает частоту
     private int estimateFrequency(int moduleIndex, int channelIndex) {
         boolean positivePartOfSignal = false;
         int frequency = 0;
@@ -252,6 +263,7 @@ public class SignalParametersModel {
         return frequency;
     }
 
+    // Возвращает значение частоты
     private double defineFrequencyFirstAlgorithm(int moduleIndex, int channelIndex) {
         int shift = 1_000;
         double firstValue = data[moduleIndex][channelIndex] + shift;
@@ -296,12 +308,14 @@ public class SignalParametersModel {
         return (samplesPerSemiPeriod[moduleIndex][channelIndex] == 0 ? 0 : (adcFrequencies[moduleIndex] / (samplesPerSemiPeriod[moduleIndex][channelIndex] * 2)));
     }
 
+    // Считает количество сэмплов в полупериоде
     private void countSamplesFirstAlgorithm(int moduleIndex, int channelIndex) {
         if (zeroTransitionCounter[moduleIndex][channelIndex] == 1) {
             samplesPerSemiPeriod[moduleIndex][channelIndex]++;
         }
     }
 
+    // Возвращает значение частоты
     private double defineFrequencySecondAlgorithm(int moduleIndex, int channelIndex, int cutoffFrequency) {
         int shift = 1_000;
         double firstValue = data[moduleIndex][0] + shift;
@@ -351,12 +365,14 @@ public class SignalParametersModel {
         return (samplesPerPeriod == 0 ? 0 : (adcFrequencies[moduleIndex] / samplesPerPeriod));
     }
 
+    // Считает количество сэмплов в полупериоде
     private void countSamplesSecondAlgorithm(int moduleIndex, int channelIndex) {
         if (zeroTransitionCounter[moduleIndex][channelIndex] >= 1) {
             samplesPerSemiPeriods[moduleIndex][channelIndex]++;
         }
     }
 
+    // Считает количество периодов
     private void countPeriods(int moduleIndex, int channelIndex) {
         zeroTransitionCounter[moduleIndex][channelIndex]++;
         if (zeroTransitionCounter[moduleIndex][channelIndex] % 2 != 0 && zeroTransitionCounter[moduleIndex][channelIndex] > 2) {
@@ -365,6 +381,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Считает количество нагружений
     private void calculateLoadsCounters(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
             loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];

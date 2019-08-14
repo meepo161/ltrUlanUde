@@ -8,10 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * Модель запланированной команды
+ */
+
 public class Command {
-    private long id;
-    private final StringProperty description;
-    private StringProperty type;
+    private long id; // id команды
+    private final StringProperty description; // описание команды
+    private StringProperty type; // вид команды
 
     public Command(long id, String type, String description) {
         this.id = id;
@@ -27,6 +31,7 @@ public class Command {
         this.id = id;
     }
 
+    // Возвращает длительность паузы
     public long getDelay() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -41,6 +46,7 @@ public class Command {
         return mills.getTime();
     }
 
+    // Возвращае время выполнения команды
     public long getTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
