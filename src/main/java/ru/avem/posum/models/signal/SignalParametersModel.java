@@ -8,26 +8,26 @@ import uk.me.berndporr.iirj.Butterworth;
 import java.util.*;
 
 public class SignalParametersModel {
-    private boolean accurateFrequencyCalculation = true;
-    private ADC adc;
-    private int averageIterator;
-    private double peakValue;
-    private double bufferedPeakValue;
-    private double bufferedFrequency;
-    private double bufferedLoadsCounter;
-    private double bufferedRms;
-    private double bufferedDC;
-    private double bufferedCalibratedAmplitude;
-    private double bufferedCalibratedRms;
-    private double bufferedCalibratedZeroShift;
-    private double bufferedSamplesPerSemiPeriods;
-    private double calibratedAmplitude;
-    private double calibratedRms;
-    private double calibratedDC;
-    private double calibratedValue;
-    private double firstLoadValue;
-    private double firstChannelValue;
-    private int frequencyCalculationCounter;
+    private boolean accurateFrequencyCalculation = true; // флаг выполнения точных расчетов
+    private ADC adc; // инстанс модуля АЦП
+    private int averageIterator; // счетчик для усреднеия значений
+    private double peakValue; // пиковое значение
+    private double bufferedPeakValue; // сохраненное пиковое значение
+    private double bufferedFrequency; // сохраненное значение частоты
+    private double bufferedLoadsCounter; // сохраненное значение количества нагружений
+    private double bufferedRms; // сохраненное действующее значение
+    private double bufferedDC; // сохраненное значение постоянной составляющей
+    private double bufferedCalibratedAmplitude; // сохраненное значение градуированной амплитуды
+    private double bufferedCalibratedRms; // сохраненное значение градуированного действующего значения
+    private double bufferedCalibratedZeroShift; // сохраненное значение градуированного смещения нуля
+    private double bufferedSamplesPerSemiPeriods; // сохранненое значение количества сэмплов в полупериоде
+    private double calibratedAmplitude; // градуированная амплитуда
+    private double calibratedRms; // градуированное действующее значение
+    private double calibratedDC; // градуированная постоянная составляющая
+    private double calibratedValue; // градуированное значение
+    private double firstLoadValue; // первое значение нагрузки
+    private double firstChannelValue; // первое значение канала
+    private int frequencyCalculationCounter; // счетчик расчета частоты
     private Butterworth iir = new Butterworth();
     private String calibratedValueName;
     private int channel;

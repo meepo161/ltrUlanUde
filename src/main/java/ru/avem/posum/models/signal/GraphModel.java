@@ -8,14 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphModel {
-    private FFT fft = new FFT();
-    private HanningWindow hanningWindow = new HanningWindow();
-    private double lowerBound;
-    private double scale;
+    private FFT fft = new FFT(); // разложение в ряд Фурье
+    private HanningWindow hanningWindow = new HanningWindow(); // окно Хэнинга для разложения в ряд Фурье
+    private double lowerBound; // нижняя граница вертикальной шкалы графикка
+    private double scale; // масштаб
     private double tickUnit;
-    private double upperBound;
-    private String valueName;
+    private double upperBound; // верхняя граница вертикальной шкалы графикка
+    private String valueName; // название величины вертикальной шкалы графика
 
+    // Расчитывает границы шкалы
     public void calculateGraphBounds() {
         if (valueName.equals("В")) {
             lowerBound = -scale * 10;
@@ -29,6 +30,7 @@ public class GraphModel {
 
     }
 
+    // Считывает масштаб графика
     public void parseGraphScale(String scale) {
         String[] separatedScale = scale.split(" ");
         double digits = Double.parseDouble(separatedScale[0]);
@@ -44,6 +46,7 @@ public class GraphModel {
         }
     }
 
+    // Выполняет разложение в ряд Фурье
     public void doFFT(int channel, double[] data) {
         int channels = 4; // TODO: delete this shit
         double[] channelData = new double[data.length / 4];
@@ -55,6 +58,7 @@ public class GraphModel {
         fft.forward(channelData, channelData.length, hanningWindow);
     }
 
+    // Возвращает график АЧХ
     public List<XYChart.Data<Number, Number>> getMagnitude() {
         List<XYChart.Data<Number, Number>> intermediateList = new ArrayList<>();
 
