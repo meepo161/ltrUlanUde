@@ -67,7 +67,6 @@ class LTR27CalibrationModel {
     }
 
     fun updateGraph(submoduleIndex: Int) {
-
         for (calibrationPoint in calibrationPointsOfChannelOne[submoduleIndex]) {
             addPointToGraphOfChannelOne(calibrationPoint)
         }

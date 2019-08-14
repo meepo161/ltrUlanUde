@@ -131,6 +131,7 @@ public class RegulatorParametersController {
         pidParameters.add(frequencyCheckBox);
     }
 
+    // Заполняет список элеметов GUI для задания требуемого значения амплитуды
     private void fillListOfAmplitudeUiElements() {
         amplitudeUiElements.add(amplitudeLabel);
         amplitudeUiElements.add(amplitudeTextField);
@@ -139,6 +140,7 @@ public class RegulatorParametersController {
         amplitudeUiElements.add(amplitudeSlider);
     }
 
+    // Заполняет список элеметов GUI для задания требуемого значения постоянной составляющей
     private void fillListOfDcUiElements() {
         dcUiElements.add(dcLabel);
         dcUiElements.add(dcTextField);
@@ -147,6 +149,7 @@ public class RegulatorParametersController {
         dcUiElements.add(dcSlider);
     }
 
+    // Заполняет список элеметов GUI для задания требуемого значения частоты
     private void fillListOfFrequencyUiElements() {
         frequencyUiElements.add(frequencyLabel);
         frequencyUiElements.add(frequencyTextField);
@@ -159,6 +162,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Меняет состояние GUI
     private void listen(CheckBox checkBox) {
         checkBox.selectedProperty().addListener(observable -> {
             if (checkBox.isSelected()) {
@@ -187,6 +191,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Делает доступным GUI для задания требуемого значения регулируемой величины
     private void highlight(int parameterIndex) {
         switch (parameterIndex) {
             case 0:
@@ -213,12 +218,14 @@ public class RegulatorParametersController {
         saveButton.setDisable(false);
     }
 
+    // Меняет состояние GUI
     private void toggleUiElements(List<Node> elements, boolean isDisable) {
         for (Node element : elements) {
             element.setDisable(isDisable);
         }
     }
 
+    // Меняет состояние GUI
     private void toggleUiElements(boolean isDisable) {
         pLabel.setDisable(isDisable);
         pSlider.setDisable(isDisable);
@@ -231,6 +238,7 @@ public class RegulatorParametersController {
         dTextField.setDisable(isDisable);
     }
 
+    // Отображает меню задания параметров регулятора
     public void showRegulationPanel() {
         int TOOLBAR_HEIGHT = 110;
         boolean hide = regulatorParametersModel.checkToProgramClicksCounter();
@@ -259,7 +267,7 @@ public class RegulatorParametersController {
         listen(textField, slider);
     }
 
-
+    // Не допускает ввода некорректных символов
     private void setDigitFilter(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!textField.getText().isEmpty()) {
@@ -271,6 +279,7 @@ public class RegulatorParametersController {
         });
     }
 
+    // Меняет значение слайдера в зависимости от введенного значения в текстовом поле
     private void listen(TextField textField, Slider slider) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             String value = textField.getText();
@@ -335,6 +344,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Отображает значение параметров регулятора, загруженные из модели
     private void setParameters(ChannelModel channelModel) {
         processController.getCalibrationModel().loadCalibrations(tableView.getItems(), processController.getProcessModel().getModules());
         Pair<Integer, Integer> slotAndChannel = processController.getTableController().parseSlotAndChannel(channelModel.getName());
@@ -357,6 +367,7 @@ public class RegulatorParametersController {
         });
     }
 
+    // Отображает градуированое значение
     private void listen(TextField textField, TextField calibratedTextField) {
         textField.textProperty().addListener(observable -> {
             int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
@@ -373,6 +384,7 @@ public class RegulatorParametersController {
 
     }
 
+    // Создает контекстное меню для правого щелчка мыши
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
@@ -383,6 +395,7 @@ public class RegulatorParametersController {
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
+    // Удаляет канал
     private void deleteChannelModel() {
         ChannelModel selectedChannelModel = tableView.getSelectionModel().getSelectedItem();
         tableView.getItems().remove(selectedChannelModel);
@@ -392,6 +405,7 @@ public class RegulatorParametersController {
         check(tableView);
     }
 
+    // Меняет состояние GUI
     private void check(TableView<ChannelModel> tableView) {
         if (tableView.getItems().isEmpty()) {
             toggleCheckBoxes(true);
@@ -409,6 +423,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Очищает GUI от заданных параметров
     private void clearParameters() {
         amplitudeTextField.setText("0");
         dcTextField.setText("0");
@@ -425,6 +440,7 @@ public class RegulatorParametersController {
         saveButton.setDisable(true);
     }
 
+    // Удаляет каналы
     private void deleteDescriptions(ChannelModel channelModel) {
         if (channelModel.getName().contains("=>")) { // удаление связанных каналов
             String descriptionOfDacChannel = channelModel.getName().split(" => ")[0];
@@ -447,6 +463,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Удаляет каналы
     private void clearPairModels() {
         ObservableList<ChannelModel> channelModels = tableView.getItems();
         processController.getTableController().delete(channelModels);
@@ -456,6 +473,7 @@ public class RegulatorParametersController {
         check(tableView);
     }
 
+    // Удаляет каналы
     private void clearDescriptions() {
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = lm.getLinkedChannels();
         lm.getLinkedChannels().removeAll(linkedChannels); // удаление всех связанных каналов
@@ -464,6 +482,7 @@ public class RegulatorParametersController {
         lm.getChosenChannels().removeAll(chosenChannels); // удаление всех выбранных каналов
     }
 
+    // Скрывает панель настройки ПИД-регулятора и добавления каналов
     public void hideToolBar() {
         toolbarSettings.setVisible(false);
         topPanel.setPrefHeight(mainPanel.getMaxHeight());
@@ -472,6 +491,7 @@ public class RegulatorParametersController {
         regulatorParametersModel.resetProgramClickCounter();
     }
 
+    // Возвращает индекс регулируемого параметра
     public int getChosenParameterIndex() {
         for (int parameterIndex = 0; parameterIndex < pidParameters.size(); parameterIndex++) {
             if (pidParameters.get(parameterIndex).isSelected()) {
@@ -482,6 +502,7 @@ public class RegulatorParametersController {
         return -1;
     }
 
+    // Сохраняет настройки ПИД-регулятора
     public void save(ChannelModel selectedChannel) {
         // Save to channel model
         selectedChannel.setAmplitude(amplitudeTextField.getText());
@@ -511,6 +532,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Удаляет колонки таблицы, которые содержат параметры регулятора
     public void removeColumns() {
         int normalCountOfColumns = 7; // количество колонок в таблице, если регулировка отсутвует
         int realCountOfColumns = tableView.getColumns().size();
@@ -521,6 +543,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Добавляет колонки таблицы, которые содержат параметры регулятора
     public void addColumns() {
         List<Integer> chosenIndexesOfParameters = getChosenIndexesOfParameters();
         for (int value : chosenIndexesOfParameters) {
@@ -559,6 +582,7 @@ public class RegulatorParametersController {
         }
     }
 
+    // Возвращает индексы регулируемых параметров
     private List<Integer> getChosenIndexesOfParameters() {
         List<Integer> chosenParameters = new ArrayList<>();
 
@@ -573,6 +597,7 @@ public class RegulatorParametersController {
         return chosenParameters;
     }
 
+    // Возвращает логическое значение добавлен ли данный параметр
     private boolean isChosenParameterAdded(int chosenParameter, List<Integer> chosenParameters) {
         for (int value : chosenParameters) {
             if (value == chosenParameter) {
@@ -583,6 +608,7 @@ public class RegulatorParametersController {
         return false;
     }
 
+    // Создает колонку таблицы для регулируемого параметры
     private TableColumn<ChannelModel, String> createColumn(String header, int width) {
         TableColumn<ChannelModel, String> column = new TableColumn<>();
 
@@ -595,6 +621,7 @@ public class RegulatorParametersController {
         return column;
     }
 
+    // Очищает GUI от заданных параметров
     public void clear() {
         unselectAllCheckBoxes();
         removeColumns();
@@ -603,6 +630,7 @@ public class RegulatorParametersController {
         dTextField.setText("0");
     }
 
+    // Задание делегата
     public void setLm(LinkingManager lm) {
         this.lm = lm;
     }

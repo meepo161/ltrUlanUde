@@ -112,6 +112,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
     private var showOfChannelOneStopped = false
     private var showOfChannelTwoStopped = false
 
+    // Инициализирует внешиний вид окна градуировки каналов модуля LTR27
     @FXML
     fun initialize() {
         statusBarLine = StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon)
@@ -129,6 +130,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         initCheckBoxes()
     }
 
+    // Устанавливает фильтры на текстовые поля, меняет состояние GUI в зависимости от количества градуировочных точек
     private fun listen(tableView: TableView<CalibrationPoint>, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField, button: Button) {
         setDigitFilterTo(tableView, valueOfChannel, loadOfChannel, valueName, button)
         setDigitFilterTo(tableView, loadOfChannel, valueOfChannel, valueName, button)
@@ -138,6 +140,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Запрещает ввод некорректных символов в текстовое поле
     private fun setDigitFilterTo(tableView: TableView<CalibrationPoint>, textField: TextField, secondTextField: TextField, valueName: TextField, button: Button) {
         textField.textProperty().addListener { _, oldValue, newValue ->
             textField.text = newValue.replace("[^-\\d(\\.|,)]".toRegex(), "")
@@ -148,6 +151,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Задает список множителей
     private fun setMultipliers(comboBox: ComboBox<String>) {
         val multipliers = FXCollections.observableArrayList<String>()
         multipliers.add("0.00001")
@@ -165,6 +169,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         comboBox.selectionModel.select(5)
     }
 
+    // Инициализирует список градуировочных точек
     private fun initTables() {
         loadOfChannelOneColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("loadValue")
         valueOfChannelOneColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
@@ -172,6 +177,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         valueOfChannelTwoColumn.cellValueFactory = PropertyValueFactory<CalibrationPoint, String>("channelValue")
     }
 
+    // Загружает список градуировочных точек и инициализирует его
     private fun loadTablesSettings() {
         calibrationOfChannelOneTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelOne[submoduleIndex]
         calibrationOfChannelTwoTableView.items = ltr27CalibrationModel.bufferedCalibrationPointsOfChannelTwo[submoduleIndex]
@@ -189,12 +195,14 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         loadValueNames(calibrationOfChannelTwoTableView, loadOfChannelTwoColumn)
     }
 
+    // Загружает название физической величины и устанавливает его в заголовок колонки списка
     private fun loadValueNames(tableView: TableView<CalibrationPoint>, tableColumn: TableColumn<CalibrationPoint, String>) {
         if (tableView.items.isNotEmpty()) {
             tableColumn.text = "Велинича нагрузки, ${tableView.items.first().valueName}"
         }
     }
 
+    // Создает контекстное меню для шелчка на правую кнопку мыши
     private fun getNewContextMenu(deleteOperation: () -> Unit, clearOperation: () -> Unit): ContextMenu {
         val menuItemDelete = MenuItem("Удалить")
         val menuItemClear = MenuItem("Удалить все")
@@ -205,6 +213,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         return ContextMenu(menuItemDelete, menuItemClear)
     }
 
+    // Удаляет градуировочную точку
     private fun deletePoint(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>, textField: TextField) {
         val selectedIndex = tableView.selectionModel.selectedIndex
         tableView.items.removeAt(selectedIndex)
@@ -213,6 +222,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         checkPointsCount()
     }
 
+    // Удаляет все градуировочные точки
     private fun clearPoints(tableView: TableView<CalibrationPoint>, graphSeries: XYChart.Series<Number, Number>, textField: TextField) {
         tableView.items.clear()
         graphSeries.data.clear()
@@ -220,6 +230,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         checkPointsCount()
     }
 
+    // Отображает контекстное меню по нажатию на правую кнопку мыши
     private fun add(contextMenu: ContextMenu, tableView: TableView<CalibrationPoint>) {
         tableView.setRowFactory({ tv ->
             val row = TableRow<CalibrationPoint>()
@@ -234,10 +245,12 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         })
     }
 
+    // Инициализирует график
     private fun initGraph() {
         calibrationGraph.data.addAll(ltr27CalibrationModel.lineChartSeriesOfChannelOne, ltr27CalibrationModel.lineChartSeriesOfChannelTwo)
     }
 
+    // Инициализирует пункты GUI
     private fun initCheckBoxes() {
         listen(setValueOfChannelOneCheckBox, calibrationOfChannelOneTableView, addToTableOfChannelOneButton, valueOfChannelOneTextField,
                 loadOfChannelOneTextField, valueNameOfChannelOneTextField)
@@ -245,6 +258,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
                 loadOfChannelTwoTextField, valueNameOfChannelTwoTextField)
     }
 
+    // Переключает состояние GUI в зависимости от того, выбран ли пункт "Задать значение"
     private fun listen(checkBox: CheckBox, tableView: TableView<CalibrationPoint>, button: Button, valueOfChannel: TextField,
                        loadOfChannel: TextField, valueName: TextField) {
         checkBox.selectedProperty().addListener { _ ->
@@ -264,6 +278,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Переключает состояние отображения текущей нагрузки на канале
     private fun toggleShowThreadState(checkBox: CheckBox) {
         val isChannelOneCheckBox = checkBox.id.contains("One")
         if (isChannelOneCheckBox) {
@@ -289,12 +304,14 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Задает делегаты
     fun setManagers() {
         ltr27SettingsController = cm.settingsController as LTR27SettingsController
         ltr27SettingsController.setLTR27CalibrationManager(this)
         ltr27SettingsController.submoduleSettings.setLTR27CalibrationManager(this)
     }
 
+    // Инициализирует внешний вид окна градуировки каналов модуля LTR27
     override fun initCalibrationView(title: String, submoduleIndex: Int) {
         Platform.runLater { titleLabel.text = title }
         this.submoduleIndex = submoduleIndex
@@ -305,6 +322,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         showValuesOfChannels()
     }
 
+    // Задает название физической величины в GUI
     private fun setValueName() {
         val label = String.format("Значение, %s", ltr27SettingsController.submodulesDescriptions[submoduleIndex][2])
         Platform.runLater {
@@ -319,6 +337,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Отображает текущую нагрузку на калах модуля LTR27
     private fun showValuesOfChannels() {
         showOfChannelOneStopped = false
         showOfChannelTwoStopped = false
@@ -336,6 +355,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }.start()
     }
 
+    // Отображает значение нагрузки на канале
     private fun show(valueOfChannel: Double, textField: TextField) {
         Platform.runLater {
             val rarefactionCoefficient = ltr27SettingsController.rarefactionComboBox.selectionModel.selectedIndex + 1
@@ -344,6 +364,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Добавляет градуировочную точку для первого канала модуля LTR27
     fun handleAddCalibrationPointOfChannelOne() {
         val calibrationPoint = parse(valueOfChannelOneTextField, valueOfChannelOneMultipliersComboBox,
                 loadOfChannelOneTextField, loadOfChannelOneMultipliersComboBox, valueNameOfChannelOneTextField)
@@ -356,6 +377,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         checkPointsCount()
     }
 
+    // Проверяет, задано ли название физической величины
     private fun checkValueName(calibrationsPoints: List<CalibrationPoint>, textField: TextField, column: TableColumn<CalibrationPoint, String>) {
         Platform.runLater {
             textField.isDisable = calibrationsPoints.isNotEmpty()
@@ -367,15 +389,18 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }
     }
 
+    // Проверяет количество градуировочных точек для канала
     private fun checkPointsCount(calibrationPoints: List<CalibrationPoint>, addButton: Button, valueOfChannel: TextField, loadOfChannel: TextField, valueName: TextField) {
         addButton.isDisable = calibrationPoints.size >= 2 || valueOfChannel.text.isEmpty() || loadOfChannel.text.isEmpty() || valueName.text.isEmpty()
     }
 
+    // Проверяет количество градуировочных точек для канала
     private fun checkPointsCount() {
         saveButton.isDisable = (calibrationOfChannelOneTableView.items.size in 1 until 2) ||
                 (calibrationOfChannelTwoTableView.items.size in 1 until 2)
     }
 
+    // Добавляет градуировочную точку для второго канала модуля LTR27
     fun handleAddCalibrationPointOfChannelTwo() {
         val calibrationPoint = parse(valueOfChannelTwoTextField, valueOfChannelTwoMultipliersComboBox,
                 loadOfChannelTwoTextField, loadOfChannelTwoMultipliersComboBox, valueNameOfChannelTwoTextField)
@@ -388,6 +413,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         checkPointsCount()
     }
 
+    // Считывает заданные пользователем значения и сохраняет их в модель
     private fun parse(valueOfChannel: TextField, valueOfChannelMultipliers: ComboBox<String>,
                       loadOfChannel: TextField, loadOfChannelMultipliers: ComboBox<String>,
                       valueName: TextField): CalibrationPoint {
@@ -402,10 +428,12 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         return CalibrationPoint(convertedLoadValue, convertedChannelValue, name)
     }
 
+    // Сохраняет градуировочные точки
     fun handleSaveButton() {
         ltr27CalibrationModel.save(submoduleIndex)
     }
 
+    // Возвращает пользователя в окно настроек модуля LTR27
     fun handleBackButton() {
         statusBarLine.setStatusOfProgress("Загрузка настроек модуля")
 
@@ -421,6 +449,7 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         }.start()
     }
 
+    // Очищает окно градуировки от заданных значений
     private fun clearView() {
         ltr27CalibrationModel.clearBuffer(submoduleIndex)
         Platform.runLater {
@@ -454,28 +483,34 @@ class LTR27CalibrationController : BaseController, LTR27CalibrationManager {
         statusBarLine.toggleProgressIndicator(true)
     }
 
+    // Сохраняет градуировочные коеффициенты
     override fun saveCalibrationSettings(moduleInstance: LTR27) {
         moduleInstance.calibrationSettings.clear()
         moduleInstance.calibrationSettings = ltr27CalibrationModel.getCalibrationPoints()
     }
 
+    // Загружает градуировочные коеффициенты
     override fun loadCalibrationSettings(moduleInstance: LTR27) {
         ltr27CalibrationModel.clear()
         ltr27CalibrationModel.setCalibrationPoints(moduleInstance.calibrationSettings)
     }
 
+    // Возвращает градуированое значение величины
     override fun calibrate(isCalibrate: Boolean, value: Double, submoduleIndex: Int, channelIndex: Int): Double {
         return ltr27CalibrationModel.calibrate(isCalibrate, value, submoduleIndex, channelIndex)
     }
 
+    // Возвращает названия физических величин для двух каналов модуля LTR27
     override fun getCalibratedUnits(): List<String> {
         return ltr27CalibrationModel.getCalibratedUnits()
     }
 
+    // Задает делегат ControllerManager
     override fun setControllerManager(cm: ControllerManager) {
         this.cm = cm
     }
 
+    // Задает делегат WindowManager
     override fun setWindowManager(wm: WindowsManager) {
         this.wm = wm
     }

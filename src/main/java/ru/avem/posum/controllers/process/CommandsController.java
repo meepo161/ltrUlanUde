@@ -45,17 +45,20 @@ public class CommandsController {
         listen(table);
     }
 
+    // Инициализирует список команд
     public void initTableView() {
         table.setItems(getCommands());
         commandsTypesColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
         commandsDescriptionsColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
     }
 
+    // Инициализирует внешний вид окна
     public void init(long testProgramId) {
         table.getItems().clear();
         loadCommands(testProgramId);
     }
 
+    // Создает контекстное меню для шелчка на правую кнопку мыши
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
@@ -66,6 +69,7 @@ public class CommandsController {
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
+    // Удаляет команду
     private void deleteCommand() {
         Command selectedCommand = table.getSelectionModel().getSelectedItem();
         table.getItems().remove(selectedCommand);
@@ -73,6 +77,7 @@ public class CommandsController {
         processController.getStatusBarLine().setStatus("Команда успешно удалена", true);
     }
 
+    // Удаляет все команды
     private void clearCommands() {
         ObservableList<Command> commands = table.getItems();
 
@@ -84,6 +89,7 @@ public class CommandsController {
         processController.getStatusBarLine().setStatus("Команды успешно удалены", true);
     }
 
+    // Отображает контекстное меню при нажатии на правую кнопку мыши
     private void listen(TableView<Command> tableView) {
         tableView.setRowFactory(tv -> {
             TableRow<Command> row = new TableRow<>();
@@ -99,6 +105,7 @@ public class CommandsController {
         });
     }
 
+    // Загружает список команд
     public void loadCommands(long testProgramId) {
         List<ru.avem.posum.db.models.Command> commands = getAllCommands();
 
@@ -109,6 +116,7 @@ public class CommandsController {
         }
     }
 
+    // Отображает окно добавления новой команды
     public void showDialogOfCommandAdding() {
         createDialog();
         createButtons();
@@ -120,18 +128,21 @@ public class CommandsController {
         dialog.showAndWait();
     }
 
+    // Создает окно добавления новой команды
     private void createDialog() {
         dialog = new Dialog();
         dialog.setTitle("Добавление команды");
         dialog.setHeaderText("Задайте необходымые параметры");
     }
 
+    // Создает кнопки окна добавления новой команды
     private void createButtons() {
         ButtonType add = new ButtonType("Добавить", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(add, cancel);
     }
 
+    // Создает выпадающее меню окна добавления новой команды
     private void createComboBox() {
         commandsComboBox = new ComboBox<>();
         commandsComboBox.getItems().addAll(CommandsTypes.PAUSE.getTypeName(), CommandsTypes.STOP.getTypeName());
@@ -143,6 +154,7 @@ public class CommandsController {
         listen(commandsComboBox);
     }
 
+    // Меняет GUI в зависимости от выбранной команды
     private void listen(ComboBox<String> comboBox) {
         comboBox.valueProperty().addListener(observable -> {
             createTextField();
@@ -154,6 +166,7 @@ public class CommandsController {
         });
     }
 
+    // Создает текстовое поле окна добавления новой команды
     private void createTextField() {
         descriptionTextFiled = new TextField();
         descriptionTextFiled.setPromptText("чч:мм:сс чч:мм:сс");
@@ -177,11 +190,13 @@ public class CommandsController {
         }
     }
 
+    // Определяет нажатие на клавишу Backspace
     private void listenBackSpaceKey(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();
         didBackSpacePressed = keyCode == KeyCode.BACK_SPACE || keyCode == KeyCode.DELETE;
     }
 
+    // Не допускает ввода некорректных параметров
     private void setFormat(int maxLength, String separator) {
         descriptionTextFiled.textProperty().addListener((observable, oldValue, newValue) -> {
             String text = descriptionTextFiled.getText();
@@ -195,7 +210,7 @@ public class CommandsController {
         });
     }
 
-
+    // Добавляет пробелы
     private void addSeparator(String separator) {
         int charactersCounter = descriptionTextFiled.getText().length();
         String selectedValue = commandsComboBox.getSelectionModel().getSelectedItem();
@@ -223,6 +238,7 @@ public class CommandsController {
         }
     }
 
+    // Создает сетку для окна добавления новой команды
     private void createGrid() {
         grid = new GridPane();
         grid.setHgap(10);
@@ -235,12 +251,14 @@ public class CommandsController {
         dialog.getDialogPane().getContent().setStyle("-fx-font-size: 13px;");
     }
 
+    // Задает стиль кнопок для окна добавления новой команды
     private void setButtonsStyle() {
         ButtonBar buttonBar = (ButtonBar) dialog.getDialogPane().lookup(".button-bar");
         buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 13px;\n" + "-fx-background-radius: 5px;\n" +
                 "\t-fx-border-radius: 5px;"));
     }
 
+    // Обрабатывает нажатие на кнопку окна добавления новой команды
     private void setResult() {
         ButtonType add = dialog.getDialogPane().getButtonTypes().get(0);
         ButtonType cancel = dialog.getDialogPane().getButtonTypes().get(1);
@@ -266,6 +284,7 @@ public class CommandsController {
         });
     }
 
+    // Проверяет, верно ли заданы параметры команды
     private boolean validate(String commandType, TextField textField) {
         boolean isPause = commandType.equals(CommandsTypes.PAUSE.getTypeName());
         boolean isStop = commandType.equals(CommandsTypes.STOP.getTypeName());
@@ -285,6 +304,7 @@ public class CommandsController {
         return isDescriptionCorrect;
     }
 
+    // Возвращает описание команды
     private String createDescription(String commandType, String oldDescription) {
         String newDescription = oldDescription;
         boolean isPause = commandType.equals(CommandsTypes.PAUSE.getTypeName());
@@ -301,10 +321,12 @@ public class CommandsController {
         return newDescription;
     }
 
+    // Добавляет команду в список
     public void addCommand(String type, String description) {
         commandsModel.addCommand(processController.getTestProgramId(), type, description);
     }
 
+    // Выполняет команды
     public void executeCommands() {
         for (Command command : getCommands()) {
             boolean isPause = command.getType().equals(CommandsTypes.PAUSE.getTypeName());
@@ -328,14 +350,17 @@ public class CommandsController {
         timerController.startTimers();
     }
 
+    // Возвращает количество ячеек для объединения при формировании протокола испытаний
     public int getCellsToMerge() {
         return getCommandsHeaders().length;
     }
 
+    // Возвращает список команд
     public ObservableList<Command> getCommands() {
         return commandsModel.getCommands();
     }
 
+    // Возвращает список команд
     public List<List<String>> getCommands(long testProgramId) {
         List<ru.avem.posum.db.models.Command> dbCommands = CommandsRepository.getAllCommands();
         List<String> commands = new ArrayList<>();
@@ -352,6 +377,7 @@ public class CommandsController {
         return output;
     }
 
+    // Возвращает цвет, которым будут выделяться команды при формировании протокола испытаний
     public List<Short> getCommandsColors(long testProgramId) {
         List<ru.avem.posum.db.models.Command> dbCommands = CommandsRepository.getAllCommands();
         List<Short> colors = new ArrayList<>();
@@ -365,10 +391,12 @@ public class CommandsController {
         return colors;
     }
 
+    // Возвращает заголовки колонок при формировании протокола испытаний
     public String[] getCommandsHeaders() {
         return new String[]{"Команды", "Параметры"};
     }
 
+    // Возвращает контроллер таймера
     public TimerController getTimerController() {
         return timerController;
     }

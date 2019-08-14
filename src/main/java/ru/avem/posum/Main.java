@@ -68,6 +68,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene signalGraphScene;
     private boolean stopped;
 
+    // Инициализация окон
     @Override
     public void init() throws IOException {
         DataBaseRepository.init(false);
@@ -77,15 +78,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createSettingsScene();
         createLinkingScene();
         createProcessScene();
-        createLTR24Scene();
-        createLTR27Scene();
-        createLTR34Scene();
-        createLTR212Scene();
         createSignalGraphScene();
         createCalibrationScene();
         createLtr27CalibrationScene();
     }
 
+    // Создание внешнего вида окна авторизации
     private void crateLoginScene() throws IOException {
         loginController = (LoginController) getController("/layouts/loginView.fxml");
         loginController.setMainApp(this);
@@ -94,6 +92,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         setKeyListener();
     }
 
+    // Загружает внешний вид, возвращает контроллер
     private BaseController getController(String layoutPath) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource(layoutPath));
@@ -105,10 +104,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
         return baseController;
     }
 
+    // Создание внешнего вида окна
     private Scene createScene(int width, int height) {
         return new Scene(parent, width, height);
     }
 
+    // Закрывает приложение, если пользователь нажал Esc в окне авторизации
     private void setKeyListener() {
         loginScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
@@ -119,56 +120,43 @@ public class Main extends Application implements WindowsManager, ControllerManag
         });
     }
 
+    // Создание внешнего вида главного окна
     private void createMainScene() throws IOException {
         mainController = (MainController) getController("/layouts/mainView.fxml");
         mainScene = createScene(1280, 720);
     }
 
+    // Создание внешнего виде окна настроек
     private void createSettingsScene() throws IOException {
         settings = (Settings) getController("/layouts/settingsView.fxml");
         settingsScene = createScene(1280, 720);
     }
 
+    // Создание внешнего виде окна добавления и связывания каналов
     private void createLinkingScene() throws IOException {
         linkingController = (LinkingController) getController("/layouts/linkingView.fxml");
         linkingScene = createScene(1280, 720);
     }
 
+    // Создание внешнего вида окна процесса испытаний
     private void createProcessScene() throws IOException {
         processController = (ProcessController) getController("/layouts/processView.fxml");
         processScene = createScene(1280, 720);
     }
 
-    private void createLTR24Scene() throws IOException {
-        ltr24Settings = (LTR24Settings) getController("/layouts/ltr24SettingView.fxml");
-        ltr24Scene = createScene(1280, 720);
-    }
-
-    private void createLTR27Scene() throws IOException {
-//        ltr27SettingsController = (LTR27SettingsController) getController("/layouts/ltr27SettingView.fxml");
-//        ltr27Scene = createScene(1280, 720);
-    }
-
-    private void createLTR34Scene() throws IOException {
-        ltr34Settings = (LTR34Settings) getController("/layouts/ltr34SettingView.fxml");
-        ltr34Scene = createScene(1280, 720);
-    }
-
-    private void createLTR212Scene() throws IOException {
-        ltr212Settings = (LTR212Settings) getController("/layouts/ltr212SettingView.fxml");
-        ltr212Scene = createScene(1280, 720);
-    }
-
+    // Создание внешнего вида окна текущей нагрузки на каналах
     private void createSignalGraphScene() throws IOException {
         signalController = (SignalController) getController("/layouts/signalGraphView.fxml");
         signalGraphScene = createScene(1280, 720);
     }
 
+    // Создание внешнего вида окна градуировки канала
     private void createCalibrationScene() throws IOException {
         calibrationController = (CalibrationController) getController("/layouts/calibrationView.fxml");
         calibrationScene = createScene(1280, 720);
     }
 
+    // Создание внешнего вида окна градуировки каналов модуля LTR27
     private void createLtr27CalibrationScene() throws IOException {
         ltr27CalibrationController = (LTR27CalibrationController) getController("/layouts/ltr27CalibrationView.fxml");
         ltr27CalibrationScene = createScene(1280, 720);
@@ -183,6 +171,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         loginController.showScene();
     }
 
+    // Задает размеры окна
     private void setLoginStageSize() {
         this.loginStage.setMinWidth(300);
         this.loginStage.setMinHeight(230);
@@ -193,18 +182,21 @@ public class Main extends Application implements WindowsManager, ControllerManag
         this.loginStage.setResizable(false);
     }
 
+    // Располагает окно по центру экрана
     private void setCentreOfStage(Stage stage) {
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
         stage.setY((primScreenBounds.getHeight() - stage.getHeight()) / 2);
     }
 
+    // Отображает главное окно программы
     public void setMainView() {
         initPrimaryStage();
         setCentreOfStage(primaryStage);
         showMainScene();
     }
 
+    // Инициализирует главное окно программы
     private void initPrimaryStage() {
         primaryStage = new Stage();
         primaryStage.setTitle("ПО Система управления многоканальная");
@@ -216,12 +208,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
         primaryStage.setResizable(true);
     }
 
+    // Отображает главное окно программы
     private void showMainScene() {
         primaryStage.show();
         loginStage.close();
         mainController.getOpenExperimentButton().requestFocus();
     }
 
+    // Проверяет наличие калибровочных коэффициентов
     @Override
     public void checkCalibration() {
         signalController.checkCalibration();
@@ -232,6 +226,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }).start();
     }
 
+    // Создает окна и контроллеры настроек модулей
     @Override
     public void createListModulesControllers(List<String> modulesNames) {
         modulesPairs.clear();
@@ -260,6 +255,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
+    // Загружает внешний вид окна
     private Pair<BaseController, Scene> loadScene(String layoutPath) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(Main.class.getResource(layoutPath));
@@ -282,6 +278,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         System.out.println("Version_1.1 closed");
     }
 
+    // Останавливает все модули и закрывает соединение с ними
     @Override
     public void stopAllModules() {
         ObservableList<String> modulesNames = settings.getSettingsModel().getModulesNames();
@@ -299,83 +296,99 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
+    // Возвращает серийный номер крейта
     @Override
     public String getCrateSerialNumber() {
         return settings.getHardwareSettings().getCrateSerialNumber();
     }
 
+    // Возвращает объект крейта
     @Override
     public Crate getCrateModelInstance() {
         return settings.getHardwareSettings().getCrate();
     }
 
+    // Возвращает значение постоянной составляющей сигнала
     @Override
     public double getDc() {
         return signalController.getSignalModel().getDc();
     }
 
+    // Возвращает количество знаков после запятой
     @Override
     public int getDecimalFormatScale() {
         return signalController.getDecimalFormatScale();
     }
 
+    // Возвращает контроллер окна добавления и связывания каналов
     @Override
     public LinkingController getLinkingController() {
         return linkingController;
     }
 
+    // Возвращает путь к файлу стилей
     @Override
     public String getStyleSheet() {
         return settingsScene.getStylesheets().get(0);
     }
 
+    // Передает номер канала, тип модуля и слот, в котором он расположен в модель
     @Override
     public void giveChannelInfo(int channel, String moduleType, int slot) {
         signalController.getSignalModel().setFields(moduleType, slot, channel);
     }
 
+    // Скрывает символы перед обязательными полями общей информации
     @Override
     public void hideRequiredFieldsSymbols() {
         settings.hideRequiredFieldsSymbols();
     }
 
+    // Инициализирует окно текущей нагрузки на канале
     @Override
     public void initializeSignalGraphView() {
         signalController.initializeView();
     }
 
+    // Возвращает состояние приложения
     @Override
     public boolean isClosed() {
         return closed;
     }
 
+    // Возвращает состояние процесса измерений
     @Override
     public boolean isStopped() {
         return stopped;
     }
 
+    // Устанавливает начальное состояние интерфейса окна градуировки канала
     @Override
     public void loadDefaultCalibrationSettings(SignalModel signalModel) {
         signalController.getGraphController().setShowFinished(true);
         calibrationController.loadDefaultCalibrationSettings(signalModel);
     }
 
+    // Устанавливае начальное состояние интерфейса окна настрокий программы испытаний
     @Override
     public void loadDefaultSettings() {
         settings.loadDefaultSettings();
     }
 
+    // Загружает список программ испытаний
     @Override
     public void loadItemsForMainTableView() {
         mainController.getTestPrograms();
         mainController.showTestPrograms();
     }
 
+    // Загружает список модулей в окне настройки программы испытаний
     @Override
     public void loadItemsForModulesTableView() {
         settings.refreshModulesList();
     }
 
+    // Загружает настройки модуля
     @Override
     public void loadModuleSettings(int id, String moduleName) {
         String moduleType = (moduleName + " ").substring(0, 6).trim();
@@ -401,48 +414,57 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
+    // Выбирает вкладку общих данных в окне настроек программы испытаний 
     @Override
     public void selectGeneralSettingsTab() {
         settings.selectGeneralSettingsTab();
     }
 
+    // Выдает права доступа администратора
     @Override
     public void setAdministration(boolean administration) {
         mainController.setAdministration(administration);
         mainController.initMenu();
     }
 
+    // Задает состояние приложения
     @Override
     public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
+    // Включает режим редактирования в окне настроек программы испытаний
     @Override
     public void setEditMode(boolean editMode) {
         settings.setEditMode(editMode);
     }
 
+    // Передает модель программы испытаний в контроллер окна процесса испытаний
     @Override
     public void setTestProgram() {
         TestProgram testProgram = mainController.getSelectedTestProgram();
         processController.setTestProgram(testProgram);
     }
 
+    // Задает состояние процесса измерений
     @Override
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
     }
 
+    // Отображает значение нагрузки на канале в окне градуировки
     @Override
     public void showChannelValue() {
         calibrationController.showChannelValue();
     }
 
+    // Передает модель программы испытаний в окно настроек программы испытаний
     @Override
     public void showTestProgram(TestProgram testProgram) {
         settings.showTestProgram(testProgram);
     }
 
+    // Задает внешний вид окна
     @Override
     public void setScene(WindowsManager.Scenes scene) {
         switch (scene) {
@@ -497,17 +519,20 @@ public class Main extends Application implements WindowsManager, ControllerManag
         }
     }
 
+    // Задает внешний вид окна натроек модуля
     @Override
     public void setModuleScene(String moduleName, int id) {
         primaryStage.setTitle("Настройки модуля " + moduleName);
         primaryStage.setScene(modulesPairs.get(id).getValue());
     }
 
+    // Возвращает контроллер окна настроек программы испытаний
     @Override
     public BaseController getSettingsController() {
         return modulesPairs.get(settings.getHardwareSettings().getSelectedModuleIndex()).getKey();
     }
 
+    // Возвращает модель настроек крейта
     @Override
     public HardwareSettings getHardwareSettings() {
         return settings.getHardwareSettings();

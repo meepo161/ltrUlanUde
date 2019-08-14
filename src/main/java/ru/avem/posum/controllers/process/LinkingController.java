@@ -48,6 +48,7 @@ public class LinkingController implements BaseController, LinkingManager {
     private TestProgram testProgram;
     private WindowsManager wm;
 
+    // Инициализирует внешний вид
     @FXML
     private void initialize() {
         statusBarLine = new StatusBarLine(checkIcon, false, progressIndicator, statusBar, warningIcon);
@@ -56,10 +57,12 @@ public class LinkingController implements BaseController, LinkingManager {
         listen(linkButton);
     }
 
+    // Меняет состояние кнопки "Выбрать все"
     private void listen(Button button) {
         button.pressedProperty().addListener(observable -> checkItems(adcChannelsListView));
     }
 
+    // Меняет состояние кнопки "Выбрать все"
     private void checkItems(ListView<CheckBox> listView) {
         new Thread(() -> {
             Utils.sleep(250);
@@ -67,26 +70,31 @@ public class LinkingController implements BaseController, LinkingManager {
         }).start();
     }
 
+    // Возвращает список добавленных каналов
     @Override
     public ObservableList<CheckBox> getChosenChannels() {
         return linkingModel.getChosenChannels();
     }
 
+    // Возвращает список добавленных модулей
     @Override
     public ObservableList<Modules> getChosenModules() {
         return linkingModel.getChosenModules();
     }
 
+    // Возвращает список связянных каналов
     @Override
     public ObservableList<Pair<CheckBox, CheckBox>> getLinkedChannels() {
         return linkingModel.getLinkedChannels();
     }
 
+    // Возвращает список связанных модулей
     @Override
     public List<Modules> getLinkedModules() {
         return linkingModel.getLinkedModules();
     }
 
+    // Инициализирует списки
     @Override
     public void initListViews() {
         linkingModel.setTestProgram(testProgram);
@@ -107,11 +115,13 @@ public class LinkingController implements BaseController, LinkingManager {
         });
     }
 
+    // Задает модель
     @Override
     public void setGraphModel() {
         setGraphModel(processController.getGraphController().getGraphModel());
     }
 
+    // Меняет состояние GUI в зависимости от количества выбранных каналов и их типа
     private void listenChannels(ObservableList<CheckBox> checkBoxes) {
         ObservableList<CheckBox> adcCheckBoxes = adcChannelsListView.getItems();
         ObservableList<CheckBox> dacCheckBoxes = dacChannelsListView.getItems();
@@ -137,6 +147,7 @@ public class LinkingController implements BaseController, LinkingManager {
         }
     }
 
+    // Возвращает логическое значение выбран ли хотя бы один канал
     private boolean isChannelSelected(ObservableList<CheckBox> checkBoxes) {
         for (CheckBox checkBox : checkBoxes) {
             if (checkBox.isSelected()) {
@@ -147,6 +158,7 @@ public class LinkingController implements BaseController, LinkingManager {
         return false;
     }
 
+    // Возвращает логическое значение выбран ли только один канал
     private boolean isOneAndOnlyChannelSelected(ObservableList<CheckBox> checkBoxes) {
         int selectedChannelsCount = 0;
 
@@ -159,6 +171,7 @@ public class LinkingController implements BaseController, LinkingManager {
         return selectedChannelsCount == 1;
     }
 
+    // Добавляет канал(ы)
     public void handleAddChannel() {
         List<CheckBox> chosenChannels = new ArrayList<>();
         ObservableList<CheckBox> adcChannels = adcChannelsListView.getItems();
@@ -177,6 +190,7 @@ public class LinkingController implements BaseController, LinkingManager {
         addChannelButton.setDisable(true);
     }
 
+    // Связывает каналы
     public void handleLink() {
         Optional<CheckBox> selectedDacChannel = getSelectedCheckBox(dacChannelsListView);
         Optional<CheckBox> selectedAdcChannel = getSelectedCheckBox(adcChannelsListView);
@@ -205,16 +219,19 @@ public class LinkingController implements BaseController, LinkingManager {
         linkButton.setDisable(true);
     }
 
+    // Возвращает модель связанных каналов
     private ChannelModel createChannel(CheckBox selectedDacChannel, CheckBox selectedAdcChannel) {
         String pairName = selectedDacChannel.getText() + " => " +  selectedAdcChannel.getText();
         return new ChannelModel(pairName);
     }
 
+    // Возвращает модель добавленного канала
     private ChannelModel createChannel(CheckBox selectedAdcChannel) {
         String channelName = selectedAdcChannel.getText();
         return new ChannelModel(channelName);
     }
 
+    // Возвращает выбранный канал
     private Optional<CheckBox> getSelectedCheckBox(ListView<CheckBox> listView) {
         ObservableList<CheckBox> checkBoxes = listView.getItems();
 
@@ -227,6 +244,7 @@ public class LinkingController implements BaseController, LinkingManager {
         return Optional.empty();
     }
 
+    // Меняет состояние GUI
     private void enableChooseOfChannels(ListView<CheckBox> listView) {
         ObservableList<CheckBox> channels = listView.getItems();
 
@@ -235,12 +253,14 @@ public class LinkingController implements BaseController, LinkingManager {
         }
     }
 
+    // Выбирает все каналы АЦП
     public void handleChooseAll() {
         for (CheckBox checkBox : adcChannelsListView.getItems()) {
             checkBox.setSelected(true);
         }
     }
 
+    // Возвращает пользователя в окно процесса испытаний
     public void handleBackButton() {
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Загрузка программы испытаний");
@@ -254,6 +274,7 @@ public class LinkingController implements BaseController, LinkingManager {
         }).start();
     }
 
+    // Добавляет выбранные и связанные каналы
     public void add(ChannelModel channelModel) {
         String name = channelModel.getName();
         if (name.contains(" => ")) {
@@ -268,24 +289,29 @@ public class LinkingController implements BaseController, LinkingManager {
         }
     }
 
+    // Инициализирует списки каналов
     public void initModulesList() {
         linkingModel.getDescriptionsOfChannels(Crate.LTR34);
         linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24);
     }
 
+    // Задает делегат WindowManager
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
     }
 
+    // Задает модель графика
     public void setGraphModel(GraphModel graphModel) {
         this.graphModel = graphModel;
     }
 
+    // Задает контроллер процесса испытаний
     public void setProcessController(ProcessController processController) {
         this.processController = processController;
     }
 
+    // Задает модель программы испытаний
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
         linkingModel.setTestProgram(testProgram);

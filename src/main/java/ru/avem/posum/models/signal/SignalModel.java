@@ -5,7 +5,7 @@ import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
 import ru.avem.posum.models.calibration.CalibrationPoint;
 import ru.avem.posum.utils.RingBuffer;
-
+import ru.avem.posum.models.signal.SignalParametersModel;
 import java.util.HashMap;
 import java.util.List;
 

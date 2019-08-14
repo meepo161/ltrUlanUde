@@ -51,6 +51,7 @@ public class GraphController {
         initScales();
     }
 
+    // Инициализирует настройки отображения графика
     private void initScales() {
         listen(autoscaleCheckBox);
         addRarefactionCoefficients();
@@ -61,6 +62,7 @@ public class GraphController {
         listenHorizontalScales();
     }
 
+    // Меняет отображение графика в зависимости от того, выбран ли пункт "Автомасштаб"
     private void listen(CheckBox checkBox) {
         checkBox.selectedProperty().addListener(observable -> {
             NumberAxis yAxis = (NumberAxis) graph.getYAxis();
@@ -77,6 +79,7 @@ public class GraphController {
         });
     }
 
+    // Задает горизонтальные границы графика
     private void setHorizontalGraphBounds() {
         String selectedScale = horizontalScaleComboBox.getSelectionModel().getSelectedItem();
         double scaleValue = Integer.parseInt(selectedScale.split(" ")[0]);
@@ -113,6 +116,7 @@ public class GraphController {
         yAxis.setLabel(scaleName);
     }
 
+    // Задает вертикальные границы графика
     private void setVerticalGraphBounds() {
         String selectedScale = verticalScaleComboBox.getSelectionModel().getSelectedItem();
         double scaleValue = Integer.parseInt(selectedScale.split(" ")[0]);
@@ -135,6 +139,7 @@ public class GraphController {
         yAxis.setLabel(scaleName);
     }
 
+    // Задает варианты прореживания
     private void addRarefactionCoefficients() {
         ObservableList<String> coefficients = FXCollections.observableArrayList();
 
@@ -152,6 +157,7 @@ public class GraphController {
         rarefactionCoefficientComboBox.getSelectionModel().select(6);
     }
 
+    // Задает прореживание
     private void listenRarefactionCoefficients() {
         rarefactionCoefficientComboBox.valueProperty().addListener(observable -> {
             String selection = rarefactionCoefficientComboBox.getSelectionModel().getSelectedItem();
@@ -174,6 +180,7 @@ public class GraphController {
         });
     }
 
+    // Задает варианты вертикального масштаба графика    
     private void addVerticalScales() {
         ObservableList<String> scales = FXCollections.observableArrayList();
 
@@ -195,6 +202,7 @@ public class GraphController {
         });
     }
 
+    // Задает варианты горизонтального масштаба графика
     private void addHorizontalScales() {
         ObservableList<String> scales = FXCollections.observableArrayList();
 
@@ -214,6 +222,7 @@ public class GraphController {
         horizontalScaleComboBox.getSelectionModel().select(2);
     }
 
+    // Изменяет отображение графика в зависимости от выбранного масштаба
     private void listenHorizontalScales() {
         horizontalScaleComboBox.valueProperty().addListener(observable -> {
             setHorizontalGraphBounds();
@@ -221,11 +230,13 @@ public class GraphController {
         });
     }
 
+    // Задает значение полям
     public void setFields(int slot, int channel) {
         this.slot = slot;
         this.channel = channel;
     }
 
+    // Отображает график
     public void showGraph() {
         stopped = false;
 
@@ -247,6 +258,7 @@ public class GraphController {
         showingThread.start();
     }
 
+    // Задает ось графика
     private void setGraphAxis() {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         String valueName = processController.getCalibrationModel().getValueName(slot, channel);
@@ -260,6 +272,7 @@ public class GraphController {
         });
     }
 
+    // Отображает график
     public void show(double[] data, int channel) {
         int channels = 4; // количество каналов АЦП
         int rarefactionCoefficient = graphModel.getRarefactionCoefficient();
@@ -296,6 +309,7 @@ public class GraphController {
         }
     }
 
+    // Возвращает верхнюю границу горизонтальной оси графика
     private double getUpperBoundOfHorizontalAxis() {
         String selection = horizontalScaleComboBox.getSelectionModel().getSelectedItem();
         String valueName = selection.split(" ")[1].split("/дел")[0];
@@ -323,6 +337,7 @@ public class GraphController {
         return uppedBound;
     }
 
+    // Перезапускает отображение графика
     public void restartShow() {
         stopped = true;
 
@@ -336,6 +351,7 @@ public class GraphController {
         showGraph();
     }
 
+    // Устанавливает начальные значение настроек отображения графика
     public void setDefaultGraphControlsState() {
         Platform.runLater(() -> {
             autoscaleCheckBox.setSelected(false);
@@ -347,6 +363,7 @@ public class GraphController {
         });
     }
 
+    // Задает начальное состояние вертикальной оси графика
     public void setDefaultGraphState() {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         Platform.runLater(() -> {
@@ -385,10 +402,12 @@ public class GraphController {
         return rarefactionCoefficientComboBox;
     }
 
+    // Возвращает состояние потока отображения графика
     public boolean isShowingThreadStopped() {
         return showingThread == null;
     }
 
+    // Прекращает отображение графика
     public void stopShowingThread() {
         stopped = true;
         Utils.sleep(100);

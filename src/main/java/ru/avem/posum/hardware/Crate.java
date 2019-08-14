@@ -7,6 +7,10 @@ import ru.avem.posum.utils.TextEncoder;
 import java.util.HashMap;
 import java.util.Optional;
 
+/**
+ * Класс крейта
+ */
+
 public class Crate {
     public static final String LTR24 = "LTR24";
     public static final String LTR27 = "LTR27";
@@ -16,11 +20,11 @@ public class Crate {
     private static final int LTR_MODULES_PER_CRATE_MAX = 16;
 
     private String[][] crates = new String[LTR_CRATES_MAX][LTR_CRATES_MAX]; // массив хранит серийные номера, имена и интерфейс подключения крейтов
-    private Optional<ObservableList<String>> cratesNames;
-    private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX];
-    private HashMap<Integer, Module> modulesList = new HashMap<>();
-    private String status;
-    private TextEncoder textEncoder = new TextEncoder();
+    private Optional<ObservableList<String>> cratesNames; // названия крейтов
+    private String[][] modules = new String[LTR_CRATES_MAX][LTR_MODULES_PER_CRATE_MAX]; // информация о модулях крейта
+    private HashMap<Integer, Module> modulesList = new HashMap<>(); // список модулей
+    private String status; // результат выполнения команды
+    private TextEncoder textEncoder = new TextEncoder(); // расшифровывает текст, полученный от крейта
     private boolean wasError; // значение поля устанавливается из библиотеки dll, не удалять!
 
     public Crate() {
@@ -44,12 +48,14 @@ public class Crate {
         }
     }
 
+    // Проверяет наличие ошибки
     private void checkStatus() {
         if (wasError) {
             status = textEncoder.cp2utf(status);
         }
     }
 
+    // Получает данные о крейте и модулях
     private void setCratesInfo() {
         if (!wasError) {
             status = getCratesInfo(crates[1], crates[2]);
@@ -57,6 +63,7 @@ public class Crate {
         }
     }
 
+    // Заполняет список модулей
     private void setModulesList() {
         initEmptyModulesList();
 
@@ -76,6 +83,7 @@ public class Crate {
         }
     }
 
+    // Закрывает соединение с крейтом
     private void closeConnection() {
         status = close();
         checkStatus();
@@ -83,6 +91,7 @@ public class Crate {
 
     public native String close();
 
+    // Заполняет список крейтов
     private void fillCratesNames() {
         cratesNames = Optional.of(FXCollections.observableArrayList());
 

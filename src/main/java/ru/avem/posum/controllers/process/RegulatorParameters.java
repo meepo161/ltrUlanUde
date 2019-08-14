@@ -1,5 +1,9 @@
 package ru.avem.posum.controllers.process;
 
+/**
+* Параметры, по которым возможна регулировка
+*/
+
 public enum RegulatorParameters {
     AMPLITUDE("Амплитуда"), DC("Статика"), FREQUENCY("Частота");
 

@@ -5,6 +5,10 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import ru.avem.posum.models.process.CommandsTypes;
 
+/**
+ * Таблица для хранения запланированных команд в базе данных
+ */
+
 @DatabaseTable(tableName = "commands")
 public class Command {
     @DatabaseField(generatedId = true)

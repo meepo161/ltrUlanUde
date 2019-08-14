@@ -6,20 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LTR212 extends ADC {
-    private String firFilePath;
+    private String firFilePath; // путь к КИХ фильру
     private double frequency; // значение поля устанавливается из библиотеки dll, не удалять!
-    private String iirFilePath;
+    private String iirFilePath; // путь к БИХ фильтру
 
     public LTR212() {
         initializeModuleSettings();
     }
 
+    // Открывает соединение с модулем
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot(), getBioPath());
         setConnectionOpen(checkStatus());
     }
 
+    // Проверяет соединение с модулем
     @Override
     public void checkConnection() {
         Crate crate = new Crate();
@@ -40,31 +42,37 @@ public class LTR212 extends ADC {
         status = testEEPROM(getSlot());
     }
 
+    // Инициализирует модуль переданными параметрами
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR212ModuleSettings(), firFilePath, iirFilePath);
     }
 
+    // Определяет частоту дискретизации модуля
     @Override
     public void defineFrequency() {
         status = getFrequency(getSlot());
     }
 
+    // Запускает измерения
     @Override
     public void start() {
         status = start(getSlot());
     }
 
+    // Записывает в массив измеренные значения
     @Override
     public void write(double[] data, double[] timeMarks) {
         status = write(getSlot(), data, timeMarks, data.length);
     }
 
+    // Завершает измерения
     @Override
     public void stop() {
         status = stop(getSlot());
     }
 
+    // Разрывает соединение с модулем
     @Override
     public void closeConnection() {
         if (isConnectionOpen()) {
@@ -95,6 +103,7 @@ public class LTR212 extends ADC {
         System.loadLibrary("LTR212Library");
     }
 
+    // Задает настройки модуля по умолчанию
     private void initializeModuleSettings() {
         getSettingsOfModule().put(Settings.ADC_MODE, 0); // режим работы каналов
         getSettingsOfModule().put(Settings.CALIBRATION_COEFFICIENTS, 0); // использование калибровочных коэффициентов
@@ -108,6 +117,7 @@ public class LTR212 extends ADC {
         getSettingsOfModule().put(Settings.REFERENCE_VOLTAGE_TYPE, 1); // тип опорного напряжения
     }
 
+    // Возвращает настройки модуля
     private int[] getLTR212ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
         settingsList.add(getSettingsOfModule().get(Settings.ADC_MODE));
@@ -130,6 +140,7 @@ public class LTR212 extends ADC {
         return settings;
     }
 
+    // Возвращает настройки модуля
     @Override
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
@@ -148,6 +159,7 @@ public class LTR212 extends ADC {
         return settings;
     }
 
+    // Считывает настройки модуля
     @Override
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
@@ -164,19 +176,23 @@ public class LTR212 extends ADC {
         settingsOfModule.put(Settings.REFERENCE_VOLTAGE_TYPE, Integer.valueOf(separatedSettings[9]));
     }
 
+    // Возвращает путь к файлу прошивки модуля
     public static String getBioPath() {
         return System.getProperty("user.dir").replace("\\", "/") + "/ltr212.bio";
     }
 
+    // Возвращает частоту дискретизации модуля
     @Override
     public double getFrequency() {
         return frequency;
     }
 
+    // Задает путь к файлу КИХ фильтра
     public void setFirFilePath(String firFilePath) {
         this.firFilePath = firFilePath;
     }
 
+    // Задает путь к файлу БИХ фильтра
     public void setIirFilePath(String iirFilePath) {
         this.iirFilePath = iirFilePath;
     }

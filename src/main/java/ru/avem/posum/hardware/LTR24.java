@@ -12,12 +12,14 @@ public class LTR24 extends ADC {
         initializeModuleSettings();
     }
 
+    // Открывает соединение с модулем
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot());
         setConnectionOpen(checkStatus());
     }
 
+    // Проверяет соединение с модулем
     @Override
     public void checkConnection() {
         Crate crate = new Crate();
@@ -34,31 +36,37 @@ public class LTR24 extends ADC {
         }
     }
 
+    // Инициализирует модуль переданными параметрами
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getTypeOfChannels(), getMeasuringRanges(), getLTR24ModuleSettings());
     }
 
+    // Определяет частоту дискретизации модуля
     @Override
     public void defineFrequency() {
         getFrequency(getSlot());
     }
 
+    // Запускает измерения
     @Override
     public void start() {
         status = start(getSlot());
     }
 
+    // Записывает в массив измеренные значения
     @Override
     public void write(double[] data, double[] timeMarks) {
         write(getSlot(), data, timeMarks, data.length);
     }
 
+    // Завершает измерения
     @Override
     public void stop() {
         status = stop(getSlot());
     }
 
+    // Разрывает соединение с модулем
     @Override
     public void closeConnection() {
         if (isConnectionOpen()) {
@@ -87,10 +95,12 @@ public class LTR24 extends ADC {
         System.loadLibrary("LTR24Library");
     }
 
+    // Задает настройки модуля по умолчанию
     private void initializeModuleSettings() {
         getSettingsOfModule().put(Settings.FREQUENCY, 0); // частота дискретизации 117 кГц
     }
 
+    // Возвращает настройки модуля
     private int[] getLTR24ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
         settingsList.add(getSettingsOfModule().get(Settings.FREQUENCY));
@@ -104,6 +114,7 @@ public class LTR24 extends ADC {
         return settings;
     }
 
+    // Возвращает настройки модуля
     @Override
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
@@ -111,12 +122,14 @@ public class LTR24 extends ADC {
         return settings;
     }
 
+    // Считывает настройки модуля
     @Override
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
         settingsOfModule.put(Settings.FREQUENCY, Integer.valueOf(separatedSettings[0]));
     }
 
+    // Возвращает частоту дискретизации модуля
     @Override
     public double getFrequency() {
         return frequency;

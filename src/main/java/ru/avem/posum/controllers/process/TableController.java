@@ -59,6 +59,7 @@ public class TableController {
         listenStopButton();
     }
 
+    // Инициализирует список каналов
     public void initTableView() {
         table.setItems(graphController.getGraphModel().getChannels());
 
@@ -82,6 +83,7 @@ public class TableController {
         listen(table);
     }
 
+    // Инициализирует колонку с GUI для отображения графика
     public void initResponse(TableColumn<ChannelModel, HBox> columnOfTable) {
         Utils.makeHeaderWrappable(columnOfTable);
 
@@ -115,6 +117,7 @@ public class TableController {
         });
     }
 
+    // Меняет состояние GUI
     private void listen(TableView<ChannelModel> tableView) {
         tableView.getItems().addListener((ListChangeListener<ChannelModel>) observable -> {
             initializeButton.setDisable(table.getItems().isEmpty());
@@ -129,6 +132,7 @@ public class TableController {
         });
     }
 
+    // Возвращает список пунктов для отображения графика
     private ObservableList<CheckBox> getCheckBoxes() {
         ObservableList<ChannelModel> channels = table.getItems();
         ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
@@ -144,6 +148,7 @@ public class TableController {
         return checkBoxes;
     }
 
+    // Возвращает список color picker'ов для отображения графика
     private ObservableList<ColorPicker> getColorPickers() {
         ObservableList<ChannelModel> channels = table.getItems();
         ObservableList<ColorPicker> colorPickers = FXCollections.observableArrayList();
@@ -157,6 +162,7 @@ public class TableController {
         return colorPickers;
     }
 
+    // Включает и выключает отображение графика
     private void listen(CheckBox checkBox, int channelIndex) {
         checkBox.selectedProperty().addListener(observable -> {
             toggleGraphControls();
@@ -172,6 +178,7 @@ public class TableController {
         });
     }
 
+    // Меняет состояние GUI
     private void toggleCheckBoxes(CheckBox checkBox) {
         ObservableList<CheckBox> checkBoxes = getCheckBoxes();
         checkBoxes.remove(checkBox);
@@ -183,6 +190,7 @@ public class TableController {
         checkBox.setSelected(true);
     }
 
+    // Отображает график сигнала и цифровые значения параметров сигнала
     private void showSignal(int channelIndex) {
         if (showingThread == null) {
             showingThread = new Thread(() -> {
@@ -209,6 +217,7 @@ public class TableController {
         }
     }
 
+    // Считывает и задает информацию о канале
     private void parseData(int channelIndex) {
         ObservableList<ChannelModel> channels = table.getItems();
         String channelDescription = channels.get(channelIndex).getName();
@@ -218,6 +227,7 @@ public class TableController {
         graphController.setFields(channel.getKey(), channel.getValue());
     }
 
+    // Возвращает информацию о номере канала и номере модуля
     public Pair<Integer, Integer> parseSlotAndChannel(String channelDescription) {
         List<Modules> modules = processController.getProcessModel().getModules();
         int slot = parseSlot(channelDescription);
@@ -241,6 +251,7 @@ public class TableController {
         return new Pair<>(0, 0);
     }
 
+    // Возвращает номер слота, в котором расположен модуль
     private int parseSlot(String channelDescription) {
         if (!channelDescription.contains("=>")) {
             return Integer.parseInt(channelDescription.split("слот ")[1].split("\\)")[0]);
@@ -250,6 +261,7 @@ public class TableController {
         }
     }
 
+    // Проверяет количество отмеченных пунктов для отображения графика
     private void checkSelection() {
         ObservableList<CheckBox> checkBoxes = getCheckBoxes();
         int nonSelectedCheckBoxesCount = 0;
@@ -268,6 +280,7 @@ public class TableController {
         }
     }
 
+    // Меняет состояние GUI
     private void toggleGraphControls() {
         ObservableList<CheckBox> checkBoxes = getCheckBoxes();
         int disabledCheckBoxesCount = 0;
@@ -288,6 +301,7 @@ public class TableController {
         graphController.getVerticalScaleComboBox().setDisable(isGraphEnable);
     }
 
+    // Отображает параметры измеренного сигнала
     public void showParametersOfSignal() {
         new Thread(() -> {
             signalParametersModel.setTypesOfModules(processController.getProcessModel().getTypesOfModules());
@@ -304,10 +318,12 @@ public class TableController {
         }).start();
     }
 
+    // Инициализирует регулятор
     public void initRegulator() {
         regulatorController.initRegulator(getDacChannels());
     }
 
+    // Возвращает модели каналов ЦАП
     private List<ChannelModel> getDacChannels() {
         ObservableList<ChannelModel> channels = table.getItems();
         List<ChannelModel> dacChannels = new ArrayList<>();
@@ -321,6 +337,7 @@ public class TableController {
         return dacChannels;
     }
 
+    // Отображает параметры измеренного сигнала
     private void show() {
         ObservableList<ChannelModel> channels = table.getItems();
         ObservableList<Modules> modules = processController.getProcessModel().getModules();
@@ -362,10 +379,12 @@ public class TableController {
         }
     }
 
+    // Меняет цвет графика
     private void listen(ColorPicker colorPicker, int channelIndex) {
         colorPicker.valueProperty().addListener(observable -> setSeriesColor(channelIndex));
     }
 
+    // Меняет цвет графика
     private void setSeriesColor(int channelIndex) {
         if (getCheckBoxes().get(channelIndex).isSelected()) {
             ObservableList<ChannelModel> channels = table.getItems();
@@ -375,6 +394,7 @@ public class TableController {
         }
     }
 
+    // Меняет состояние GUI
     private void listenStopButton() {
         processController.getStopButton().disableProperty().addListener(observable -> {
             ObservableList<CheckBox> checkBoxes = getCheckBoxes();
@@ -394,6 +414,7 @@ public class TableController {
         });
     }
 
+    // Меняет состояние GUI
     public void toggleResponseUiElements(boolean isDisable) {
         ObservableList<ChannelModel> channels = table.getItems();
 
@@ -402,6 +423,7 @@ public class TableController {
         }
     }
 
+    // Снимает отметки с пунктов
     public void disableChannels() {
         ObservableList<CheckBox> checkBoxes = getCheckBoxes();
 
@@ -410,6 +432,7 @@ public class TableController {
         }
     }
 
+    // Сохраняет модели каналов в базу данных
     public void saveChannels() {
         ObservableList<ChannelModel> channels = table.getItems();
         List<Channels> dbChannels = ChannelsRepository.getAllChannels();
@@ -432,6 +455,7 @@ public class TableController {
         }
     }
 
+    // Загружает модели каналов из базы данных
     public void loadChannels() {
         List<Channels> channels = ChannelsRepository.getAllChannels();
 
@@ -454,6 +478,7 @@ public class TableController {
 
     }
 
+    // Удаляет канал
     public void delete(ChannelModel channelModel) {
         List<Channels> channels = ChannelsRepository.getAllChannels();
 
@@ -465,6 +490,7 @@ public class TableController {
         }
     }
 
+    // Удаляет каналы
     public void delete(List<ChannelModel> channels) {
         List<Channels> dbChannels = ChannelsRepository.getAllChannels();
 
@@ -478,6 +504,7 @@ public class TableController {
         }
     }
 
+    // Удаляет все каналы
     public void clearChannels() {
         ObservableList<ChannelModel> channelModels = table.getItems();
         for (ChannelModel channel : channelModels) {
@@ -485,6 +512,7 @@ public class TableController {
         }
     }
 
+    // Возвращает список каналов
     public ObservableList<ChannelModel> getChannels() {
         return table.getItems();
     }
@@ -504,6 +532,7 @@ public class TableController {
         return headers.toArray(new String[0]);
     }
 
+    // Возвращает список регулируемых параметров
     private List<String> getChosenParameters() {
         List<String> outputList = new ArrayList<>();
         boolean[] chosenParameters = new boolean[3];
@@ -552,10 +581,12 @@ public class TableController {
         return outputList;
     }
 
+    // Возвращает количество ячеек для объединения при формировании протокола
     public int getCellsToMerge() {
         return table.getColumns().size() + 1;
     }
 
+    // Возвращает контроллер регулятора
     public RegulatorController getRegulatorController() {
         return regulatorController;
     }

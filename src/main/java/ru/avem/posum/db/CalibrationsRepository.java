@@ -23,24 +23,29 @@ public class CalibrationsRepository extends DataBaseRepository {
         }
     }
 
+    // Добавляет калибровочные коэффициенты в базу данных
     public static void insertCalibration(Calibration calibration) {
         sendAction((calibrationDao) -> calibrationDao.create(calibration));
     }
 
+    // Обновляет калибровочные коэффициенты в базе данных
     public static void updateCalibration(Calibration calibration) {
         sendAction((calibrationDao) -> calibrationDao.update(calibration));
     }
 
+    // Удаляет калибровочные коэффициенты из базы данных
     public static void deleteCalibration(Calibration calibration) {
         sendAction((calibrationDao) -> calibrationDao.delete(calibration));
     }
 
+    // Возвращает список всех калибровочных коэффициентов
     public static List<Calibration> getAllCalibrations(){
         final List[] calibrations = {null};
         sendAction((calibrationsDao -> calibrations[0] = calibrationsDao.queryForAll()));
         return (List<Calibration>) calibrations[0];
     }
 
+    // Возвращает калибровочные коэффициенты с указанным id
     public static Calibration getCalibration(long id) {
         final Calibration[] calibration = {null};
         sendAction((calibrationsDao -> calibration[0] = calibrationsDao.queryForId(id)));

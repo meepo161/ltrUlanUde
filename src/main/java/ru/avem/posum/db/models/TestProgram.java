@@ -5,6 +5,10 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Таблица для хранения программ испытаний в базе данных
+ */
+
 @XmlRootElement
 @DatabaseTable(tableName = "testPrograms")
 public class TestProgram {

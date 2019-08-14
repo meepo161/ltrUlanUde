@@ -2,6 +2,10 @@ package ru.avem.posum.hardware;
 
 import java.util.HashMap;
 
+/**
+ * Класс ЦАП модуля
+ */
+
 public abstract class DAC extends Module {
     public enum Settings {
         DAC_MODE("DAC mode"), FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
@@ -18,12 +22,12 @@ public abstract class DAC extends Module {
         }
     }
 
-    private double[] amplitudes;
-    private int checkedChannelsCounter;
-    private double[] dc;
-    private double[] frequencies;
-    HashMap<String, Integer> moduleSettings;
-    private int[] phases;
+    private double[] amplitudes; // амплитуды каналов
+    private int checkedChannelsCounter; // количество задействованных каналов
+    private double[] dc; // постоянные составляющие каналов
+    private double[] frequencies; // частоты каналов
+    HashMap<String, Integer> moduleSettings; // настройки модуля
+    private int[] phases; // фазы каналов
 
     DAC() {
         channelsCount = 8; // 8 каналов, поскольку в проекте используется LTR34-8

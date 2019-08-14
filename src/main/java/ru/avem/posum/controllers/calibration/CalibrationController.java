@@ -1,4 +1,4 @@
-package ru.avem.posum.controllers.calibration;
+    package ru.avem.posum.controllers.calibration;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -81,6 +81,7 @@ public class CalibrationController implements BaseController {
     private WindowsManager wm;
     private boolean stopped;
 
+    // Инициализирует окно градуирования канала
     @FXML
     private void initialize() {
         initTextFields();
@@ -95,6 +96,7 @@ public class CalibrationController implements BaseController {
                 statusBar, warningIcon);
     }
 
+    // Инициализирует текстовые поля
     private void initTextFields() {
         toggleUiElementsIfEmptyField(dcTextField);
         toggleUiElementsIfEmptyField(loadValueTextField);
@@ -103,6 +105,7 @@ public class CalibrationController implements BaseController {
         setDigitFilterToTextField(loadValueTextField);
     }
 
+    // Переключает состояние GUI в зависимости от отсутствия значений в текстовых полях
     private void toggleUiElementsIfEmptyField(TextField textField) {
         textField.textProperty().addListener((observable) -> {
             if (!loadValueTextField.getText().isEmpty() &
@@ -116,6 +119,7 @@ public class CalibrationController implements BaseController {
         });
     }
 
+    // Запрещает ввод недопустимых символов в текстовое поле
     private void setDigitFilterToTextField(TextField textField) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             textField.setText(newValue.replaceAll("[^-\\d(\\.|,)]", ""));
@@ -125,10 +129,12 @@ public class CalibrationController implements BaseController {
         });
     }
 
+    // Инициализирует пункты окна
     private void initComboBoxes() {
         addMultipliersList();
     }
 
+    // Задает список множителей
     private void addMultipliersList() {
         ObservableList<String> coefficients = FXCollections.observableArrayList();
 
@@ -151,16 +157,19 @@ public class CalibrationController implements BaseController {
         loadValueMultiplierComboBox.getSelectionModel().select(5);
     }
 
+    // Инициализирует список градуировочных точек
     private void initTableView() {
         loadChannelColumn.setCellValueFactory(new PropertyValueFactory<>("loadValue"));
         channelValueColumn.setCellValueFactory(new PropertyValueFactory<>("channelValue"));
     }
 
+    // Инициализирует график
     private void initGraph() {
         calibrationTableView.setItems(calibrationModel.getCalibrationPoints());
         calibrationGraph.getData().add(graphSeries);
     }
 
+    // Инициализирует контекстное меню, которое появляется по клику на правую кнопку мыши
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
@@ -171,6 +180,7 @@ public class CalibrationController implements BaseController {
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
+    // Удаляет калибровочную точку
     private void deleteCalibrationPoint() {
         int selectedPointIndex = calibrationTableView.getSelectionModel().getSelectedIndex();
         CalibrationPoint removedPoint = calibrationModel.getCalibrationPoints().remove(selectedPointIndex);
@@ -185,6 +195,7 @@ public class CalibrationController implements BaseController {
         checkNumberOfCalibrationPoints();
     }
 
+    // Проверяет количество градуировочных точек
     private void checkNumberOfCalibrationPoints() {
         ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
         int MAX_CALIBRATION_POINTS = 20;
@@ -194,6 +205,7 @@ public class CalibrationController implements BaseController {
         saveButton.setDisable(checkSettingOfNul() && calibrationPoints.size() < MIN_CALIBRATION_POINTS);
     }
 
+    // Менеят состояние GUI
     private void changeUiElementsState(boolean isDisable) {
         loadValueLabel.setDisable(setNulCheckBox.isSelected());
         loadValueTextField.setDisable(setNulCheckBox.isSelected());
@@ -207,6 +219,7 @@ public class CalibrationController implements BaseController {
         addToTableButton.setDisable(isDisable);
     }
 
+    // Проверяет градуировку нулевого значения
     private boolean checkSettingOfNul() {
         ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
 
@@ -219,12 +232,14 @@ public class CalibrationController implements BaseController {
         return true;
     }
 
+    // Удаляет все градуировочные точки
     private void clearCalibrationPoints() {
         graphSeries.getData().clear();
         calibrationModel.getCalibrationPoints().clear();
         checkNumberOfCalibrationPoints();
     }
 
+    // Меняет состояние GUI в зависимости от того, отмечен ли пункт "Задать значение"
     private void listenSetChannelValueCheckBox() {
         setChannelValueCheckBox.selectedProperty().addListener(observable -> {
             if (setChannelValueCheckBox.isSelected()) {
@@ -243,6 +258,7 @@ public class CalibrationController implements BaseController {
         });
     }
 
+    // Отображает текущее значение нагрузки на канале
     public void showChannelValue() {
         calibrationModel.setDecimalFormatScale(cm.getDecimalFormatScale());
 
@@ -256,6 +272,7 @@ public class CalibrationController implements BaseController {
         }).start();
     }
 
+    // Меняет состояние GUI в зависимости от того, выбран ли пункт "Градуировать ноль"
     private void listenSettingNul() {
         setNulCheckBox.selectedProperty().addListener(observable -> {
             if (setNulCheckBox.isSelected()) {
@@ -275,6 +292,7 @@ public class CalibrationController implements BaseController {
         });
     }
 
+    // Отображает контекстное меню по нажатию правой кнопки мыши
     private void listenMouse() {
         calibrationTableView.setRowFactory(tv -> {
             TableRow<CalibrationPoint> row = new TableRow<>();
@@ -289,6 +307,7 @@ public class CalibrationController implements BaseController {
         });
     }
 
+    // Загружает начальное состояние окна градуировки канала
     public void loadDefaultCalibrationSettings(SignalModel signalModel) {
         this.stopped = false;
         this.signalModel = signalModel;
@@ -300,6 +319,7 @@ public class CalibrationController implements BaseController {
         setLoadValueTextFields();
     }
 
+    // Загружает начальное состояние окна градуировки канала
     public void loadDefaultUiElementsState() {
         dcLabel.setDisable(false);
         dcTextField.setDisable(false);
@@ -314,6 +334,7 @@ public class CalibrationController implements BaseController {
         saveButton.setDisable(false);
     }
 
+    // Загружает калибровочные коэффициенты
     private void loadCalibrationSettings() {
         int channel = signalModel.getChannel();
         List<String> calibrations = signalModel.getAdc().getCalibrationSettings().get(channel);
@@ -327,6 +348,7 @@ public class CalibrationController implements BaseController {
         }
     }
 
+    // Отображает градуировочные коэффициенты
     private void showCalibration() {
         boolean isSettingOfNul = calibrationModel.getLoadValue() == 0;
 
@@ -339,6 +361,7 @@ public class CalibrationController implements BaseController {
         }
     }
 
+    // Проверяет наличие градуировки для заданных значений
     private boolean checkExistingPoints() {
         ObservableList<CalibrationPoint> calibrationPoints = calibrationModel.getCalibrationPoints();
 
@@ -360,6 +383,7 @@ public class CalibrationController implements BaseController {
         return true;
     }
 
+    // Добавляет градуировочную точку в список
     private void addCalibrationPointToTableView() {
         int channel = signalModel.getChannel();
         CalibrationPoint point = new CalibrationPoint(channel, calibrationModel);
@@ -378,6 +402,7 @@ public class CalibrationController implements BaseController {
         loadChannelColumn.textProperty().set(loadChannelHeader);
     }
 
+    // Добавляет градуировочную точку на график
     private void addPointToGraph() {
         for (CalibrationPoint calibrationPoint : calibrationModel.getCalibrationPoints()) {
             double xValue = Double.parseDouble(calibrationPoint.getLoadValue());
@@ -390,17 +415,20 @@ public class CalibrationController implements BaseController {
         }
     }
 
+    // Задает значения для полей с величиной нагрузки и названием физической величины
     private void setLoadValueTextFields() {
         loadValueTextField.setText(calibrationModel.getFormattedLoadValue());
         loadValueNameTextField.setText(calibrationModel.getValueName());
     }
 
+    // Добавляет градуировочную точку
     @FXML
     public void handleAddPoint() {
         parseData();
         showCalibration();
     }
 
+    // Считывает и сохраняет в модель заданные данные
     private void parseData() {
         double loadValueMultiplierCoefficient = Double.parseDouble(loadValueMultiplierComboBox.getSelectionModel().getSelectedItem());
         double channelValueMultiplierCoefficient = Double.parseDouble(dcMultipliersComboBox.getSelectionModel().getSelectedItem());
@@ -416,6 +444,7 @@ public class CalibrationController implements BaseController {
         calibrationModel.setValueName(valueName);
     }
 
+    // Считывает значение текстового поля
     private double parse(TextField textField, double multiplierCoefficient) {
         if (!textField.getText().equals("-") && !textField.getText().isEmpty()) {
             String digits = textField.getText().replaceAll(",", ".");
@@ -426,12 +455,14 @@ public class CalibrationController implements BaseController {
         }
     }
 
+    // Сохраняет градуировочные точки
     @FXML
     public void handleSaveButton() {
         saveCalibrationPoints();
         indicateResult();
     }
 
+    // Сохраняет градуировочные точки
     private void saveCalibrationPoints() {
         ADC adc = signalModel.getAdc();
         int channel = signalModel.getChannel();
@@ -445,11 +476,13 @@ public class CalibrationController implements BaseController {
         adc.getCalibrationCoefficients().get(channel).addAll(calibrationModel.getCalibrationCoefficients());
     }
 
+    // Отображает результат сохранения градуировочных точек
     private void indicateResult() {
         saveButton.setDisable(true);
         statusBarLine.setStatus("Настройки успешно сохранены", true);
     }
 
+    // Возвращает пользователя в окно отображения текущей нагрузки на канале
     @FXML
     public void handleBackButton() {
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
@@ -470,6 +503,7 @@ public class CalibrationController implements BaseController {
         }).start();
     }
 
+    // Очищает GUI от всех заданных значений
     private void clearCalibrationData() {
         Platform.runLater(() -> {
             loadValueTextField.setText("");
@@ -484,11 +518,13 @@ public class CalibrationController implements BaseController {
         });
     }
 
+    // Задает делегат ControllerManager
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
     }
 
+    // Задает делегат WindowManager
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;
