@@ -30,7 +30,7 @@ class ProtocolController(val processController: ProcessController) {
     private var workbook = XSSFWorkbook()
     private val cellStyles = HashMap<CellStyles, XSSFCellStyle>()
 
-
+    // Создает файл протокола испытаний
     fun createProtocol(testProgramId: Long, testProgramTitle: String, isPointData: Boolean, isShort: Boolean,
                        rarefactionCoefficient: Long, vararg sheetsNames: ProtocolSheets) {
 
@@ -74,12 +74,14 @@ class ProtocolController(val processController: ProcessController) {
         fillWorkBook(sheets, headers.toTypedArray(), data, colors, isPointData, isShort, rarefactionCoefficient)
     }
 
+    // Создает файл протокола испытаний
     private fun createWorkBook(sheets: Array<String>, title: String, titleCellsToMerge: IntArray) {
         createProtocol(*sheets)
         createTitle(title, titleCellsToMerge, *sheets)
         createDataCellsStyles()
     }
 
+    // Создает файл протокола испытаний
     private fun createProtocol(vararg sheetNames: String) {
         workbook = XSSFWorkbook()
         for ((index, name) in sheetNames.withIndex()) {
@@ -88,6 +90,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Заполняет первую строку с названием программы испытаний на всех листах
     private fun createTitle(title: String, cellsToMerge: IntArray, vararg sheets: String) {
         val rowNumber = 0 // row for title
         val columnNumber = 0 // beginning of sheet
@@ -110,6 +113,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Возвращает форматирование заголовка
     private fun getTitleStyle(): XSSFCellStyle {
         val cellStyle = workbook.createCellStyle()
         cellStyle.alignment = HorizontalAlignment.CENTER
@@ -120,6 +124,7 @@ class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
+    // Возвращает шрифт
     private fun getFont(name: String, height: Short, isBold: Boolean): XSSFFont {
         val font = workbook.createFont()
         font.fontName = name
@@ -128,6 +133,7 @@ class ProtocolController(val processController: ProcessController) {
         return font
     }
 
+    // Устанавливает нужный размер ячеек
     private fun autosizeColumns(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
         for (index in 0..maxColons) {
@@ -136,6 +142,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Заполняет данными файл протокола испытаний
     private fun fillWorkBook(sheets: Array<String>, headers: Array<Array<String>>, data: List<List<List<String>>>,
                              colors: List<List<Short>>, isPointData: Boolean, isShort: Boolean, rarefactionCoefficient: Long) {
         for (index in headers.indices) {
@@ -163,6 +170,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Создает заголовки колонок
     private fun createHeaders(sheetName: String, vararg headers: String) {
         val sheet = workbook.getSheet(sheetName)
         val rowNumber = 1 // row for headers
@@ -176,6 +184,7 @@ class ProtocolController(val processController: ProcessController) {
         sheet.createFreezePane(0, 2)
     }
 
+    // Возвращает форматирование заголовка
     private fun getHeaderStyle(): XSSFCellStyle {
         val cellStyle = workbook.createCellStyle()
         cellStyle.alignment = HorizontalAlignment.CENTER
@@ -190,6 +199,7 @@ class ProtocolController(val processController: ProcessController) {
         return cellStyle
     }
 
+    // Записывает данные в файл
     private fun fill(sheetName: String, colors: List<Short>, dataForColumns: List<List<String>>) {
         val sheet = workbook.getSheet(sheetName)
 
@@ -205,6 +215,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Записывает данные в файл
     fun fillChannelData(channelData: List<String>) {
         val sheet = workbook.getSheet(ProtocolSheets.CHANNELS_DATA.sheetName)
         val row = sheet.createRow(sheet.lastRowNum + 1)
@@ -217,6 +228,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Показывает окно сохранения файла
     fun showFileSaver(windowTitle: String, initialFileName: String): File? {
         val userDocumentsPath = System.getProperty("user.home") + "\\Documents"
         val file = File(userDocumentsPath)
@@ -229,6 +241,7 @@ class ProtocolController(val processController: ProcessController) {
         return fileChooser.showSaveDialog(Stage())
     }
 
+    // Сохраняет протокол испытаний
     fun saveProtocol(selectedDirectory: File, successfulStatus: String) {
         var path = selectedDirectory.absolutePath
         path = if (path.contains(".xlsx")) path else "$path.xlsx"
@@ -242,6 +255,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Показывает окно сохранения файла
     fun showProtocolSaverDialog(): Long {
         val dialog = createDialog()
         val combobox = createComboBox()
@@ -255,13 +269,15 @@ class ProtocolController(val processController: ProcessController) {
         return dialog.showAndWait().get()
     }
 
+    // Создает окно сохранения
     private fun createDialog(): Dialog<Long> {
         val dialog = Dialog<Long>()
         dialog.title = "Параметры сохранения протокола"
         dialog.headerText = "Задайте необходимые параметры"
         return dialog
     }
-
+    
+    // Создает кнопки сохранения
     private fun createButtons(): Pair<ButtonType, ButtonType> {
         val saveButton = ButtonType("Сохранить", ButtonBar.ButtonData.OK_DONE)
         val cancelButton = ButtonType("Отмена", ButtonBar.ButtonData.OK_DONE)
@@ -300,6 +316,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Определяет коэффициент прореживания
     private fun parseRarefactionCoefficient(string: String): Long {
         var coefficient: Long = 1 // default value
         when (string) {
@@ -316,6 +333,7 @@ class ProtocolController(val processController: ProcessController) {
         return coefficient
     }
 
+    // Формирует график в протоколе испытаний
     private fun drawLineChart(sheetName: String) {
         val sheet = workbook.getSheet(sheetName)
         val lastRowIndex = getLastRowIndex(sheet) + 1
@@ -338,6 +356,7 @@ class ProtocolController(val processController: ProcessController) {
         drawLineChart(lineChart, "Rms", timeData, rmsData)
     }
 
+    // Создает график
     private fun createLineChart(sheet: XSSFSheet, lineChartTitle: String, chartBeginningRow: Int): XSSFChart {
         val drawing = sheet.createDrawingPatriarch()
         val chartBeginningColumnIndex = getLastColumnIndex(sheet) + 2
@@ -350,6 +369,7 @@ class ProtocolController(val processController: ProcessController) {
         return lineChart
     }
 
+    // Рисует график
     private fun drawLineChart(lineChart: XSSFChart, seriesTitle: String, xAxisData: ChartDataSource<Number>, yAxisData: ChartDataSource<Number>) {
         val legend = lineChart.orAddLegend
         legend.position = LegendPosition.RIGHT
@@ -374,6 +394,7 @@ class ProtocolController(val processController: ProcessController) {
         }
     }
 
+    // Возвращает индекс постедней колонки
     private fun getLastColumnIndex(sheet: XSSFSheet): Int {
         var lastColumnNum: Short = 0
         for (index in 0..sheet.lastRowNum) {
@@ -383,10 +404,12 @@ class ProtocolController(val processController: ProcessController) {
         return lastColumnNum.toInt() - 1
     }
 
+    // Возвращает индекс последней строки
     private fun getLastRowIndex(sheet: XSSFSheet): Int {
         return sheet.lastRowNum - 1
     }
 
+    // Создает стили ячеек журнала событий
     private fun createDataCellsStyles() {
         cellStyles[CellStyles.ERROR] = createDataCellStyle(IndexedColors.RED.index)
         cellStyles[CellStyles.LOG] = createDataCellStyle(IndexedColors.WHITE.index)
@@ -394,7 +417,7 @@ class ProtocolController(val processController: ProcessController) {
         cellStyles[CellStyles.WARNING] = createDataCellStyle(IndexedColors.YELLOW.index)
     }
 
-
+    // Создает стили ячеек с данными
     private fun createDataCellStyle(color: Short): XSSFCellStyle {
         val cellStyle = workbook.createCellStyle()
         cellStyle.borderTop = BorderStyle.THIN

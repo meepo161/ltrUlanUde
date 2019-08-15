@@ -5,14 +5,18 @@ import ru.avem.posum.hardware.Module;
 
 import java.util.HashMap;
 
+/**
+ * Модель настроек модуля LTR24
+ */
+
 public class LTR24SettingsModel {
-    private String[] descriptions;
-    private boolean[] checkedChannels;
-    private LTR24 ltr24;
-    private int[] measuringRanges;
-    private String moduleName;
-    private int slot;
-    private int[] typesOfChannels;
+    private String[] descriptions; // Описания каналов
+    private boolean[] checkedChannels; // Задействованные каналы
+    private LTR24 ltr24; // Инстанс модуля
+    private int[] measuringRanges; // Диапазоны имзерений каналов
+    private String moduleName; // Название модуля
+    private int slot; // Номер слота
+    private int[] typesOfChannels; // Режимы работы модулей
 
     public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
         this.ltr24 = (LTR24) instancesOfModules.get(slot);

@@ -8,6 +8,10 @@ import ru.avem.posum.utils.TextEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс всех модулей процесса испытаний
+ */
+
 public class Process {
     private final int CHANNELS = 4; // количество каналов
     private final int SLOTS = 16; // количество слотов в крейте
@@ -45,11 +49,13 @@ public class Process {
         crateSerialNumber = "";
     }
 
+    // Открывает соединения с модулями
     public void connect() {
         openConnection(crateSerialNumber, modulesTypes, slots, bioPath);
         encodeStatuses();
     }
 
+    // Расшифровывает текст, принятый от крейта
     private void encodeStatuses() {
         for (int i = 0; i < SLOTS; i++) {
             if (!statuses[i].isEmpty() && !statuses[i].equals("Операция успешно выполнена")) {
@@ -58,6 +64,7 @@ public class Process {
         }
     }
 
+    // Проверяет соединение с модулями
     public boolean isConnected() {
         checkConnection();
         encodeStatuses();
@@ -65,6 +72,7 @@ public class Process {
         return checkStatuses();
     }
 
+    // Проверяет наличие ошибки
     private boolean checkStatuses() {
         for (int i = 0; i < SLOTS; i++) {
             if (!statuses[i].isEmpty() && !statuses[i].equals("Операция успешно выполнена")) {
@@ -75,6 +83,7 @@ public class Process {
         return true;
     }
 
+    // Инициализирует модули
     public void initialize() {
         initialize(typesOfChannels, measuringRanges, settingsOfModules, firPaths, iirPaths, channelsCount);
         encodeStatuses();
@@ -84,6 +93,7 @@ public class Process {
         return checkStatuses();
     }
 
+    // Запускает модули
     public void run() {
         start();
         encodeStatuses();
@@ -93,17 +103,20 @@ public class Process {
         return checkStatuses();
     }
 
+    // Записывает измеренные значения и генерирует сигнал
     public void perform() {
         if (!paused) {
             perform(data, timeMarks);
         }
     }
 
+    // Завершает работу модулей
     public void finish() {
         stop();
         disconnect();
     }
 
+    // Закрывает соединения с модулями
     public void disconnect() {
         closeConnection();
         encodeStatuses();
@@ -143,6 +156,7 @@ public class Process {
         return stopped;
     }
 
+    // Задает список используемых в процессе испытаний модулей
     public void setModulesTypes(List<String> modulesTypes) {
         int modulesCount = modulesTypes.size();
         this.modulesTypes = new int[modulesCount];
@@ -162,6 +176,7 @@ public class Process {
         }
     }
 
+    // Задает список используемых в процессе испытаний слотов
     public void setSlots(List<Integer> slots) {
         int slotsCount = slots.size();
 
@@ -170,10 +185,12 @@ public class Process {
         }
     }
 
+    // Задает серийный номер крейта
     public void setCrateSerialNumber(String serialNumber) {
         this.crateSerialNumber = serialNumber;
     }
 
+    // Задает режимы работы каналов модулей АЦП
     public void setTypesOfChannels(List<int[]> typesOfChannels) {
         int typesCount = typesOfChannels.size();
 
@@ -182,6 +199,7 @@ public class Process {
         }
     }
 
+    // Задает диапазаны измерений каналов модулей АЦП
     public void setMeasuringRanges(List<int[]> measuringRanges) {
         int rangesCount = measuringRanges.size();
 
@@ -190,6 +208,7 @@ public class Process {
         }
     }
 
+    // Задает настройки модуля
     public void setSettingsOfModules(List<int[]> settingsOfModules) {
         int settingsCount = settingsOfModules.size();
 
@@ -198,6 +217,7 @@ public class Process {
         }
     }
 
+    // Задает путь к КИХ фильтру
     public void setFirPaths(List<String> firPaths) {
         int pathCount = firPaths.size();
 
@@ -206,6 +226,7 @@ public class Process {
         }
     }
 
+    // Задает путь к БИХ фильтру
     public void setIirPaths(List<String> iirPaths) {
         int pathCount = iirPaths.size();
 
@@ -214,6 +235,7 @@ public class Process {
         }
     }
 
+    // Задает количество каналов модуля
     public void setChannelsCounts(List<Integer> channelsCounts) {
         int size = channelsCounts.size();
 
@@ -222,6 +244,7 @@ public class Process {
         }
     }
 
+    // Возващает информацию о модуле и текст ошибки
     public List<Pair<String, String>> getBadStatus() {
         List<Pair<String, String>> outputList = new ArrayList<>();
 
@@ -238,12 +261,6 @@ public class Process {
     public double[][] getData() {
         return data;
     }
-
-//    public double[] getData(int slot) {
-//        double[] output = new double[data[slot].length];
-//        System.arraycopy(data[slot], 0, output, 0, output.length);
-//        return output;
-//    }
 
     public boolean isPaused() {
         return paused;

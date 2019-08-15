@@ -38,6 +38,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         addDACModes();
     }
 
+    // Добавляет виды генерируемого сигнала
     private void addSignalTypes() {
         ObservableList<String> types = FXCollections.observableArrayList();
 
@@ -52,6 +53,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         signalTypeComboBox.getSelectionModel().select(0);
     }
 
+    // Добавляет варианты использования заводских калибровочных коэффициентов
     private void addCalibrations() {
         ObservableList<String> calibrations = FXCollections.observableArrayList();
 
@@ -62,6 +64,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         calibrationComboBox.getSelectionModel().select(1);
     }
 
+    // Добавляет режимы работы модуля
     private void addDACModes() {
         ObservableList<String> modes = FXCollections.observableArrayList();
 
@@ -72,6 +75,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         dacModeComboBox.getSelectionModel().select(0);
     }
 
+    // Загружает настройки модуля
     void setSettings() {
         // TODO: Refactor a hashmap
         int dacMode = ltr34SettingsModel.getLTR34Instance().getModuleSettings().get(DAC.Settings.DAC_MODE.getSettingName());
@@ -82,6 +86,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         signalTypeComboBox.getSelectionModel().select(signalType);
     }
 
+    // Сохраняет настройки модуля
     void saveSettings() {
         int dacMode = dacModeComboBox.getSelectionModel().getSelectedIndex();
         int factoryCalibration = calibrationComboBox.getSelectionModel().getSelectedIndex();
@@ -94,6 +99,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         ltr34SettingsModel.getLTR34Instance().setData(new double[dataLength]);
     }
 
+    // Меняет состояние GUI
     void disableUiElementsState() {
         calibrationComboBox.setDisable(true);
         calibrationLabel.setDisable(true);
@@ -104,6 +110,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         generateSignalButton.setDisable(true);
     }
 
+    // Меняет состояние GUI
     void enableUiElements() {
         calibrationComboBox.setDisable(false);
         calibrationLabel.setDisable(false);

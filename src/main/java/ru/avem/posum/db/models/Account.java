@@ -5,6 +5,10 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.Objects;
 
+/**
+ * Таблица для хранения учетных записей в базе данных
+ */
+
 @DatabaseTable(tableName = "accounts")
 public class Account {
     @DatabaseField(generatedId = true)

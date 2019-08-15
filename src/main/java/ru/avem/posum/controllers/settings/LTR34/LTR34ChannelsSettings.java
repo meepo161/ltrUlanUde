@@ -121,6 +121,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Меняет состояние GUI
     private void toggleUiElementsState(CheckBox checkBox, int channelNumber) {
         checkBox.selectedProperty().addListener(observable -> {
             if (!checkBox.isSelected()) {
@@ -132,6 +133,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         });
     }
 
+    // Устанавливает настройки по умолчанию
     private void resetSettings(int channelNumber) {
         checkBoxes.get(channelNumber).setSelected(false);
         amplitudesTextFields.get(channelNumber).setText("");
@@ -141,6 +143,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         phasesTextFields.get(channelNumber).setText("");
     }
 
+    // Меняет состояние GUI
     private void toggleUiElementsState(int channelNumber, boolean isDisable) {
         amplitudesTextFields.get(channelNumber).setDisable(isDisable);
         dcTextFields.get(channelNumber).setDisable(isDisable);
@@ -156,6 +159,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         });
     }
 
+    // Проверяет условия для включения кнопки "Генерировать"
     private void checkConditionForTurningOnTheGenerateButton() {
         int disabledChannelsCounter = 0;
 
@@ -176,6 +180,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         generateSignalButton.setDisable(disabledChannelsCounter == checkBoxes.size());
     }
 
+    // Проверяет условия для выключения кнопки "Генерировать"
     private void checkConditionForTurningOffTheGenerateButton() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             if (checkBoxes.get(channelIndex).isSelected() &
@@ -188,6 +193,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Устанавливат фильтры некорректных символов
     private void setDigitFilter() {
         for (TextField textField : amplitudesTextFields) {
             setAmplitudeFilter(textField);
@@ -262,6 +268,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         });
     }
 
+    // Загружает настройки модуля
     void setSettings() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setSelected(ltr34SettingsModel.getCheckedChannels()[channelIndex]);
@@ -277,6 +284,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Заменяет отображение "0" на ""
     private void replaceNul(CheckBox channel, double value, TextField textField) {
         String textFieldName = textField.getId();
 
@@ -299,6 +307,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Меняет состояние GUI
     void disableUiElementsState() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setDisable(true);
@@ -310,6 +319,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Сохраняет настройки модуля
     void saveSettings() {
         int channelsCount = 0;
 
@@ -334,8 +344,9 @@ class LTR34ChannelsSettings extends LTR34Settings {
 
         channelsCount = channelsCount <= 4 ? 4 : 8;
         ltr34SettingsModel.getLTR34Instance().setChannelsCount(channelsCount);
-     }
+    }
 
+    // Считывает данные текстового поля
     private int parseInteger(TextField textField) {
         if (!textField.getText().isEmpty()) {
             return Integer.parseInt(textField.getText());
@@ -344,6 +355,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Считывает данные текстового поля
     private double parseDouble(TextField textField) {
         if (!textField.getText().isEmpty()) {
             String value = textField.getText().replace(",", ".");
@@ -353,6 +365,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Меняет состояние GUI
     void enableUiElements() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             checkBoxes.get(channelIndex).setDisable(false);
@@ -364,6 +377,7 @@ class LTR34ChannelsSettings extends LTR34Settings {
         }
     }
 
+    // Возвращает список пунктов
     List<CheckBox> getCheckBoxes() {
         return checkBoxes;
     }

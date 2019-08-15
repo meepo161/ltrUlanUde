@@ -7,6 +7,7 @@ import ru.avem.posum.models.protocol.TestProgramDataModel
 class TestProgramController {
     private val testProgramDataModel = TestProgramDataModel()
 
+    // Считывает общие данные программы испытаний
     fun parse(testProgram: TestProgram) {
         testProgramDataModel.name = testProgram.name
         testProgramDataModel.testingSampleName = testProgram.sampleName
@@ -19,10 +20,12 @@ class TestProgramController {
         testProgramDataModel.comments = testProgram.comments
     }
 
+    // Возвращает заголовки общих данных о программе испытаний при формировании протокола испытаний
     fun getTestProgramHeaders(): Array<String> {
         return arrayOf("Поле", "Значение")
     }
 
+    // Возвращает общие данные о программе испытаний
     fun getTestProgramData(): List<List<String>> {
         val description = listOf("Название испытания:", "Испытываемый объект:", "Серийный номер объекта:",
                 "Номер документа:", "Тип испытаний:", "Длительность испытаний:", "Дата испытаний:", "Ведущий инженер:",
@@ -35,6 +38,7 @@ class TestProgramController {
         return listOf(description, data)
     }
 
+    // Возвращает цвета, которыми будет выделена общая информация об испытании при формировании протокола
     fun getColorsForProtocol(): List<Short> {
         val colors = mutableListOf<Short>()
         for (index in 0 until getTestProgramData()[0].size) {
@@ -43,6 +47,7 @@ class TestProgramController {
         return colors
     }
 
+    // Возвращает количество ячеек для объединения при формировании протокола испытаний
     fun getCellsToMerge(): Int {
         return getTestProgramHeaders().size
     }

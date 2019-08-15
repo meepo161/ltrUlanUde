@@ -95,6 +95,7 @@ public class Settings implements BaseController {
         initHardwareSettings();
     }
 
+    // Создает пары обязательных полей и их символов
     private void initRequiredFieldsSymbols() {
         requiredFields.addAll(Arrays.asList(
                 new Pair<>(requiredFieldN1, testProgramNameTextField),
@@ -110,11 +111,13 @@ public class Settings implements BaseController {
         }
     }
 
+    // Задает формат данных для вермени и даты
     private void initTimeAndDateFields() {
         setTextFormat(testProgramTimeTextField, 8, ":");
         setTextFormat(testProgramDateTextField, 10, ".");
     }
 
+    // Задает формат данных для текстового поля
     private void setTextFormat(TextField textField, int limitOfNumbers, String separator) {
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             String text = textField.getText();
@@ -128,6 +131,7 @@ public class Settings implements BaseController {
         });
     }
 
+    // Добавляет разделители
     private void addColons(TextField textField, String text, String separator) {
         int charactersCounter = text.length();
 
@@ -169,6 +173,7 @@ public class Settings implements BaseController {
         });
     }
 
+    // Обрабатывает нажатие на кропку "Выбрать"
     @FXML
     public void handleChooseCrate() {
         if (cratesListView.getSelectionModel().getSelectedIndex() == -1) {
@@ -197,6 +202,7 @@ public class Settings implements BaseController {
         }
     }
 
+    // Обрабатывает нажатие на кнопку "Настроить"
     @FXML
     public void handleSetupModule() {
         if (modulesListView.getSelectionModel().getSelectedIndex() == -1) {
@@ -219,6 +225,7 @@ public class Settings implements BaseController {
         }
     }
 
+    // Сохраняет программу испытаний
     @FXML
     public void handleSaveTestProgramSettings() {
         boolean isRequiredSettingsSet = checkTimeAndDateFormat() & hardwareSettings.checkHardwareSettings()
@@ -229,6 +236,7 @@ public class Settings implements BaseController {
         }
     }
 
+    // Проверяет формат времени и даты
     private boolean checkTimeAndDateFormat() {
         String time = testProgramTimeTextField.getText();
         String date = testProgramDateTextField.getText();
@@ -247,6 +255,7 @@ public class Settings implements BaseController {
         return isTextFormatCorrect;
     }
 
+    // Проверят отсутствие значений в обязательных полях общей информации
     private boolean checkRequiredTextFields() {
         int filledFields = 0;
         boolean isRequiredFieldsFilled = false;
@@ -272,6 +281,7 @@ public class Settings implements BaseController {
         return isRequiredFieldsFilled;
     }
 
+    // Сохраняет программу испытаний
     private void save() {
         statusBarLine.setStatusOfProgress("Сохранение программы испытаний");
         toggleUiElements();
@@ -279,6 +289,7 @@ public class Settings implements BaseController {
         Platform.runLater(this::handleBackButton);
     }
 
+    // Меняет состояние GUI
     private void toggleUiElements() {
         setupModuleButton.setDisable(true);
         saveSettingsButton.setDisable(true);
@@ -287,17 +298,20 @@ public class Settings implements BaseController {
         hideRequiredFieldsSymbols();
     }
 
+    // Скрывает символы обязательной информации
     public void hideRequiredFieldsSymbols() {
         for (Pair<Label, TextField> pair : requiredFields) {
             pair.getKey().setVisible(false);
         }
     }
 
+    // Сохраняет программу испытаний
     private void saveSettings() {
         settingsModel.saveGeneralSettings(parseGeneralSettingsData(), editMode);
         settingsModel.saveHardwareSettings(editMode);
     }
 
+    // Считывает общие данные об испытании
     private HashMap<String, String> parseGeneralSettingsData() {
         HashMap<String, String> generalSettings = new HashMap<>();
 
@@ -315,6 +329,7 @@ public class Settings implements BaseController {
         return generalSettings;
     }
 
+    // Возвращает пользователя в главное окно приложения
     @FXML
     public void handleBackButton() {
         statusBarLine.toggleProgressIndicator(false);
@@ -331,6 +346,7 @@ public class Settings implements BaseController {
         }).start();
     }
 
+    // Загружает программу испытаний
     public void showTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
 
@@ -339,6 +355,7 @@ public class Settings implements BaseController {
         hardwareSettings.selectCrate();
     }
 
+    // Загружает общие данные о программе испытаний
     private void loadGeneralSettings(TestProgram testProgram) {
         testProgramNameTextField.setText(testProgram.getName());
         sampleNameTextField.setText(testProgram.getSampleName());
@@ -351,7 +368,7 @@ public class Settings implements BaseController {
         commentsTextArea.setText(testProgram.getComments());
     }
 
-
+    // Загружает настройки по умолчанию
     public void loadDefaultSettings() {
         testProgramNameTextField.setText("");
         sampleNameTextField.setText("");
@@ -368,6 +385,7 @@ public class Settings implements BaseController {
         hardwareSettings.toggleUiElements(false);
     }
 
+    // Определяет нажатие клавиши BACKSPACE
     @FXML
     public void listenBackSpaceKey(KeyEvent keyEvent) {
         KeyCode keyCode = keyEvent.getCode();

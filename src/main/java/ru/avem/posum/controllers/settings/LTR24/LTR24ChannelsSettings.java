@@ -43,6 +43,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         listenTestModes();
     }
 
+    // Заполняет список пунктов
     private void fillListOfCheckBoxes(LTR24Settings ltr24Settings) {
         checkBoxes.addAll(Arrays.asList(
                 ltr24Settings.getCheckChannelN1(),
@@ -52,6 +53,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         ));
     }
 
+    // Заполняет список полей с описанием программы испытаний
     private void fillListOfDescriptionsTextFields(LTR24Settings ltr24Settings) {
         descriptions.addAll(Arrays.asList(
                 ltr24Settings.getDescriptionOfChannelN1(),
@@ -61,6 +63,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         ));
     }
 
+    // Заполняет список меню выбора режимов работы каналов
     private void fillListOfChannelsTypesComboBoxes(LTR24Settings ltr24Settings) {
         typesOfChannelComboBoxes.addAll(Arrays.asList(
                 ltr24Settings.getTypeOfChannelN1(),
@@ -70,6 +73,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         ));
     }
 
+    // Заполняет список меню выбора диапазонов измерения каналов
     private void fillListOfMeasuringRangesComboBoxes(LTR24Settings ltr24Settings) {
         measuringRangesComboBoxes.addAll(Arrays.asList(
                 ltr24Settings.getMeasuringRangeOfChannelN1(),
@@ -79,6 +83,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         ));
     }
 
+    // Заполняет список кнопок "Нагрузка на канале"
     private void fillListOfValueOnChannelButtons(LTR24Settings ltr24Settings) {
         valueOnChannelButtons.addAll(Arrays.asList(
                 ltr24Settings.getValueOnChannelN1(),
@@ -88,6 +93,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         ));
     }
 
+    // Добавляет режимы работы каналов
     private void addTypesOfChannels() {
         ObservableList<String> types = FXCollections.observableArrayList();
 
@@ -103,12 +109,14 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Переключает состояние GUI
     private void listenCheckBoxes() {
         for (int checkBoxIndex = 0; checkBoxIndex < checkBoxes.size(); checkBoxIndex++) {
             toggleUiElementsState(checkBoxIndex);
         }
     }
 
+    // Переключает состояние GUI
     private void toggleUiElementsState(int checkBoxIndex) {
         checkBoxes.get(checkBoxIndex).selectedProperty().addListener(observable -> {
             selectCheckBoxes(checkBoxes.get(checkBoxIndex).isSelected());
@@ -117,6 +125,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         });
     }
 
+    // Переключает состояние GUI
     private void selectCheckBoxes(boolean isCheckBoxSelected) {
         if (applyForAllChannels.isSelected()) {
             for (CheckBox checkBox : checkBoxes) {
@@ -125,6 +134,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Переключает состояние GUI
     private void changeUiElementsState(int channelIndex, boolean isDisable) {
         typesOfChannelComboBoxes.get(channelIndex).setDisable(isDisable);
         measuringRangesComboBoxes.get(channelIndex).setDisable(isDisable);
@@ -140,6 +150,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         initializeButton.setDisable(disabledCheckBoxesCounter == checkBoxes.size());
     }
 
+    // Сбрасывает конфигурацию каналов
     private void resetChannelSettings(int channelIndex) {
         if (!checkBoxes.get(channelIndex).isSelected()) {
             descriptions.get(channelIndex).setText("");
@@ -148,6 +159,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Задает выбранный параметр для всех каналов
     private void listenComboBoxes(List<ComboBox<String>> comboBoxes) {
         for (ComboBox comboBox : comboBoxes) {
             comboBox.valueProperty().addListener(observable -> {
@@ -170,6 +182,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Изменяет меню выбора диапазона измерений каналов
     private void toggleMeasuringRanges(ComboBox<String> typesOfChannel, ComboBox<String> measuringRanges) {
         typesOfChannel.valueProperty().addListener(observable -> {
             ObservableList<String> ranges = FXCollections.observableArrayList();
@@ -193,6 +206,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Оставляет возможным выбор правильной настройки каналов для тестового режима работы
     private void toggleTestModes(ComboBox<String> typesOfChannel) {
         typesOfChannel.valueProperty().addListener(observable -> {
             int selectedMode = typesOfChannel.getSelectionModel().getSelectedIndex();
@@ -206,6 +220,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         });
     }
 
+    // Загружает настройки модуля
     void setSettings() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             boolean isCheckBoxSelected = ltr24SettingsModel.getCheckedChannels()[channelIndex];
@@ -230,6 +245,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         toggleInitializebutton();
     }
 
+    // Сохраняет настройки модуля
     void saveSettings() {
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isSelected()) {
@@ -246,6 +262,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Изменяет состояние GUI
     void disableUiElementsState() {
         for (int checkBoxIndex = 0; checkBoxIndex < checkBoxes.size(); checkBoxIndex++) {
             checkBoxes.get(checkBoxIndex).setDisable(true);
@@ -259,6 +276,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         initializeButton.setDisable(true);
     }
 
+    // Включает элеметы GUI
     void enableUiElements() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             CheckBox checkBox = checkBoxes.get(channelIndex);
@@ -273,18 +291,21 @@ class LTR24ChannelsSettings extends LTR24Settings {
         backButton.setDisable(false);
     }
 
+    // Выключает кнопки "Нагрузка на канале"
     void disableValueOnChannelButtonsState() {
         for (Button valueOnChannelButton : valueOnChannelButtons) {
             valueOnChannelButton.setDisable(true);
         }
     }
 
+    // Включает кнопки "Нагрузка на канале"
     void enableValueOnChannelButtonsState() {
         for (int i = 0; i < checkBoxes.size(); i++) {
             valueOnChannelButtons.get(i).setDisable(!checkBoxes.get(i).isSelected());
         }
     }
 
+    // Сохраняет пределы измерения модуля
     void saveMeasuringRangeOfChannel(int channel) {
         LTR24 ltr24 = ltr24SettingsModel.getLTR24Instance();
         int measuringRange = ltr24.getMeasuringRanges()[channel];
@@ -312,6 +333,7 @@ class LTR24ChannelsSettings extends LTR24Settings {
         }
     }
 
+    // Меняет состояние кнопки "Инициализация"
     private void toggleInitializebutton() {
         for (CheckBox checkBox : checkBoxes) {
             if (checkBox.isSelected()) {

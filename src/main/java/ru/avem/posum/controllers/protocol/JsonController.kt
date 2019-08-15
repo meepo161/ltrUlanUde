@@ -21,6 +21,7 @@ class JsonController(private val processController: ProcessController) {
     private var linesCount = 0
     private val chosenParameters = arrayOf(false, false, false)
 
+    // Создает файл Json
     fun createJson() {
         try {
             file.writeText("") // beginning of list
@@ -30,6 +31,7 @@ class JsonController(private val processController: ProcessController) {
 
     }
 
+    // Сериализует модель и записывает в Json
     fun write(channelsModels: ObservableList<ChannelModel>) {
         val writerThread = Thread {
             for (channelModel in channelsModels) {
@@ -42,7 +44,7 @@ class JsonController(private val processController: ProcessController) {
         writerThread.start()
     }
 
-
+    // Считывает модели из Json с заданным прореживанием
     fun parseFullFile(rarefactionCoefficient: Long) {
         estimateJson(false)
         val reader = getReader(false)
@@ -80,6 +82,7 @@ class JsonController(private val processController: ProcessController) {
         }
     }
 
+    // Оценивает файл Json
     private fun estimateJson(aCopy: Boolean) {
         val reader = getReader(aCopy)
         val simpleTimeFormat = SimpleDateFormat("HH:mm:ss")
@@ -108,6 +111,7 @@ class JsonController(private val processController: ProcessController) {
         linesCount = lines
     }
 
+    // Считывает модели за последние 60 секунд процесса испытаний
     fun parsePieceOfFile() {
         copy()
         val reader = getReader(true)
@@ -128,6 +132,7 @@ class JsonController(private val processController: ProcessController) {
         }
     }
 
+    // Считывает модели за последнюю секунду процесса испытаний
     fun parseOneSecond() {
         copy()
         val reader = getReader(true)
@@ -146,6 +151,7 @@ class JsonController(private val processController: ProcessController) {
         }
     }
 
+    // Копирует Json в промежуточный файл
     fun copy() {
         val json = file.readText()
         val temp = File("${file.path}.tmp")

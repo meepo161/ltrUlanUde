@@ -25,24 +25,29 @@ public class EventsRepository extends DataBaseRepository {
         }
     }
 
+    // Добавляет событие в базу данных
     public static void insertEvent(Event event) {
         sendAction((eventDao) -> eventDao.create(event));
     }
 
+    // Обновляет событие в базе данных
     public static void updateEvent(Event event) {
         sendAction((eventDao) -> eventDao.update(event));
     }
 
+    // Удаляет событие из базы данных
     public static void deleteEvent(Event event) {
         sendAction((eventDao) -> eventDao.delete(event));
     }
 
+    // Возвращает список всех событий
     public static List<Event> getAllEvents() {
         final List[] event = {null};
         sendAction((eventDao) -> event[0] = eventDao.queryForAll());
         return (List<Event>) event[0];
     }
 
+    // Возвращает события с указанным id
     public static List<Event> getEventsByTestId(long idTest) {
         final List[] event = {null};
         Map<String, Object> map = new HashMap<>();

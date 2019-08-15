@@ -1,5 +1,9 @@
 package ru.avem.posum.utils;
 
+/**
+* Класс для расчета скользящего среднего
+*/
+
 public class MovingAverage {
     private double alpha;
     private Double oldValue;

@@ -122,6 +122,7 @@ public class LTR27SubmodulesSettings {
         calibrationButtons.add(ltr27SettingsController.getCalibrateSubmoduleEightButton());
     }
 
+    // Меняет состояние GUI
     private void listenCheckBoxes() {
         for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
             CheckBox checkBox = checkBoxes.get(channelIndex);
@@ -133,6 +134,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Меняет состояние GUI
     private void toggleSubmoduleUiElements(int channelIndex, boolean isDisable) {
         channelOneLabels.get(channelIndex).setDisable(isDisable);
         channelOneTextFields.get(channelIndex).setDisable(isDisable);
@@ -145,11 +147,13 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Очищает значения в текстовых
     private void clearTextFields(int channelIndex) {
         channelOneTextFields.get(channelIndex).setText("");
         channelTwoTextFields.get(channelIndex).setText("");
     }
 
+    // Меняет состояние GUI
     private void toggleSettingsUiElements() {
         for (CheckBox checkBox : checkBoxes) {
             if (checkBox.isSelected()) {
@@ -160,6 +164,7 @@ public class LTR27SubmodulesSettings {
         toggle(true);
     }
 
+    // Меняет состояние GUI
     private void toggle(boolean isDisable) {
         ltr27SettingsController.getAverageLabel().setDisable(isDisable);
         ltr27SettingsController.getAverageTextField().setDisable(isDisable);
@@ -168,6 +173,7 @@ public class LTR27SubmodulesSettings {
         ltr27SettingsController.getCalibrationCheckBox().setDisable(isDisable);
     }
 
+    // Задает частоты дискретизации модулей
     private void setFrequencies() {
         ObservableList<String> frequencies = FXCollections.observableArrayList();
         final double MAX_FREQUENCY = 1000;
@@ -179,6 +185,7 @@ public class LTR27SubmodulesSettings {
         ltr27SettingsController.getFrequencyComboBox().getSelectionModel().select(0);
     }
 
+    // Задает коэффициент прореживания
     private void setRarefactionCoefficients() {
         ObservableList<String> coefficients = FXCollections.observableArrayList();
         for (int i = 1; i < 8; i++) {
@@ -209,6 +216,7 @@ public class LTR27SubmodulesSettings {
         });
     }
 
+    // Задает названия суюмодулей
     public void setSubmodulesNames() {
         String[][] descriptions = ltr27SettingsController.getSubmodulesDescriptions();
 
@@ -219,6 +227,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Задает названия физических величин
     public void setSubmodulesUnits() {
         String[][] descriptions = ltr27SettingsController.getSubmodulesDescriptions();
 
@@ -231,6 +240,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Задает названия физических величин
     public void setCalibratedUnits() {
         List<String> calibratedUnits = lcm.getCalibratedUnits();
         for (int channelIndex = 0; channelIndex < LTR27.MAX_SUBMODULES * 2; channelIndex++) {
@@ -246,12 +256,14 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Создает описание канала
     private void createNewLabel(Label label, int channelNumber, String unit) {
         if (!label.getText().contains(unit)) {
             Platform.runLater(() -> label.setText(String.format("Канал %d, %s:", channelNumber, unit)));
         }
     }
 
+    // Меняет состояние GUI
     public void toggleCheckBoxesState(boolean isDisable) {
         for (CheckBox checkBox : checkBoxes) {
             if (!checkBox.getText().equals(submoduleIsAbsentee)) {
@@ -260,6 +272,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Меняет состояние GUI
     public void toggleCheckBoxes(boolean isSelected) {
         for (CheckBox checkBox : checkBoxes) {
             if (!checkBox.getText().equals(submoduleIsAbsentee)) {
@@ -268,6 +281,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Загружает состояние GUI по умолчанию
     public void loadUiElementsState() {
         boolean isLeastOneSubmoduleEnabled = false;
         for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
@@ -285,6 +299,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Отображает значения на каналах субмодулей
     public void showValues() {
         new Thread(() -> {
             while (!ltr27SettingsController.isStopped()) {
@@ -325,6 +340,7 @@ public class LTR27SubmodulesSettings {
         }).start();
     }
 
+    // Задает значения на каналах
     private void setValues(double valueOfChannelOne, double valueOfChannelTwo, int submoduleIndex) {
         Platform.runLater(() -> {
             String channelOneValue = Utils.convertFromExponentialFormat(valueOfChannelOne, Utils.getRounder(rarefactionCoefficient));
@@ -334,6 +350,7 @@ public class LTR27SubmodulesSettings {
         });
     }
 
+    // Включает отображение всеъ субмодулей
     public void enableAll() {
         for (CheckBox checkBox : checkBoxes) {
             if (!checkBox.getText().equals(submoduleIsAbsentee)) {
@@ -342,6 +359,7 @@ public class LTR27SubmodulesSettings {
         }
     }
 
+    // Возвращает названия субмодулей
     public String[] getSubmodulesNames() {
         String[][] descriptions = ltr27SettingsController.getSubmodulesDescriptions();
         String[] names = new String[descriptions.length];
@@ -353,6 +371,7 @@ public class LTR27SubmodulesSettings {
         return names;
     }
 
+    // Возвращает список включенных субмодулей
     public boolean[] getCheckedSubmodules() {
         boolean[] checkedSubmodules = new boolean[LTR27.MAX_SUBMODULES];
         for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
@@ -361,18 +380,21 @@ public class LTR27SubmodulesSettings {
         return checkedSubmodules;
     }
 
+    // Загружает список включенных субмодулей
     public void setCheckedSubmodules(boolean[] checkedSubmodules) {
         for (int submoduleIndex = 0; submoduleIndex < checkedSubmodules.length; submoduleIndex++) {
             checkBoxes.get(submoduleIndex).setSelected(checkedSubmodules[submoduleIndex]);
         }
     }
 
+    // Меняет состояние GUI
     public void disableSubmodulesUiElements() {
         for (int submoduleIndex = 0; submoduleIndex < LTR27.MAX_SUBMODULES; submoduleIndex++) {
             toggleSubmoduleUiElements(submoduleIndex, true);
         }
     }
 
+    // Задает делегат
     public void setLTR27CalibrationManager(LTR27CalibrationManager lcm) {
         this.lcm = lcm;
     }

@@ -8,14 +8,18 @@ import ru.avem.posum.utils.Utils;
 
 import java.util.HashMap;
 
+/**
+ * Модель настроек модуля LTR27
+ */
+
 public class LTR27SettingsModel {
-    private double[] data;
-    private String[][] descriptions;
-    private LTR27 ltr27;
-    private LTR27SettingsController ltr27SettingsController;
-    private String moduleName;
-    private int slot;
-    private double[] timeMarks;
+    private double[] data; // Данные модуля
+    private String[][] descriptions; // Информация о субмодулях
+    private LTR27 ltr27; // Инстанс модуля
+    private LTR27SettingsController ltr27SettingsController; // Инстанс контроллера
+    private String moduleName;  // Название модуля
+    private int slot; // Номер слота
+    private double[] timeMarks; // Синхрометки
 
     public LTR27SettingsModel(LTR27SettingsController ltr27SettingsController) {
         this.ltr27SettingsController = ltr27SettingsController;
@@ -41,6 +45,7 @@ public class LTR27SettingsModel {
         }
     }
 
+    // Записывает данные, полученные от модуля
     public void receiveData() {
         new Thread(() -> {
             data = new double[LTR27.MAX_FREQUENCY * LTR27.MAX_SUBMODULES];
@@ -53,6 +58,7 @@ public class LTR27SettingsModel {
         }).start();
     }
 
+    // Останавливает модуль
     public void stop() {
         ltr27.stop();
         ltr27.closeConnection();

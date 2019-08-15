@@ -12,6 +12,7 @@ public class LTR34 extends DAC {
         initializeModuleSettings();
     }
 
+    // Считает количество каналов, которые задействованы
     public void countChannels() {
         for (int i = 0; i < checkedChannels.length; i++) {
             if (checkedChannels[i]) {
@@ -20,12 +21,14 @@ public class LTR34 extends DAC {
         }
     }
 
+    // Открывает соединение с модулем
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot());
         setConnectionOpen(checkStatus());
     }
 
+    // Проверяет соединение с модулем
     @Override
     public void checkConnection() {
         Crate crate = new Crate();
@@ -42,31 +45,37 @@ public class LTR34 extends DAC {
         }
     }
 
+    // Инициализирует модуль переданными параметрами
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getCheckedChannelsCounter(), getLTR34ModuleSettings());
     }
 
+    // Определяет частоту дискретизации модуля
     @Override
     public void defineFrequency() {
         getFrequency(getSlot());
     }
 
+    // Запускает измерения
     @Override
     public void start() {
         status = start(getSlot());
     }
 
+    // Генерирует переданный сигнал
     @Override
     public void generate(double[] signal) {
         status = generate(getSlot(), signal, signal.length);
     }
 
+    // Завершает измерения
     @Override
     public void stop() {
         status = stop(getSlot());
     }
 
+    // Разрывает соединение с модулем
     @Override
     public void closeConnection() {
         status = closeConnection(getSlot());
@@ -93,6 +102,7 @@ public class LTR34 extends DAC {
         System.loadLibrary("LTR34Library");
     }
 
+    // Задает настройки модуля по умолчанию
     private void initializeModuleSettings() {
         getModuleSettings().put(DAC.Settings.DAC_MODE.getSettingName(), 0); // режим работы каналов
         getModuleSettings().put(DAC.Settings.FACTORY_CALIBRATION_COEFFICIENTS.getSettingName(), 1); // использование заводских калибровочных коэфффициентов
@@ -100,6 +110,7 @@ public class LTR34 extends DAC {
         getModuleSettings().put(Settings.SIGNAL_TYPE.getSettingName(), 0); // тип генерируемого сигнала
     }
 
+    // Возвращает настройки модуля
     private int[] getLTR34ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
         settingsList.add(getModuleSettings().get(DAC.Settings.DAC_MODE.getSettingName()));
@@ -116,6 +127,7 @@ public class LTR34 extends DAC {
         return settings;
     }
 
+    // Возвращает настройки модуля
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
 
@@ -127,6 +139,7 @@ public class LTR34 extends DAC {
         return settings;
     }
 
+    // Считывает настройки модуля
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
 
@@ -136,6 +149,7 @@ public class LTR34 extends DAC {
         moduleSettings.put(Settings.SIGNAL_TYPE.getSettingName(), Integer.valueOf(separatedSettings[3]));
     }
 
+    // Возвращает частоту дискретизации модуля
     @Override
     public double getFrequency() {
         return frequency;

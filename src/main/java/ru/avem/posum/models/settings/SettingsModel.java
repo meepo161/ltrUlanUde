@@ -19,38 +19,43 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-public class SettingsModel implements BaseController {
-    private ADC adc;
-    private double[] amplitudes;
-    private ArrayList<List<Double>> calibrationCoefficients;
-    private ArrayList<List<String>> calibrationSettings;
-    private int channelsCount;
-    private String[] descriptions;
-    private int[] typesOfChannels;
-    private boolean[] checkedChannels;
-    private ControllerManager cm;
-    private int channels;
-    private String crateSerialNumber;
-    private Crate crate;
-    private DAC dac;
-    private double[] dc;
-    private String firPath;
-    private double[] frequencies;
-    private String iirPath;
-    private boolean isEditMode;
-    private HashMap<String, Actionable> instructions = new HashMap<>();
-    private int[] measuringRanges;
-    private long moduleId;
-    private HashMap<Integer, Module> modules;
-    private int moduleIndex;
-    private ObservableList<String> modulesNames;
-    private HashMap<String, String> moduleSettings;
-    private String moduleType;
-    private int[] phases;
-    private int slot;
-    private TestProgram testProgram;
-    private long testProgramId;
+/**
+ * Модель настроек программы испытаний
+ */
 
+public class SettingsModel implements BaseController {
+    private ADC adc; // инстанс модуля АЦП
+    private double[] amplitudes; // амплитуды каналов модуля
+    private ArrayList<List<Double>> calibrationCoefficients; // градуировочные коэффициенты модуля
+    private ArrayList<List<String>> calibrationSettings; // настройки градуировки модуля
+    private int channelsCount; // количество каналов
+    private String[] descriptions; // описания каналов модуля
+    private int[] typesOfChannels; // режимы работы модуля
+    private boolean[] checkedChannels; // задействованные каналы модуля
+    private ControllerManager cm;
+    private int channels; // количесвто каналов модуля
+    private String crateSerialNumber; // серийный номер крейта
+    private Crate crate; // инстанс крейта
+    private DAC dac; // инстанс модуля ЦАП
+    private double[] dc; // постоянные составляющие каналов модуля
+    private String firPath; // путь к КИХ фильтру
+    private double[] frequencies; // частоты каналов модуля
+    private String iirPath; // путь к БИХ фильтру
+    private boolean isEditMode; // флаг редактирования программы испытаний
+    private HashMap<String, Actionable> instructions = new HashMap<>(); // список команд для выполнения
+    private int[] measuringRanges; // диапазоны измерений каналов модуля
+    private long moduleId; // id модуля
+    private HashMap<Integer, Module> modules; // список модулей с номером слота
+    private int moduleIndex; // индекс модуля
+    private ObservableList<String> modulesNames; // список модулей
+    private HashMap<String, String> moduleSettings; // список конфигураций модулей
+    private String moduleType; // название модуля
+    private int[] phases; // фазы каналов модуля
+    private int slot; // номер слота модуля
+    private TestProgram testProgram; // модель программы испытаний
+    private long testProgramId; // id программы испытаний
+
+    // Создает инстансы модулей
     public void createModulesInstances(ObservableList<String> modulesNames) {
         this.modulesNames = modulesNames;
         this.crateSerialNumber = cm.getCrateSerialNumber();
@@ -64,6 +69,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Добавляет команды инициализации модулей
     private void addInitModuleInstructions() {
         instructions.clear();
         instructions.put(Crate.LTR24, this::initLTR24Instance);
@@ -72,10 +78,12 @@ public class SettingsModel implements BaseController {
         instructions.put(Crate.LTR212, this::initLTR212Instance);
     }
 
+    // Выполняет команды
     private void runInstructions() {
         instructions.get(moduleType).onAction();
     }
 
+    // Инициализирует инстанс модуля LTR24
     private void initLTR24Instance() {
         adc = new LTR24();
         setModuleSettings(adc);
@@ -84,6 +92,7 @@ public class SettingsModel implements BaseController {
         saveModuleInstance(adc);
     }
 
+    // Инициализирует инстанс модуля LTR27
     private void initLTR27Instance() {
         adc = new LTR27();
         setModuleSettings(adc);
@@ -91,6 +100,7 @@ public class SettingsModel implements BaseController {
         saveModuleInstance(adc);
     }
 
+    // Инициализирует инстанс модуля LTR34
     private void initLTR34Instance() {
         dac = new LTR34();
         setModuleSettings(dac);
@@ -99,6 +109,7 @@ public class SettingsModel implements BaseController {
         saveModuleInstance(dac);
     }
 
+    // Инициализирует инстанс модуля LTR212
     private void initLTR212Instance() {
         adc = new LTR212();
         setModuleSettings(adc);
@@ -107,6 +118,7 @@ public class SettingsModel implements BaseController {
         saveModuleInstance(adc);
     }
 
+    // Задает настройки модуля
     private void setModuleSettings(Module module) {
         slot = parseSlotNumber(moduleIndex);
         module.setSlot(slot);
@@ -114,11 +126,13 @@ public class SettingsModel implements BaseController {
         module.setStatus("");
     }
 
+    // Считывает номер слота
     public int parseSlotNumber(int moduleIndex) {
         String moduleName = modulesNames.get(moduleIndex);
         return Utils.parseSlotNumber(moduleName);
     }
 
+    // Задает настройки модуля АЦП по умолчанию
     private void setDefaultADCSettings(int channelsType, int measuringRange) {
         setADCSettingsFields();
 
@@ -132,6 +146,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Задает поля инстанса модуля АЦП
     private void setADCSettingsFields() {
         checkedChannels = adc.getCheckedChannels();
         typesOfChannels = adc.getTypeOfChannels();
@@ -147,10 +162,12 @@ public class SettingsModel implements BaseController {
         iirPath = adc.getIirPath();
     }
 
+    // Сохраняет инстанс модуля
     private void saveModuleInstance(Module module) {
         crate.getModulesList().put(slot, module);
     }
 
+    // Задает настройки модуля ЦАП по умолчанию
     private void setDefaultDACSettings() {
         setDACSettingsFields();
 
@@ -163,6 +180,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Задает значения полей инстанса ЦАП
     private void setDACSettingsFields() {
         channelsCount = dac.getChannelsCount();
         checkedChannels = dac.getCheckedChannels();
@@ -175,6 +193,7 @@ public class SettingsModel implements BaseController {
         phases = dac.getPhases();
     }
 
+    // Сохраняет общую инфомацию о программе испытаний
     public void saveGeneralSettings(HashMap<String, String> generalSettings, boolean isEditMode) {
         this.isEditMode = isEditMode;
         if (isEditMode) {
@@ -184,11 +203,13 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Обновляет программу испытаний
     private void updateTestProgram(HashMap<String, String> generalSettings) {
         setTestProgramFields(generalSettings);
         TestProgramRepository.updateTestProgram(testProgram);
     }
 
+    // Задает поля модели программы испытаний
     private void setTestProgramFields(HashMap<String, String> generalSettings) {
         testProgram.setCrateSerialNumber(generalSettings.get("Crate Serial Number"));
         testProgram.setTestProgramName(generalSettings.get("Test Program Name"));
@@ -203,6 +224,7 @@ public class SettingsModel implements BaseController {
         testProgram.setChanged(new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime()));
     }
 
+    // Создает новую программу испытаний
     private void createNewTestProgram(HashMap<String, String> generalSettings) {
         testProgram = new TestProgram(
                 generalSettings.get("Crate Serial Number"),
@@ -221,12 +243,14 @@ public class SettingsModel implements BaseController {
         TestProgramRepository.insertTestProgram(testProgram);
     }
 
+    // Сохраняет настройки крейта
     public void saveHardwareSettings(boolean isEditMode) {
         this.isEditMode = isEditMode;
         this.testProgramId = testProgram.getId();
         saveModulesSettings();
     }
 
+    // Сохраняет настройки модулей
     private void saveModulesSettings() {
         addSaveModuleInstructions();
         for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
@@ -236,6 +260,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Добавляет команды для сохранения настроек модулей
     private void addSaveModuleInstructions() {
         instructions.clear();
         instructions.put(Crate.LTR24, this::saveLTR24Settings);
@@ -244,30 +269,36 @@ public class SettingsModel implements BaseController {
         instructions.put(Crate.LTR212, this::saveLTR212Settings);
     }
 
+    // Сохраняет настройки модуля LTR24
     private void saveLTR24Settings() {
         getADCInstance();
         saveADCSettings(Crate.LTR24);
     }
 
+    // Сохраняет настройки модуля LTR27
     private void saveLTR27Settings() {
         getADCInstance();
         saveADCSettings(Crate.LTR27);
     }
 
+    // Сохраняет настройки модуля LTR34
     private void saveLTR34Settings() {
         getDACInstance();
         saveDACSettings(Crate.LTR34);
     }
 
+    // Сохраняет настройки модуля LTR212
     private void saveLTR212Settings() {
         getADCInstance();
         saveADCSettings(Crate.LTR212);
     }
 
+    // Возвращает инстанс модуля АЦП
     private void getADCInstance() {
         adc = (ADC) crate.getModulesList().get(slot);
     }
 
+    // Сохраняет настройки модуля АЦП
     private void saveADCSettings(String moduleName) {
         if (isEditMode) {
             updateADCFields();
@@ -280,6 +311,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Обновляет поля инстанса модуля АЦП
     private void updateADCFields() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == adc.getSlot()) {
@@ -298,10 +330,12 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Обновляет настройки модуля
     private void updateModuleSettings(Modules module) {
         ModulesRepository.updateModules(module);
     }
 
+    // Обновляет настройки калибровки модуля
     private void updateCalibration() {
         List<Calibration> allCalibrations = CalibrationsRepository.getAllCalibrations();
 
@@ -314,18 +348,21 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Записывает настройки модуля в базу данных
     private void addNewModule() {
         Modules module = new Modules(moduleSettings);
         ModulesRepository.insertModule(module);
         moduleId = module.getId();
     }
 
+    // Записывает настройки градуировки в базу данных
     private void addNewCalibrationSettings() {
         Calibration calibration = new Calibration(testProgramId, moduleId, adc.getCalibrationSettings(),
                 adc.getCalibrationCoefficients());
         CalibrationsRepository.insertCalibration(calibration);
     }
 
+    // Задает настройки модуля АЦП
     private void setADCModuleSettings(String moduleName) {
         moduleSettings = new HashMap<>();
         StringBuilder checkedChannelsLine = new StringBuilder();
@@ -354,10 +391,12 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Data length", String.valueOf(adc.getData().length));
     }
 
+    // Возвращает инстанс ЦАП
     private void getDACInstance() {
         dac = (DAC) crate.getModulesList().get(slot);
     }
 
+    // Сохраняет настройки ЦАП
     private void saveDACSettings(String moduleName) {
         if (isEditMode) {
             updateDACFields();
@@ -368,6 +407,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Обновляет значения полей инстанса модуля ЦАП
     private void updateDACFields() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId && module.getSlot() == dac.getSlot()) {
@@ -385,6 +425,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Задает настройки модуля ЦАП
     private void setDACSettings(String moduleName) {
         moduleSettings = new HashMap<>();
         StringBuilder checkedChannelsLine = new StringBuilder();
@@ -416,6 +457,7 @@ public class SettingsModel implements BaseController {
         moduleSettings.put("Data length", String.valueOf(dac.getData().length));
     }
 
+    // Загружает настройки каналов
     public void loadChannelsSettings(TestProgram testProgram, Crate crate, int selectedCrate) {
         setFields(testProgram, crate, selectedCrate);
         fillModulesList();
@@ -429,13 +471,14 @@ public class SettingsModel implements BaseController {
         this.modulesNames = crate.getModulesNames(selectedCrate);
     }
 
+    // Заполняет список модулей
     private void fillModulesList() {
         modules = crate.getModulesList();
         testProgramId = testProgram.getId();
-
         findModules();
     }
 
+    // Заполнаяет список модулей
     private void findModules() {
         for (Modules module : ModulesRepository.getAllModules()) {
             if (module.getTestProgramId() == testProgramId) {
@@ -444,6 +487,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Загружает настройки
     private void loadSettings() {
         addLoadModulesInstructions();
         for (moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) {
@@ -453,6 +497,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Добавляет команды загрузки настроек
     private void addLoadModulesInstructions() {
         instructions.clear();
         instructions.put(Crate.LTR24, this::loadADCSettings);
@@ -461,6 +506,7 @@ public class SettingsModel implements BaseController {
         instructions.put(Crate.LTR212, this::loadADCSettings);
     }
 
+    // Загружает настройки АЦП
     private void loadADCSettings() {
         adc = (ADC) modules.get(slot);
 
@@ -469,6 +515,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Считывает настройки АЦП
     private void parseADCSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             channels = adc.getChannelsCount();
@@ -479,6 +526,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Считывает настройки каналов
     private void parseChannelsSettings(Modules module) {
         int channelsCount = module.getChannelsCount();
 
@@ -502,11 +550,13 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Считывает настройки модуля
     private void parseModuleSettings(Modules module) {
         String settings = module.getSettings();
         adc.parseModuleSettings(settings);
     }
 
+    // Загружает настройки градуировок
     private void loadCalibrationSettings(Modules module) {
         long moduleId = module.getId();
         List<Calibration> allCalibrations = CalibrationsRepository.getAllCalibrations();
@@ -519,6 +569,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Загружает настройки ЦАП
     private void loadDACSettings() {
         dac = (DAC) modules.get(slot);
         channels = dac.getChannelsCount();
@@ -529,6 +580,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Считывает настройки ЦАП
     private void parseDACSettings(Modules module) {
         if (slot == module.getSlot() & testProgramId == module.getTestProgramId()) {
             String[] parsedCheckedChannels = module.getCheckedChannels().split(", ", 9);
@@ -554,6 +606,7 @@ public class SettingsModel implements BaseController {
         }
     }
 
+    // Возвращает список модулей
     public ObservableList<String> getModulesNames() {
         return modulesNames;
     }

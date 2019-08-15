@@ -6,7 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Класс АЦП модуля
+ */
+
 public abstract class ADC extends Module {
+    // Виды настроек АЦП модулей
     public enum Settings {
         ADC_MODE("ADC mode"), CALIBRATION_COEFFICIENTS("calibration coefficients"),
         FACTORY_CALIBRATION_COEFFICIENTS("Factory calibration coefficients"),
@@ -22,6 +27,7 @@ public abstract class ADC extends Module {
         }
     }
 
+    // Пределы измерений канала модуля АЦП
     public enum MeasuringRangeOfChannel {
         LOWER_BOUND(0), UPPER_BOUND(0);
 
@@ -40,19 +46,19 @@ public abstract class ADC extends Module {
         }
     }
 
-    private HashMap<String, Integer> bounds = new HashMap<>();
-    private ArrayList<List<Double>> calibrationCoefficients;
-    private ArrayList<List<String>> calibrationSettings;
-    private double[] data;
-    private String firPath;
-    private String iirPath;
-    private int[] measuringRanges;
-    private RingBuffer ringBufferForCalculation;
-    private RingBuffer ringBufferForShow;
-    HashMap<Settings, Integer> settingsOfModule;
-    private double[] timeMarks;
-    private RingBuffer timeMarksRingBuffer;
-    private int[] typeOfChannels;
+    private HashMap<String, Integer> bounds = new HashMap<>(); // пределы измерений
+    private ArrayList<List<Double>> calibrationCoefficients; // калибровочные коэффициенты
+    private ArrayList<List<String>> calibrationSettings; // настройки калибровки
+    private double[] data; // данные модуля
+    private String firPath; // путь к КИХ фильтру
+    private String iirPath; // путь к БИХ фильру
+    private int[] measuringRanges; // диапазоны измерений каналов
+    private RingBuffer ringBufferForCalculation; // кольцевой буфер для расчета параметров принятого сигнала
+    private RingBuffer ringBufferForShow; // кольцевой буфер для оторажения принятого сигнала
+    HashMap<Settings, Integer> settingsOfModule; // настройки модуля
+    private double[] timeMarks; // синхрометки
+    private RingBuffer timeMarksRingBuffer; // кольцевой буфер для синхрометок
+    private int[] typeOfChannels; // режим работы каналов
 
     ADC() {
         channelsCount = 4; // 4 канала, поскольку все АЦП в проекте настроены на 4-х канальный режим

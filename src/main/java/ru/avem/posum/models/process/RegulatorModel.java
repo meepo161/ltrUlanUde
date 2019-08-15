@@ -1,27 +1,33 @@
 package ru.avem.posum.models.process;
 
-public class RegulatorModel {
-    private double bufferedError;
-    private double bufferedIValue;
-    private int calculationCount = 1;
-    private double dCoefficient;
-    private double dValue;
-    private double iCoefficient;
-    private double iValue;
-    private double neededAmplitude;
-    private double neededDc;
-    private double neededFrequency;
-    private double neededRms;
-    private double pCoefficient;
-    private double pValue;
-    private double responseAmplitude;
-    private double responseDc;
-    private double responseFrequency;
+/**
+ * Модель ПИД - регулятора
+ */
 
+public class RegulatorModel {
+    private double bufferedError; // сохраненое значение ошибки регулирования
+    private double bufferedIValue; // сохраненное значение интегральной составляющей
+    private int calculationCount = 1;
+    private double dCoefficient; // Д - коэффициент
+    private double dValue; // дифференциальная составляющая
+    private double iCoefficient; // И - коэффициент
+    private double iValue; // интегральная составляющая
+    private double neededAmplitude; // заданное значение амплитуды
+    private double neededDc; // заданное значение постоянной составляющей
+    private double neededFrequency; // заданное значение частоты
+    private double neededRms; // заданное действующее значение
+    private double pCoefficient; // П - коэффициент
+    private double pValue; // пропорциональная составляющая
+    private double responseAmplitude; // измеренное значение амплитуды
+    private double responseDc; // измеренное значение постоянной составляющей
+    private double responseFrequency; // измеренное значение частоты
+
+    // вовзращает скорректированное значение амплитуды
     public double getAmplitude() {
         return calculateRegulator(neededAmplitude, responseAmplitude);
     }
 
+    // рассчитывает корректировку
     private double calculateRegulator(double neededParameter, double response) {
         double error = neededParameter - response;
         pValue = pCoefficient * error;
@@ -39,14 +45,17 @@ public class RegulatorModel {
         return pValue + iValue + dValue;
     }
 
+    // вовзращает скорректриованное значение постоянной составляющей
     public double getDc() {
         return calculateRegulator(neededDc, responseDc);
     }
 
+    // вовзращает скорректированное значение частоты
     public double getFrequency() {
         return calculateRegulator(neededFrequency, responseFrequency);
     }
 
+    // вовзращает скорректированное действующее значение
     public double getRms() {
         return neededRms;
     }

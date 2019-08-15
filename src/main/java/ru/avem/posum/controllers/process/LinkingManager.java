@@ -7,6 +7,10 @@ import ru.avem.posum.db.models.Modules;
 
 import java.util.List;
 
+/**
+* Интерфейс оперирования добавленных и связаных каналов
+*/
+
 public interface LinkingManager {
     ObservableList<CheckBox> getChosenChannels();
 

@@ -7,33 +7,37 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
+/**
+ * Модель канала процесса испытаний
+ */
+
 public class ChannelModel {
-    private long id;
-    private String initialValue = "0.0";
-    private StringProperty name;
-    private StringProperty amplitude;
-    private StringProperty responseAmplitude;
-    private StringProperty relativeResponseAmplitude;
-    private StringProperty dc;
-    private StringProperty responseDc;
-    private StringProperty relativeResponseDc;
-    private StringProperty frequency;
-    private StringProperty responseFrequency;
-    private StringProperty relativeResponseFrequency;
-    private StringProperty loadsCounter;
-    private StringProperty responseLoadsCounter;
-    private StringProperty rms;
-    private StringProperty responseRms;
-    private StringProperty relativeResponseRms;
-    private StringProperty pCoefficient;
-    private StringProperty iCoefficient;
-    private StringProperty dCoefficient;
-    private StringProperty chosenParameterIndex;
+    private long id; // id канала
+    private String initialValue = "0.0"; // начальное значение регулируемой величины
+    private StringProperty name; // название канала
+    private StringProperty amplitude; // заданное значение амплитуды
+    private StringProperty responseAmplitude; // измеренное значение амплитуды
+    private StringProperty relativeResponseAmplitude; // отклонение измеренной величины от заданной
+    private StringProperty dc; // заданное значение постоянной составляющей
+    private StringProperty responseDc; // измеренной значение постоянной составляющей
+    private StringProperty relativeResponseDc; // отклонение измеренной величины от заданной
+    private StringProperty frequency; // заданное значение частоты
+    private StringProperty responseFrequency; // измеренное значение частоты
+    private StringProperty relativeResponseFrequency; // отклонение измеренной величины от заданной
+    private StringProperty loadsCounter; // количество нагружений
+    private StringProperty responseLoadsCounter; // количество нагружений
+    private StringProperty rms; // заданное действующее значение
+    private StringProperty responseRms; // измеренное действующее значение
+    private StringProperty relativeResponseRms; // отклонение измеренной величины от заданной
+    private StringProperty pCoefficient; // p - коэффициент
+    private StringProperty iCoefficient; // i - коэффициент
+    private StringProperty dCoefficient; // d - коэффициент
+    private StringProperty chosenParameterIndex; // индекс регулируемого параметра
     private CheckBox responseCheckBox;
     private ColorPicker colorPicker;
     private StringProperty responseColor;
-    private String date;
-    private String time;
+    private String date; // дата
+    private String time; // время
 
     public ChannelModel(String name) {
         this.name = new SimpleStringProperty(name);
@@ -101,6 +105,7 @@ public class ChannelModel {
         colorPicker = createColorPicker();
     }
 
+    // Задает индекс контролируемого параметра
     private void setChosenParameterValue(String value) {
         switch (Integer.parseInt(chosenParameterIndex.get())) {
             case 0:
@@ -115,6 +120,7 @@ public class ChannelModel {
         }
     }
 
+    // Очищает измеренные значения
     public void clearResponse() {
         setResponseAmplitude(initialValue);
         setRelativeResponseAmplitude(initialValue);

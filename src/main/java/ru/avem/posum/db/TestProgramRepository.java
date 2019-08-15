@@ -23,14 +23,17 @@ public class TestProgramRepository extends DataBaseRepository {
         }
     }
 
+    // Добавляет программу испытаний в базу данных
     public static void insertTestProgram(TestProgram testProgram) {
         sendAction((testProgramDao) -> testProgramDao.create(testProgram));
     }
 
+    // Обновляет программу испытаний в базе данных
     public static void updateTestProgram(TestProgram testProgram) {
         sendAction((testProgramDao) -> testProgramDao.update(testProgram));
     }
 
+    // Обновляет индексы программ испытаний
     public static void updateTestProgramIndexes() {
         List<TestProgram> testPrograms = getAllTestPrograms();
 
@@ -40,16 +43,19 @@ public class TestProgramRepository extends DataBaseRepository {
         }
     }
 
+    // Удаляет программу испытаний из базы данных
     public static void deleteTestProgram(TestProgram testProgram) {
         sendAction((testProgramDao) -> testProgramDao.delete(testProgram));
     }
 
+    // Возвращает список всех программ испытаний
     public static List<TestProgram> getAllTestPrograms() {
         final List[] testPrograms = {null};
         sendAction((testProgramDao) -> testPrograms[0] = testProgramDao.queryForAll());
         return (List<TestProgram>) testPrograms[0];
     }
 
+    // Возвращает программу испытаний с указанным id
     public static TestProgram getTestProgramm(long id) {
         final TestProgram[] testProgram = {null};
         sendAction((testProgramDao) -> testProgram[0] = testProgramDao.queryForId(id));

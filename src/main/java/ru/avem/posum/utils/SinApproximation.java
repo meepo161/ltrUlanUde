@@ -38,6 +38,7 @@ public class SinApproximation {
         }
     }
 
+    // Составляет систему уравнений
     public void createEquationSystem() {
         matrixA[0][0] = sin2XSum;
         matrixA[0][1] = sinXcosXSum;
@@ -56,6 +57,7 @@ public class SinApproximation {
         b[2] = ySum;
     }
 
+    // Рассчитывает корни уравнения
     public void calculateRoots() {
         roots = GaussianElimination.lsolve(matrixA, b);
     }

@@ -3,21 +3,25 @@ package ru.avem.posum.models.protocol
 import ru.avem.posum.models.process.ChannelModel
 import java.text.SimpleDateFormat
 
+/**
+ * Модель канала для сериализации и десериализации
+ */
+
 class ChannelDataModel(
-        var name: String,
-        var chosenParameterIndex: String,
-        var loadsCounter: String,
-        var neededAmplitude: String,
-        var neededDc: String,
-        var neededFrequency: String,
-        var relativeResponseAmplitude: String,
-        var relativeResponseDc: String,
-        var relativeResponseFrequency: String,
-        var responseAmplitude: String,
-        var responseDc: String,
-        var responseFrequency: String,
-        var rms: String,
-        var dateAndTime: String
+        var name: String, // Название канала
+        var chosenParameterIndex: String, // Индекс регулируемого параметра
+        var loadsCounter: String, // Количество нагружений
+        var neededAmplitude: String, // Заданное значение амплитуды
+        var neededDc: String, // Заданное значение постоянной составляющей
+        var neededFrequency: String, // Заданное значение частоты
+        var relativeResponseAmplitude: String, // Отношение заданного значения регулируемой величины к измеренному
+        var relativeResponseDc: String, // Отношение заданного значения регулируемой величины к измеренному
+        var relativeResponseFrequency: String, // Отношение заданного значения регулируемой величины к измеренному
+        var responseAmplitude: String, // Измеренное значение амплитуды
+        var responseDc: String, // Измеренное значение постоянной составляющей
+        var responseFrequency: String, // Измеренное значение частоты
+        var rms: String, // Измеренное действующее значение
+        var dateAndTime: String // Дата и время проведения измерений
 ) {
     constructor(channelModel: ChannelModel) : this(
             name = channelModel.name,
@@ -36,6 +40,7 @@ class ChannelDataModel(
             dateAndTime = SimpleDateFormat("dd.MM.yyy HH:mm:ss").format(System.currentTimeMillis())
     )
 
+    // Вовзращает текстовое значение модели
     fun toList(chosenParameters: Array<Boolean>): List<String> {
         val outputList = mutableListOf(
                 getDate(),

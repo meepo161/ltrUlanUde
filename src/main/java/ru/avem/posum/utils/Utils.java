@@ -13,24 +13,29 @@ public class Utils {
         throw new IllegalAccessException();
     }
 
+    // Переводит число из экспоненциальной формы представления в форму с нужным количеством знаков после запятой
     public static String convertFromExponentialFormat(double value, int decimalFormatScale) {
         int scale = (int) Math.log10(decimalFormatScale);
         String convertedValue = String.format("%.7f", value);
         return convertedValue.substring(0, convertedValue.length() - (DECIMAL_SCALE_LIMIT - scale));
     }
 
+    // Возвращает название модуля
     public static String parseModuleType(String moduleName) {
         return moduleName.split(" ")[0];
     }
 
+    // Возвращает номер слота
     public static int parseSlotNumber(String moduleName) {
         return Integer.parseInt(moduleName.split("Слот ")[1].split("\\)")[0]); // номер слота
     }
 
+    // Округляет число до нужного знака после запятой
     public static double roundValue(double value, int rounder) {
         return (double) Math.round(value * rounder) / rounder;
     }
 
+    // Приостанавливает выполнение потока
     public static void sleep(int mills) {
         try {
             Thread.sleep(mills);
@@ -38,6 +43,7 @@ public class Utils {
         }
     }
 
+    // Делает заголовок колонки в таблице переносимым на несколько строк
     public static void makeHeaderWrappable(TableColumn col) {
         Label label = new Label(col.getText());
         label.setStyle("-fx-padding: 8px;");

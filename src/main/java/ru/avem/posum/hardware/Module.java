@@ -2,17 +2,21 @@ package ru.avem.posum.hardware;
 
 import ru.avem.posum.utils.TextEncoder;
 
+/**
+ * Класс модуля крейта
+ */
+
 public abstract class Module {
-    int channelsCount;
-    boolean[] checkedChannels;
-    private boolean connectionOpen;
-    String crateSerialNumber;
-    double[] data;
-    String[] descriptions;
-    private long moduleId;
-    private int slot;
-    protected String status;
-    private TextEncoder textEncoder = new TextEncoder();
+    int channelsCount; // количество каналов модуля
+    boolean[] checkedChannels; // задействованные каналы
+    private boolean connectionOpen; // состояние соединения с модулем
+    String crateSerialNumber; // серийный номер крейта
+    double[] data; // данные модуля
+    String[] descriptions; // описание каналов модуля
+    private long moduleId; // id модуля
+    private int slot; // слот модуля
+    protected String status; // результат выполнения операции модуля
+    private TextEncoder textEncoder = new TextEncoder(); // расшифровывает текст, полученный от модуля
 
     public boolean checkStatus() {
         if (status.equals("Операция успешно выполнена")) {

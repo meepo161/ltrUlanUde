@@ -3,6 +3,10 @@ package ru.avem.posum.utils;
 import javafx.geometry.Pos;
 import org.controlsfx.control.Notifications;
 
+/**
+* Класс для отображения уведомлений в виде всплывающих окон
+*/
+
 public class Toast {
     private Notifications notifications;
 

@@ -89,6 +89,7 @@ public class LTR24Settings implements BaseController {
 
     }
 
+    // Загружает настройки модуля
     public void loadSettings(String moduleName) {
         sceneTitleLabel.setText(String.format("Настройки модуля %s", moduleName));
         ltr24SettingsModel.setModuleName(moduleName);
@@ -98,6 +99,7 @@ public class LTR24Settings implements BaseController {
         ltr24ModuleSettings.setSettings();
     }
 
+    // Выполняет инициализацию модуля
     @FXML
     public void handleInitialize() {
         statusBarLine.toggleProgressIndicator(false);
@@ -127,6 +129,7 @@ public class LTR24Settings implements BaseController {
         }).start();
     }
 
+    // Возвращает пользователя в окно выбора модуля
     @FXML
     public void handleBackButton() {
         new Thread(() -> {
@@ -151,6 +154,7 @@ public class LTR24Settings implements BaseController {
         showChannelValue(0);
     }
 
+    // Отображает график текущей нагрузки на канале
     private void showChannelValue(int channel) {
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");

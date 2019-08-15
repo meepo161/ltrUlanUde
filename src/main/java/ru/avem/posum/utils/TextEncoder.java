@@ -2,6 +2,10 @@ package ru.avem.posum.utils;
 
 import java.util.Optional;
 
+/**
+* Класс для расшифровки текста, принятого от крейта
+*/
+
 public class TextEncoder {
     public String cp2utf(String str) {
         Optional<String> inputString = Optional.ofNullable(str);

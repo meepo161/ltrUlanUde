@@ -3,6 +3,10 @@ package ru.avem.posum.db.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+/**
+ * Таблица для добавленных и связанных каналов в базе данных
+ */
+
 @DatabaseTable(tableName = "channels")
 public class Channels {
     @DatabaseField(generatedId = true)

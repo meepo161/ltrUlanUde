@@ -41,6 +41,7 @@ public class EventsController {
         listen(table);
     }
 
+    // Инициализирует журнал событий
     public void initTableView() {
         table.setItems(getEvents());
         eventTimeColumn.setCellValueFactory(cellData -> cellData.getValue().timeProperty());
@@ -48,6 +49,7 @@ public class EventsController {
         listen(table);
     }
 
+    // Инициализирует внешний вид
     public void init(long testProgramId) {
         table.getItems().addListener((ListChangeListener<Event>) observable -> {
             saveJournalButton.setDisable(table.getItems().isEmpty());
@@ -57,6 +59,7 @@ public class EventsController {
         loadEvents(testProgramId);
     }
 
+    // Инициализирует контекстное меню для нажатия на правую кнопку мыши
     private void initContextMenu() {
         MenuItem menuItemDelete = new MenuItem("Удалить");
         MenuItem menuItemClear = new MenuItem("Удалить все");
@@ -67,6 +70,7 @@ public class EventsController {
         contextMenu.getItems().addAll(menuItemDelete, menuItemClear);
     }
 
+    // Удаляет событие из журнала
     private void deleteEvent() {
         Event selectedEvent = table.getSelectionModel().getSelectedItem();
         table.getItems().remove(selectedEvent);
@@ -74,6 +78,7 @@ public class EventsController {
         processController.getStatusBarLine().setStatus("Событие успешно удалено", true);
     }
 
+    // Удаляет все события из журнала
     private void clearEvents() {
         processController.getStatusBarLine().toggleProgressIndicator(false);
         processController.getStatusBarLine().setStatusOfProgress("Удаление всех событий из журнала");
@@ -95,6 +100,7 @@ public class EventsController {
         }).start();
     }
 
+    // Отображает контекстное меню при нажатии на правую кнопку мыши и помечает цветом события
     public void listen(TableView<Event> tableView) {
         tableView.setRowFactory(tv -> {
             TableRow<Event> row = new TableRow<>();
@@ -124,6 +130,7 @@ public class EventsController {
         });
     }
 
+    // Загружает список событий
     public void loadEvents(long testProgramId) {
         List<ru.avem.posum.db.models.Event> events = EventsRepository.getAllEvents();
 
@@ -134,6 +141,7 @@ public class EventsController {
         }
     }
 
+    // Отображает окно добавления нового события
     public void showDialogOfEventAdding() {
         // Create the text dialog.
         TextInputDialog dialog = new TextInputDialog("");
@@ -165,6 +173,7 @@ public class EventsController {
         });
     }
 
+    // Задает цвета разным типам событий
     public void setEventsColors(TableRow<Event> row) {
         if (row != null && row.getItem() != null) {
             switch (row.getItem().getStatus()) {
@@ -186,10 +195,12 @@ public class EventsController {
         }
     }
 
+    // Возвращает модель
     public EventsModel getEventsModel() {
         return eventsModel;
     }
 
+    // Экспортирует журнал в файл Journal.xlsx
     public void saveJournal(String testProgramName, long testProgramId) {
         ProtocolSheets[] sheetsNames = {ProtocolSheets.JOURNAL, ProtocolSheets.COMMANDS};
         processController.getProtocolController().createProtocol(testProgramId, testProgramName, false, false, 1000, sheetsNames);
@@ -203,10 +214,12 @@ public class EventsController {
         });
     }
 
+    // Возвращает количество ячеек для объединения при формировании протокола испытаний
     public int getCellsToMerge() {
         return getJournalHeaders().length;
     }
 
+    // Возвращает журнал событий
     public List<List<String>> getEvents(long testProgramId) {
         List<ru.avem.posum.db.models.Event> dbEvents = EventsRepository.getAllEvents();
         List<String> events = new ArrayList<>();
@@ -226,10 +239,12 @@ public class EventsController {
         return output;
     }
 
+    // Возвращает журнал событий
     private ObservableList<Event> getEvents() {
         return eventsModel.getEvents();
     }
 
+    // Возвращает цвета, которыми будут отмечены события при формировании протокола испытаний
     public List<Short> getEventsColors(long testProgramId) {
         List<ru.avem.posum.db.models.Event> dbEvents = EventsRepository.getAllEvents();
         List<Short> colors = new ArrayList<>();
@@ -243,6 +258,7 @@ public class EventsController {
         return colors;
     }
 
+    // Возвращает заголовки колонок при формировании протокола испытаний
     public String[] getJournalHeaders() {
         return new String[]{"Дата", "Время", "События"};
     }

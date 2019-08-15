@@ -23,24 +23,29 @@ public class AccountRepository extends DataBaseRepository {
         }
     }
 
+    // Добавляет учетную запись в базу данных
     public static void insertAccount(Account account) {
         sendAction((accountDao) -> accountDao.create(account));
     }
 
+    // Обновляет учетную запись в базе данных
     public static void updateAccount(Account account) {
         sendAction((accountDao) -> accountDao.update(account));
     }
 
+    // Удаляет учетную запись из базы данных
     public static void deleteAccount(Account account) {
         sendAction((accountDao) -> accountDao.delete(account));
     }
 
+    // Возвращает список всех учетных записей
     public static List<Account> getAllAccounts(){
         final List[] accounts = {null};
         sendAction((accountsDao -> accounts[0] = accountsDao.queryForAll()));
         return (List<Account>) accounts[0];
     }
 
+    // Возвращает учетную запись с указанным id
     public static Account getAccount(long id) {
         final Account[] account = {null};
         sendAction((accountsDao -> account[0] = accountsDao.queryForId(id)));

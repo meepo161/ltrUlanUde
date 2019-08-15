@@ -6,11 +6,16 @@ import javafx.scene.control.ProgressIndicator
 import javafx.scene.paint.Color
 import org.controlsfx.control.StatusBar
 
+/**
+* Класс для работы со статус баром
+*/
+
 class StatusBarLine(private val checkIcon: Label, private val isMainView: Boolean,
                     private val progressIndicator: ProgressIndicator, private val statusBar: StatusBar,
                     private val warningIcon: Label) {
     private var statusBarThread = Thread()
 
+    // Отображает статус процесса
     fun setStatusOfProgress(text: String) {
         Platform.runLater {
             clearStatusBar()
@@ -21,12 +26,14 @@ class StatusBarLine(private val checkIcon: Label, private val isMainView: Boolea
         }
     }
 
+    // Скрывает статус бар
     private fun clearStatusBar() {
         statusBar.text = ""
         checkIcon.style = "-fx-opacity: 0;"
         warningIcon.style = "-fx-opacity: 0;"
     }
 
+    // Показывает или скрывает индикатор процесса
     private fun toggleIndicator(isHidden: Boolean) {
         if (isHidden) progressIndicator.style = "-fx-opacity: 0;"
         else progressIndicator.style = "-fx-opacity: 1;"
@@ -47,6 +54,7 @@ class StatusBarLine(private val checkIcon: Label, private val isMainView: Boolea
         statusBarThread.start()
     }
 
+    // Задает статус выполнения какой-либо операции
     fun setStatus(text: String, isStatusSuccessful: Boolean) {
         Platform.runLater {
             clearStatusBar()

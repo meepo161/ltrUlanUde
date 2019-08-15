@@ -10,7 +10,7 @@ public class LTR27 extends ADC {
     public static final int MAX_FREQUENCY = 1000; // максимальная частота дискретизации модуля
     public static final int MAX_SUBMODULES = 8; // максимальное количество мезонинов в модуле
     private final int DESCRIPTIONS = 3; // количество строк описания мезонина
-    private String[][] submodulesDescription = new String[MAX_SUBMODULES][DESCRIPTIONS];
+    private String[][] submodulesDescription = new String[MAX_SUBMODULES][DESCRIPTIONS]; // информация о субмодулях
 
     public LTR27() {
         initDescription();
@@ -35,12 +35,14 @@ public class LTR27 extends ADC {
         return submodulesDescription;
     }
 
+    // Открывает соединение с модулем
     @Override
     public void openConnection() {
         status = openConnection(crateSerialNumber, getSlot());
         setConnectionOpen(checkStatus());
     }
 
+    // Проверяет соединение с модулем
     @Override
     public void checkConnection() {
         Crate crate = new Crate();
@@ -57,6 +59,7 @@ public class LTR27 extends ADC {
         }
     }
 
+    // Инициализирует модуль переданными параметрами, записывает информацию о субмодулях
     @Override
     public void initializeModule() {
         status = initialize(getSlot(), getLTR27ModuleSettings(), submodulesDescription);
@@ -66,26 +69,31 @@ public class LTR27 extends ADC {
         }
     }
 
+    // Определяет частоту дискретизации модуля
     @Override
     public void defineFrequency() {
         getFrequency(getSlot());
     }
 
+    // Запускает измерения
     @Override
     public void start() {
         status = start(getSlot());
     }
 
+    // Записывает в массив измеренные значения
     @Override
     public void write(double[] data, double[] timeMarks) {
         write(getSlot(), data, timeMarks);
     }
 
+    // Завершает измерения
     @Override
     public void stop() {
         status = stop(getSlot());
     }
 
+    // Разрывает соединение с модулем
     @Override
     public void closeConnection() {
         if (isConnectionOpen()) {
@@ -114,6 +122,7 @@ public class LTR27 extends ADC {
         System.loadLibrary("LTR27Library");
     }
 
+    // Задает настройки модуля по умолчанию
     private void initializeModuleSettings() {
         getSettingsOfModule().put(Settings.FREQUENCY, 9); // частота дискретизации 100 Гц
         channelsCount = MAX_SUBMODULES;
@@ -128,6 +137,7 @@ public class LTR27 extends ADC {
         setDescriptions(descriptions);
     }
 
+    // Возвращает настройки модуля
     private int[] getLTR27ModuleSettings() {
         List<Integer> settingsList = new ArrayList<>();
         settingsList.add(getSettingsOfModule().get(Settings.FREQUENCY));
@@ -141,6 +151,7 @@ public class LTR27 extends ADC {
         return settings;
     }
 
+    // Возвращает настройки модуля
     @Override
     public StringBuilder moduleSettingsToString() {
         StringBuilder settings = new StringBuilder();
@@ -148,12 +159,14 @@ public class LTR27 extends ADC {
         return settings;
     }
 
+    // Считывает настройки модуля
     @Override
     public void parseModuleSettings(String settings) {
         String[] separatedSettings = settings.split(", ");
         settingsOfModule.put(Settings.FREQUENCY, Integer.valueOf(separatedSettings[0]));
     }
 
+    // Возвращает частоту дискретизации модуля
     @Override
     public double getFrequency() {
         defineFrequency();

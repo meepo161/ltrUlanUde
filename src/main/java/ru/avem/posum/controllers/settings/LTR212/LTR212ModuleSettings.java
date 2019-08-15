@@ -42,6 +42,7 @@ class LTR212ModuleSettings extends LTR212Settings {
         addListener(iirCheckBox, iirPathTextField, iirPathButton);
     }
 
+    // Добавляет режимы работы модуля
     private void addModuleModes() {
         ObservableList<String> modes = FXCollections.observableArrayList();
 
@@ -52,6 +53,7 @@ class LTR212ModuleSettings extends LTR212Settings {
         adcModes.getSelectionModel().select(0);
     }
 
+    // Добавляет выбор опоного напряжения модуля
     private void addReferenceVoltages() {
         ObservableList<String> modes = FXCollections.observableArrayList();
 
@@ -74,6 +76,7 @@ class LTR212ModuleSettings extends LTR212Settings {
         });
     }
 
+    // Загружает настройки модуля
     void setSettings() {
         HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getSettingsOfModule();
         int adcMode = moduleSettings.get(ADC.Settings.ADC_MODE);
@@ -91,6 +94,7 @@ class LTR212ModuleSettings extends LTR212Settings {
         this.referenceVoltageComboBox.getSelectionModel().select(referenceVoltage);
     }
 
+    // Сохраняет настройки модуля
     void saveSettings() {
         HashMap<ADC.Settings, Integer> moduleSettings = ltr212SettingsModel.getLTR212Instance().getSettingsOfModule();
         int adcMode = adcModes.getSelectionModel().getSelectedIndex();
@@ -126,6 +130,7 @@ class LTR212ModuleSettings extends LTR212Settings {
         ltr212SettingsModel.getLTR212Instance().setData(new double[dataLength * ltr212SettingsModel.getLTR212Instance().getChannelsCount()]);
     }
 
+    // Меняет состояние GUI
     void toggleUiElementsState(boolean isDisable) {
         adcModes.setDisable(isDisable);
         factoryCalibration.setDisable(isDisable);
@@ -136,11 +141,13 @@ class LTR212ModuleSettings extends LTR212Settings {
         toggleFiltersUiElementsState();
     }
 
+    // Включает элементы GUI
     void enableUiElements() {
         toggleUiElementsState(false);
         toggleFiltersUiElementsState();
     }
 
+    // Меняет состояние GUI
     private void toggleFiltersUiElementsState() {
         iirPathTextField.setDisable(!iirCheckBox.isSelected());
         iirPathButton.setDisable(!iirCheckBox.isSelected());

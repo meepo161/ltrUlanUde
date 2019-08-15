@@ -21,6 +21,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Добавляет градуировочную точку первого канала
     fun addPointToGraphOfChannelOne(calibrationPoint: CalibrationPoint) {
         Platform.runLater {
             val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
@@ -28,6 +29,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Добавляет градуировочную точку второго канала
     fun addPointToGraphOfChannelTwo(calibrationPoint: CalibrationPoint) {
         Platform.runLater {
             val point = XYChart.Data<Number, Number>(calibrationPoint.valueOfChannel, calibrationPoint.loadOfChannel)
@@ -35,6 +37,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Градуирует значение
     fun calibrate(isCalibrate: Boolean, value: Double, submoduleIndex: Int, channelIndex: Int): Double {
         return if (channelIndex % 2 == 0) {
             getCalibrated(isCalibrate, value, calibrationPointsOfChannelOne[submoduleIndex])
@@ -43,6 +46,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Возвращает градуированное значение
     private fun getCalibrated(isCalibrate: Boolean, value: Double, calibrationPoints: List<CalibrationPoint>): Double {
         return if (isCalibrate && calibrationPoints.isNotEmpty() && calibrationPoints.size % 2 == 0) {
             if (calibrationPoints.first().valueOfChannel > calibrationPoints.last().valueOfChannel) {
@@ -55,10 +59,12 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Градуирует значение
     private fun calibrate(value: Double, calibrationPoints: List<CalibrationPoint>): Double {
         return value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
     }
 
+    // Очищает буфер
     fun clearBuffer(submoduleIndex: Int) {
         for (index in 0 until LTR27.MAX_SUBMODULES) {
             bufferedCalibrationPointsOfChannelOne[submoduleIndex].clear()
@@ -66,8 +72,8 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Обновляет градуировочный график субмодуля
     fun updateGraph(submoduleIndex: Int) {
-
         for (calibrationPoint in calibrationPointsOfChannelOne[submoduleIndex]) {
             addPointToGraphOfChannelOne(calibrationPoint)
         }
@@ -76,6 +82,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Сохраняет градуировочные точки
     fun save(submoduleIndex: Int) {
         calibrationPointsOfChannelOne[submoduleIndex].clear()
         calibrationPointsOfChannelTwo[submoduleIndex].clear()
@@ -83,11 +90,13 @@ class LTR27CalibrationModel {
         calibrationPointsOfChannelTwo[submoduleIndex].addAll(bufferedCalibrationPointsOfChannelTwo[submoduleIndex])
     }
 
+    // Загружает градуировочные точки
     fun load(submoduleIndex: Int) {
         bufferedCalibrationPointsOfChannelOne[submoduleIndex].addAll(calibrationPointsOfChannelOne[submoduleIndex])
         bufferedCalibrationPointsOfChannelTwo[submoduleIndex].addAll(calibrationPointsOfChannelTwo[submoduleIndex])
     }
 
+    // Возвращает названия физических величин
     fun getCalibratedUnits(): List<String> {
         val calibratedUnits = mutableListOf<String>()
 
@@ -99,6 +108,7 @@ class LTR27CalibrationModel {
         return calibratedUnits
     }
 
+    // Возвращает название физической величины
     private fun getUnit(calibrationPoints: List<CalibrationPoint>): String {
         return if (calibrationPoints.isNotEmpty()) {
             calibrationPoints.first().valueName
@@ -107,6 +117,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Возвращает список градуировочных точек
     fun getCalibrationPoints(): ArrayList<List<String>> {
         val calibrationPoints = ArrayList<List<String>>()
         for (index in 0 until LTR27.MAX_SUBMODULES) {
@@ -124,6 +135,7 @@ class LTR27CalibrationModel {
         return outputList
     }
 
+    // Очищает списки градуировочных точек
     fun clear() {
         for (index in 0 until LTR27.MAX_SUBMODULES) {
             calibrationPointsOfChannelOne[index].clear()
@@ -131,6 +143,7 @@ class LTR27CalibrationModel {
         }
     }
 
+    // Задает списки градуировочных точек
     fun setCalibrationPoints(rawData: ArrayList<List<String>>) {
         for (index in 0 until rawData.size) {
             if (index % 2 == 0) {

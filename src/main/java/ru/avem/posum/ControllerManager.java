@@ -10,6 +10,10 @@ import ru.avem.posum.models.signal.SignalModel;
 
 import java.util.List;
 
+/**
+* Интерфейс взаимодействия контроллеров. Комментарии методов приведены в Main.java
+*/
+
 public interface ControllerManager {
 
     void checkCalibration();

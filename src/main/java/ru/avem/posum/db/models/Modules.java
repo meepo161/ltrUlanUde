@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Таблица для хранения конфигурации модулей в базе данных
+ */
+
 @DatabaseTable(tableName = "modules")
 public class Modules {
     @DatabaseField(generatedId = true)

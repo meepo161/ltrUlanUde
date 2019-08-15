@@ -14,17 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessModel {
-    private List<Integer> channelsCounts;
-    private String crateSerialNumber;
-    private List<String> firPath;
-    private List<String> iirPath;
-    private LinkingManager lm;
-    private List<int[]> measuringRanges;
-    private List<String> modulesTypes;
-    private List<int[]> settingsOfModules;
-    private List<Integer> slots;
-    private List<int[]> typesOfChannels;
+    private List<Integer> channelsCounts; // количество каналов каждого модуля
+    private String crateSerialNumber; // серийный номер крейта
+    private List<String> firPath; // путь к КИХ фильтру
+    private List<String> iirPath; // путь к БИХ фильтру
+    private LinkingManager lm; // интерфейс работы для связывания и добавления каналов
+    private List<int[]> measuringRanges; // диапазоны измерений каналов
+    private List<String> modulesTypes; // список модулей
+    private List<int[]> settingsOfModules; // конфигурации модулей
+    private List<Integer> slots; // номера слотов
+    private List<int[]> typesOfChannels; // режимы работы каналов модулей
 
+    // Считывает данные
     public void parseSettings() {
         channelsCounts = new ArrayList<>();
         crateSerialNumber = "";
@@ -66,6 +67,7 @@ public class ProcessModel {
         }
     }
 
+    // Возвращает список задействованных модулей
     public ObservableList<Modules> getModules() {
         List<Modules> linkedModules = lm.getLinkedModules();
         ObservableList<Modules> chosenModules = lm.getChosenModules();
@@ -79,7 +81,7 @@ public class ProcessModel {
         return chosenModules;
     }
 
-
+    // Возвращает список модулей
     public String[] getTypesOfModules() {
         ObservableList<Modules> modules = getModules();
         int SLOTS = 16; // количество слотов в крейте
@@ -107,6 +109,7 @@ public class ProcessModel {
         lm.getChosenModules().clear();
     }
 
+    // Создает уведомляющее окно перед закрытием процесса испытаний
     public Alert createExitAlert(ButtonType ok, ButtonType cancel) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
         alert.setTitle("Подтвердите действие");

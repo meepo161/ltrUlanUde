@@ -12,6 +12,10 @@ import ru.avem.posum.models.Actionable;
 
 import java.util.Optional;
 
+/**
+* Класс для создания custom alert'а
+*/
+
 public class View {
 
     private View() {

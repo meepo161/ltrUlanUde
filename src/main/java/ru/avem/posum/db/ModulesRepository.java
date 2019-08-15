@@ -24,24 +24,29 @@ public class ModulesRepository extends DataBaseRepository {
         }
     }
 
+    // Добавляет конфигурацию модуля в базу данных
     public static void insertModule(Modules modules) {
         sendAction((modulesDao) -> modulesDao.create(modules));
     }
 
+    // Обновляет конфигурацию модуля в базе данных
     public static void updateModules(Modules modules) {
         sendAction((modulesDao) -> modulesDao.update(modules));
     }
 
+    // Удаляет конфигурацию модуля из базы данных
     public static void deleteModule(Modules modules) {
         sendAction((modulesDao) -> modulesDao.delete(modules));
     }
 
+    // Возвращает список всех конфигураций модулей
     public static List<Modules> getAllModules(){
         final List[] modules = {null};
         sendAction((modulesDao -> modules[0] = modulesDao.queryForAll()));
         return (List<Modules>) modules[0];
     }
 
+    // Возвращает конфигурации модулей с указанным id
     public static List<Modules> getModules(long id) {
         List<Modules> allModules = getAllModules();
         List<Modules> modulesOfTestProgram = new ArrayList<>();

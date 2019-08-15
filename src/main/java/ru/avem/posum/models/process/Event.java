@@ -3,11 +3,15 @@ package ru.avem.posum.models.process;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+/**
+ * Модель события
+ */
+
 public class Event {
-    private long id;
-    private final StringProperty description;
-    private final StringProperty status;
-    private final StringProperty time;
+    private long id; // id события
+    private final StringProperty description; // описание события
+    private final StringProperty status; // тип события
+    private final StringProperty time; // время события
 
     public Event(long id, String description, String status, String time) {
         this.id = id;

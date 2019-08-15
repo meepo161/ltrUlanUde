@@ -110,6 +110,7 @@ public class LTR212Settings implements BaseController {
                 warningIcon);
     }
 
+    // Загружает настройки модуля
     public void loadSettings(String moduleName) {
         sceneTitleLabel.setText(String.format("Настройки модуля %s", moduleName));
         ltr212SettingsModel.setModuleName(moduleName);
@@ -119,6 +120,7 @@ public class LTR212Settings implements BaseController {
         ltr212ModuleSettings.setSettings();
     }
 
+    // Выполняет инициализацию модуля
     public void handleInitialize() {
         statusBarLine.toggleProgressIndicator(false);
         statusBarLine.setStatusOfProgress("Инициализация модуля");
@@ -146,6 +148,7 @@ public class LTR212Settings implements BaseController {
         }).start();
     }
 
+    // Возвращает пользователя в окно выбора модуля
     public void handleBackButton() {
         new Thread(() -> {
             ltr212ChannelsSettings.enableUiElements();
@@ -169,6 +172,7 @@ public class LTR212Settings implements BaseController {
         showChannelValue(0);
     }
 
+    // Отображает график текущей нагрузки на канале
     private void showChannelValue(int channel) {
         statusBarLine.setStatusOfProgress("Подготовка данных для отображения");
         ltr212ChannelsSettings.disableValueOnChannelButtonsState();
@@ -207,6 +211,7 @@ public class LTR212Settings implements BaseController {
         showChannelValue(3);
     }
 
+    // Отображает окно выбора файла БИХ фильтра
     @FXML
     public void handleChoosingIIRFile() {
         FileChooser fileChooser = new FileChooser();
@@ -219,6 +224,7 @@ public class LTR212Settings implements BaseController {
         }
     }
 
+    // Отображает окно выбора файла КИХ фильтра
     @FXML
     public void handleChoosingFIRFile() {
         FileChooser fileChooser = new FileChooser();

@@ -7,6 +7,10 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Таблица для хранения калибровочных коэффициентов в базе данных
+ */
+
 @DatabaseTable(tableName = "calibration")
 public class Calibration {
     @DatabaseField(generatedId = true)

@@ -27,24 +27,29 @@ public class ChannelsRepository {
         }
     }
 
+    // Добавляет добавленные и связанные каналы в базу данных
     public static void insertChannel(Channels channel) {
         sendAction((channelDao) -> channelDao.create(channel));
     }
 
+    // Обновляет добавленные и связанные каналы в базе данных
     public static void updateChannel(Channels channel) {
         sendAction((channelDao) -> channelDao.update(channel));
     }
 
+    // Удаляет добавленные и связанные каналы из базы данных
     public static void deleteChannel(Channels channel) {
         sendAction((channelDao) -> channelDao.delete(channel));
     }
 
+    // Возвращает список всех добавленных и связанных каналов
     public static List<Channels> getAllChannels() {
         final List[] channel = {null};
         sendAction((channelDao) -> channel[0] = channelDao.queryForAll());
         return (List<Channels>) channel[0];
     }
 
+    // Возвращает добавленных и связанных каналов с указанным id
     public static List<Channels> getChannelsByTestId(long idTest) {
         final List[] channel = {null};
         Map<String, Object> map = new HashMap<>();

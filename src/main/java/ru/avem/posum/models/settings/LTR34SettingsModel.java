@@ -9,21 +9,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Модель настроек модуля LTR34
+ */
+
 public class LTR34SettingsModel {
     private final int CHANNELS = 8; // максимальное количество каналов LTR34
 
-    private double[] amplitudes = new double[CHANNELS];
-    private boolean[] checkedChannels;
-    private double[] dc = new double[CHANNELS];
-    private String[] descriptions;
-    private double[] frequencies = new double[CHANNELS];
-    private LTR34 ltr34 = new LTR34();
-    private String moduleName;
-    private int[] phases = new int[CHANNELS];
+    private double[] amplitudes = new double[CHANNELS]; // амплитуды каналов модуля
+    private boolean[] checkedChannels; // задействованные каналы
+    private double[] dc = new double[CHANNELS]; // постоянные составляющие каналов модулей
+    private String[] descriptions; // описания каналов модуля
+    private double[] frequencies = new double[CHANNELS]; // частоты каналов модуля
+    private LTR34 ltr34 = new LTR34(); // Инстанс модуля
+    private String moduleName; // Название модуля
+    private int[] phases = new int[CHANNELS]; // Фазы каналов модуля
     private Random random = new Random();
-    private double[] signal = new double[31_250]; // массив данных для генерации сигнала для каждого канала
-    private int slot;
-    private boolean stopped = true;
+    private double[] signal = new double[31_250]; // Массив данных для генерации сигнала для каждого канала
+    private int slot; // Номер слота модуля
+    private boolean stopped = true; // Флаг состояния модуля
 
     public void setModuleInstance(HashMap<Integer, Module> instancesOfModules) {
         this.ltr34 = (LTR34) instancesOfModules.get(slot);
@@ -44,6 +48,7 @@ public class LTR34SettingsModel {
         ltr34.initializeModule();
     }
 
+    // Расчитывает сигнал для генерации модулем
     public void calculateSignal(int signalType) {
         List<double[]> channelsData = new ArrayList<>();
         int channels = (ltr34.getCheckedChannelsCounter() <= 4) ? 4 : 8;
@@ -79,6 +84,7 @@ public class LTR34SettingsModel {
         signal = mergeArrays(channelsData);
     }
 
+    // Рассчитывает синусоидальный сигнал
     private double[] createSinSignal(int length, double amplitude, double dc, double frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
@@ -90,6 +96,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
+    // Рассчитывает импульсный сигнал
     private double[] createSquareSignal(int length, double amplitude, double dc, double frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
@@ -101,6 +108,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
+    // Рассчитывает "треугольный" сигнал
     private double[] createTriangleSignal(int length, double amplitude, double dc, double frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
@@ -112,6 +120,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
+    // Рассчитывает "пилу"
     private double[] createSawtoothSignal(int length, double amplitude, double dc, double frequency, int phase, double coefficient) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
@@ -124,7 +133,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
-
+    // Рассчитывает "шум"
     private double[] createNoiseSignal(int length, double amplitude, double dc, double frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);
@@ -137,6 +146,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
+    // Склеивает массивы данных для каждого канала
     private static double[] mergeArrays(List<double[]> channelsData) {
         int resultArraySize = 0;
         int numberOfArrays = 0;
@@ -158,6 +168,7 @@ public class LTR34SettingsModel {
         return resultArray;
     }
 
+    // Возвращает график сигнала
     public XYChart.Series<Number, Number> createSeries(int channelNumber) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(String.format("Канал %d", channelNumber + 1));
@@ -170,6 +181,7 @@ public class LTR34SettingsModel {
         return series;
     }
 
+    // Останавливает генерацию
     public void stopModule() {
         if (!stopped) {
             ltr34.stop();

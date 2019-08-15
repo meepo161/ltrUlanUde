@@ -7,6 +7,10 @@ import ru.avem.posum.models.process.EventsTypes;
 
 import java.text.SimpleDateFormat;
 
+/**
+ * Таблица для хранения журнала событий в базе данных
+ */
+
 @DatabaseTable(tableName = "events")
 public class Event {
     @DatabaseField(generatedId = true)

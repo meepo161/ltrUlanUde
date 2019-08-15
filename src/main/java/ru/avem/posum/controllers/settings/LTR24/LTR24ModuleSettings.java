@@ -16,6 +16,7 @@ class LTR24ModuleSettings extends LTR24Settings {
         addFrequencies();
     }
 
+    // Добавляет частоты дискретизации модуля
     private void addFrequencies() {
         ObservableList<String> frequencies = FXCollections.observableArrayList();
 
@@ -40,11 +41,13 @@ class LTR24ModuleSettings extends LTR24Settings {
         frequencyComboBox.getSelectionModel().select(0);
     }
 
+    // Задает настройки частоты дискретизации модуля
     void setSettings() {
         int frequency = ltr24SettingsModel.getLTR24Instance().getSettingsOfModule().get(ADC.Settings.FREQUENCY);
         frequencyComboBox.getSelectionModel().select(frequency);
     }
 
+    // Сохраняет настройки модуля
     void saveSettings() {
         int frequency = frequencyComboBox.getSelectionModel().getSelectedIndex();
         ltr24SettingsModel.getLTR24Instance().getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequency);
@@ -107,6 +110,7 @@ class LTR24ModuleSettings extends LTR24Settings {
         ltr24SettingsModel.getLTR24Instance().setData(new double[dataLength * ltr24SettingsModel.getLTR24Instance().getChannelsCount()]);
     }
 
+    // Меняет состояние GUI
     void toggleUiElementsState(boolean isDisable) {
         frequencyComboBox.setDisable(isDisable);
     }

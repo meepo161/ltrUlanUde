@@ -1,5 +1,7 @@
 package ru.avem.posum.utils;
 
+// Класс для работы с кольцевым буфером
+
 public class RingBuffer {
     public double[] elements;
 

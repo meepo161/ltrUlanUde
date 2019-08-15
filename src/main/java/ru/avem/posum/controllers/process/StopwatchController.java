@@ -25,6 +25,7 @@ public class StopwatchController {
         timeFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
+    // Запускает секундомер
     public void startStopwatch() {
         resetStopwatch();
         stopWatch.start();
@@ -32,6 +33,7 @@ public class StopwatchController {
         showTime();
     }
 
+    // Отображает значение секундомера
     public void showTime() {
         new Thread(() -> {
             while (!stopped && !processController.getProcess().isStopped()) {
@@ -44,6 +46,7 @@ public class StopwatchController {
         }).start();
     }
 
+    // Возвращает количество дней
     private String getDays(String currentTime) {
         if (currentTime.equals("23:59:59")) {
             ++daysCount;
@@ -52,6 +55,7 @@ public class StopwatchController {
         return String.format("%d ", daysCount);
     }
 
+    // Останавливает секундомер
     public void stopStopwatch() {
         if (!stopped) {
             stopped = true;
@@ -62,6 +66,7 @@ public class StopwatchController {
         Platform.runLater(() -> stopwatchTextField.setText("0 00:00:00"));
     }
 
+    // Приостанавливает секундомер
     public void pauseStopwatch() {
         if (!stopped) {
             stopped = true;
@@ -69,21 +74,25 @@ public class StopwatchController {
         }
     }
 
+    // Возобновляет секундомер
     public void resume() {
         stopped = false;
         stopWatch.resume();
         showTime();
     }
 
+    // Перезапускает секундомер
     private void resetStopwatch() {
         daysCount = 0;
         stopWatch.reset();
     }
 
+    // Возвращает значение секундомера в секундах
     public long getTime() {
         return stopWatch.getTime();
     }
 
+    // Меняет состояние GUI
     public void toggleTimer(boolean isHide) {
         Platform.runLater(() -> {
             stopwatchLabel.setDisable(isHide);

@@ -25,24 +25,29 @@ public class CommandsRepository extends DataBaseRepository {
         }
     }
 
+    // Добавляет запланированные команды в базу данных
     public static void insertCommand(Command command) {
         sendAction((commandDao) -> commandDao.create(command));
     }
 
+    // Обновляет запланированные команды в базе данных
     public static void updateCommand(Command command) {
         sendAction((commandDao) -> commandDao.update(command));
     }
 
+    // Удаляет запланированные команды из базы данных
     public static void deleteCommand(Command command) {
         sendAction((commandDao) -> commandDao.delete(command));
     }
 
+    // Возвращает список всех запланированных команд
     public static List<Command> getAllCommands() {
         final List[] command = {null};
         sendAction((commandDao) -> command[0] = commandDao.queryForAll());
         return (List<Command>) command[0];
     }
 
+    // Возвращает запланированные команды с указанным id
     public static List<Command> getCommandsByTestId(long idTest) {
         final List[] command = {null};
         Map<String, Object> map = new HashMap<>();

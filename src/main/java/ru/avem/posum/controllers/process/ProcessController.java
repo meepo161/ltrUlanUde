@@ -228,6 +228,7 @@ public class ProcessController implements BaseController {
         fillListOfUiElements();
     }
 
+    // Формирует список элементов GUI
     private void fillListOfUiElements() {
         uiElements.add(toProgramButton);
         uiElements.add(initializeButton);
@@ -256,6 +257,7 @@ public class ProcessController implements BaseController {
         uiElements.add(horizontalScaleComboBox);
     }
 
+    // Инициализирует модули
     public void handleInitialize() {
         if (!processModel.getModules().isEmpty()) {
             doInitialization();
@@ -264,6 +266,7 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Выполняет инициализацию
     private void doInitialization() {
         if (!initialized) {
             statusBarLine.toggleProgressIndicator(false);
@@ -317,6 +320,7 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Меняет состояние GUI в зависимости от состоянии инициализации модулей
     private void toggleInitializationUiElements() {
         if (!initialized) {
             Platform.runLater(() -> {
@@ -348,12 +352,14 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Меняет состояние GUI
     public void toggleUiElements(boolean isDisable) {
         for (Node element : uiElements) {
             element.setDisable(isDisable);
         }
     }
 
+    // Сохраняет состояние GUI
     public void saveUiElementsState() {
         states = new ArrayList<>();
         for (Node element : uiElements) {
@@ -361,12 +367,14 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Загружает состояние GUI
     public void loadUiElementsState() {
         for (Pair<Node, Boolean> uiElementState : states) {
             uiElementState.getKey().setDisable(uiElementState.getValue());
         }
     }
 
+    // Передает конфигурацию модулей для их инициалации
     private void setSettings() {
         process.setModulesTypes(processModel.getModulesTypes());
         process.setSlots(processModel.getSlots());
@@ -379,6 +387,7 @@ public class ProcessController implements BaseController {
         process.setChannelsCounts(processModel.getChannelsCounts());
     }
 
+    // Проверяет результат инициализации
     private void checkInitialization() {
         statusBarLine.toggleProgressIndicator(true);
 
@@ -396,6 +405,7 @@ public class ProcessController implements BaseController {
         Platform.runLater(() -> startButton.requestFocus());
     }
 
+    // Записывает ошибку в журнал событий
     private void showErrors() {
         List<Pair<String, String>> statuses = process.getBadStatus();
 
@@ -405,6 +415,7 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Запускает программу испытаний
     public void handleStart() {
         statusBarLine.setStatusOfProgress("Запуск программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Запуск программы испытаний", EventsTypes.LOG);
@@ -420,6 +431,7 @@ public class ProcessController implements BaseController {
         processThread.start();
     }
 
+    // Проверят, запущены ли измерения и генерация сигнала на всех модулях
     private void checkRunning() {
         statusBarLine.clear();
         statusBarLine.toggleProgressIndicator(true);
@@ -476,6 +488,7 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Выполняет плавную остановку
     public void handleSmoothStopButton() {
         statusBarLine.setStatusOfProgress("Плавная остановка запущена");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Запущена плавная остановка", EventsTypes.LOG);
@@ -492,6 +505,7 @@ public class ProcessController implements BaseController {
         }).start();
     }
 
+    // Выполняет паузу процесса испытаний
     public void handlePause(long delay) {
         statusBarLine.setStatusOfProgress("Программа испытаний приостановлена");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Пауза программы испытаний", EventsTypes.LOG);
@@ -516,6 +530,7 @@ public class ProcessController implements BaseController {
         timerController.startTimers();
     }
 
+    // Выполняет остановку процесса испытаний
     public void handleStop() {
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
@@ -536,6 +551,7 @@ public class ProcessController implements BaseController {
         }).start();
     }
 
+    // Проверяет завершение программы испытаний
     private void checkFinish() {
         statusBarLine.toggleProgressIndicator(true);
 
@@ -556,16 +572,19 @@ public class ProcessController implements BaseController {
         Platform.runLater(() -> saveProtocolButton.requestFocus());
     }
 
+    // Отображает меню настройки ПИД - регулятора и добавления каналов измерения/управления
     public void handleToProgramButton() {
         regulatorParametersController.showRegulationPanel();
         Platform.runLater(() -> addChannelsButton.requestFocus());
     }
 
+    // Отображает окно связывания и добавления каналов
     public void handleLinkButton() {
         processModel.initListViews();
         wm.setScene(WindowsManager.Scenes.LINKING_SCENE);
     }
 
+    // Выполняет сохранение текущих значений на каналах
     public void handleSavePoint() {
         statusBarLine.setStatusOfProgress("Подготовка данных для сохранения текущей нагрузки на каналах");
 
@@ -580,6 +599,7 @@ public class ProcessController implements BaseController {
         }).start();
     }
 
+    // Выполняет сохранения осциллограммы
     public void handleSaveWaveformButton() {
         Platform.runLater(() -> {
             saveUiElementsState();
@@ -599,6 +619,7 @@ public class ProcessController implements BaseController {
         });
     }
 
+    // Выполняет сохранение протокола испытаний
     public void handleSaveProtocol() {
         long rarefactionCoefficient = protocolController.showProtocolSaverDialog();
         if (rarefactionCoefficient != -1) {
@@ -622,6 +643,7 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Отображает предупреждающее окно и возвращает пользователя в главное окно программы
     public void handleBack() {
         ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -652,18 +674,22 @@ public class ProcessController implements BaseController {
         }
     }
 
+    // Добавляет запранированную команду
     public void handleAddCommand() {
         commandsController.showDialogOfCommandAdding();
     }
 
+    // Добавляет событие в журнал
     public void handleAddEvent() {
         eventsController.showDialogOfEventAdding();
     }
 
+    // Выполняет сохранение журнала событий
     public void handleSaveJournal() {
         eventsController.saveJournal(testProgram.getName(), testProgram.getId());
     }
 
+    // Выполняет сохранение параметров ПИД-регулятора
     public void handleSaveRegulatorParameters() {
         statusBarLine.setStatusOfProgress("Сохранение параметров регулятора");
 
@@ -744,6 +770,7 @@ public class ProcessController implements BaseController {
         return testProgram.getId();
     }
 
+    // Задает делегаты
     @Override
     public void setControllerManager(ControllerManager cm) {
         this.cm = cm;
@@ -753,12 +780,14 @@ public class ProcessController implements BaseController {
         regulatorParametersController.setLm(linkingController);
     }
 
+    // Задает модель программы испытаний
     public void setTestProgram(TestProgram testProgram) {
         this.testProgram = testProgram;
         linkingController.setTestProgram(testProgram);
         loadTestProgram();
     }
 
+    // Загружает модель программы испытаний
     private void loadTestProgram() {
         processModel.clear();
         tableController.loadChannels();
@@ -769,6 +798,7 @@ public class ProcessController implements BaseController {
         statusBarLine.clear();
     }
 
+    // Задает делегат WindowManager
     @Override
     public void setWindowManager(WindowsManager wm) {
         this.wm = wm;

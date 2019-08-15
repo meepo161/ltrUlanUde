@@ -9,12 +9,12 @@ import ru.avem.posum.db.models.Channels;
 import ru.avem.posum.db.models.Modules;
 
 public class GraphModel {
-    private double[] data;
-    private int channel;
-    private ObservableList<ChannelModel> channels = FXCollections.observableArrayList();
+    private double[] data; // данные
+    private int channel; // номер канала
+    private ObservableList<ChannelModel> channels = FXCollections.observableArrayList(); // список добавленных и связанных каналов
     private XYChart.Series<Number, Number> graphSeries = new XYChart.Series<>();
-    private int rarefactionCoefficient = 10;
-    private int slot;
+    private int rarefactionCoefficient = 10; // коэффициент прореживания
+    private int slot; // номер слота
 
     public void setFields(double[] data, int slot, int channel) {
         this.data = data;
@@ -22,6 +22,7 @@ public class GraphModel {
         this.channel = channel;
     }
 
+    // Возвращает точку графика для заданного канала
     public XYChart.Data<Number, Number> getPoint(int index) {
         int channels = 4; // количество каналов АЦП
         double xValue = (double) (index - channels) / data.length;
@@ -38,7 +39,6 @@ public class GraphModel {
 
     private void createADC(Modules module) {
         String moduleType = module.getModuleType();
-
     }
 
     public void clear() {

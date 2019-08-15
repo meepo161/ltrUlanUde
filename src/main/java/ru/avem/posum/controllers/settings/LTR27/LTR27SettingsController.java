@@ -170,6 +170,7 @@ public class LTR27SettingsController implements BaseController {
         });
     }
 
+    // Отображает названия физических величин
     private void setUnits(boolean isDefaultUnits) {
         if (isDefaultUnits) {
             ltr27SubmodulesSettings.setSubmodulesUnits();
@@ -178,6 +179,7 @@ public class LTR27SettingsController implements BaseController {
         }
     }
 
+    // Загружает настройки модуля
     public void loadSettings(String moduleName) {
         sceneTitleLabel.setText(String.format("Настройки модуля %s", moduleName));
         ltr27SettingsModel.setModuleName(moduleName);
@@ -190,6 +192,7 @@ public class LTR27SettingsController implements BaseController {
         loadInitialStateOfUi();
     }
 
+    // Инициализирует модуль
     public void handleInitialize() {
         statusBarLine.setStatusOfProgress("Инициализация модуля");
 
@@ -215,6 +218,7 @@ public class LTR27SettingsController implements BaseController {
 
     }
 
+    // Меняет состояние GUI
     private void toggleUiElements(boolean isInit) {
         frequencyComboBox.setDisable(isInit);
         frequencyLabel.setDisable(isInit);
@@ -222,17 +226,20 @@ public class LTR27SettingsController implements BaseController {
         initializeButton.setDisable(isInit);
     }
 
+    // Отобажает окно градуировки первого субмодуля
     public void handleCalibrateSubmoduleOne() {
         int submoduleIndex = 0;
         String title = createTitle(submoduleIndex);
         showCalibrationView(title, submoduleIndex);
     }
 
+    // Задает заголовок окна градуировки
     private String createTitle(int submoduleIndex) {
         return String.format("Градуировка субмодуля %s (слот %d)",
                 ltr27SubmodulesSettings.getSubmodulesNames()[submoduleIndex], submoduleIndex + 1);
     }
 
+    // Отобажает окно градуировки второго субмодуля
     public void handleCalibrateSubmoduleTwo() {
         showStatusOfCalibrationLoading();
 
@@ -243,6 +250,7 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Отобажает окно градуировки третьего субмодуля
     public void handleCalibrateSubmoduleThree() {
         showStatusOfCalibrationLoading();
 
@@ -253,6 +261,7 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Отобажает окно градуировки четвертого субмодуля
     public void handleCalibrateSubmoduleFour() {
         showStatusOfCalibrationLoading();
 
@@ -263,6 +272,7 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Отобажает окно градуировки пятого субмодуля
     public void handleCalibrateSubmoduleFive() {
         showStatusOfCalibrationLoading();
 
@@ -273,6 +283,7 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Отобажает окно градуировки шестого субмодуля
     public void handleCalibrateSubmoduleSix() {
         showStatusOfCalibrationLoading();
 
@@ -283,6 +294,7 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Отобажает окно градуировки седьмого субмодуля
     public void handleCalibrateSubmoduleSeven() {
         showStatusOfCalibrationLoading();
 
@@ -293,6 +305,7 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Отобажает окно градуировки восьмого субмодуля
     public void handleCalibrateSubmoduleEight() {
         showStatusOfCalibrationLoading();
 
@@ -307,6 +320,7 @@ public class LTR27SettingsController implements BaseController {
         statusBarLine.setStatusOfProgress("Загрузка грудуировок");
     }
 
+    // Отобажает окно градуировки
     private void showCalibrationView(String title, int submoduleIndex) {
         calibrationCheckBox.setSelected(false);
         lcm.initCalibrationView(title, submoduleIndex);
@@ -315,10 +329,12 @@ public class LTR27SettingsController implements BaseController {
         Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.LTR27_CALIBRATION_SCENE));
     }
 
+    // Включает все субмодули
     public void handleEnableAll() {
         ltr27SubmodulesSettings.enableAll();
     }
-
+    
+    // Возвращает пользователя в окно выбора модулей
     public void handleBack() {
         statusBarLine.setStatusOfProgress("Загрузка списка модулей");
 
@@ -333,12 +349,14 @@ public class LTR27SettingsController implements BaseController {
         }).start();
     }
 
+    // Меняет состояние GUI
     private void disableUiElements() {
         ltr27SubmodulesSettings.toggleCheckBoxesState(true);
         ltr27SubmodulesSettings.disableSubmodulesUiElements();
         toggleUi(true);
     }
 
+    // Меняет состояние GUI
     private void toggleUi(boolean isDisable) {
         frequencyComboBox.setDisable(isDisable);
         rarefactionLabel.setDisable(isDisable);
@@ -351,12 +369,14 @@ public class LTR27SettingsController implements BaseController {
         backButton.setDisable(isDisable);
     }
 
+    // Сохраняет настройки модуля
     private void saveSettings() {
         ltr27SettingsModel.getModuleInstance().setCheckedChannels(ltr27SubmodulesSettings.getCheckedSubmodules());
         ltr27SettingsModel.getModuleInstance().getSettingsOfModule().put(ADC.Settings.FREQUENCY, frequencyComboBox.getSelectionModel().getSelectedIndex());
         lcm.saveCalibrationSettings(ltr27SettingsModel.getModuleInstance());
     }
 
+    // Загружает настройки модуля
     private void setSettings() {
         int frequencyIndex = ltr27SettingsModel.getModuleInstance().getSettingsOfModule().get(ADC.Settings.FREQUENCY);
         frequencyComboBox.getSelectionModel().select(frequencyIndex);
@@ -364,6 +384,7 @@ public class LTR27SettingsController implements BaseController {
         ltr27SubmodulesSettings.setCheckedSubmodules(checkedSubmodules);
     }
 
+    // Устанавливает начальное состояние GUI
     private void loadInitialStateOfUi() {
         ltr27SubmodulesSettings.disableSubmodulesUiElements();
         toggleUi(true);

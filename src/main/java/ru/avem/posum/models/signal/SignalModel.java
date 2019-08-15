@@ -5,34 +5,34 @@ import ru.avem.posum.hardware.*;
 import ru.avem.posum.models.Actionable;
 import ru.avem.posum.models.calibration.CalibrationPoint;
 import ru.avem.posum.utils.RingBuffer;
-
+import ru.avem.posum.models.signal.SignalParametersModel;
 import java.util.HashMap;
 import java.util.List;
 
 public class SignalModel {
-    private ADC adc;
-    private double amplitude;
+    private ADC adc; // инстанс модуля
+    private double amplitude; // амплитуды каналов
     private double averageCount = 1;
     private double[] buffer;
-    private boolean calibrationExists;
-    private boolean calibrationOfNullExists;
-    private int channel;
-    private boolean connectionLost;
-    private double dc;
-    private double frequency;
-    private HashMap<String, Actionable> instructions = new HashMap<>();
-    private double loadsCounter;
-    private double lowerBound;
-    private LTR24 ltr24;
-    private LTR212 ltr212;
-    private String moduleType;
-    private SignalParametersModel signalParametersModel = new SignalParametersModel();
-    private int rarefactionCoefficient = 10;
-    private double rms;
-    private int slot;
+    private boolean calibrationExists; // флаг наличия градуировки
+    private boolean calibrationOfNullExists; // флаг наличия градуированного нуля
+    private int channel; // номер канала
+    private boolean connectionLost; // флаг потери соединения с модулем
+    private double dc; // постоянная составляющая сигнала
+    private double frequency; // частота сигнала
+    private HashMap<String, Actionable> instructions = new HashMap<>(); // команды для выполнения
+    private double loadsCounter; // количество нагружений
+    private double lowerBound; // нижняя граница графика
+    private LTR24 ltr24; // инстанс модуля LTR24
+    private LTR212 ltr212; // инстанс модуля LTR212
+    private String moduleType; // название модуля
+    private SignalParametersModel signalParametersModel = new SignalParametersModel(); // модель параметров сигала
+    private int rarefactionCoefficient = 10; // коэффициент прореживания
+    private double rms; // действующее значение
+    private int slot; // номер слота
     private double tickUnit;
-    private double upperBound;
-    private String valueName = "В";
+    private double upperBound; // верхняя граница графика
+    private String valueName = "В"; // название величины вертикальной оси графика
 
     public void setFields(String moduleType, int slot, int channel) {
         this.moduleType = moduleType;
@@ -40,6 +40,7 @@ public class SignalModel {
         this.channel = channel;
     }
 
+    // Задает инстанс модуля АЦП
     public void defineModuleInstance(HashMap<Integer, Module> modules) {
         adc = (ADC) modules.get(slot);
         getADCInstance();
@@ -50,12 +51,14 @@ public class SignalModel {
         runInstructions();
     }
 
+    // Инициализирует инстанс модуля АЦП
     private void addInitModuleInstructions() {
         instructions.clear();
         instructions.put(Crate.LTR24, this::initLTR24Module);
         instructions.put(Crate.LTR212, this::initLTR212Module);
     }
 
+    // Инициализирует инстанс модуля LTR24
     private void initLTR24Module() {
         ltr24 = (LTR24) adc;
         int SAMPLES = (int) ltr24.getFrequency() * ltr24.getChannelsCount();
@@ -66,6 +69,7 @@ public class SignalModel {
         ltr24.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
+    // Инициализирует инстанс модуля LTR212
     private void initLTR212Module() {
         ltr212 = (LTR212) adc;
         int adcMode = ltr212.getSettingsOfModule().get(ADC.Settings.ADC_MODE);
@@ -77,10 +81,12 @@ public class SignalModel {
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
+    // Выполняет инструкции
     private void runInstructions() {
         instructions.get(moduleType).onAction();
     }
 
+    // Проверяет наличие градуировки
     public void checkCalibration() {
         checkSettingOfNul();
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
@@ -93,6 +99,7 @@ public class SignalModel {
         }
     }
 
+    // Проверяет наличие градуировки нуля
     private void checkSettingOfNul() {
         List<String> calibrations = adc.getCalibrationSettings().get(channel);
 
@@ -109,31 +116,37 @@ public class SignalModel {
         }
     }
 
+    // Задает параметры для отображения графика
     private void setBounds() {
         this.lowerBound = signalParametersModel.getLowerBound();
         this.upperBound = signalParametersModel.getUpperBound();
         this.tickUnit = signalParametersModel.getTickUnit();
     }
 
+    // Задает название величины вертикальной оси графика
     private void setValueName() {
         this.valueName = signalParametersModel.getCalibratedValueName();
     }
 
+    // Задает название величины вертикальной оси графика по умолчанию
     public void setDefaultValueName() {
         valueName = "В";
     }
 
+    // Записывает данные, полученные от модуля
     public void getData() {
         addReceivingDataInstructions();
         runInstructions();
     }
 
+    // Добавляет команды для записи данных, полученных от модуля
     private void addReceivingDataInstructions() {
         instructions.clear();
         instructions.put(Crate.LTR24, this::receive);
         instructions.put(Crate.LTR212, this::receive);
     }
 
+    // Записывает данные, полученные от модуля
     private void receive() {
         double[] data = adc.getData();
         double[] timeMarks = adc.getTimeMarks();
@@ -158,11 +171,13 @@ public class SignalModel {
         }
     }
 
+    // Рассчитывает параметры сигнала
     public void calculateData() {
         calculate();
         getSignalParameters();
     }
 
+    // Рассчитывает параметры сигнала
     private void calculate() {
         double[] buffer = new double[adc.getData().length];
         adc.getRingBufferForCalculation().take(buffer, buffer.length);
@@ -170,6 +185,7 @@ public class SignalModel {
         signalParametersModel.calculateParameters(buffer, averageCount, calibrationExists);
     }
 
+    // Сохраняет параметры сигнала
     private void getSignalParameters() {
         amplitude = signalParametersModel.getPeakValue();
         frequency = signalParametersModel.getSignalFrequency();
@@ -178,11 +194,13 @@ public class SignalModel {
         dc = signalParametersModel.getDc();
     }
 
+    // Сохраняет данные, полученные от модуля в буфер
     public void fillBuffer() {
         buffer = new double[adc.getData().length];
         adc.getRingBufferForShow().take(buffer, buffer.length);
     }
 
+    // Возвращает точку для графика
     public XYChart.Data<Number, Number> getPoint(int valueIndex) {
         if (calibrationExists) {
             double xValue = (double) (valueIndex - adc.getChannelsCount()) / buffer.length;

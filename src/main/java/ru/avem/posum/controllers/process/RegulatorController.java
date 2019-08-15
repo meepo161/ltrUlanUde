@@ -42,6 +42,7 @@ public class RegulatorController {
         }
     }
 
+    // Задает параметры регулятора
     private void setRegulatorParameters(ChannelModel channel, int channelIndex) {
         double neededAmplitude = Double.parseDouble(channel.getAmplitude());
         double neededDc = Double.parseDouble(channel.getDc());
@@ -60,6 +61,7 @@ public class RegulatorController {
         regulatorModel[channelIndex].setCoefficient(dValue);
     }
 
+    // Передает регулятору значение отклика
     public void setResponse() {
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
 
@@ -79,6 +81,7 @@ public class RegulatorController {
         }
     }
 
+    // Возвращает индекс модуля АЦП
     public int getDacIndex() {
         int dacIndex = -1;
 
@@ -92,6 +95,7 @@ public class RegulatorController {
         return dacIndex;
     }
 
+    // Возвращает скорректированный сигнал для генерации ЦАП'ом
     public double[] getSignalForDac() {
         Optional<Modules> dac = getDacModule();
         parseDacSettings(dac.get());
@@ -161,10 +165,12 @@ public class RegulatorController {
         return signal;
     }
 
+    // Возвращает состояние процесса испытаний
     private boolean checkPause() {
         return processController.getProcess().isPaused();
     }
 
+    // Считывает настройки ЦАП
     private void parseDacSettings(Modules dac) {
         if (firstStart) {
             double[] amplitudes = ltr34SettingsModel.getAmplitudes();
@@ -183,6 +189,7 @@ public class RegulatorController {
         firstStart = false;
     }
 
+    // Выполняет плавную остановку
     public void doSmoothStop() {
         for (ChannelModel channel : channels) {
             channel.setChosenParameterIndex("0"); // регулировка по амплитуде
@@ -207,6 +214,7 @@ public class RegulatorController {
         }).start();
     }
 
+    // Возвращает объект модуля ЦАП
     private Optional<Modules> getDacModule() {
         Optional<Modules> dac = Optional.empty();
 

@@ -146,6 +146,7 @@ public class LTR34Settings implements BaseController {
     private StatusBarLine statusBarLine;
     private WindowsManager wm;
 
+    // Загружает настройки модуля
     public void loadSettings(String moduleName) {
         sceneTitleLabel.setText(String.format("Настройки модуля %s", moduleName));
         ltr34SettingsModel.setModuleName(moduleName);
@@ -164,6 +165,7 @@ public class LTR34Settings implements BaseController {
                 warningIcon);
     }
 
+    // Обрабатывает нажатие на кнопку "Генерировать"
     @FXML
     public void handleGenerateSignal() {
         statusBarLine.toggleProgressIndicator(false);
@@ -191,6 +193,7 @@ public class LTR34Settings implements BaseController {
         }).start();
     }
 
+    // Генерирует сигнал
     private void generate() {
         LTR34 ltr34 = ltr34SettingsModel.getLTR34Instance();
         ltr34.generate(ltr34SettingsModel.getSignal());
@@ -216,6 +219,7 @@ public class LTR34Settings implements BaseController {
         }
     }
 
+    // Проверяет соединение с модулем
     private void checkConnection() {
         LTR34 ltr34 = ltr34SettingsModel.getLTR34Instance();
         ltr34.checkConnection();
@@ -228,6 +232,7 @@ public class LTR34Settings implements BaseController {
         }
     }
 
+    // Отображает график сигнала
     private void showGraph() {
         Platform.runLater(() -> {
             graph.setDisable(false);
@@ -237,6 +242,7 @@ public class LTR34Settings implements BaseController {
         });
     }
 
+    // Выводит график
     private void drawGraph() {
         for (int channelIndex = 0; channelIndex < ltr34SettingsModel.getLTR34Instance().getChannelsCount();
              channelIndex++) {
@@ -246,6 +252,7 @@ public class LTR34Settings implements BaseController {
         }
     }
 
+    // Останавливает генерацию сигнала
     @FXML
     public void handleStopSignal() {
         ltr34SettingsModel.stopModule();
@@ -254,6 +261,7 @@ public class LTR34Settings implements BaseController {
         ltr34ModuleSettings.enableUiElements();
     }
 
+    // Возвращает пользователя в окно выбора модуля
     @FXML
     public void handleBackButton() {
         new Thread(() -> {

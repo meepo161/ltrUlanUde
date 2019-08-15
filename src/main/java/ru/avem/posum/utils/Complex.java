@@ -1,5 +1,9 @@
 package ru.avem.posum.utils;
 
+/**
+* Класс для работы с комплексными числами
+*/
+
 import java.util.Objects;
 
 public class Complex {

@@ -1,5 +1,9 @@
 package ru.avem.posum.utils;
 
+/**
+* Класс для решения систем уравнения методом Гаусса
+*/
+
 public class GaussianElimination {
     private static final double EPSILON = 1e-10;
 

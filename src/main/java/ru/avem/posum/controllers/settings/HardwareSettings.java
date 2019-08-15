@@ -33,6 +33,7 @@ public class HardwareSettings extends Settings {
         this.setupModuleButton = settings.getSetupModuleButton();
     }
 
+    // Отображает список крейтов
     public void showCrates() {
         crate.initCratesList();
 
@@ -46,6 +47,7 @@ public class HardwareSettings extends Settings {
         }
     }
 
+    // Отображает список модулей
     public void showModules() {
         cratesListView.getSelectionModel().selectedItemProperty().addListener((observable -> {
             selectedCrate = cratesListView.getSelectionModel().getSelectedIndex();
@@ -57,6 +59,7 @@ public class HardwareSettings extends Settings {
         }));
     }
 
+    // Очищает списки
     public void clear() {
         cratesListView.getSelectionModel().clearSelection();
         cratesListView.getItems().clear();
@@ -64,6 +67,7 @@ public class HardwareSettings extends Settings {
         modulesListView.getItems().clear();
     }
 
+    // Соединяется с крейтом и запускает процесс инициализации
     public void initialize() {
         for (int i = 0; i < getCrates().size(); i++) {
             if (cratesListView.getSelectionModel().isSelected(i)) {
@@ -84,6 +88,7 @@ public class HardwareSettings extends Settings {
         settings.getSettingsModel().createModulesInstances(modulesNames);
     }
 
+    // Меняет состояние GUI
     public void toggleUiElements(boolean isDisable) {
         cratesListView.setDisable(isDisable);
         chooseCrateButton.setDisable(isDisable);
@@ -91,12 +96,14 @@ public class HardwareSettings extends Settings {
         setupModuleButton.setDisable(!isDisable);
     }
 
+    // Загружает настройки модулей
     public void loadModuleSettings() {
         selectedModuleIndex = modulesListView.getSelectionModel().getSelectedIndex();
         moduleName = modulesNames.get(selectedModuleIndex);
         settings.getCm().loadModuleSettings(selectedModuleIndex, moduleName);
     }
 
+    // Проверяет, заданы ли настройки оборудования
     public boolean checkHardwareSettings() {
         boolean isCrateChosen = false;
         if (crate.getCratesNames().isPresent()) {
@@ -111,6 +118,7 @@ public class HardwareSettings extends Settings {
         return isCrateChosen;
     }
 
+    // Выбирает крейт
     public void selectCrate() {
         if (crate.getCratesNames().isPresent()) {
             if (crate.getCratesNames().get().isEmpty()) {
@@ -126,6 +134,7 @@ public class HardwareSettings extends Settings {
         }
     }
 
+    // Находит крейт по серийному номеру
     private void findCrate() {
         ObservableList<String> cratesNames = crate.getCratesNames().get();
 
@@ -145,6 +154,7 @@ public class HardwareSettings extends Settings {
         }
     }
 
+    // Проверяет, был ли найден крейт
     private void check(ObservableList<String> cratesNames, int notCrateCounter) {
         if (notCrateCounter == cratesNames.size()) {
             clearListViews();
@@ -164,6 +174,7 @@ public class HardwareSettings extends Settings {
         }
     }
 
+    // Очищает списки
     private void clearListViews() {
         ObservableList<String> crates = cratesListView.getItems();
         ObservableList<String> modules = modulesListView.getItems();

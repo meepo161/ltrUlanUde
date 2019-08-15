@@ -1,6 +1,6 @@
 package ru.avem.posum.models.protocol
 
-class TestProgramDataModel() {
+class TestProgramDataModel {
     var name: String = ""
     var testingSampleName = ""
     var sampleSerialNumber = ""

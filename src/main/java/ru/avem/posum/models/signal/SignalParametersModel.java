@@ -8,50 +8,50 @@ import uk.me.berndporr.iirj.Butterworth;
 import java.util.*;
 
 public class SignalParametersModel {
-    private boolean accurateFrequencyCalculation = true;
-    private ADC adc;
-    private int averageIterator;
-    private double peakValue;
-    private double bufferedPeakValue;
-    private double bufferedFrequency;
-    private double bufferedLoadsCounter;
-    private double bufferedRms;
-    private double bufferedDC;
-    private double bufferedCalibratedAmplitude;
-    private double bufferedCalibratedRms;
-    private double bufferedCalibratedZeroShift;
-    private double bufferedSamplesPerSemiPeriods;
-    private double calibratedAmplitude;
-    private double calibratedRms;
-    private double calibratedDC;
-    private double calibratedValue;
-    private double firstLoadValue;
-    private double firstChannelValue;
-    private int frequencyCalculationCounter;
-    private Butterworth iir = new Butterworth();
-    private String calibratedValueName;
-    private int channel;
-    private int channels;
-    private double[] data;
-    private double dc;
-    private double loadsCounter;
-    private double lowerBound;
-    private double maxSignalValue;
-    private int minSamples = 50;
-    private double minSignalValue;
-    private double rms;
-    private int periods;
-    private int samplesPerSemiPeriods;
-    private int samplesPerSemiPeriod;
-    private double savedFrequency;
-    private double savedRms;
-    private double secondLoadValue;
-    private double secondChannelValue;
-    private double shift;
-    private double signalFrequency;
+    private boolean accurateFrequencyCalculation = true; // флаг выполнения точных расчетов
+    private ADC adc; // инстанс модуля АЦП
+    private int averageIterator; // счетчик для усреднеия значений
+    private double peakValue; // пиковое значение
+    private double bufferedPeakValue; // сохраненное пиковое значение
+    private double bufferedFrequency; // сохраненное значение частоты
+    private double bufferedLoadsCounter; // сохраненное значение количества нагружений
+    private double bufferedRms; // сохраненное действующее значение
+    private double bufferedDC; // сохраненное значение постоянной составляющей
+    private double bufferedCalibratedAmplitude; // сохраненное значение градуированной амплитуды
+    private double bufferedCalibratedRms; // сохраненное значение градуированного действующего значения
+    private double bufferedCalibratedZeroShift; // сохраненное значение градуированного смещения нуля
+    private double bufferedSamplesPerSemiPeriods; // сохранненое значение количества сэмплов в полупериоде
+    private double calibratedAmplitude; // градуированная амплитуда
+    private double calibratedRms; // градуированное действующее значение
+    private double calibratedDC; // градуированная постоянная составляющая
+    private double calibratedValue; // градуированное значение
+    private double firstLoadValue; // первое значение нагрузки
+    private double firstChannelValue; // первое значение канала
+    private int frequencyCalculationCounter; // счетчик расчета частоты
+    private Butterworth iir = new Butterworth(); // фильтр
+    private String calibratedValueName; // название физической величины
+    private int channel; // номер канала
+    private int channels; // количество каналов
+    private double[] data; // сигнал
+    private double dc; // постоянная составляющая
+    private double loadsCounter; // счетчик количества нагружений
+    private double lowerBound; // нижняя граница вертикальной оси графика
+    private double maxSignalValue; // максимальное значение
+    private int minSamples = 50; // минимальное количество сэмплов в полупериоде
+    private double minSignalValue; // минимальное значение
+    private double rms; // действующее значение
+    private int periods; // количество периодов
+    private int samplesPerSemiPeriods; // количество сэмплов в полупериодах
+    private int samplesPerSemiPeriod; // количество сэмплов в полупериоде
+    private double savedFrequency; // сохнаренное значение частоты
+    private double savedRms; // сохраненное действующее значение
+    private double secondLoadValue; // второе значение нагрузки
+    private double secondChannelValue; // второе значение канала
+    private double shift; // смещение сигнала
+    private double signalFrequency; // частота
     private double tickUnit;
-    private double upperBound;
-    private int zeroTransitionCounter;
+    private double upperBound; // верхняя граница вертикальной оси графика
+    private int zeroTransitionCounter; // счетчик переходов через ноль
 
     public void setFields(ADC adc, int channel) {
         this.adc = adc;
@@ -59,6 +59,7 @@ public class SignalParametersModel {
         this.channels = adc.getChannelsCount();
     }
 
+    // Расчитывает параметры сигнала
     public void calculateParameters(double[] signal, double averageCount, boolean isCalibrationExists) {
         setFields(signal, channel);
         calculateMinAndMaxValues();
@@ -73,6 +74,7 @@ public class SignalParametersModel {
         this.channel = channel;
     }
 
+    // Расчитывает минимальное и максимальное значения
     private void calculateMinAndMaxValues() {
         double min = Integer.MAX_VALUE;
         double max = Integer.MIN_VALUE;
@@ -95,6 +97,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Более точный расчет минимального и максимального значений
     private void calculateAverageMinAndMaxValues() {
         double[] channelData = new double[data.length / channels];
         List<Double> maxs = new ArrayList<>();
@@ -151,6 +154,7 @@ public class SignalParametersModel {
         minSignalValue = min;
     }
 
+    // Рассчитывает параметры сигнала
     private void calculateParameters(double averageCount) {
         if (averageCount == 1) {
             peakValue = rms = dc = 0;
@@ -177,6 +181,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Расчитвает пиковое значение сигнала
     private double calculatePeakValue() {
         double peakValue = (maxSignalValue - minSignalValue);
         return peakValue < 0 ? 0 : peakValue;
@@ -194,6 +199,7 @@ public class SignalParametersModel {
         return dc;
     }
 
+    // Рассчитывает действующее значение сигнала
     private double calculateRms() {
         double summ = 0;
 
@@ -205,6 +211,7 @@ public class SignalParametersModel {
         return rms < 0 ? 0 : rms;
     }
 
+    // Рассчитывает частоту сигнала
     private double calculateFrequency() {
         int estimatedFrequency = estimateFrequency();
         if (estimatedFrequency > 5000) {
@@ -250,6 +257,7 @@ public class SignalParametersModel {
         return freq;
     }
 
+    // Оценивает частоту сигнала
     private int estimateFrequency() {
         boolean positivePartOfSignal = false;
         int frequency = 0;
@@ -267,11 +275,13 @@ public class SignalParametersModel {
         return frequency;
     }
 
+    // Возвращает минимальное значение амплитуды
     private double getLowerLimitOfAmplitude() {
         return ((Math.abs(ADC.MeasuringRangeOfChannel.LOWER_BOUND.getBoundValue()) +
                 Math.abs(ADC.MeasuringRangeOfChannel.UPPER_BOUND.getBoundValue())) / 2) * 0.01;
     }
 
+    // Алгоритм расчета частоты по количеству сэмплов в полупериоде
     private double defineFrequencyFirstAlgorithm() {
         int shift = 1_000;
         double firstValue = data[channel] + shift;
@@ -315,12 +325,14 @@ public class SignalParametersModel {
         return (samplesPerSemiPeriod == 0 ? 0 : (adc.getFrequency() / (samplesPerSemiPeriod * 2)));
     }
 
+    // Считает количество сэмплов в полупериоде
     private void countSamplesFirstAlgorithm() {
         if (zeroTransitionCounter == 1) {
             samplesPerSemiPeriod++;
         }
     }
 
+    // Алгоритм расчета частоты по количеству сэмплов в полупериодах
     private double defineFrequencySecondAlgorithm(int cutoffFrequency) {
         int shift = 1_000;
         double firstValue = data[0] + shift;
@@ -367,6 +379,7 @@ public class SignalParametersModel {
         return (samplesPerPeriod == 0 ? 0 : (adc.getFrequency() / samplesPerPeriod));
     }
 
+    // Считает количество периодов
     private void countPeriods() {
         zeroTransitionCounter++;
         if (zeroTransitionCounter % 2 != 0 && zeroTransitionCounter > 2) {
@@ -375,16 +388,19 @@ public class SignalParametersModel {
         }
     }
 
+    // Считает количество сэмплов в полупериодах
     private void countSamplesSecondAlgorithm() {
         if (zeroTransitionCounter >= 1) {
             samplesPerSemiPeriods++;
         }
     }
 
+    // Считает количество нагружений
     private double calculateLoadsCounter() {
         return calculateFrequency();
     }
 
+    // Проверяет наличие градуировки
     private void checkCalibration(boolean isCalibrationExists, double averageCount) {
         if (isCalibrationExists) {
             if (averageIterator < averageCount || averageCount == 1) {
@@ -397,6 +413,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Суммирует градуированные величины для усреднения
     private void sumCalibratedParameters() {
         if (lowerBound < 0 & firstLoadValue >= 0) {
             bufferedCalibratedAmplitude += calibratedAmplitude = applyCalibration(peakValue);
@@ -408,6 +425,7 @@ public class SignalParametersModel {
         bufferedCalibratedZeroShift += calibratedDC = applyCalibration(adc, dc);
     }
 
+    // Градуирует параметры сигнала
     private void calculateCalibratedParameters(double averageCount) {
         calibratedAmplitude = bufferedCalibratedAmplitude / averageCount;
         calibratedRms = bufferedCalibratedRms / averageCount;
@@ -415,6 +433,7 @@ public class SignalParametersModel {
         bufferedCalibratedAmplitude = bufferedCalibratedRms = bufferedCalibratedZeroShift = 0;
     }
 
+    // Градуирует параметры сигнала
     private double applyCalibration(double value) {
         defineValueName();
         defineBounds();
@@ -422,6 +441,7 @@ public class SignalParametersModel {
         return calibratedValue = value / (Math.abs(lowerBound) + Math.abs(upperBound)) * secondLoadValue;
     }
 
+    // Определяет границы сигнала
     private void defineBounds() {
         if (firstChannelValue > secondChannelValue) {
             double bufferForLoadValue = firstLoadValue;
@@ -433,11 +453,13 @@ public class SignalParametersModel {
         }
     }
 
+	// Задает границы графика
     private void setBounds() {
         lowerBound = firstChannelValue;
         upperBound = secondChannelValue;
     }
 
+    // Градуирует параметры сигнала
     public double applyCalibration(ADC adc, double value) {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
@@ -453,6 +475,7 @@ public class SignalParametersModel {
         return calibratedValue;
     }
 
+    // Считывает параметры градуировки
     private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
         if (CalibrationPoint.parseValueName(calibrationSettings.get(i)).isEmpty()) { // если ноль градуирован
             i++;
@@ -466,6 +489,7 @@ public class SignalParametersModel {
         secondLoadValue = CalibrationPoint.parseLoadValue(secondCalibrationPoint);
     }
 
+    // Градуирует величину
     private void calibrate(double value) {
         if (value > lowerBound * 1.2 & value <= upperBound * 1.2) {
             double k = (secondLoadValue - firstLoadValue) / (secondChannelValue - firstChannelValue);
@@ -474,6 +498,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Определяет границы градуированного сигнала
     public void defineCalibratedBounds(ADC adc) {
         this.adc = adc;
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
@@ -505,6 +530,7 @@ public class SignalParametersModel {
         }
     }
 
+    // Определяет название физической величины
     private void defineValueName() {
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
         calibratedValueName = CalibrationPoint.parseValueName(calibrationSettings.get(calibrationSettings.size() - 1));
