@@ -12,6 +12,8 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import ru.avem.posum.communication.CommunicationModel;
+import ru.avem.posum.communication.ModbusConnection;
 import ru.avem.posum.controllers.*;
 import ru.avem.posum.controllers.calibration.CalibrationController;
 import ru.avem.posum.controllers.calibration.LTR27CalibrationController;
@@ -36,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import tornadofx.*;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
@@ -86,9 +89,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createSignalGraphScene();
         createCalibrationScene();
         createLtr27CalibrationScene();
+        initializeSingletons();
+    }
 
-
-
+    private void initializeSingletons() {
+        ModbusConnection svetlana = ModbusConnection.INSTANCE;
+        CommunicationModel serega = CommunicationModel.INSTANCE;
     }
 
     // Создание внешнего вида окна авторизации
@@ -206,7 +212,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         initPrimaryStage();
         setCentreOfStage(primaryStage);
         showMainScene();
-       // FX.registerApplication(this, primaryStage);
+        // FX.registerApplication(this, primaryStage);
     }
 
     // Инициализирует главное окно программы

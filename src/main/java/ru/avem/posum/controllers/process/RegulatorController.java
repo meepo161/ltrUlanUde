@@ -108,7 +108,7 @@ public class RegulatorController {
             return signal;
         }
 
-        int signalType = 0; // синусоидальный сигнал
+        int signalType = 6; // постоянный сигнал
         double[] amplitudes = ltr34SettingsModel.getAmplitudes();
         double[] dc = ltr34SettingsModel.getDc();
         double[] frequencies = ltr34SettingsModel.getFrequencies();
@@ -154,6 +154,10 @@ public class RegulatorController {
                                         frequencies[channelIndex] += newFrequency;
                                     }
                                     break;
+                                case 3:
+                                    double newStatic = regulatorModel[channelIndex].getDc();
+                                    dc[channelIndex] += newStatic;
+                                    break; //TODO тест
                             }
                         }
                     }

@@ -11,6 +11,8 @@ import ru.avem.posum.communication.devices.enums.DeviceType
 import ru.avem.posum.communication.devices.enums.UnitID
 import ru.avem.posum.communication.devices.parameters.DeviceParameter
 import java.util.*
+import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Observable(), Device {
     companion object {
@@ -50,15 +52,15 @@ class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Obse
 
     fun on1KM() {
         try {
-            ModbusConnection.writeSingleRegister(unitID.id, 0, SimpleRegister(1000))
-        } catch (e: Exception) {
+            ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 50, arrayOf(SimpleRegister(1.toShort())))
+        } catch (e: ModbusException) {
             isResponding = false
         }
     }
 
 
-    private fun notice(parameter: DeviceParameter) {
-        setChanged()
-        notifyObservers(parameter)
+        private fun notice(parameter: DeviceParameter) {
+            setChanged()
+            notifyObservers(parameter)
+        }
     }
-}

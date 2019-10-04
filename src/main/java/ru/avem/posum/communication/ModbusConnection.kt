@@ -15,7 +15,7 @@ object ModbusConnection {
     private val logger = LoggerFactory.getLogger(this::class.java)
     private val MUTEX = Any()
 
-    private var master: ModbusSerialMaster? = null
+    var master: ModbusSerialMaster? = null
     var isAppRunning = true
         set(value) {
             field = value

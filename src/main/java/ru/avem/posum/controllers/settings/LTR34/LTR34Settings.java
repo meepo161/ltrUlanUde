@@ -192,8 +192,7 @@ public class LTR34Settings implements BaseController {
                 ltr34SettingsModel.calculateSignal(signalTypeComboBox.getSelectionModel().getSelectedIndex());
                 generate();
                 showGraph();
-//                CommunicationModel.INSTANCE.getMU110Controller().readRegister();
-//                CommunicationModel.INSTANCE.getMU110Controller().on1KM();
+                CommunicationModel.INSTANCE.getMU110Controller().on1KM();//TODO тесты
             } else {
                 ltr34ChannelsSettings.enableUiElements();
                 ltr34ModuleSettings.enableUiElements();
@@ -271,6 +270,7 @@ public class LTR34Settings implements BaseController {
         Platform.runLater(() -> graph.getData().clear());
         ltr34ChannelsSettings.enableUiElements();
         ltr34ModuleSettings.enableUiElements();
+        CommunicationModel.INSTANCE.getMU110Controller().on1KM();//TODO тесты
     }
 
     // Возвращает пользователя в окно выбора модуля

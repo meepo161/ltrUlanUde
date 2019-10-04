@@ -17,31 +17,31 @@ object CommunicationModel : Observer {
 
     val deviceControllers = listOf<Device>(mU110Controller)
 
-    init {
-        Thread {
-            while (isAppRunning) {
-                deviceControllers.forEach {
-                    if (isModbusConnected) {
-                        try {
-                            when (it) {
-                                is OwenMU110Controller -> {
-                                    try {
-                                        it.readRegister()
-                                        it.on1KM()
-                                        it.isResponding = true
-                                    } catch (e: Exception) {
-                                        it.isResponding = false
-                                    }
-                                }
-                            }
-                        } catch (e: NullPointerException) {
-                        }
-                    }
-                }
-                sleep(1)
-            }
-        }.start()
-    }
+//    init {
+//        Thread {
+//            while (isAppRunning) {
+//                deviceControllers.forEach {
+//                    if (isModbusConnected) {
+//                        try {
+//                            when (it) {
+//                                is OwenMU110Controller -> {
+//                                    try {
+//                                        it.readRegister()
+//                                        it.on1KM()
+//                                        it.isResponding = true
+//                                    } catch (e: Exception) {
+//                                        it.isResponding = false
+//                                    }
+//                                }
+//                            }
+//                        } catch (e: NullPointerException) {
+//                        }
+//                    }
+//                }
+//                sleep(1)
+//            }
+//        }.start()
+//    }
 
     override fun update(o: Observable?, arg: Any?) {
         arg as DeviceParameter

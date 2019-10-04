@@ -151,7 +151,7 @@ public class LTR34SettingsModel {
         return data;
     }
 
-    // Рассчитывает "шум"
+    // Рассчитывает постоянное напряжение
     private double[] createLinerSignal(int length, double amplitude, double dc, double frequency, int phase) {
         double[] data = new double[length];
         double channelPhase = Math.toRadians(phase);

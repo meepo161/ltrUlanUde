@@ -12,6 +12,7 @@ import javafx.util.Pair;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.communication.CommunicationModel;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.controllers.protocol.JsonController;
 import ru.avem.posum.controllers.protocol.ProtocolController;
@@ -422,6 +423,8 @@ public class ProcessController implements BaseController {
 
         toggleUiElements(true);
 
+        CommunicationModel.INSTANCE.getMU110Controller().on1KM(); //TODO тесты
+
         Thread processThread = new Thread(() -> {
             process.run();
             checkRunning();
@@ -429,6 +432,7 @@ public class ProcessController implements BaseController {
 
         processThread.setPriority(Thread.MAX_PRIORITY);
         processThread.start();
+
     }
 
     // Проверят, запущены ли измерения и генерация сигнала на всех модулях
@@ -462,7 +466,7 @@ public class ProcessController implements BaseController {
             process.setStopped(false);
             process.initData(processModel.getModules());
             tableController.showParametersOfSignal();
-            stopwatchController.startStopwatch();
+            stopwatchController.startStopWatch();
             tableController.getRegulatorController().setFirstStart(true);
             tableController.getRegulatorController().setModules(processModel.getModules());
             tableController.getRegulatorController().setTypesOfModules(processModel.getTypesOfModules());

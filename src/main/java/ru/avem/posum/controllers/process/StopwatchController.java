@@ -26,7 +26,7 @@ public class StopwatchController {
     }
 
     // Запускает секундомер
-    public void startStopwatch() {
+    public void startStopWatch() {
         resetStopwatch();
         stopWatch.start();
         stopped = false;
