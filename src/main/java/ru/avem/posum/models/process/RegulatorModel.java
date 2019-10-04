@@ -1,5 +1,7 @@
 package ru.avem.posum.models.process;
 
+import ru.avem.posum.utils.ExtView;
+
 /**
  * Модель ПИД - регулятора
  */
@@ -29,20 +31,30 @@ public class RegulatorModel {
 
     // рассчитывает корректировку
     private double calculateRegulator(double neededParameter, double response) {
-        double error = neededParameter - response;
+
+        double error = neededParameter - response; //величина отличия заданного параметра от принимаемого
         pValue = pCoefficient * error;
         iValue = iCoefficient * error;
 
-        if (calculationCount % 2 != 0) {
+    //    if (calculationCount % 2 != 0) {
             bufferedError = error;
             bufferedIValue = iValue;
-        } else {
+      //  } else {
             iValue = bufferedIValue + iCoefficient * error;
             dValue = dCoefficient * (error - bufferedError);
             calculationCount = 1;
-        }
+      //  }
+        System.out.println ("response"+response);
+       // System.out.println("PID"+pValue + iValue + dValue);
+//        if (((pValue + iValue + dValue)> -0.05) && ((pValue + iValue + dValue)< 0.05)) {
+//            System.out.println(0.0);
+//            return 0.0;
+//        }
+//        else {
+            System.out.println("PID"+(pValue + iValue + dValue));
+            return (pValue + iValue + dValue);
 
-        return pValue + iValue + dValue;
+//        }
     }
 
     // вовзращает скорректриованное значение постоянной составляющей

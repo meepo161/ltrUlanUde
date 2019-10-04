@@ -13,6 +13,8 @@ import javafx.scene.text.TextAlignment;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
+import ru.avem.posum.communication.CommunicationModel;
+import ru.avem.posum.communication.ModbusConnection;
 import ru.avem.posum.db.CalibrationsRepository;
 import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
@@ -76,6 +78,7 @@ public class MainController implements BaseController {
         addMouseListener();
         statusBarLine = new StatusBarLine(checkIcon, true, progressIndicator, statusBar, warningIcon);
     }
+
 
     public void initMenu() {
         menuEdit.setDisable(!isAdministration);

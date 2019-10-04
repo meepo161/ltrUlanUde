@@ -29,12 +29,14 @@ import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.signal.SignalModel;
+import ru.avem.posum.utils.ExtView;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import tornadofx.*;
 
 public class Main extends Application implements WindowsManager, ControllerManager {
     private CalibrationController calibrationController;
@@ -68,9 +70,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private Scene signalGraphScene;
     private boolean stopped;
 
+
     // Инициализация окон
     @Override
     public void init() throws IOException {
+
+
         DataBaseRepository.init(false);
 
         crateLoginScene();
@@ -81,10 +86,14 @@ public class Main extends Application implements WindowsManager, ControllerManag
         createSignalGraphScene();
         createCalibrationScene();
         createLtr27CalibrationScene();
+
+
+
     }
 
     // Создание внешнего вида окна авторизации
     private void crateLoginScene() throws IOException {
+
         loginController = (LoginController) getController("/layouts/loginView.fxml");
         loginController.setMainApp(this);
 
@@ -124,6 +133,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createMainScene() throws IOException {
         mainController = (MainController) getController("/layouts/mainView.fxml");
         mainScene = createScene(1280, 720);
+
     }
 
     // Создание внешнего виде окна настроек
@@ -142,6 +152,8 @@ public class Main extends Application implements WindowsManager, ControllerManag
     private void createProcessScene() throws IOException {
         processController = (ProcessController) getController("/layouts/processView.fxml");
         processScene = createScene(1280, 720);
+
+
     }
 
     // Создание внешнего вида окна текущей нагрузки на каналах
@@ -194,6 +206,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         initPrimaryStage();
         setCentreOfStage(primaryStage);
         showMainScene();
+       // FX.registerApplication(this, primaryStage);
     }
 
     // Инициализирует главное окно программы
@@ -213,6 +226,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         primaryStage.show();
         loginStage.close();
         mainController.getOpenExperimentButton().requestFocus();
+
     }
 
     // Проверяет наличие калибровочных коэффициентов

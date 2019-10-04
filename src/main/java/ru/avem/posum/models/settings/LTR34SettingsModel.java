@@ -78,6 +78,11 @@ public class LTR34SettingsModel {
                 case 5:
                     channelsData.add(createNoiseSignal(signal.length / channels, amplitudes[channelIndex],
                             dc[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    break;
+                case 6:
+                    channelsData.add(createLinerSignal(signal.length / channels, amplitudes[channelIndex],
+                            dc[channelIndex], frequencies[channelIndex], phases[channelIndex]));
+                    break;
             }
         }
 
@@ -141,6 +146,18 @@ public class LTR34SettingsModel {
         for (int i = 0; i < length; i++) {
             data[i] = dc + amplitude * random.nextDouble() * Math.sin(2 * Math.PI * (frequency + random.nextDouble()) *
                     i / length + channelPhase);
+        }
+
+        return data;
+    }
+
+    // Рассчитывает "шум"
+    private double[] createLinerSignal(int length, double amplitude, double dc, double frequency, int phase) {
+        double[] data = new double[length];
+        double channelPhase = Math.toRadians(phase);
+
+        for (int i = 0; i < length; i++) {
+            data[i] = dc + channelPhase;
         }
 
         return data;

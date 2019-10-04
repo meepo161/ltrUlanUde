@@ -48,6 +48,7 @@ class LTR34ModuleSettings extends LTR34Settings {
         types.add("Пила");
         types.add("Отраженная пила");
         types.add("Периодический шум");
+        types.add("Постоянный");
 
         signalTypeComboBox.getItems().addAll(types);
         signalTypeComboBox.getSelectionModel().select(0);

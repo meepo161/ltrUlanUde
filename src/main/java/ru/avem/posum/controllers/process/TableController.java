@@ -311,9 +311,12 @@ public class TableController {
                 signalParametersModel.calculateParameters();
                 processController.getJsonController().write(table.getItems());
 
-                new Thread(() -> regulatorController.setResponse()).start();
+             //   new Thread(() -> regulatorController.setResponse()).start();
+
                 new Thread(this::show).start();
+
                 Utils.sleep(1000);
+                regulatorController.setResponse();
             }
         }).start();
     }

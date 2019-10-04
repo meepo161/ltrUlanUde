@@ -97,9 +97,11 @@ public class RegulatorController {
 
     // Возвращает скорректированный сигнал для генерации ЦАП'ом
     public double[] getSignalForDac() {
-        Optional<Modules> dac = getDacModule();
-        parseDacSettings(dac.get());
-        int signalLength = dac.get().getDataLength();
+        Optional<Modules> dac;
+        dac = getDacModule();
+        parseDacSettings(dac.orElse(null));
+        assert dac.orElse(null) != null;
+        int signalLength = dac.orElse(null).getDataLength();
         double[] signal = new double[signalLength];
 
         if (checkPause()) {

@@ -220,9 +220,7 @@ public class ChannelModel {
         return relativeResponseFrequency.get();
     }
 
-    public String getResponseAmplitude() {
-        return responseAmplitude.get();
-    }
+    public String getResponseAmplitude() { return responseAmplitude.get(); }
 
     public String getResponseDc() {
         return responseDc.get();

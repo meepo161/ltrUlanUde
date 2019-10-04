@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import org.controlsfx.control.StatusBar?>
+
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.avem.posum.controllers.settings.LTR212.LTR212Settings">
+   <children>
+      <GridPane layoutX="104.0" layoutY="113.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+            <ColumnConstraints hgrow="SOMETIMES" prefWidth="200.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+            <ColumnConstraints hgrow="SOMETIMES" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="10.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label fx:id="sceneTitleLabel" styleClass="title" text="Настройки модуля LTR212" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="2" GridPane.rowSpan="6" />
+            <CheckBox fx:id="applyForAllChannels" mnemonicParsing="false" text="Применять для всех" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Назначение канала:" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Label>
+            <Label text="Тип мостового подключения:" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Label>
+            <Label text="Диапазон измерений:" GridPane.columnIndex="1" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Label>
+            <CheckBox fx:id="checkChannelN1" mnemonicParsing="false" text="Канал 1" GridPane.columnIndex="2" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN2" mnemonicParsing="false" text="Канал 2" GridPane.columnIndex="4" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN3" mnemonicParsing="false" text="Канал 3" GridPane.columnIndex="6" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </CheckBox>
+            <CheckBox fx:id="checkChannelN4" mnemonicParsing="false" text="Канал 4" GridPane.columnIndex="8" GridPane.rowIndex="2">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </CheckBox>
+            <TextField fx:id="descriptionOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="2" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </TextField>
+            <ComboBox fx:id="typeOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <Button fx:id="valueOnChannelN1" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN1" text="Нагрузка на канале" GridPane.columnIndex="2" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Button>
+            <TextField fx:id="descriptionOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="4" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </TextField>
+            <ComboBox fx:id="typeOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <Button fx:id="valueOnChannelN2" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN2" text="Нагрузка на канале" GridPane.columnIndex="4" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Button>
+            <TextField fx:id="descriptionOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="6" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </TextField>
+            <ComboBox fx:id="typeOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <Button fx:id="valueOnChannelN3" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN3" text="Нагрузка на канале" GridPane.columnIndex="6" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Button>
+            <TextField fx:id="descriptionOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" promptText="Описание" GridPane.columnIndex="8" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </TextField>
+            <ComboBox fx:id="typeOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="8" GridPane.rowIndex="4">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <ComboBox fx:id="measuringRangeOfChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="8" GridPane.rowIndex="5">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ComboBox>
+            <Button fx:id="valueOnChannelN4" disable="true" maxWidth="200.0" minWidth="200.0" mnemonicParsing="false" onAction="#handleValueOfChannelN4" text="Нагрузка на канале" GridPane.columnIndex="8" GridPane.rowIndex="6" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </Button>
+            <Button fx:id="initializeButton" disable="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleInitialize" text="Инициализация" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets left="270.0" />
+               </GridPane.margin>
+            </Button>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="wrapper" GridPane.columnSpan="10" GridPane.rowIndex="9" GridPane.rowSpan="4" />
+            <Label text="Режим сбора данных:" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <ComboBox fx:id="moduleModesComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+            <Label text="Опорное напряжение:" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+            <ComboBox fx:id="referenceVoltageComboBox" maxWidth="200.0" minWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+            <CheckBox fx:id="iirCheckBox" mnemonicParsing="false" text="Включить БИХ фильтр" GridPane.columnIndex="4" GridPane.rowIndex="10" />
+            <CheckBox fx:id="firCheckBox" mnemonicParsing="false" text="Включить КИХ фильтр" GridPane.columnIndex="4" GridPane.rowIndex="11" />
+            <TextField fx:id="iirPathTextField" disable="true" maxWidth="165.0" GridPane.columnIndex="6" GridPane.rowIndex="10" />
+            <Button fx:id="iirPathButton" disable="true" maxWidth="20.0" mnemonicParsing="false" onAction="#handleChoosingIIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="10" />
+            <TextField fx:id="firPathTextField" disable="true" maxWidth="165.0" GridPane.columnIndex="6" GridPane.rowIndex="11" />
+            <Button fx:id="firPathButton" disable="true" maxWidth="20.0" mnemonicParsing="false" onAction="#handleChoosingFIRFile" text="..." GridPane.columnIndex="6" GridPane.halignment="RIGHT" GridPane.rowIndex="11" />
+            <CheckBox fx:id="factoryCalibrationCheckBox" mnemonicParsing="false" text="Завод. калибр. коэф." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="10" />
+            <CheckBox fx:id="referenceVoltageTypeCheckBox" mnemonicParsing="false" text="Пост. опорное напр." GridPane.columnIndex="8" GridPane.columnSpan="2" GridPane.rowIndex="11" />
+            <Button fx:id="backButton" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="BOTTOM">
+               <GridPane.margin>
+                  <Insets right="270.0" />
+               </GridPane.margin>
+            </Button>
+            <ProgressIndicator fx:id="progressIndicator" maxWidth="16.0" style="-fx-opacity: 0;" GridPane.halignment="LEFT" GridPane.rowIndex="15" />
+            <StatusBar fx:id="statusBar" styleText="" text="" GridPane.columnSpan="10" GridPane.rowIndex="15">
+               <GridPane.margin>
+                  <Insets left="15.0" />
+               </GridPane.margin></StatusBar>
+            <Label fx:id="warningIcon" alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22px; -fx-opacity: 0;" text="❗" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="15" />
+            <Label fx:id="checkIcon" style="-fx-font-size: 26px; -fx-opacity: 0;" text="✔" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.rowIndex="15" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>

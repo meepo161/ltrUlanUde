@@ -235,7 +235,7 @@ public class SignalParametersModel {
     private double getLowerLimitOfAmplitude(int moduleIndex) {
         switch (typesOfModules[moduleIndex]) {
             case Crate.LTR24:
-                return 0.5;
+                return 0.05;
             case Crate.LTR212:
                 return 0.001;
             default:
