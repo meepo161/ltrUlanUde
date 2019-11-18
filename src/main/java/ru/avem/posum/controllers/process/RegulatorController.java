@@ -3,6 +3,7 @@ package ru.avem.posum.controllers.process;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.util.Pair;
+import ru.avem.posum.communication.CommunicationModel;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.process.ChannelModel;
@@ -11,6 +12,8 @@ import ru.avem.posum.models.settings.LTR34SettingsModel;
 
 import java.util.List;
 import java.util.Optional;
+
+import static ru.avem.posum.utils.Utils.sleep;
 
 public class RegulatorController {
     private final int SLOTS = 16;
@@ -23,6 +26,11 @@ public class RegulatorController {
     private RegulatorModel[] regulatorModel = new RegulatorModel[SLOTS];
     private boolean stopped;
     private String[] typesOfModules = new String[SLOTS];
+    private boolean noNeedRegulate = true;
+    private boolean isCoarseStep = true;
+    private boolean isFineStep = false;
+    private boolean isMegaFineStep = false;
+    int tries = 0;
 
     public RegulatorController(ProcessController processController) {
         this.processController = processController;
@@ -147,17 +155,47 @@ public class RegulatorController {
                                     }
                                     break;
                                 case 2:
-                                    double newFrequency = regulatorModel[channelIndex].getFrequency();
-                                    if (newFrequency + frequencies[channelIndex] < 0) {
-                                        frequencies[channelIndex] = 0;
+                                    double newFrequency = regulatorModel[channelIndex].getNeededFrequency();
+
+                                    if (dc[channelIndex] <= 10) {
+                                        if (isCoarseStep) {
+                                            if (regulatorModel[channelIndex].getResponseFrequency() < newFrequency * 0.8) {
+                                                dc[channelIndex] += 0.5;
+                                            } else if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 1.2) {
+                                                dc[channelIndex] -= 0.5;
+                                            }
+                                        }
+
+                                        if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 0.8) {
+                                            isCoarseStep = false;
+                                            isFineStep = true;
+                                        }
+
+                                        if (isFineStep) {
+                                            if (regulatorModel[channelIndex].getResponseFrequency() < newFrequency * 0.95) {
+                                                dc[channelIndex] += 0.1;
+                                            } else if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 1.05) {
+                                                dc[channelIndex] -= 0.1;
+                                            }
+                                        }
+
+                                        if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 0.95) {
+                                            isFineStep = false;
+                                            isMegaFineStep = true;
+                                        }
+
+                                        if (isMegaFineStep) {
+                                            if (regulatorModel[channelIndex].getResponseFrequency() < newFrequency * 0.99) {
+                                                dc[channelIndex] += 0.01;
+                                            } else if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 1.01) {
+                                                dc[channelIndex] -= 0.01;
+                                            }
+                                        }
                                     } else {
-                                        frequencies[channelIndex] += newFrequency;
+
                                     }
+
                                     break;
-                                case 3:
-                                    double newStatic = regulatorModel[channelIndex].getDc();
-                                    dc[channelIndex] += newStatic;
-                                    break; //TODO тест
                             }
                         }
                     }

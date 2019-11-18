@@ -270,7 +270,7 @@ public class LTR34Settings implements BaseController {
         Platform.runLater(() -> graph.getData().clear());
         ltr34ChannelsSettings.enableUiElements();
         ltr34ModuleSettings.enableUiElements();
-        CommunicationModel.INSTANCE.getMU110Controller().on1KM();//TODO тесты
+        CommunicationModel.INSTANCE.getMU110Controller().off1KM();
     }
 
     // Возвращает пользователя в окно выбора модуля

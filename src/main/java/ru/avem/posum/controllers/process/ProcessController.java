@@ -20,6 +20,7 @@ import ru.avem.posum.controllers.protocol.ProtocolSheets;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.process.*;
+import ru.avem.posum.models.settings.LTR34SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
 
@@ -479,6 +480,9 @@ public class ProcessController implements BaseController {
             while (!process.isStopped()) {
                 if (dacIndex != -1) {
                     process.getData()[dacIndex] = tableController.getRegulatorController().getSignalForDac();
+                    if (tableController.getRegulatorController().getSignalForDac()[dacIndex] > 10) { //TODO проверить
+                        process.setStopped(true);
+                    }
                 }
 
                 process.perform();
@@ -519,7 +523,7 @@ public class ProcessController implements BaseController {
             @Override
             public void run() {
                 process.setPaused(false);
-                initializeButton.setDisable(true); // TODO: change this shit
+                initializeButton.setDisable(true); // TODO: change this shit -LUL :D how?
                 statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.setStatus("Программа испытаний возобновлена", true);
                 eventsController.getEventsModel().addEvent(testProgram.getId(), "Программа испытаний возобновлена", EventsTypes.LOG);

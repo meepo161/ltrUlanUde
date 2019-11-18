@@ -52,8 +52,9 @@ public class RegulatorModel {
 //        }
 //        else {
             System.out.println("PID"+(pValue + iValue + dValue));
-            return (pValue + iValue + dValue);
+//            return (pValue + iValue + dValue);
 
+        return neededParameter;
 //        }
     }
 
@@ -63,8 +64,14 @@ public class RegulatorModel {
     }
 
     // вовзращает скорректированное значение частоты
-    public double getFrequency() {
-        return calculateRegulator(neededFrequency, responseFrequency);
+
+
+    public double getNeededFrequency() {
+        return neededFrequency;
+    }
+
+    public double getResponseFrequency() {
+        return responseFrequency;
     }
 
     // вовзращает скорректированное действующее значение

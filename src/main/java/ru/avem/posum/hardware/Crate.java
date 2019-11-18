@@ -95,8 +95,8 @@ public class Crate {
     private void fillCratesNames() {
         cratesNames = Optional.of(FXCollections.observableArrayList());
 
-        for (int i = 0; i < crates[1].length; i++) {
-            if (!crates[1][i].isEmpty()) {
+        for (int i = 0; i < crates[0].length; i++) { //crates[1].length; почему по [1]?? главное - серийный номер
+            if (!crates[0][i].isEmpty() || !crates[1][i].isEmpty() || !crates[2][i].isEmpty()) { // у некоторых крейтов почему-то ничего не лежит в crates[1], добавил проверку всех 3
                 cratesNames.get().add(crates[1][i] + " (" + crates[0][i] + "), " + crates[2][i]);
             }
         }
