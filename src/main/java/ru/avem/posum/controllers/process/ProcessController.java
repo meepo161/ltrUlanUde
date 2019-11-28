@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TimerTask;
 
+import static ru.avem.posum.utils.Utils.sleep;
+
 public class ProcessController implements BaseController {
     @FXML
     private Button addChannelsButton;
@@ -425,6 +427,9 @@ public class ProcessController implements BaseController {
         toggleUiElements(true);
 
         CommunicationModel.INSTANCE.getMU110Controller().on1KM(); //TODO тесты
+//        CommunicationModel.INSTANCE.getMU110Controller().on2KM();
+//        CommunicationModel.INSTANCE.getMU110Controller().on3KM();
+
 
         Thread processThread = new Thread(() -> {
             process.run();
@@ -534,7 +539,7 @@ public class ProcessController implements BaseController {
         initializeButton.setDisable(true); // TODO: change this shit
 
         process.setPaused(true);
-        Utils.sleep(1000);
+        sleep(1000);
         process.initData(processModel.getModules());
         timerController.startTimers();
     }
@@ -551,7 +556,7 @@ public class ProcessController implements BaseController {
 
         new Thread(() -> {
             process.setStopped(true);
-            Utils.sleep(1000);
+            sleep(1000);
             process.finish();
             tableController.getRegulatorController().setFirstStart(false);
             tableController.clearChannels();

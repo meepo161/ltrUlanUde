@@ -23,6 +23,8 @@ class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Obse
         val DEVICE_ID = DeviceType.MU110
 
         var isNeedMotor = false
+        var isRestartNeed = false
+        var isStartNeed = false
     }
 
     enum class Parameters : Parameter {
@@ -66,6 +68,40 @@ class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Obse
 
     fun off1KM() {
         isNeedMotor = false
+    }
+
+    fun on2KM() {
+        try {
+            isRestartNeed = true;
+            thread {
+                while (isRestartNeed) {
+                    ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 50, arrayOf(SimpleRegister(2.toShort())))
+                }
+            }
+        } catch (e: Exception) {
+            isResponding = false
+        }
+    }
+
+    fun off2KM() {
+        isRestartNeed = false
+    }
+
+    fun on3KM() {
+        try {
+            isStartNeed = true;
+            thread {
+                while (isStartNeed) {
+                    ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 50, arrayOf(SimpleRegister(4.toShort())))
+                }
+            }
+        } catch (e: Exception) {
+            isResponding = false
+        }
+    }
+
+    fun off3KM() {
+        isStartNeed = false
     }
 
 
