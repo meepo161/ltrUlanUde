@@ -9,7 +9,6 @@ import ru.avem.posum.controllers.process.ProcessController
 import ru.avem.posum.models.process.ChannelModel
 import ru.avem.posum.models.protocol.ChannelDataModel
 import java.io.File
-import java.io.FileNotFoundException
 import java.text.SimpleDateFormat
 
 class JsonController(private val processController: ProcessController) {
@@ -23,12 +22,7 @@ class JsonController(private val processController: ProcessController) {
 
     // Создает файл Json
     fun createJson() {
-        try {
-            file.writeText("") // beginning of list
-        } catch (e: FileNotFoundException) {
-            file.createNewFile()
-        }
-
+        file.writeText("") // beginning of list
     }
 
     // Сериализует модель и записывает в Json

@@ -40,7 +40,6 @@ class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Obse
         addObserver(observer)
     }
 
-
     fun readRegister() {
         try {
             val readInputRegisters = ModbusConnection.readInputRegisters(unitID.id, REGISTER, 1)

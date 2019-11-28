@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.util.Pair;
 import ru.avem.posum.communication.CommunicationModel;
+import ru.avem.posum.communication.ModbusConnection;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.process.ChannelModel;
@@ -13,6 +14,7 @@ import ru.avem.posum.models.settings.LTR34SettingsModel;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.xmlbeans.impl.schema.StscState.start;
 import static ru.avem.posum.utils.Utils.sleep;
 
 public class RegulatorController {
@@ -30,7 +32,13 @@ public class RegulatorController {
     private boolean isCoarseStep = true;
     private boolean isFineStep = false;
     private boolean isMegaFineStep = false;
+    private boolean isFirstStart = false;
     int tries = 0;
+    private boolean isNeedSmoothStop;
+    private ChannelModel channelModel;
+
+    private double newFrequency;
+    private double needFrequency;
 
     public RegulatorController(ProcessController processController) {
         this.processController = processController;
@@ -121,7 +129,6 @@ public class RegulatorController {
         double[] dc = ltr34SettingsModel.getDc();
         double[] frequencies = ltr34SettingsModel.getFrequencies();
 
-
         ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
         for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
             String adcChannelDescription = linkedChannels.get(channelIndex).getValue().getText();
@@ -155,52 +162,40 @@ public class RegulatorController {
                                     }
                                     break;
                                 case 2:
-                                    double newFrequency = regulatorModel[channelIndex].getNeededFrequency();
-
-                                    if (dc[channelIndex] <= 10) {
-                                        if (isCoarseStep) {
-                                            if (regulatorModel[channelIndex].getResponseFrequency() < newFrequency * 0.8) {
-                                                dc[channelIndex] += 0.5;
-                                            } else if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 1.2) {
-                                                dc[channelIndex] -= 0.5;
-                                            }
-                                        }
-
-                                        if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 0.8) {
-                                            isCoarseStep = false;
-                                            isFineStep = true;
-                                        }
-
-                                        if (isFineStep) {
-                                            if (regulatorModel[channelIndex].getResponseFrequency() < newFrequency * 0.95) {
-                                                dc[channelIndex] += 0.1;
-                                            } else if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 1.05) {
-                                                dc[channelIndex] -= 0.1;
-                                            }
-                                        }
-
-                                        if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 0.95) {
-                                            isFineStep = false;
-                                            isMegaFineStep = true;
-                                        }
-
-                                        if (isMegaFineStep) {
-                                            if (regulatorModel[channelIndex].getResponseFrequency() < newFrequency * 0.99) {
-                                                dc[channelIndex] += 0.01;
-                                            } else if (regulatorModel[channelIndex].getResponseFrequency() > newFrequency * 1.01) {
-                                                dc[channelIndex] -= 0.01;
+                                    if (isNeedSmoothStop) {
+                                        if (dc[channelIndex] > 0) {
+                                            dc[channelIndex] -= 0.3;
+                                            if (dc[channelIndex] < 0.5) {
+                                                processController.handleStop();
+                                                break;
                                             }
                                         }
                                     } else {
-
+                                        newFrequency = regulatorModel[channelIndex].getNeededFrequency();
+                                        needFrequency = regulatorModel[channelIndex].getResponseFrequency();
+                                        if (dc[channelIndex] <= 10 || dc[channelIndex] > 0) {
+                                            if (needFrequency < newFrequency * 0.8) {
+                                                dc[channelIndex] += 0.05;
+                                            } else if (needFrequency > newFrequency * 1.2) {
+                                                dc[channelIndex] -= 0.05;
+                                            } else if (needFrequency < newFrequency * 0.92) {
+                                                dc[channelIndex] += 0.01;
+                                            } else if (needFrequency > newFrequency * 1.08) {
+                                                dc[channelIndex] -= 0.01;
+                                            } else if (needFrequency < newFrequency * 0.995) {
+                                                dc[channelIndex] += 0.005;
+                                            } else if (needFrequency > newFrequency * 1.005) {
+                                                dc[channelIndex] -= 0.005;
+                                            }
+                                        }
                                     }
-
-                                    break;
+//                                    break;
                             }
                         }
                     }
                 }
             }
+            System.out.println(String.format("%.3f", dc[channelIndex]));
         }
 
         ltr34SettingsModel.calculateSignal(signalType);
@@ -235,27 +230,28 @@ public class RegulatorController {
 
     // Выполняет плавную остановку
     public void doSmoothStop() {
-        for (ChannelModel channel : channels) {
-            channel.setChosenParameterIndex("0"); // регулировка по амплитуде
-        }
-
-        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
-        for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
-            RegulatorModel regulator = regulatorModel[channelIndex];
-            regulator.setNeededAmplitude(0);
-            regulator.setPCoefficient(1);
-        }
-
-        new Thread(() -> {
-            while (!stopped) {
-                stopped = true;
-                for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
-                    if (ltr34SettingsModel.getAmplitudes()[channelIndex] != 0) {
-                        stopped = false;
-                    }
-                }
-            }
-        }).start();
+//        for (ChannelModel channel : channels) {
+//            channel.setChosenParameterIndex("0"); // регулировка по амплитуде
+//        }
+//
+//        ObservableList<Pair<CheckBox, CheckBox>> linkedChannels = processController.getLinkingController().getLinkedChannels();
+//        for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+//            RegulatorModel regulator = regulatorModel[channelIndex];
+//            regulator.setNeededAmplitude(0);
+//            regulator.setPCoefficient(1);
+//        }
+//
+//        new Thread(() -> {
+//            while (!stopped) {
+//                stopped = true;
+//                for (int channelIndex = 0; channelIndex < linkedChannels.size(); channelIndex++) {
+//                    if (ltr34SettingsModel.getAmplitudes()[channelIndex] != 0) {
+//                        stopped = false;
+//                    }
+//                }
+//            }
+//        }).start();
+        isNeedSmoothStop = true;
     }
 
     // Возвращает объект модуля ЦАП

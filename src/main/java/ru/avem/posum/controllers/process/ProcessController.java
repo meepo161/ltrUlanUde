@@ -502,15 +502,16 @@ public class ProcessController implements BaseController {
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Запущена плавная остановка", EventsTypes.LOG);
         tableController.getRegulatorController().doSmoothStop();
 
-        new Thread(() -> {
-            while (!tableController.getRegulatorController().isStopped()) {
-                if (tableController.getRegulatorController().isStopped()) {
-                    handleStop();
-                    statusBarLine.setStatus("Плавная остановка успешно выполнена", true);
-                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Плавная остановка успешно выполнена", EventsTypes.OK);
-                }
-            }
-        }).start();
+//        new Thread(() -> {
+//            while (!tableController.getRegulatorController().isStopped()) {
+//                if (tableController.getRegulatorController().isStopped()) {
+//                    handleStop();
+//                    statusBarLine.setStatus("Плавная остановка успешно выполнена", true);
+//                    eventsController.getEventsModel().addEvent(testProgram.getId(), "Плавная остановка успешно выполнена", EventsTypes.OK);
+//                }
+//            }
+//        }).start();
+
     }
 
     // Выполняет паузу процесса испытаний
@@ -540,6 +541,7 @@ public class ProcessController implements BaseController {
 
     // Выполняет остановку процесса испытаний
     public void handleStop() {
+        CommunicationModel.INSTANCE.getMU110Controller().off1KM();
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
 
