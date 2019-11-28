@@ -173,19 +173,22 @@ public class RegulatorController {
                                     } else {
                                         newFrequency = regulatorModel[channelIndex].getNeededFrequency();
                                         needFrequency = regulatorModel[channelIndex].getResponseFrequency();
-                                        if (dc[channelIndex] <= 10 || dc[channelIndex] > 0) {
+                                        if (dc[channelIndex] < 3) {
+                                            dc[channelIndex] += 0.1;
+                                        }
+                                        if (dc[channelIndex] <= 10 || dc[channelIndex] >= 3) {
                                             if (needFrequency < newFrequency * 0.8) {
-                                                dc[channelIndex] += 0.05;
+                                                dc[channelIndex] += 0.08;
                                             } else if (needFrequency > newFrequency * 1.2) {
-                                                dc[channelIndex] -= 0.05;
-                                            } else if (needFrequency < newFrequency * 0.92) {
+                                                dc[channelIndex] -= 0.08;
+                                            } else if (needFrequency < newFrequency * 0.90) {
+                                                dc[channelIndex] += 0.03;
+                                            } else if (needFrequency > newFrequency * 1.1) {
+                                                dc[channelIndex] -= 0.03;
+                                            } else if (needFrequency < newFrequency * 0.95) {
                                                 dc[channelIndex] += 0.01;
-                                            } else if (needFrequency > newFrequency * 1.08) {
+                                            } else if (needFrequency > newFrequency * 1.05) {
                                                 dc[channelIndex] -= 0.01;
-                                            } else if (needFrequency < newFrequency * 0.995) {
-                                                dc[channelIndex] += 0.005;
-                                            } else if (needFrequency > newFrequency * 1.005) {
-                                                dc[channelIndex] -= 0.005;
                                             }
                                         }
                                     }
