@@ -1,8 +1,5 @@
 package ru.avem.posum.controllers.settings.LTR34;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
-import com.ucicke.k2mod.modbus.procimg.Register;
-import com.ucicke.k2mod.modbus.procimg.SimpleRegister;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -11,16 +8,11 @@ import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.communication.CommunicationModel;
-import ru.avem.posum.communication.ModbusConnection;
-import ru.avem.posum.communication.devices.enums.COMState;
-import ru.avem.posum.communication.devices.mu110.OwenMU110Controller;
 import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.hardware.LTR34;
 import ru.avem.posum.models.settings.LTR34SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
 import ru.avem.posum.utils.Utils;
-
-import java.util.Observable;
 
 public class LTR34Settings implements BaseController {
     @FXML
@@ -192,7 +184,7 @@ public class LTR34Settings implements BaseController {
                 ltr34SettingsModel.calculateSignal(signalTypeComboBox.getSelectionModel().getSelectedIndex());
                 generate();
                 showGraph();
-                CommunicationModel.INSTANCE.getMU110Controller().on1KM();//TODO тесты
+                CommunicationModel.INSTANCE.getMU110Controller().onKM1();//TODO тесты
             } else {
                 ltr34ChannelsSettings.enableUiElements();
                 ltr34ModuleSettings.enableUiElements();
@@ -270,7 +262,7 @@ public class LTR34Settings implements BaseController {
         Platform.runLater(() -> graph.getData().clear());
         ltr34ChannelsSettings.enableUiElements();
         ltr34ModuleSettings.enableUiElements();
-        CommunicationModel.INSTANCE.getMU110Controller().off1KM();
+        CommunicationModel.INSTANCE.getMU110Controller().offAllKms();
     }
 
     // Возвращает пользователя в окно выбора модуля

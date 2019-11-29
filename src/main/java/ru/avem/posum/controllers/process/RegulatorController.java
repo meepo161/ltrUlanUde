@@ -1,21 +1,20 @@
 package ru.avem.posum.controllers.process;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.util.Pair;
 import ru.avem.posum.communication.CommunicationModel;
-import ru.avem.posum.communication.ModbusConnection;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.models.process.ChannelModel;
 import ru.avem.posum.models.process.RegulatorModel;
 import ru.avem.posum.models.settings.LTR34SettingsModel;
+import ru.avem.posum.utils.Toast;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
-import static org.apache.xmlbeans.impl.schema.StscState.start;
-import static ru.avem.posum.utils.Utils.sleep;
 
 public class RegulatorController {
     private final int SLOTS = 16;
@@ -33,12 +32,11 @@ public class RegulatorController {
     private boolean isFineStep = false;
     private boolean isMegaFineStep = false;
     private boolean isFirstStart = false;
-    int tries = 0;
+    private int redZone = 0;
+    private int yellowZone = 0;
     private boolean isNeedSmoothStop;
     private ChannelModel channelModel;
-
-    private double newFrequency;
-    private double needFrequency;
+    boolean isRegulated = false;
 
     public RegulatorController(ProcessController processController) {
         this.processController = processController;
@@ -171,25 +169,63 @@ public class RegulatorController {
                                             }
                                         }
                                     } else {
-                                        newFrequency = regulatorModel[channelIndex].getNeededFrequency();
-                                        needFrequency = regulatorModel[channelIndex].getResponseFrequency();
+                                        double needFrequency = regulatorModel[channelIndex].getNeededFrequency();
+                                        double measuringFrequency = regulatorModel[channelIndex].getResponseFrequency();
                                         if (dc[channelIndex] < 3) {
                                             dc[channelIndex] += 0.1;
                                         }
                                         if (dc[channelIndex] <= 10 || dc[channelIndex] >= 3) {
-                                            if (needFrequency < newFrequency * 0.8) {
+                                            if (measuringFrequency < needFrequency * 0.8) {
                                                 dc[channelIndex] += 0.08;
-                                            } else if (needFrequency > newFrequency * 1.2) {
+                                            } else if (measuringFrequency > needFrequency * 1.2) {
                                                 dc[channelIndex] -= 0.08;
-                                            } else if (needFrequency < newFrequency * 0.90) {
+                                            } else if (measuringFrequency < needFrequency * 0.90) {
                                                 dc[channelIndex] += 0.03;
-                                            } else if (needFrequency > newFrequency * 1.1) {
+                                            } else if (measuringFrequency > needFrequency * 1.1) {
                                                 dc[channelIndex] -= 0.03;
-                                            } else if (needFrequency < newFrequency * 0.95) {
+                                            } else if (measuringFrequency < needFrequency * 0.97) {
                                                 dc[channelIndex] += 0.01;
-                                            } else if (needFrequency > newFrequency * 1.05) {
+                                                if (!isRegulated) {
+                                                    Platform.runLater(() -> {
+                                                        Toast.makeText("Регулирование окончено.").show(Toast.ToastType.INFORMATION);
+                                                    });
+                                                }
+                                                isRegulated = true;
+                                            } else if (measuringFrequency > needFrequency * 1.03) {
                                                 dc[channelIndex] -= 0.01;
+                                                if (!isRegulated) {
+                                                    Platform.runLater(() -> {
+                                                        Toast.makeText("Регулирование окончено.").show(Toast.ToastType.INFORMATION);
+                                                    });
+                                                }
+                                                isRegulated = true;
                                             }
+                                            if ((needFrequency > measuringFrequency * 1.2
+                                                    || needFrequency < measuringFrequency * 0.8) && isRegulated) {
+                                                CommunicationModel.INSTANCE.getMU110Controller().offKM1();
+                                                processController.handleStop();
+                                                Platform.runLater(() -> {
+                                                    Toast.makeText("Остановка. КРАСНАЯ ЗОНА!").show(Toast.ToastType.ERROR);
+                                                });
+                                                break;
+                                            }
+
+//                                            if (measuringFrequency > 20 && isRegulated) { //от 10% до 20%
+//                                                yellowZone++;
+//                                                if (yellowZone == 1) {
+//                                                    Platform.runLater(() -> {
+//                                                        Toast.makeText("Вошли в желтую зону. Отсчитываем 20 секунд.").show(Toast.ToastType.WARNING);
+//                                                    });
+//                                                }
+//                                                System.out.println("yellowZone = " + yellowZone);
+//                                                if (yellowZone > 20) {
+//                                                    isNeedSmoothStop = true;
+//                                                    Platform.runLater(() -> {
+//                                                        Toast.makeText("Плавная остановка. Желтая зона.").show(Toast.ToastType.ERROR);
+//                                                    });
+//                                                    break;
+//                                                }
+//                                            }
                                         }
                                     }
 //                                    break;
@@ -198,7 +234,7 @@ public class RegulatorController {
                     }
                 }
             }
-            System.out.println(String.format("%.3f", dc[channelIndex]));
+            System.out.println(String.format("%s%.3f", "freq = ", dc[channelIndex]));
         }
 
         ltr34SettingsModel.calculateSignal(signalType);

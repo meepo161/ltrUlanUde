@@ -20,9 +20,7 @@ import ru.avem.posum.controllers.protocol.ProtocolSheets;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.process.*;
-import ru.avem.posum.models.settings.LTR34SettingsModel;
 import ru.avem.posum.utils.StatusBarLine;
-import ru.avem.posum.utils.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -426,10 +424,7 @@ public class ProcessController implements BaseController {
 
         toggleUiElements(true);
 
-        CommunicationModel.INSTANCE.getMU110Controller().on1KM(); //TODO тесты
-//        CommunicationModel.INSTANCE.getMU110Controller().on2KM();
-//        CommunicationModel.INSTANCE.getMU110Controller().on3KM();
-
+            CommunicationModel.INSTANCE.getMU110Controller().onKM1();
 
         Thread processThread = new Thread(() -> {
             process.run();
@@ -546,7 +541,7 @@ public class ProcessController implements BaseController {
 
     // Выполняет остановку процесса испытаний
     public void handleStop() {
-        CommunicationModel.INSTANCE.getMU110Controller().off1KM();
+        CommunicationModel.INSTANCE.getMU110Controller().offAllKms();
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
 
