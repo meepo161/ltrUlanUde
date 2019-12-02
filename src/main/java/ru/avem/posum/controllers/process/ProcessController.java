@@ -424,8 +424,6 @@ public class ProcessController implements BaseController {
 
         toggleUiElements(true);
 
-            CommunicationModel.INSTANCE.getMU110Controller().onKM1();
-
         Thread processThread = new Thread(() -> {
             process.run();
             checkRunning();

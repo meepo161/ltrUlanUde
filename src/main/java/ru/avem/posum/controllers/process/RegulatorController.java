@@ -37,6 +37,7 @@ public class RegulatorController {
     private boolean isNeedSmoothStop;
     private ChannelModel channelModel;
     boolean isRegulated = false;
+    boolean isError = false;
 
     public RegulatorController(ProcessController processController) {
         this.processController = processController;
@@ -169,6 +170,9 @@ public class RegulatorController {
                                             }
                                         }
                                     } else {
+                                        if (!isError) {
+                                            CommunicationModel.INSTANCE.getMU110Controller().onKM1();
+                                        }
                                         double needFrequency = regulatorModel[channelIndex].getNeededFrequency();
                                         double measuringFrequency = regulatorModel[channelIndex].getResponseFrequency();
                                         if (dc[channelIndex] < 3) {
@@ -200,8 +204,10 @@ public class RegulatorController {
                                                 }
                                                 isRegulated = true;
                                             }
+
                                             if ((needFrequency > measuringFrequency * 1.2
                                                     || needFrequency < measuringFrequency * 0.8) && isRegulated) {
+                                                isError = true;
                                                 CommunicationModel.INSTANCE.getMU110Controller().offKM1();
                                                 processController.handleStop();
                                                 Platform.runLater(() -> {

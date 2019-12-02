@@ -82,12 +82,7 @@ class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Obse
 
     fun onKM(mask: Short) {
         try {
-            isNeedMotor = true;
-            thread {
-                while (isNeedMotor) {
-                    ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 50, arrayOf(SimpleRegister(mask)))
-                }
-            }
+            ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 50, arrayOf(SimpleRegister(mask)))
         } catch (e: Exception) {
             isResponding = false
         }
