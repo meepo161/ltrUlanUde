@@ -74,6 +74,22 @@ public class RegulatorModel {
         return responseFrequency;
     }
 
+    public double getResponseAmplitude() {
+        return responseAmplitude;
+    }
+
+    public double getResponseDc() {
+        return responseDc;
+    }
+
+    public double getNeededAmplitude() {
+        return neededAmplitude;
+    }
+
+    public double getNeededDc() {
+        return neededDc;
+    }
+
     // вовзращает скорректированное действующее значение
     public double getRms() {
         return neededRms;

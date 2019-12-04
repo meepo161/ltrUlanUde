@@ -169,7 +169,7 @@ public class RegulatorParametersController {
                 unselectCheckBoxes(checkBox);
                 highlightPidParameters();
             } else {
-                clearParameters();
+//                clearParameters();
                 saveButton.setDisable(false);
             }
         });
@@ -196,20 +196,20 @@ public class RegulatorParametersController {
         switch (parameterIndex) {
             case 0:
                 toggleUiElements(amplitudeUiElements, false);
-                toggleUiElements(dcUiElements, true);
-                toggleUiElements(rmsUiElements, true);
-                toggleUiElements(frequencyUiElements, true);
+                toggleUiElements(dcUiElements, false);
+                toggleUiElements(rmsUiElements, false);
+                toggleUiElements(frequencyUiElements, false);
                 break;
             case 1:
-                toggleUiElements(amplitudeUiElements, true);
+                toggleUiElements(amplitudeUiElements, false);
                 toggleUiElements(dcUiElements, false);
-                toggleUiElements(rmsUiElements, true);
-                toggleUiElements(frequencyUiElements, true);
+                toggleUiElements(rmsUiElements, false);
+                toggleUiElements(frequencyUiElements, false);
                 break;
             case 2:
-                toggleUiElements(amplitudeUiElements, true);
-                toggleUiElements(dcUiElements, true);
-                toggleUiElements(rmsUiElements, true);
+                toggleUiElements(amplitudeUiElements, false);
+                toggleUiElements(dcUiElements, false);
+                toggleUiElements(rmsUiElements, false);
                 toggleUiElements(frequencyUiElements, false);
                 break;
         }

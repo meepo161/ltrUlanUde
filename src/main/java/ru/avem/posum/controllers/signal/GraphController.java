@@ -49,7 +49,7 @@ public class GraphController {
 
     public void clearSeries() {
         Platform.runLater(() -> graphSeries.getData().clear());
-        Utils.sleep(50);
+        Utils.sleep(1);
     }
 
     public void initComboBoxes() {

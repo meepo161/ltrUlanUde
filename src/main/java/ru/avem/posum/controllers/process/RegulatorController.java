@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
 import javafx.util.Pair;
+import kotlin.jvm.Volatile;
 import ru.avem.posum.communication.CommunicationModel;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
@@ -27,17 +28,18 @@ public class RegulatorController {
     private RegulatorModel[] regulatorModel = new RegulatorModel[SLOTS];
     private boolean stopped;
     private String[] typesOfModules = new String[SLOTS];
-    private boolean noNeedRegulate = true;
-    private boolean isCoarseStep = true;
-    private boolean isFineStep = false;
-    private boolean isMegaFineStep = false;
-    private boolean isFirstStart = false;
-    private int redZone = 0;
-    private int yellowZone = 0;
-    private boolean isNeedSmoothStop;
     private ChannelModel channelModel;
+
+    @Volatile
+    private int redZone = 0;
+    @Volatile
+    private int yellowZone = 0;
+    @Volatile
+    private boolean isNeedSmoothStop;
+    @Volatile
     boolean isRegulated = false;
-    boolean isError = false;
+    @Volatile
+    public static boolean isError = false;
 
     public RegulatorController(ProcessController processController) {
         this.processController = processController;
@@ -175,6 +177,11 @@ public class RegulatorController {
                                         }
                                         double needFrequency = regulatorModel[channelIndex].getNeededFrequency();
                                         double measuringFrequency = regulatorModel[channelIndex].getResponseFrequency();
+                                        double needAmplitude = regulatorModel[channelIndex].getNeededAmplitude();
+                                        double measuringAmplitude = regulatorModel[channelIndex].getResponseAmplitude();
+                                        double needStatic = regulatorModel[channelIndex].getNeededDc();
+                                        double measuringStatic = regulatorModel[channelIndex].getResponseDc();
+
                                         if (dc[channelIndex] < 3) {
                                             dc[channelIndex] += 0.1;
                                         }
@@ -207,31 +214,85 @@ public class RegulatorController {
 
                                             if ((needFrequency > measuringFrequency * 1.2
                                                     || needFrequency < measuringFrequency * 0.8) && isRegulated) {
-                                                isError = true;
                                                 CommunicationModel.INSTANCE.getMU110Controller().offKM1();
-                                                processController.handleStop();
+                                                CommunicationModel.INSTANCE.getMU110Controller().offKM2();
+                                                isError = true;
                                                 Platform.runLater(() -> {
-                                                    Toast.makeText("Остановка. КРАСНАЯ ЗОНА!").show(Toast.ToastType.ERROR);
+                                                    Toast.makeText("Остановка по частоте. КРАСНАЯ ЗОНА!").show(Toast.ToastType.ERROR);
                                                 });
+                                                processController.handleStop();
                                                 break;
                                             }
 
-//                                            if (measuringFrequency > 20 && isRegulated) { //от 10% до 20%
-//                                                yellowZone++;
-//                                                if (yellowZone == 1) {
-//                                                    Platform.runLater(() -> {
-//                                                        Toast.makeText("Вошли в желтую зону. Отсчитываем 20 секунд.").show(Toast.ToastType.WARNING);
-//                                                    });
-//                                                }
-//                                                System.out.println("yellowZone = " + yellowZone);
-//                                                if (yellowZone > 20) {
-//                                                    isNeedSmoothStop = true;
-//                                                    Platform.runLater(() -> {
-//                                                        Toast.makeText("Плавная остановка. Желтая зона.").show(Toast.ToastType.ERROR);
-//                                                    });
-//                                                    break;
-//                                                }
-//                                            }
+                                            if ((needAmplitude > measuringAmplitude * 1.2
+                                                    || needAmplitude < measuringAmplitude * 0.8) && isRegulated) {
+                                                CommunicationModel.INSTANCE.getMU110Controller().offKM1();
+                                                CommunicationModel.INSTANCE.getMU110Controller().offKM2();
+                                                isError = true;
+                                                Platform.runLater(() -> {
+                                                    Toast.makeText("Остановка по амлитуде. КРАСНАЯ ЗОНА!").show(Toast.ToastType.ERROR);
+                                                });
+                                                processController.handleStop();
+                                                break;
+                                            }
+
+                                            if ((needStatic > measuringStatic * 1.2
+                                                    || needStatic < measuringStatic * 0.8) && isRegulated) {
+                                                CommunicationModel.INSTANCE.getMU110Controller().offKM1();
+                                                CommunicationModel.INSTANCE.getMU110Controller().offKM2();
+                                                isError = true;
+                                                Platform.runLater(() -> {
+                                                    Toast.makeText("Остановка по амлитуде. КРАСНАЯ ЗОНА!").show(Toast.ToastType.ERROR);
+                                                });
+                                                processController.handleStop();
+                                                break;
+                                            }
+
+                                            if ((needFrequency > measuringFrequency * 1.1
+                                                    || needFrequency < measuringFrequency * 0.9) && isRegulated) { //от 10% до 20%
+                                                yellowZone++;
+                                                if (yellowZone == 1) {
+                                                    Platform.runLater(() -> {
+                                                        Toast.makeText("Вошли в желтую зону по частоте. Отсчитываем 20 секунд.").show(Toast.ToastType.WARNING);
+                                                    });
+                                                }
+                                            }
+
+                                            if ((needAmplitude > measuringAmplitude * 1.1
+                                                    || needAmplitude < measuringAmplitude * 0.9) && isRegulated) { //от 10% до 20%
+                                                yellowZone++;
+                                                if (yellowZone == 1) {
+                                                    Platform.runLater(() -> {
+                                                        Toast.makeText("Вошли в желтую зону по амлитуде. Отсчитываем 20 секунд.").show(Toast.ToastType.WARNING);
+                                                    });
+                                                }
+                                            }
+
+                                            if ((needStatic > measuringStatic * 1.1
+                                                    || needStatic < measuringStatic * 0.9) && isRegulated) { //от 10% до 20%
+                                                yellowZone++;
+                                                if (yellowZone == 1) {
+                                                    Platform.runLater(() -> {
+                                                        Toast.makeText("Вошли в желтую зону по статике. Отсчитываем 20 секунд.").show(Toast.ToastType.WARNING);
+                                                    });
+                                                }
+
+                                                if (yellowZone > 20) {
+                                                    isNeedSmoothStop = true;
+                                                    Platform.runLater(() -> {
+                                                        Toast.makeText("Плавная остановка. Желтая зона.").show(Toast.ToastType.ERROR);
+                                                    });
+                                                    break;
+                                                }
+
+                                                if (needFrequency < measuringFrequency * 1.1 || needFrequency > measuringFrequency * 0.9 ||
+                                                        needAmplitude < measuringAmplitude * 1.1 || needAmplitude > measuringAmplitude * 0.9 ||
+                                                        needStatic < measuringStatic * 1.1 || needStatic > measuringStatic * 0.9) {
+                                                    yellowZone = 0;
+                                                }
+
+                                            }
+
                                         }
                                     }
 //                                    break;

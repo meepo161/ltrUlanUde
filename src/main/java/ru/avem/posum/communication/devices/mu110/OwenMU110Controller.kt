@@ -89,8 +89,7 @@ class OwenMU110Controller(private val unitID: UnitID, observer: Observer) : Obse
     }
 
     fun offAllKms() {
-        isNeedMotor = false
-        ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 0, arrayOf(SimpleRegister(1.toShort())))
+        ModbusConnection.master!!.writeMultipleRegisters(unitID.id, 50, arrayOf(SimpleRegister(0.toShort())))
     }
 
     fun onKM1() {

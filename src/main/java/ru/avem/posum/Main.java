@@ -41,6 +41,8 @@ import java.util.List;
 
 import tornadofx.*;
 
+import static ru.avem.posum.controllers.process.RegulatorController.isError;
+
 public class Main extends Application implements WindowsManager, ControllerManager {
     private CalibrationController calibrationController;
     private LTR27CalibrationController ltr27CalibrationController;
@@ -80,6 +82,12 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
 
         DataBaseRepository.init(false);
+
+        new Thread(() -> {
+            while (!isError) {
+                CommunicationModel.INSTANCE.getMU110Controller().onKM2();
+            }
+        }).start();
 
         crateLoginScene();
         createMainScene();

@@ -88,6 +88,14 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField frequencyTextField;
     @FXML
+    private Label frequencyAmpLabel;
+    @FXML
+    private TextField frequencyAmpTextField;
+    @FXML
+    private Label frequencyStaticLabel;
+    @FXML
+    private TextField frequencyStaticTextField;
+    @FXML
     private Label horizontalScaleLabel;
     @FXML
     private ComboBox<String> horizontalScaleComboBox;
@@ -424,6 +432,11 @@ public class ProcessController implements BaseController {
 
         toggleUiElements(true);
 
+        CommunicationModel.INSTANCE.getMU110Controller().onKM3();
+        sleep(100);
+        CommunicationModel.INSTANCE.getMU110Controller().offKM3();
+        sleep(100);
+
         Thread processThread = new Thread(() -> {
             process.run();
             checkRunning();
@@ -478,9 +491,6 @@ public class ProcessController implements BaseController {
             while (!process.isStopped()) {
                 if (dacIndex != -1) {
                     process.getData()[dacIndex] = tableController.getRegulatorController().getSignalForDac();
-                    if (tableController.getRegulatorController().getSignalForDac()[dacIndex] > 10) { //TODO проверить
-                        process.setStopped(true);
-                    }
                 }
 
                 process.perform();
@@ -539,7 +549,6 @@ public class ProcessController implements BaseController {
 
     // Выполняет остановку процесса испытаний
     public void handleStop() {
-        CommunicationModel.INSTANCE.getMU110Controller().offAllKms();
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
 
@@ -557,6 +566,9 @@ public class ProcessController implements BaseController {
             commandsController.getTimerController().clearTimers();
             checkFinish();
         }).start();
+
+        CommunicationModel.INSTANCE.getMU110Controller().offAllKms();
+
     }
 
     // Проверяет завершение программы испытаний
