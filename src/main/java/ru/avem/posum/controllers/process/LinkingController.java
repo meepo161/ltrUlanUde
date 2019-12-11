@@ -104,7 +104,7 @@ public class LinkingController implements BaseController, LinkingManager {
             adcChannelsListView.getItems().clear();
 
             dacChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR34));
-            adcChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24));
+            adcChannelsListView.setItems(linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24, Crate.LTR27));
 
             listenChannels(adcChannelsListView.getItems());
             listenChannels(dacChannelsListView.getItems());
@@ -292,7 +292,7 @@ public class LinkingController implements BaseController, LinkingManager {
     // Инициализирует списки каналов
     public void initModulesList() {
         linkingModel.getDescriptionsOfChannels(Crate.LTR34);
-        linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24);
+        linkingModel.getDescriptionsOfChannels(Crate.LTR212, Crate.LTR24, Crate.LTR27);
     }
 
     // Задает делегат WindowManager

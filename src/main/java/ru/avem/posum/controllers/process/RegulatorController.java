@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.avem.posum.utils.Utils.sleep;
+
 public class RegulatorController {
     private final int SLOTS = 16;
 
@@ -163,6 +165,7 @@ public class RegulatorController {
                                     }
                                     break;
                                 case 2:
+                                    sleep(1000);
                                     if (isNeedSmoothStop) {
                                         if (dc[channelIndex] > 0) {
                                             dc[channelIndex] -= 0.3;
@@ -292,16 +295,14 @@ public class RegulatorController {
                                                 }
 
                                             }
-
                                         }
                                     }
-//                                    break;
                             }
                         }
                     }
                 }
             }
-            System.out.println(String.format("%s%.3f", "freq = ", dc[channelIndex]));
+            System.out.println(String.format("%s%.3f", "volt = ", dc[channelIndex]));
         }
 
         ltr34SettingsModel.calculateSignal(signalType);

@@ -172,6 +172,9 @@ public class Process {
                 case Crate.LTR212:
                     this.modulesTypes[moduleIndex] = 2;
                     break;
+                case Crate.LTR27:
+                    this.modulesTypes[moduleIndex] = 3;
+                    break;
             }
         }
     }

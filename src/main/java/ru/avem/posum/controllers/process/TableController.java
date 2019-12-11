@@ -332,7 +332,7 @@ public class TableController {
         List<ChannelModel> dacChannels = new ArrayList<>();
 
         for (ChannelModel channel : channels) {
-            if (channel.getName().contains(Crate.LTR24)) {
+            if (channel.getName().contains(Crate.LTR24) || channel.getName().contains(Crate.LTR27)) {
                 dacChannels.add(channel);
             }
         }

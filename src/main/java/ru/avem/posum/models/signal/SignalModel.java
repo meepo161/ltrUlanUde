@@ -25,6 +25,7 @@ public class SignalModel {
     private double lowerBound; // нижняя граница графика
     private LTR24 ltr24; // инстанс модуля LTR24
     private LTR212 ltr212; // инстанс модуля LTR212
+    private LTR27 ltr27; // инстанс модуля LTR212
     private String moduleType; // название модуля
     private SignalParametersModel signalParametersModel = new SignalParametersModel(); // модель параметров сигала
     private int rarefactionCoefficient = 10; // коэффициент прореживания
@@ -56,6 +57,7 @@ public class SignalModel {
         instructions.clear();
         instructions.put(Crate.LTR24, this::initLTR24Module);
         instructions.put(Crate.LTR212, this::initLTR212Module);
+        instructions.put(Crate.LTR27, this::initLTR27Module);
     }
 
     // Инициализирует инстанс модуля LTR24
@@ -79,6 +81,16 @@ public class SignalModel {
         ltr212.setRingBufferForShow(new RingBuffer(SAMPLES));
         ltr212.setTimeMarks(new double[SAMPLES * 2]);
         ltr212.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
+    }
+
+    private void initLTR27Module() {
+        ltr27 = (LTR27) adc;
+        int SAMPLES = (int) ltr27.getFrequency() * ltr27.getChannelsCount();
+        ltr27.setData(new double[SAMPLES]);
+        ltr27.setRingBufferForCalculation(new RingBuffer(SAMPLES));
+        ltr27.setRingBufferForShow(new RingBuffer(SAMPLES));
+        ltr27.setTimeMarks(new double[SAMPLES * 2]);
+        ltr27.setTimeMarksRingBuffer(new RingBuffer(SAMPLES * 2));
     }
 
     // Выполняет инструкции
@@ -144,6 +156,7 @@ public class SignalModel {
         instructions.clear();
         instructions.put(Crate.LTR24, this::receive);
         instructions.put(Crate.LTR212, this::receive);
+        instructions.put(Crate.LTR27, this::receive);
     }
 
     // Записывает данные, полученные от модуля

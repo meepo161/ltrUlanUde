@@ -238,6 +238,8 @@ public class SignalParametersModel {
                 return 0.05;
             case Crate.LTR212:
                 return 0.001;
+            case Crate.LTR27:
+                return 0.01;
             default:
                 return 0;
         }

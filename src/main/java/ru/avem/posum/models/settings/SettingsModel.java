@@ -96,6 +96,7 @@ public class SettingsModel implements BaseController {
     private void initLTR27Instance() {
         adc = new LTR27();
         setModuleSettings(adc);
+        setDefaultADCSettings(0, 1); //TODO УДАЛИТЬ
         adc.setData(new double[1000]); // частота дискретизации по умолчанию
         saveModuleInstance(adc);
     }

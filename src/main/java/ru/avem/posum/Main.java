@@ -85,7 +85,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
 
         new Thread(() -> {
             while (!isError) {
-                CommunicationModel.INSTANCE.getMU110Controller().onKM2();
+                CommunicationModel.INSTANCE.getMU110Controller().onKM3();
             }
         }).start();
 
