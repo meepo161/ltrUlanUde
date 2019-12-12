@@ -14,7 +14,9 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import ru.avem.posum.communication.CommunicationModel;
 import ru.avem.posum.communication.ModbusConnection;
-import ru.avem.posum.controllers.*;
+import ru.avem.posum.controllers.BaseController;
+import ru.avem.posum.controllers.LoginController;
+import ru.avem.posum.controllers.MainController;
 import ru.avem.posum.controllers.calibration.CalibrationController;
 import ru.avem.posum.controllers.calibration.LTR27CalibrationController;
 import ru.avem.posum.controllers.process.LinkingController;
@@ -31,15 +33,12 @@ import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Crate;
 import ru.avem.posum.hardware.Module;
 import ru.avem.posum.models.signal.SignalModel;
-import ru.avem.posum.utils.ExtView;
 import ru.avem.posum.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import tornadofx.*;
 
 import static ru.avem.posum.controllers.process.RegulatorController.isError;
 
