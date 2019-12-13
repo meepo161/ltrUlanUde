@@ -6,7 +6,10 @@ import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalDouble;
+import java.util.stream.Stream;
 
 /**
  * Класс всех модулей процесса испытаний
@@ -107,6 +110,11 @@ public class Process {
     public void perform() {
         if (!paused) {
             perform(data, timeMarks);
+//            double validValue = Arrays.stream(data[1]).filter((value) -> value != 0).findFirst().orElse(404);
+//
+//            for (int i = 0; i < data[1].length; i++) {
+//                if (data[1][i] == 0) data[1][i] = validValue;
+//            }
         }
     }
 

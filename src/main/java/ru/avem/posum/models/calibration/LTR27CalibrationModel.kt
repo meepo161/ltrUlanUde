@@ -61,7 +61,12 @@ class LTR27CalibrationModel {
 
     // Градуирует значение
     private fun calibrate(value: Double, calibrationPoints: List<CalibrationPoint>): Double {
-        return value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
+
+        return (-(calibrationPoints.first().valueOfChannel * calibrationPoints.last().loadOfChannel -
+                calibrationPoints.last().valueOfChannel * calibrationPoints.first().loadOfChannel) -
+                (calibrationPoints.first().loadOfChannel - calibrationPoints.last().loadOfChannel) * value) /
+                (calibrationPoints.last().valueOfChannel - calibrationPoints.first().valueOfChannel)
+//        return value * (calibrationPoints.last().loadOfChannel / calibrationPoints.last().valueOfChannel)
     }
 
     // Очищает буфер

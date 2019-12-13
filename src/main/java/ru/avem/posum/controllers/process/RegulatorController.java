@@ -165,7 +165,6 @@ public class RegulatorController {
                                     }
                                     break;
                                 case 2:
-                                    sleep(1000);
                                     if (isNeedSmoothStop) {
                                         if (dc[channelIndex] > 0) {
                                             dc[channelIndex] -= 0.3;
