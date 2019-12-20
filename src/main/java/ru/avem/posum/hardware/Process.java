@@ -1,15 +1,11 @@
 package ru.avem.posum.hardware;
 
 import javafx.util.Pair;
-import ru.avem.posum.db.DataBaseRepository;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.utils.TextEncoder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.OptionalDouble;
-import java.util.stream.Stream;
 
 /**
  * Класс всех модулей процесса испытаний
@@ -18,6 +14,7 @@ import java.util.stream.Stream;
 public class Process {
     private final int CHANNELS = 4; // количество каналов
     private final int SLOTS = 16; // количество слотов в крейте
+    private int LENGTH_LTR27_DATA = 1000;
 
     private String bioPath = LTR212.getBioPath();
     private int[] channelsCount = new int[SLOTS];
@@ -36,6 +33,7 @@ public class Process {
     private TextEncoder textEncoder = new TextEncoder();
     private double[][] timeMarks = new double[SLOTS][SLOTS];
     private int[][] typesOfChannels = new int[SLOTS][SLOTS];
+
 
     public Process() {
         initStrings();
@@ -109,13 +107,67 @@ public class Process {
     // Записывает измеренные значения и генерирует сигнал
     public void perform() {
         if (!paused) {
-            perform(data, timeMarks);
-//            double validValue = Arrays.stream(data[1]).filter((value) -> value != 0).findFirst().orElse(404);
-//
+//            double[] result = new double[data[1].length];
 //            for (int i = 0; i < data[1].length; i++) {
+//                double validValue = Arrays.stream(data[1]).filter((value) -> value != 0).findFirst().orElse(404);
+//                result = Arrays.stream()
 //                if (data[1][i] == 0) data[1][i] = validValue;
 //            }
+
+//            ArrayList<Double> tempList = new ArrayList<>();
+//
+//            for (int i = 0; i < data[1].length; i++) {
+//                if (data[1][i] != 0)
+//                    tempList.add(data[1][i]);
+//            }
+
+//            if (tempList.size() > 0) {
+//                data[1] = new double[tempList.size()];
+//            }
+//
+//            for (int i = 0; i < tempList.size(); i++) {
+//                data[1][i] = tempList.get(i);
+//            }
+            int ltr27Index = 1;
+            data[ltr27Index] = new double[LENGTH_LTR27_DATA];
+            perform(data, timeMarks);
+
+            LENGTH_LTR27_DATA = data[ltr27Index].length;
+            data[ltr27Index+1] = data[ltr27Index]; // original
+            data[ltr27Index] = filterLtr27(data[ltr27Index]); // filter
         }
+    }
+
+
+    private double[] filterLtr27(double[] data) {
+
+        int originalLength = data.length;
+
+        int dataStartPoint = -1;
+        for (int i = 0; i < data.length - 4; i++) {
+            if (data[i] != 0 && data[i + 1] != 0 && data[i + 2] != 0 && data[i + 3] != 0) {
+                dataStartPoint = i;
+                break;
+            }
+        }
+
+        if (dataStartPoint < 0)
+            return data;
+
+        int ltr27DataPacketLength = 16;
+        int ltr27DataPackedValidLength = 4;
+        int dataPacketCount = (data.length - dataStartPoint) / ltr27DataPacketLength-1;
+
+        if (dataPacketCount <= 0)
+            return data;
+
+        double[] result = new double[dataPacketCount * ltr27DataPackedValidLength];
+
+        for (int i = 0; i < dataPacketCount; i++)
+            for (int j = 0; j < ltr27DataPackedValidLength; j++)
+                result[i*ltr27DataPackedValidLength + j] = data[dataStartPoint + i * ltr27DataPacketLength + j];
+
+        return result;
     }
 
     // Завершает работу модулей

@@ -210,11 +210,11 @@ public class SignalParametersModel {
             int upperLimitOfFrequency = 1000;
 
             frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
-//            double buffer = bufferedFrequency[moduleIndex][channelIndex];
+            double buffer = bufferedFrequency[moduleIndex][channelIndex];
 
-//            if (!(frequency - buffer > 1) && (frequency > bufferedFrequency[moduleIndex][channelIndex])) {
-//                frequency = bufferedFrequency[moduleIndex][channelIndex];
-//            }
+            if (!(frequency - buffer > 1) && (frequency > bufferedFrequency[moduleIndex][channelIndex])) {
+                frequency = bufferedFrequency[moduleIndex][channelIndex];
+            }
 
             if (frequencyCalculationCounters[moduleIndex][channelIndex] == 10) {
                 frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
@@ -226,8 +226,8 @@ public class SignalParametersModel {
             }
 
             frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
-//            frequencies[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex] > upperLimitOfFrequency ? bufferedFrequency[moduleIndex][channelIndex] : frequencies[moduleIndex][channelIndex];
-//            bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
+            frequencies[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex] > upperLimitOfFrequency ? bufferedFrequency[moduleIndex][channelIndex] : frequencies[moduleIndex][channelIndex];
+            bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
         }
     }
 
