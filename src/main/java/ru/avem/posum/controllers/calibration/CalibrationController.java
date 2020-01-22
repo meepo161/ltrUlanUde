@@ -282,7 +282,6 @@ public class CalibrationController implements BaseController {
                 loadValueTextField.setText("");
                 loadValueNameTextField.setText("");
             }
-
             loadValueLabel.setDisable(setNulCheckBox.isSelected());
             loadValueTextField.setDisable(setNulCheckBox.isSelected());
             loadValueNameLabel.setDisable(setNulCheckBox.isSelected());

@@ -3,6 +3,7 @@ package ru.avem.posum.hardware;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LTR27 extends ADC {
@@ -131,9 +132,7 @@ public class LTR27 extends ADC {
         setMeasuringRanges(new int[MAX_SUBMODULES]);
 
         String[] descriptions = new String[MAX_SUBMODULES];
-        for (int i = 0; i < descriptions.length; i++) {
-            descriptions[i] = ", ";
-        }
+        Arrays.fill(descriptions, ", ");
         setDescriptions(descriptions);
     }
 

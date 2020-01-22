@@ -19,7 +19,7 @@ public class Process {
     private String bioPath = LTR212.getBioPath();
     private int[] channelsCount = new int[SLOTS];
     private String crateSerialNumber;
-    private double[][] data = new double[SLOTS][SLOTS];
+    private double[][] data = new double[SLOTS][10001];
     private String[] firPaths = new String[SLOTS];
     private String[] iirPaths = new String[SLOTS];
     private int[][] measuringRanges = new int[SLOTS][SLOTS];
@@ -46,7 +46,6 @@ public class Process {
             firPaths[stringIndex] = "";
             iirPaths[stringIndex] = "";
         }
-
         crateSerialNumber = "";
     }
 

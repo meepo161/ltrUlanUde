@@ -210,24 +210,24 @@ public class SignalParametersModel {
             int upperLimitOfFrequency = 1000;
 
             frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
-            double buffer = bufferedFrequency[moduleIndex][channelIndex];
-
-            if (!(frequency - buffer > 1) && (frequency > bufferedFrequency[moduleIndex][channelIndex])) {
-                frequency = bufferedFrequency[moduleIndex][channelIndex];
-            }
-
-            if (frequencyCalculationCounters[moduleIndex][channelIndex] == 10) {
-                frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
-                frequencyCalculationCounters[moduleIndex][channelIndex] = 0;
-            }
-
-            if (frequency <= accuracyCoefficient) {
-                frequency = defineFrequencyFirstAlgorithm(moduleIndex, channelIndex);
-            }
+//            double buffer = bufferedFrequency[moduleIndex][channelIndex];
+//
+//            if (!(frequency - buffer > 1) && (frequency > bufferedFrequency[moduleIndex][channelIndex])) {
+//                frequency = bufferedFrequency[moduleIndex][channelIndex];
+//            }
+//
+//            if (frequencyCalculationCounters[moduleIndex][channelIndex] == 10) {
+//                frequency = defineFrequencySecondAlgorithm(moduleIndex, channelIndex, estimatedFrequency * 2);
+//                frequencyCalculationCounters[moduleIndex][channelIndex] = 0;
+//            }
+//
+//            if (frequency <= accuracyCoefficient) {
+//                frequency = defineFrequencyFirstAlgorithm(moduleIndex, channelIndex);
+//            }
 
             frequencies[moduleIndex][channelIndex] = amplitudes[moduleIndex][channelIndex] < getLowerLimitOfAmplitude(moduleIndex) ? 0 : frequency;
-            frequencies[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex] > upperLimitOfFrequency ? bufferedFrequency[moduleIndex][channelIndex] : frequencies[moduleIndex][channelIndex];
-            bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
+//            frequencies[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex] > upperLimitOfFrequency ? bufferedFrequency[moduleIndex][channelIndex] : frequencies[moduleIndex][channelIndex];
+//            bufferedFrequency[moduleIndex][channelIndex] = frequencies[moduleIndex][channelIndex];
         }
     }
 
@@ -247,10 +247,10 @@ public class SignalParametersModel {
 
     // Оценивает частоту
     private int estimateFrequency(int moduleIndex, int channelIndex) {
-        boolean positivePartOfSignal = false;
-        int frequency = 0;
-        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude(moduleIndex);
-        iir.lowPass(10, data[moduleIndex].length / CHANNELS, 50);
+        boolean positivePartOfSignal = false; //положительная часть сигнала
+        int frequency = 0; //обновление частоты
+        double lowerLimitOfAmplitude = getLowerLimitOfAmplitude(moduleIndex); //нижний предел амплитуды (для LTR27 = 0)
+        iir.lowPass(10, data[moduleIndex].length / CHANNELS, 50); //
 
         for (int i = channelIndex; i < data[moduleIndex].length; i += CHANNELS) {
             double value = iir.filter(data[moduleIndex][i]);
