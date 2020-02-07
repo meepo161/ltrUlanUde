@@ -464,9 +464,33 @@ public class SignalParametersModel {
         List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
         List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
 
+        List<CalibrationPoint> calibrationPoints = new ArrayList<>();
+        for (int settingsIndex = 0; settingsIndex < calibrationCoefficients.size(); settingsIndex++) {
+            calibrationPoints.add(getCalibrationPoint(calibrationSettings.get(settingsIndex)));
+        }
+        defineValueName();
+
+        int last = calibrationPoints.size() - 1;
+        return (-(calibrationPoints.get(0).getValueOfChannel() * calibrationPoints.get(last).getLoadOfChannel() -
+                calibrationPoints.get(last).getValueOfChannel() * calibrationPoints.get(0).getLoadOfChannel()) -
+                (calibrationPoints.get(0).getLoadOfChannel() - calibrationPoints.get(last).getLoadOfChannel()) * value) /
+                (calibrationPoints.get(last).getValueOfChannel() - calibrationPoints.get(0).getValueOfChannel());
+    }
+    // Получает откалиброванную точку
+    private CalibrationPoint getCalibrationPoint(String calibrationSettings) {
+        firstChannelValue = CalibrationPoint.parseChannelValue(calibrationSettings);
+        firstLoadValue = CalibrationPoint.parseLoadValue(calibrationSettings);
+        return new CalibrationPoint(String.valueOf(firstLoadValue), String.valueOf(firstChannelValue), "В");
+    }
+
+    // Градуирует параметры сигнала
+    public double applyCalibrationOld(ADC adc, double value) {
+        List<Double> calibrationCoefficients = adc.getCalibrationCoefficients().get(channel);
+        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
+
         for (int settingsIndex = 0; settingsIndex < calibrationCoefficients.size() - 1; settingsIndex++) {
             defineValueName();
-            parseCalibrationSettings(calibrationSettings, settingsIndex);
+            parseCalibrationSettingsOld(calibrationSettings, settingsIndex);
             defineBounds();
             setBounds();
             calibrate(value);
@@ -476,7 +500,7 @@ public class SignalParametersModel {
     }
 
     // Считывает параметры градуировки
-    private void parseCalibrationSettings(List<String> calibrationSettings, int i) {
+    private void parseCalibrationSettingsOld(List<String> calibrationSettings, int i) {
         if (CalibrationPoint.parseValueName(calibrationSettings.get(i)).isEmpty()) { // если ноль градуирован
             i++;
         }
@@ -532,8 +556,7 @@ public class SignalParametersModel {
 
     // Определяет название физической величины
     private void defineValueName() {
-        List<String> calibrationSettings = adc.getCalibrationSettings().get(channel);
-        calibratedValueName = CalibrationPoint.parseValueName(calibrationSettings.get(calibrationSettings.size() - 1));
+        calibratedValueName = CalibrationPoint.parseValueName(adc.getCalibrationSettings().get(channel).get(0));
     }
 
     public double getPeakValue() {

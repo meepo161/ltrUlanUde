@@ -262,7 +262,7 @@ public class GraphController {
     private void setGraphAxis() {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         String valueName = processController.getCalibrationModel().getValueName(slot, channel);
-        String label = valueName.equals("В") ? "Напряжение, В" : String.format("Значение, %s", valueName) ;
+        String label = valueName.equals("В") ? "Напряжение, В" : String.format("Значение, %s", valueName);
 
         Platform.runLater(() -> {
             yAxis.setLowerBound(processController.getCalibrationModel().getLowerBound(slot, channel));

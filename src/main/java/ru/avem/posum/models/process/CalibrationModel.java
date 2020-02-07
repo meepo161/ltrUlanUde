@@ -47,7 +47,7 @@ public class CalibrationModel {
                         isCalibrationsExists[moduleIndex][channelIndex] = calibrationSettings.size() > 1;
 
                         if (isCalibrationsExists[moduleIndex][channelIndex]) {
-                            parseValueName(calibrationSettings.get(channelIndex), moduleIndex, channelIndex);
+                            parseValueName(calibrationSettings.get(0), moduleIndex, channelIndex);
                             parse(calibrationSettings, moduleIndex, channelIndex);
                             break;
                         }
@@ -101,7 +101,6 @@ public class CalibrationModel {
             firstPointLoadValue[moduleIndex][channelIndex] = secondPointLoadValue[moduleIndex][channelIndex];
             secondPointLoadValue[moduleIndex][channelIndex] = bufferForLoadValue;
         }
-
         lowerBound[moduleIndex][channelIndex] = firstPointChannelValue[moduleIndex][channelIndex];
         upperBound[moduleIndex][channelIndex] = secondPointChannelValue[moduleIndex][channelIndex];
     }
@@ -152,21 +151,10 @@ public class CalibrationModel {
 
     // Градуирует данные канала
     public double calibrate(double value, int moduleIndex, int channelIndex) {
-        double calibratedValue;
-        double accuracyCoefficient = 1.2;
-
-        if (value > lowerBound[moduleIndex][channelIndex] * accuracyCoefficient && value <= upperBound[moduleIndex][channelIndex] * accuracyCoefficient) {
-            double k = (secondPointLoadValue[moduleIndex][channelIndex] - firstPointLoadValue[moduleIndex][channelIndex])
-                    / (secondPointChannelValue[moduleIndex][channelIndex] - firstPointChannelValue[moduleIndex][channelIndex]);
-            double b = firstPointLoadValue[moduleIndex][channelIndex] - k * firstPointChannelValue[moduleIndex][channelIndex];
-            calibratedValue = k * value + b;
-        } else if (value <= lowerBound[moduleIndex][channelIndex] / accuracyCoefficient) {
-            calibratedValue = calibratedLowerBound[moduleIndex][channelIndex];
-        } else {
-            calibratedValue = calibratedUpperBound[moduleIndex][channelIndex];
-        }
-
-        return calibratedValue;
+        return (-(firstPointChannelValue[moduleIndex][channelIndex] * secondPointLoadValue[moduleIndex][channelIndex] -
+                secondPointChannelValue[moduleIndex][channelIndex] * firstPointLoadValue[moduleIndex][channelIndex]) -
+                (firstPointLoadValue[moduleIndex][channelIndex] - secondPointLoadValue[moduleIndex][channelIndex]) * value) /
+                (secondPointChannelValue[moduleIndex][channelIndex] - firstPointChannelValue[moduleIndex][channelIndex]);
     }
 
     // Возвращает градуированные данные
