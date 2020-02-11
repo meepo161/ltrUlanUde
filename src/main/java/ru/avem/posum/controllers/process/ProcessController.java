@@ -432,9 +432,9 @@ public class ProcessController implements BaseController {
 
         toggleUiElements(true);
 
-        CommunicationModel.INSTANCE.getMU110Controller().onKM3();
+        CommunicationModel.INSTANCE.getMU110Controller().onKM2();
         sleep(100);
-        CommunicationModel.INSTANCE.getMU110Controller().offKM3();
+        CommunicationModel.INSTANCE.getMU110Controller().offKM2();
         sleep(100);
 
         Thread processThread = new Thread(() -> {
@@ -567,7 +567,7 @@ public class ProcessController implements BaseController {
             checkFinish();
         }).start();
 
-        CommunicationModel.INSTANCE.getMU110Controller().offAllKms();
+        CommunicationModel.INSTANCE.getMU110Controller().offKM1();
 
     }
 

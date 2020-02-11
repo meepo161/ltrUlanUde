@@ -7,6 +7,8 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
+import java.util.Objects;
+
 /**
  * Модель канала процесса испытаний
  */
@@ -220,7 +222,9 @@ public class ChannelModel {
         return relativeResponseFrequency.get();
     }
 
-    public String getResponseAmplitude() { return responseAmplitude.get(); }
+    public String getResponseAmplitude() {
+        return responseAmplitude.get();
+    }
 
     public String getResponseDc() {
         return responseDc.get();
