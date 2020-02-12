@@ -73,7 +73,7 @@ public class GraphController {
         scales.add("10 мВ/дел");
         scales.add("100 мВ/дел");
         scales.add("1 В/дел");
-        scales.add("10 В/дел");
+        scales.add("5 В/дел");
         scales.add("100 В/дел");
 
         signalController.getVerticalScalesComboBox().setItems(scales);
@@ -210,7 +210,7 @@ public class GraphController {
             graph.getXAxis().setLabel("Частота, Гц");
         } else {
             graph.setTitle("График сигнала");
-            graph.getYAxis().setLabel("Напряжение, В");
+            graph.getYAxis().setLabel("мм");
             graph.getXAxis().setLabel("Время, с");
         }
     }

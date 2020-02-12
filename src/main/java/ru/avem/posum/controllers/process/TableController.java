@@ -311,7 +311,7 @@ public class TableController {
                 signalParametersModel.calculateParameters();
                 processController.getJsonController().write(table.getItems());
 
-             //   new Thread(() -> regulatorController.setResponse()).start();
+                //   new Thread(() -> regulatorController.setResponse()).start();
 
                 new Thread(this::show).start();
 
@@ -367,15 +367,19 @@ public class TableController {
                         double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
                         double neededRms = Double.parseDouble(channelModel.getRms());
 
-                        channelModel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude * 1.06, 1000)));
-                        channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 1000)));
-                        channelModel.setResponseDc(String.valueOf(Utils.roundValue(dc, 1000)));
-                        channelModel.setRelativeResponseDc(String.valueOf(neededDc == 0 ? 0 : Utils.roundValue(dc / neededDc * 100.0, 1000)));
+                        channelModel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude * 1.06, 100)));
+                        channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 100)));
+                        channelModel.setResponseDc(String.valueOf(Utils.roundValue(dc, 100)));
+                        channelModel.setRelativeResponseDc(String.valueOf(neededDc == 0 ? 0 : Utils.roundValue(dc / neededDc * 100.0, 100)));
                         channelModel.setResponseLoadsCounter(String.valueOf((int) loadsCounter));
-                        channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 1000)));
-                        channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 1000)));
-                        channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms * 1.06, 1000)));
-                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 1000)));
+                        if (frequency < 50) {
+                            channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 100)));
+                        } else {
+                            channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(0.0, 100)));
+                        }
+                        channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 100)));
+                        channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms * 1.06, 100)));
+                        channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 100)));
                     }
                 }
             }
@@ -405,11 +409,11 @@ public class TableController {
 
             Platform.runLater(() -> {
                 for (int channelIndex = 0; channelIndex < checkBoxes.size(); channelIndex++) {
-                    graphController.getAutoscaleCheckBox().setDisable(isProcessStopped);
+//                    graphController.getAutoscaleCheckBox().setDisable(isProcessStopped);
                     graphController.getRarefactionCoefficientLabel().setDisable(isProcessStopped);
                     graphController.getRarefactionCoefficientComboBox().setDisable(isProcessStopped);
                     graphController.getVerticalScaleLabel().setDisable(isProcessStopped);
-                    graphController.getVerticalScaleComboBox().setDisable(isProcessStopped);
+                    graphController.getVerticalScaleComboBox().setDisable(true);
                     graphController.getHorizontalScaleLabel().setDisable(isProcessStopped);
                     graphController.getHorizontalScaleComboBox().setDisable(isProcessStopped);
                 }

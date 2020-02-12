@@ -123,87 +123,142 @@
                         <Pane prefHeight="90.0" prefWidth="550.0">
                             <children>
                                 <ListView fx:id="plug_ListView" prefHeight="97.0" prefWidth="54.0" style="-fx-background-radius: 5px;" />
-                                <Button fx:id="plug_Button" layoutX="53.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран">
+                                <Button fx:id="plug_Button" disable="true" layoutX="53.0" mnemonicParsing="false" onAction="#handlePlugButton" prefHeight="97.0" prefWidth="48.0" text="Кран">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Button>
-                                <CheckBox fx:id="amplitudeCheckBox" disable="true" layoutX="110.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Амплитуда" />
-                                <Label fx:id="amplitudeVoltLabel" disable="true" layoutX="110.0" layoutY="30.0" text="В">
+                                <CheckBox fx:id="amplitudeCheckBox" disable="true" layoutX="110.0" mnemonicParsing="false" opacity="0.0" style="-fx-font-size: 12px;" text="Амплитуда" />
+                                <Label fx:id="amplitudeVoltLabel" layoutX="277.0" layoutY="30.0" text="мм">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="amplitudeTextField" disable="true" layoutX="129.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="amplitudeTextField" layoutX="209.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Label fx:id="calibratedAmplitudeLabel" disable="true" layoutX="110.0" layoutY="60.0" maxWidth="20.0" text="ед">
+                                <Label fx:id="calibratedAmplitudeLabel" disable="true" layoutX="110.0" layoutY="60.0" maxWidth="20.0" opacity="0.0" text="ед">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="calibratedAmplitudeTextField" disable="true" layoutX="129.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="calibratedAmplitudeTextField" disable="true" layoutX="129.0" layoutY="55.0" opacity="0.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="amplitudeSlider" blockIncrement="1.0" disable="true" layoutX="195.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                                <CheckBox fx:id="dcCheckBox" disable="true" layoutX="219.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Статика" />
-                                <Label fx:id="dcLabel" disable="true" layoutX="219.0" layoutY="30.0" text="В">
+                                <Slider fx:id="amplitudeSlider" blockIncrement="1.0" disable="true" layoutX="195.0" layoutY="6.0" max="10.0" opacity="0.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                                <CheckBox fx:id="dcCheckBox" disable="true" layoutX="219.0" mnemonicParsing="false" opacity="0.0" style="-fx-font-size: 12px;" text="Статика" />
+                                <Label fx:id="dcLabel" disable="true" layoutX="247.0" layoutY="53.0" opacity="0.0" text="В">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="dcTextField" disable="true" layoutX="238.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="dcTextField" disable="true" layoutX="231.0" layoutY="48.0" opacity="0.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Label fx:id="calibratedDcLabel" disable="true" layoutX="219.0" layoutY="60.0" maxWidth="20.0" text="ед">
+                                <Label fx:id="calibratedDcLabel" disable="true" layoutX="219.0" layoutY="60.0" maxWidth="20.0" opacity="0.0" text="ед">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="calibratedDcTextField" disable="true" layoutX="238.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="calibratedDcTextField" disable="true" layoutX="238.0" layoutY="55.0" opacity="0.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="dcSlider" blockIncrement="1.0" disable="true" layoutX="307.0" layoutY="6.0" max="10.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
-                                <CheckBox fx:id="frequencyCheckBox" disable="true" layoutX="331.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Частота" />
-                                <Label fx:id="frequencyLabel" disable="true" layoutX="331.0" layoutY="30.0" text="Гц">
+                                <Slider fx:id="dcSlider" blockIncrement="1.0" disable="true" layoutX="307.0" layoutY="6.0" max="10.0" opacity="0.0" orientation="VERTICAL" prefHeight="87.0" prefWidth="19.0" />
+                                <CheckBox fx:id="frequencyCheckBox" layoutX="118.0" layoutY="1.0" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Частота" />
+                                <Label fx:id="frequencyLabel" layoutX="186.0" layoutY="30.0" text="Гц">
                                     <font>
                                         <Font name="Arial" size="12.0" />
                                     </font>
                                 </Label>
-                                <TextField fx:id="frequencyTextField" disable="true" layoutX="350.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                                <TextField fx:id="frequencyTextField" layoutX="119.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                                     <font>
                                         <Font name="Arial Bold" size="12.0" />
                                     </font>
                                 </TextField>
-                                <Slider fx:id="frequencySlider" blockIncrement="1.0" disable="true" layoutX="419.0" layoutY="6.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
-                        <Label fx:id="frequencyAmpLabel" disable="true" layoutX="443.0" layoutY="7.0" text="Ампл">
+                                <Slider fx:id="frequencySlider" blockIncrement="1.0" disable="true" layoutX="419.0" layoutY="6.0" opacity="0.0" orientation="VERTICAL" prefHeight="90.0" prefWidth="14.0" />
+                        <Label layoutX="211.0" layoutY="1.0" text="Амплитуда">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="frequencyAmpTextField" disable="true" layoutX="483.0" layoutY="2.0" prefHeight="25.0" prefWidth="60.0" text="0">
-                           <font>
-                              <Font name="Arial Bold" size="12.0" />
-                           </font>
-                        </TextField>
-                        <Label fx:id="frequencyStaticLabel" disable="true" layoutX="445.0" layoutY="38.0" text="Стат">
+                        <Label layoutX="326.0" layoutY="1.0" text="Желтая зона">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="frequencyStaticTextField" disable="true" layoutX="483.0" layoutY="33.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                        <Label layoutX="438.0" layoutY="1.0" text="Красная зона">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="tfYellowZonePercent" layoutX="332.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
                            <font>
                               <Font name="Arial Bold" size="12.0" />
                            </font>
                         </TextField>
+                        <TextField fx:id="tfYellowZoneTime" layoutX="332.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <TextField fx:id="tfRedZonePercent" layoutX="445.0" layoutY="25.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <TextField fx:id="tfRedZoneTime" layoutX="445.0" layoutY="55.0" prefHeight="25.0" prefWidth="60.0" text="0">
+                           <font>
+                              <Font name="Arial Bold" size="12.0" />
+                           </font>
+                        </TextField>
+                        <Label fx:id="frequencyLabel1" layoutX="309.0" layoutY="30.0" text="От">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel11" layoutX="421.0" layoutY="30.0" text="От">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel111" layoutX="398.0" layoutY="30.0" text="\%">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel112" layoutX="513.0" layoutY="30.0" text="\%">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel12" layoutX="322.0" layoutY="60.0" text="t">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel121" layoutX="434.0" layoutY="60.0" text="t">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel113" layoutX="396.0" layoutY="60.0" text="сек">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="frequencyLabel114" layoutX="509.0" layoutY="60.0" text="сек">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Label>
                             </children>
                         </Pane>
                         <Pane prefHeight="97.0" prefWidth="350.0">
@@ -308,7 +363,7 @@
                                                         <NumberAxis animated="false" autoRanging="false" label="Время, с" minorTickCount="10" side="LEFT" style="-fx-border-color: none;" styleClass="programGraph" tickUnit="0.1" upperBound="1.0" fx:id="xAxis" />
                                                     </xAxis>
                                                     <yAxis>
-                                                        <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="Напряжение, В" lowerBound="-5.0" side="LEFT" tickUnit="1.0" upperBound="5.0" />
+                                                        <NumberAxis fx:id="yAxis" animated="false" autoRanging="false" label="мм" lowerBound="-5.0" side="LEFT" tickUnit="1.0" upperBound="5.0" />
                                                     </yAxis>
                                                 </LineChart>
                                             </items>
@@ -383,21 +438,20 @@
                                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="0.0" prefWidth="0.0" />
                                             </columnConstraints>
                                             <rowConstraints>
-                                                <RowConstraints maxHeight="25.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="30.0" minHeight="0.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="0.0" vgrow="SOMETIMES" />
                                             </rowConstraints>
                                             <children>
                                                 <CheckBox fx:id="autoScaleCheckBox" disable="true" mnemonicParsing="false" style="-fx-font-size: 12px;" text="Автомасшаб" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                                                <ComboBox fx:id="horizontalScaleComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                                                <ComboBox fx:id="verticalScaleComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                                                <Label fx:id="verticalScaleLabel" disable="true" style="-fx-font-size: 12px;" text="Вертикальный машстаб:" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                <ComboBox fx:id="horizontalScaleComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                                                <ComboBox fx:id="verticalScaleComboBox" disable="true" maxHeight="25.0" prefWidth="150.0" style="-fx-font-size: 12px;" visible="false" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
+                                                <Label fx:id="verticalScaleLabel" disable="true" style="-fx-font-size: 12px;" text="Вертикальный машстаб:" visible="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                     <GridPane.margin>
                                                         <Insets left="2.0" />
                                                     </GridPane.margin>
                                                 </Label>
-                                                <Label fx:id="horizontalScaleLabel" disable="true" style="-fx-font-size: 12px;" text="Горизонтальный масштаб:" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                <Label fx:id="horizontalScaleLabel" disable="true" style="-fx-font-size: 12px;" text="Горизонтальный масштаб:" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                     <GridPane.margin>
                                                         <Insets left="2.0" />
                                                     </GridPane.margin>

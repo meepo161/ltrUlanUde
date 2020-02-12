@@ -384,7 +384,9 @@ public class SignalParametersModel {
     // Считает количество нагружений
     private void calculateLoadsCounters(int moduleIndex) {
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-            loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];
+            if (frequencies[moduleIndex][channelIndex] < 50) {
+                loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];
+            }
         }
     }
 

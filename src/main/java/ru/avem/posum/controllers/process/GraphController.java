@@ -68,7 +68,7 @@ public class GraphController {
             NumberAxis yAxis = (NumberAxis) graph.getYAxis();
             yAxis.setAutoRanging(checkBox.isSelected());
             verticalScaleLabel.setDisable(checkBox.isSelected());
-            verticalScaleComboBox.setDisable(checkBox.isSelected());
+            verticalScaleComboBox.setDisable(true);
 
             if (!checkBox.isSelected()) {
                 setHorizontalGraphBounds();
@@ -131,7 +131,7 @@ public class GraphController {
         double upperBound = scaleValue * divisions / 2;
         double tickUnit = scaleValue;
 
-        scaleName = "Напряжение, В";
+        scaleName = "мм";
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         yAxis.setLowerBound(lowerBound);
         yAxis.setUpperBound(upperBound);
@@ -262,7 +262,7 @@ public class GraphController {
     private void setGraphAxis() {
         NumberAxis yAxis = (NumberAxis) graph.getYAxis();
         String valueName = processController.getCalibrationModel().getValueName(slot, channel);
-        String label = valueName.equals("В") ? "Напряжение, В" : String.format("Значение, %s", valueName);
+        String label = "мм";
 
         Platform.runLater(() -> {
             yAxis.setLowerBound(processController.getCalibrationModel().getLowerBound(slot, channel));
@@ -355,7 +355,7 @@ public class GraphController {
     public void setDefaultGraphControlsState() {
         Platform.runLater(() -> {
             autoscaleCheckBox.setSelected(false);
-            rarefactionCoefficientComboBox.getSelectionModel().select(3); // отображать точек в 10 раз меньше
+            rarefactionCoefficientComboBox.getSelectionModel().select(6); // отображать точек в 10 раз меньше
             horizontalScaleComboBox.getSelectionModel().select(2); // 100 мс в делении
             verticalScaleComboBox.getSelectionModel().select(3); // 1 В в делении
             verticalScaleLabel.setDisable(true);
@@ -370,7 +370,7 @@ public class GraphController {
             yAxis.setLowerBound(-5); // TODO: change this shit
             yAxis.setUpperBound(5); // TODO: change this shit
             yAxis.setTickUnit(1); // TODO: change this shit
-            yAxis.setLabel("Напряжение, В");
+            yAxis.setLabel("мм");
         });
     }
 

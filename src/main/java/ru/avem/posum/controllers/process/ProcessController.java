@@ -88,13 +88,13 @@ public class ProcessController implements BaseController {
     @FXML
     private TextField frequencyTextField;
     @FXML
-    private Label frequencyAmpLabel;
+    public TextField tfYellowZonePercent;
     @FXML
-    private TextField frequencyAmpTextField;
+    public TextField tfYellowZoneTime;
     @FXML
-    private Label frequencyStaticLabel;
+    public TextField tfRedZonePercent;
     @FXML
-    private TextField frequencyStaticTextField;
+    public TextField tfRedZoneTime;
     @FXML
     private Label horizontalScaleLabel;
     @FXML
@@ -236,6 +236,11 @@ public class ProcessController implements BaseController {
         tableController.initTableView();
 
         fillListOfUiElements();
+
+        tfYellowZonePercent.setText("10.0");
+        tfYellowZoneTime.setText("20.0");
+        tfRedZonePercent.setText("20.0");
+        tfRedZoneTime.setText("5.0");
     }
 
     // Формирует список элементов GUI
@@ -549,6 +554,13 @@ public class ProcessController implements BaseController {
 
     // Выполняет остановку процесса испытаний
     public void handleStop() {
+        new Thread(() -> {
+            CommunicationModel.INSTANCE.getMU110Controller().offKM1();
+            sleep(100);
+            CommunicationModel.INSTANCE.getMU110Controller().offKM2();
+            sleep(100);
+        }).start();
+
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
 
