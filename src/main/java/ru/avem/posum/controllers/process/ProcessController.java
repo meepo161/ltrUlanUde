@@ -9,6 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
+import kotlin.jvm.Volatile;
 import org.controlsfx.control.StatusBar;
 import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
@@ -41,8 +42,6 @@ public class ProcessController implements BaseController {
     private CheckBox amplitudeCheckBox;
     @FXML
     private Slider amplitudeSlider;
-    @FXML
-    private TextField amplitudeTextField;
     @FXML
     private Label amplitudeVoltLabel;
     @FXML
@@ -95,6 +94,8 @@ public class ProcessController implements BaseController {
     public TextField tfRedZonePercent;
     @FXML
     public TextField tfRedZoneTime;
+    @FXML
+    public TextField amplitudeTextField;
     @FXML
     private Label horizontalScaleLabel;
     @FXML
@@ -201,6 +202,8 @@ public class ProcessController implements BaseController {
     private TestProgramController testProgramController = new TestProgramController();
     private List<Node> uiElements = new ArrayList<>();
     private WindowsManager wm;
+    @Volatile
+    boolean isRegulated = false;
 
     @FXML
     private void initialize() {
@@ -493,6 +496,11 @@ public class ProcessController implements BaseController {
             jsonController.createJson();
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
+
+            new Thread(() -> {
+                CommunicationModel.INSTANCE.getMU110Controller().onKM1();
+            }).start();
+
             while (!process.isStopped()) {
                 if (dacIndex != -1) {
                     process.getData()[dacIndex] = tableController.getRegulatorController().getSignalForDac();
@@ -557,8 +565,6 @@ public class ProcessController implements BaseController {
         new Thread(() -> {
             CommunicationModel.INSTANCE.getMU110Controller().offKM1();
             sleep(100);
-            CommunicationModel.INSTANCE.getMU110Controller().offKM2();
-            sleep(100);
         }).start();
 
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
@@ -579,7 +585,7 @@ public class ProcessController implements BaseController {
             checkFinish();
         }).start();
 
-        CommunicationModel.INSTANCE.getMU110Controller().offKM1();
+        isRegulated = false;
 
     }
 

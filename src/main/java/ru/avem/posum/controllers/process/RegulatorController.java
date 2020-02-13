@@ -40,8 +40,6 @@ public class RegulatorController {
     @Volatile
     private boolean isNeedSmoothStop;
     @Volatile
-    boolean isRegulated = false;
-    @Volatile
     public static boolean isError = false;
 
     public RegulatorController(ProcessController processController) {
@@ -180,23 +178,13 @@ public class RegulatorController {
                                         }
                                         double needFrequency = regulatorModel[channelIndex].getNeededFrequency();
                                         double measuringFrequency = regulatorModel[channelIndex].getResponseFrequency();
-                                        double needAmplitude = regulatorModel[channelIndex].getNeededAmplitude();
+                                        double needAmplitude = Double.parseDouble(processController.amplitudeTextField.getText());
                                         double measuringAmplitude = regulatorModel[channelIndex].getResponseAmplitude();
 
                                         double yellowZonePercent = Double.parseDouble(processController.tfYellowZonePercent.getText()) / 100;
                                         double yellowZoneTime = Double.parseDouble(processController.tfYellowZoneTime.getText());
                                         double redZonePercent = Double.parseDouble(processController.tfRedZonePercent.getText()) / 100;
                                         double redZoneTime = Double.parseDouble(processController.tfRedZoneTime.getText());
-
-                                        System.out.println("yellowZonePercent =" + yellowZonePercent);
-                                        System.out.println("yellowZoneTime =" + yellowZoneTime);
-                                        System.out.println("yellowZoneFreq =" + yellowZoneFreq);
-                                        System.out.println("yellowZoneAmpl =" + yellowZoneAmpl);
-
-                                        System.out.println("redZonePercent =" + redZonePercent);
-                                        System.out.println("redZoneTime =" + redZoneTime);
-                                        System.out.println("redZoneFreq =" + redZoneFreq);
-                                        System.out.println("redZoneAmpl =" + redZoneAmpl);
 
                                         if (dc[channelIndex] < 3) {
                                             dc[channelIndex] += 0.1;
@@ -210,28 +198,34 @@ public class RegulatorController {
                                                 dc[channelIndex] += 0.03;
                                             } else if (measuringFrequency > needFrequency * 1.1) {
                                                 dc[channelIndex] -= 0.03;
-                                            } else if (measuringFrequency < needFrequency * 0.97) {
+                                            } else if (measuringFrequency < needFrequency * 0.99) {
                                                 dc[channelIndex] += 0.01;
-                                                if (!isRegulated) {
-                                                    Platform.runLater(() -> {
-                                                        Toast.makeText("Регулирование окончено.").show(Toast.ToastType.INFORMATION);
-                                                    });
+                                                if (measuringAmplitude < needAmplitude * (1 + yellowZonePercent) &&
+                                                        measuringAmplitude > needAmplitude * (1 - yellowZonePercent)) {
+                                                    if (!processController.isRegulated) {
+                                                        Platform.runLater(() -> {
+                                                            Toast.makeText("Регулирование окончено.").show(Toast.ToastType.INFORMATION);
+                                                        });
+                                                    }
+                                                    processController.isRegulated = true;
                                                 }
-                                                isRegulated = true;
-                                            } else if (measuringFrequency > needFrequency * 1.03) {
+                                            } else if (measuringFrequency > needFrequency * 1.01) {
                                                 dc[channelIndex] -= 0.01;
-                                                if (!isRegulated) {
-                                                    Platform.runLater(() -> {
-                                                        Toast.makeText("Регулирование окончено.").show(Toast.ToastType.INFORMATION);
-                                                    });
+                                                if (measuringAmplitude < needAmplitude * (1 + yellowZonePercent) &&
+                                                        measuringAmplitude > needAmplitude * (1 - yellowZonePercent)) {
+                                                    if (!processController.isRegulated) {
+                                                        Platform.runLater(() -> {
+                                                            Toast.makeText("Регулирование окончено.").show(Toast.ToastType.INFORMATION);
+                                                        });
+                                                    }
+                                                    processController.isRegulated = true;
                                                 }
-                                                isRegulated = true;
                                             }
 
-                                            if ((needFrequency > measuringFrequency * (1 + yellowZonePercent)
-                                                    || needFrequency < measuringFrequency * (1 - yellowZonePercent)) && isRegulated) {
+                                            if ((needFrequency * (1 - yellowZonePercent) > measuringFrequency
+                                                    || needFrequency * (1 + yellowZonePercent) < measuringFrequency) && processController.isRegulated) {
                                                 yellowZoneFreq++;
-                                                if (yellowZoneFreq > 2) {
+                                                if (yellowZoneFreq == 2) {
                                                     Platform.runLater(() -> {
                                                         Toast.makeText("Вошли в желтую зону по частоте.").show(Toast.ToastType.WARNING);
                                                     });
@@ -243,10 +237,11 @@ public class RegulatorController {
                                                 }
                                             }
 
-                                            if ((needFrequency > measuringFrequency * (1 + redZonePercent)
-                                                    || needFrequency < measuringFrequency * (1 - redZonePercent)) && isRegulated) {
+                                            if ((needFrequency * (1 - redZonePercent) > measuringFrequency
+                                                    || needFrequency * (1 + redZonePercent) < measuringFrequency)
+                                                    && processController.isRegulated) {
                                                 redZoneFreq++;
-                                                if (redZoneFreq > 2) {
+                                                if (redZoneFreq == 2) {
                                                     Platform.runLater(() -> {
                                                         Toast.makeText("Вошли в красную зону по частоте.").show(Toast.ToastType.ERROR);
                                                     });
@@ -258,10 +253,10 @@ public class RegulatorController {
                                                 }
                                             }
 
-                                            if ((needAmplitude > measuringAmplitude * (1 + yellowZonePercent)
-                                                    || needAmplitude < measuringAmplitude * (1 - yellowZonePercent)) && isRegulated) {
+                                            if ((needAmplitude * (1 - yellowZonePercent) > measuringAmplitude
+                                                    || needAmplitude * (1 + yellowZonePercent) < measuringAmplitude) && processController.isRegulated) {
                                                 yellowZoneAmpl++;
-                                                if (yellowZoneAmpl > 2) {
+                                                if (yellowZoneAmpl == 2) {
                                                     Platform.runLater(() -> {
                                                         Toast.makeText("Вошли в желтую зону по амплитуде.").show(Toast.ToastType.WARNING);
                                                     });
@@ -273,10 +268,10 @@ public class RegulatorController {
                                                 }
                                             }
 
-                                            if ((needAmplitude > measuringAmplitude * (1 + redZonePercent)
-                                                    || needAmplitude < measuringAmplitude * (1 - redZonePercent)) && isRegulated) {
+                                            if ((needAmplitude * (1 - redZonePercent) > measuringAmplitude
+                                                    || needAmplitude * (1 + redZonePercent) < measuringAmplitude) && processController.isRegulated) {
                                                 redZoneAmpl++;
-                                                if (redZoneAmpl > 2) {
+                                                if (redZoneAmpl == 2) {
                                                     Platform.runLater(() -> {
                                                         Toast.makeText("Вошли в красную зону по амплитуде.").show(Toast.ToastType.ERROR);
                                                     });
@@ -288,23 +283,23 @@ public class RegulatorController {
                                                 }
                                             }
 
-                                            if (needFrequency < measuringFrequency * (1 + yellowZonePercent) ||
-                                                    needFrequency > measuringFrequency * (1 - yellowZonePercent)) {
+                                            if (needFrequency * (1 + yellowZonePercent) > measuringFrequency &&
+                                                    needFrequency * (1 - yellowZonePercent) < measuringFrequency) {
                                                 yellowZoneFreq = 0;
                                             }
 
-                                            if (needFrequency < measuringFrequency * (1 + redZonePercent) ||
-                                                    needFrequency > measuringFrequency * (1 - redZonePercent)) {
+                                            if (needFrequency * (1 + redZonePercent) > measuringFrequency &&
+                                                    needFrequency * (1 - redZonePercent) < measuringFrequency) {
                                                 redZoneFreq = 0;
                                             }
 
-                                            if (needAmplitude < measuringAmplitude * (1 + yellowZonePercent) ||
-                                                    needAmplitude > measuringAmplitude * (1 - yellowZonePercent)) {
+                                            if (needAmplitude * (1 + yellowZonePercent) > measuringAmplitude &&
+                                                    needAmplitude * (1 - yellowZonePercent) < measuringAmplitude) {
                                                 yellowZoneAmpl = 0;
                                             }
 
-                                            if (needAmplitude < measuringAmplitude * (1 + redZonePercent) ||
-                                                    needAmplitude > measuringAmplitude * (1 - redZonePercent)) {
+                                            if (needAmplitude * (1 + redZonePercent) > measuringAmplitude &&
+                                                    needAmplitude * (1 - redZonePercent) < measuringAmplitude) {
                                                 redZoneAmpl = 0;
                                             }
                                         }

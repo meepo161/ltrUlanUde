@@ -84,7 +84,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
         DataBaseRepository.init(false);
 
         new Thread(() -> {
-            while (!isError) {
+            while (!isClosed()) {
                 CommunicationModel.INSTANCE.getMU110Controller().onKM3();
             }
         }).start();
