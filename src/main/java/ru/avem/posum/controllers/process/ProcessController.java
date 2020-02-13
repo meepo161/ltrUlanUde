@@ -204,6 +204,8 @@ public class ProcessController implements BaseController {
     private WindowsManager wm;
     @Volatile
     boolean isRegulated = false;
+    @Volatile
+    boolean isNeedSmoothStop;
 
     @FXML
     private void initialize() {
@@ -444,6 +446,7 @@ public class ProcessController implements BaseController {
         sleep(100);
         CommunicationModel.INSTANCE.getMU110Controller().offKM2();
         sleep(100);
+        isNeedSmoothStop = false;
 
         Thread processThread = new Thread(() -> {
             process.run();

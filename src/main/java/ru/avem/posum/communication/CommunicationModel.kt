@@ -1,13 +1,10 @@
 package ru.avem.posum.communication
 
-import ru.avem.posum.communication.ModbusConnection.isAppRunning
-import ru.avem.posum.communication.ModbusConnection.isModbusConnected
 import ru.avem.posum.communication.devices.Device
 import ru.avem.posum.communication.devices.enums.DeviceType
 import ru.avem.posum.communication.devices.enums.UnitID
-import ru.avem.posum.communication.devices.parameters.DeviceParameter
 import ru.avem.posum.communication.devices.mu110.OwenMU110Controller
-import java.lang.Thread.sleep
+import ru.avem.posum.communication.devices.parameters.DeviceParameter
 import java.util.*
 
 object CommunicationModel : Observer {

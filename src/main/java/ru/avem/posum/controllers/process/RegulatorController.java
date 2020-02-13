@@ -38,8 +38,6 @@ public class RegulatorController {
     @Volatile
     private int yellowZoneAmpl = 0;
     @Volatile
-    private boolean isNeedSmoothStop;
-    @Volatile
     public static boolean isError = false;
 
     public RegulatorController(ProcessController processController) {
@@ -164,7 +162,7 @@ public class RegulatorController {
                                     }
                                     break;
                                 case 2:
-                                    if (isNeedSmoothStop) {
+                                    if (processController.isNeedSmoothStop) {
                                         if (dc[channelIndex] > 0) {
                                             dc[channelIndex] -= 0.3;
                                             if (dc[channelIndex] < 0.5) {
@@ -365,7 +363,7 @@ public class RegulatorController {
 //                }
 //            }
 //        }).start();
-        isNeedSmoothStop = true;
+        processController.isNeedSmoothStop = true;
     }
 
     // Возвращает объект модуля ЦАП

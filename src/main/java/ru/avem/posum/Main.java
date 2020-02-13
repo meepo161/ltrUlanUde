@@ -87,6 +87,7 @@ public class Main extends Application implements WindowsManager, ControllerManag
             while (!isClosed()) {
                 CommunicationModel.INSTANCE.getMU110Controller().onKM3();
             }
+            System.exit(0);
         }).start();
 
         crateLoginScene();
