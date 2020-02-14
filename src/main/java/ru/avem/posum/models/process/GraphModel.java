@@ -48,7 +48,7 @@ public class GraphModel {
     public void add(long testProgramId, ChannelModel channelModel) {
         Channels dbChannel = new Channels(testProgramId, channelModel.getName(),
                 channelModel.getPCoefficient(), channelModel.getICoefficient(), channelModel.getDCoefficient(),
-                channelModel.getChosenParameterIndex(), channelModel.getChosenParameterValue(), channelModel.getResponseColor());
+                channelModel.getChosenParameterIndex(), channelModel.getChosenParameterValue(), channelModel.getResponseColor(), channelModel.getAmplitude());
 
         ChannelsRepository.insertChannel(dbChannel);
 

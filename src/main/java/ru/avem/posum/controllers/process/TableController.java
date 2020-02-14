@@ -470,7 +470,7 @@ public class TableController {
             if (channel.getTestProgramId() == processController.getTestProgramId()) {
                 ChannelModel channelModel = new ChannelModel(channel.getId(), channel.getName(),
                         channel.getPCoefficient(), channel.getICoefficient(), channel.getDCoefficient(),
-                        channel.getChosenParameterIndex(), channel.getChosenParameterValue(), channel.getResponseColor());
+                        channel.getChosenParameterIndex(), channel.getChosenParameterValue(), channel.getResponseColor(), channel.getAmplitudeValue());
 
                 table.getItems().add(channelModel);
                 processController.getLinkingController().add(channelModel);

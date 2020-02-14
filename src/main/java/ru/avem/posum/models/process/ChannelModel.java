@@ -35,6 +35,7 @@ public class ChannelModel {
     private StringProperty iCoefficient; // i - коэффициент
     private StringProperty dCoefficient; // d - коэффициент
     private StringProperty chosenParameterIndex; // индекс регулируемого параметра
+    private StringProperty amplitudeValue; // регулируемое значение амплитуды
     private CheckBox responseCheckBox;
     private ColorPicker colorPicker;
     private StringProperty responseColor;
@@ -48,6 +49,7 @@ public class ChannelModel {
         iCoefficient = new SimpleStringProperty(initialValue);
         dCoefficient = new SimpleStringProperty(initialValue);
         chosenParameterIndex = new SimpleStringProperty("-1");
+        amplitudeValue = new SimpleStringProperty("-1");
         responseColor = new SimpleStringProperty(String.format("rgba(%d, %d, %d, %d);", 139, 0, 0, 1));
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
@@ -102,13 +104,14 @@ public class ChannelModel {
         this.chosenParameterIndex = new SimpleStringProperty(chosenParameterIndex);
         this.responseColor = new SimpleStringProperty(responseColor);
         initResponseFields();
-        setChosenParameterValue(chosenParameterValue);
+
+        setChosenParameterValue(chosenParameterValue, amplitudeValue);
         responseCheckBox = createResponseCheckBox();
         colorPicker = createColorPicker();
     }
 
     // Задает индекс контролируемого параметра
-    private void setChosenParameterValue(String value) {
+    private void setChosenParameterValue(String value, String ampVlaue) {
         switch (Integer.parseInt(chosenParameterIndex.get())) {
             case 0:
                 setAmplitude(value);
@@ -117,6 +120,7 @@ public class ChannelModel {
                 setDc(value);
                 break;
             case 2:
+                setAmplitude(ampVlaue);
                 setFrequency(value);
                 break;
         }

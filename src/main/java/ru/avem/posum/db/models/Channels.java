@@ -26,6 +26,8 @@ public class Channels {
     @DatabaseField
     private String chosenParameterValue;
     @DatabaseField
+    private String amplitudeValue;
+    @DatabaseField
     private String responseColor;
 
     public Channels() {
@@ -33,7 +35,7 @@ public class Channels {
     }
 
     public Channels(long testProgramId, String name, String pCoefficient, String iCoefficient,
-                    String dCoefficient, String chosenParameterIndex, String chosenParameterValue, String responseColor) {
+                    String dCoefficient, String chosenParameterIndex, String chosenParameterValue, String responseColor, String amplitudeValue) {
 
         this.testProgramId = testProgramId;
         this.name = name;
@@ -42,6 +44,7 @@ public class Channels {
         this.dCoefficient = dCoefficient;
         this.chosenParameterIndex = chosenParameterIndex;
         this.chosenParameterValue = chosenParameterValue;
+        this.amplitudeValue = amplitudeValue;
         this.responseColor = responseColor;
     }
 
@@ -111,5 +114,13 @@ public class Channels {
 
     public void setResponseColor(String responseColor) {
         this.responseColor = responseColor;
+    }
+
+    public String getAmplitudeValue() {
+        return amplitudeValue;
+    }
+
+    public void setAmplitudeValue(String amplitudeValue) {
+        this.amplitudeValue = amplitudeValue;
     }
 }

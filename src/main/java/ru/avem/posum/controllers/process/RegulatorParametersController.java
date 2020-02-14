@@ -23,7 +23,7 @@ import java.util.List;
 public class RegulatorParametersController {
     private CheckBox amplitudeCheckBox;
     private Label amplitudeLabel;
-    private TextField amplitudeTextField;
+    public TextField amplitudeTextField;
     private Label calibratedAmplitudeLabel;
     private TextField calibratedAmplitudeTextField;
     private Slider amplitudeSlider;
@@ -549,15 +549,15 @@ public class RegulatorParametersController {
         for (int value : chosenIndexesOfParameters) {
             switch (value) {
                 case 0:
-                    TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма", 90);
-                    TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %", 90);
-
-                    amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
-                    relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
-
-                    tableView.getColumns().add(amplitudeColumn);
-                    tableView.getColumns().add(relativeResponseAmplitudeColumn);
-                    break;
+//                    TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма", 90);
+//                    TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %", 90);
+//
+//                    amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
+//                    relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
+//
+//                    tableView.getColumns().add(amplitudeColumn);
+//                    tableView.getColumns().add(relativeResponseAmplitudeColumn);
+//                    break;
                 case 1:
                     TableColumn<ChannelModel, String> dcColumn = createColumn("Статика норма", 70);
                     TableColumn<ChannelModel, String> relativeResponseDcColumn = createColumn("Статика отклик, %", 80);
@@ -577,6 +577,15 @@ public class RegulatorParametersController {
 
                     tableView.getColumns().add(frequencyColumn);
                     tableView.getColumns().add(relativeResponseFrequencyColumn);
+
+                    TableColumn<ChannelModel, String> amplitudeColumn = createColumn("Амплитуда норма", 90);
+                    TableColumn<ChannelModel, String> relativeResponseAmplitudeColumn = createColumn("Амплитуда отклик, %", 90);
+
+                    amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
+                    relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
+
+                    tableView.getColumns().add(amplitudeColumn);
+                    tableView.getColumns().add(relativeResponseAmplitudeColumn);
                     break;
             }
         }
