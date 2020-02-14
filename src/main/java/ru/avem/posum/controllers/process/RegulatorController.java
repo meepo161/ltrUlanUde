@@ -169,6 +169,7 @@ public class RegulatorController {
                                                 processController.handleStop();
                                                 break;
                                             }
+                                            processController.isRegulated = false;
                                         }
                                     } else {
                                         if (!isError) {
@@ -299,6 +300,15 @@ public class RegulatorController {
                                             if (needAmplitude * (1 + redZonePercent) > measuringAmplitude &&
                                                     needAmplitude * (1 - redZonePercent) < measuringAmplitude) {
                                                 redZoneAmpl = 0;
+                                            }
+
+                                            if (Integer.parseInt(channel.getResponseLoadsCounter()) > processController.loads) {
+                                                Platform.runLater(() -> {
+                                                    Toast.makeText("Испытание окончено. Совершено " + processController.loads + " цикла(ов)")
+                                                            .show(Toast.ToastType.ERROR);
+                                                });
+                                                doSmoothStop();
+                                                break;
                                             }
                                         }
                                     }

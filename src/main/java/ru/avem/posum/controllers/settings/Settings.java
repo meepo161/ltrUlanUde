@@ -67,7 +67,7 @@ public class Settings implements BaseController {
     @FXML
     private TextField testProgramNameTextField;
     @FXML
-    private TextField testProgramTimeTextField;
+    private TextField testProgramLoadsTextField;
     @FXML
     private TextField testProgramDateTextField;
     @FXML
@@ -101,7 +101,7 @@ public class Settings implements BaseController {
                 new Pair<>(requiredFieldN1, testProgramNameTextField),
                 new Pair<>(requiredFieldN2, sampleNameTextField),
                 new Pair<>(requiredFieldN3, testProgramTypeTextField),
-                new Pair<>(requiredFieldN4, testProgramTimeTextField),
+                new Pair<>(requiredFieldN4, testProgramLoadsTextField),
                 new Pair<>(requiredFieldN5, testProgramDateTextField)
         ));
 
@@ -113,7 +113,6 @@ public class Settings implements BaseController {
 
     // Задает формат данных для вермени и даты
     private void initTimeAndDateFields() {
-        setTextFormat(testProgramTimeTextField, 8, ":");
         setTextFormat(testProgramDateTextField, 10, ".");
     }
 
@@ -238,14 +237,8 @@ public class Settings implements BaseController {
 
     // Проверяет формат времени и даты
     private boolean checkTimeAndDateFormat() {
-        String time = testProgramTimeTextField.getText();
         String date = testProgramDateTextField.getText();
         boolean isTextFormatCorrect = true;
-
-        if (!time.matches("^[\\d]{2,3}:[0-5][\\d]:[0-5][\\d]")) {
-            statusBarLine.setStatus("Неверно задано время испытаний", false);
-            isTextFormatCorrect = false;
-        }
 
         if (!date.matches("(^[0-2][\\d]|^[3][0,1])\\.(0[\\d]|1[0-2])\\.[2][\\d]{3}")) {
             statusBarLine.setStatus("Неверно задана дата испытаний", false);
@@ -321,7 +314,7 @@ public class Settings implements BaseController {
         generalSettings.put("Sample Serial Number", sampleSerialNumberTextField.getText());
         generalSettings.put("Document Number", documentNumberTextField.getText());
         generalSettings.put("Test Program Type", testProgramTypeTextField.getText());
-        generalSettings.put("Test Program Time", testProgramTimeTextField.getText());
+        generalSettings.put("Test Program Time", testProgramLoadsTextField.getText());
         generalSettings.put("Test Program Date", testProgramDateTextField.getText());
         generalSettings.put("Lead Engineer", leadEngineerTextField.getText());
         generalSettings.put("Comments", commentsTextArea.getText());
@@ -362,7 +355,7 @@ public class Settings implements BaseController {
         sampleSerialNumberTextField.setText(testProgram.getSampleSerialNumber());
         documentNumberTextField.setText(testProgram.getDocumentNumber());
         testProgramTypeTextField.setText(testProgram.getTestProgramType());
-        testProgramTimeTextField.setText(testProgram.getTestProgramTime());
+        testProgramLoadsTextField.setText(testProgram.getTestProgramTime());
         testProgramDateTextField.setText(testProgram.getTestProgramDate());
         leadEngineerTextField.setText(testProgram.getLeadEngineer());
         commentsTextArea.setText(testProgram.getComments());
@@ -375,7 +368,7 @@ public class Settings implements BaseController {
         sampleSerialNumberTextField.setText("");
         documentNumberTextField.setText("");
         testProgramTypeTextField.setText("");
-        testProgramTimeTextField.setText("");
+        testProgramLoadsTextField.setText("");
         testProgramDateTextField.setText("");
         leadEngineerTextField.setText("");
         commentsTextArea.setText("");

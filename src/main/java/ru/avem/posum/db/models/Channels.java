@@ -35,7 +35,8 @@ public class Channels {
     }
 
     public Channels(long testProgramId, String name, String pCoefficient, String iCoefficient,
-                    String dCoefficient, String chosenParameterIndex, String chosenParameterValue, String responseColor, String amplitudeValue) {
+                    String dCoefficient, String chosenParameterIndex, String chosenParameterValue,
+                    String responseColor, String amplitudeValue) {
 
         this.testProgramId = testProgramId;
         this.name = name;
@@ -123,4 +124,5 @@ public class Channels {
     public void setAmplitudeValue(String amplitudeValue) {
         this.amplitudeValue = amplitudeValue;
     }
+
 }

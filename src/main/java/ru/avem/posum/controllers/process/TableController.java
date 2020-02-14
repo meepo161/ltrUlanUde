@@ -361,25 +361,30 @@ public class TableController {
                         double neededAmplitude = Double.parseDouble(channelModel.getAmplitude());
                         double dc = signalParametersModel.getDc(moduleIndex, channelIndex);
                         double neededDc = Double.parseDouble(channelModel.getDc());
-                        double loadsCounter = signalParametersModel.getLoadsCounter(moduleIndex, channelIndex);
+                        double loadsCounter = signalParametersModel.getLoadsCounter(moduleIndex, 0);
                         double frequency = signalParametersModel.getFrequency(moduleIndex, channelIndex);
                         double neededFrequency = Double.parseDouble(channelModel.getFrequency());
                         double rms = signalParametersModel.getRms(moduleIndex, channelIndex);
                         double neededRms = Double.parseDouble(channelModel.getRms());
 
                         channelModel.setResponseAmplitude(String.valueOf(Utils.roundValue(amplitude * 1.06, 100)));
-                        channelModel.setRelativeResponseAmplitude(String.valueOf(neededAmplitude == 0 ? 0 : Utils.roundValue(amplitude / neededAmplitude * 100.0, 100)));
+                        channelModel.setRelativeResponseAmplitude(String.valueOf(Utils.roundValue(amplitude * 1.06, 100)));
                         channelModel.setResponseDc(String.valueOf(Utils.roundValue(dc, 100)));
                         channelModel.setRelativeResponseDc(String.valueOf(neededDc == 0 ? 0 : Utils.roundValue(dc / neededDc * 100.0, 100)));
                         channelModel.setResponseLoadsCounter(String.valueOf((int) loadsCounter));
+
                         if (frequency < 50) {
-                            channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 100)));
+                            channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(frequency, 10)));
                         } else {
-                            channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(0.0, 100)));
+                            channelModel.setResponseFrequency(String.valueOf(Utils.roundValue(0.0, 10)));
                         }
                         channelModel.setRelativeResponseFrequency(String.valueOf(neededFrequency == 0 ? 0 : Utils.roundValue(frequency / neededFrequency * 100.0, 100)));
                         channelModel.setResponseRms(String.valueOf(Utils.roundValue(rms * 1.06, 100)));
                         channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 100)));
+
+                        channelModel.setRms(String.valueOf(Utils.roundValue(rms, 100)));
+                        channelModel.setLoadsCounter(String.valueOf(Utils.roundValue(loadsCounter, 100)));
+                        channelModel.setFrequency(String.valueOf(Utils.roundValue(neededFrequency, 100)));
                     }
                 }
             }
@@ -470,7 +475,8 @@ public class TableController {
             if (channel.getTestProgramId() == processController.getTestProgramId()) {
                 ChannelModel channelModel = new ChannelModel(channel.getId(), channel.getName(),
                         channel.getPCoefficient(), channel.getICoefficient(), channel.getDCoefficient(),
-                        channel.getChosenParameterIndex(), channel.getChosenParameterValue(), channel.getResponseColor(), channel.getAmplitudeValue());
+                        channel.getChosenParameterIndex(), channel.getChosenParameterValue(),
+                        channel.getResponseColor(), channel.getAmplitudeValue());
 
                 table.getItems().add(channelModel);
                 processController.getLinkingController().add(channelModel);

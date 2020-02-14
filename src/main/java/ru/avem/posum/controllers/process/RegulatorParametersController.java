@@ -23,7 +23,7 @@ import java.util.List;
 public class RegulatorParametersController {
     private CheckBox amplitudeCheckBox;
     private Label amplitudeLabel;
-    public TextField amplitudeTextField;
+    private TextField amplitudeTextField;
     private Label calibratedAmplitudeLabel;
     private TextField calibratedAmplitudeTextField;
     private Slider amplitudeSlider;
@@ -337,7 +337,6 @@ public class RegulatorParametersController {
                     pidParameters.get(parametersIndex).setSelected(false);
                 }
             }
-
             pidParameters.get(chosenParameterIndex).setSelected(true);
         } else {
             unselectAllCheckBoxes();
@@ -506,6 +505,7 @@ public class RegulatorParametersController {
     public void save(ChannelModel selectedChannel) {
         // Save to channel model
         selectedChannel.setAmplitude(amplitudeTextField.getText());
+        selectedChannel.setResponseLoadsCounter(selectedChannel.getLoadsCounter());
         selectedChannel.setDc(dcTextField.getText());
         selectedChannel.setFrequency(frequencyTextField.getText());
         selectedChannel.setPCoefficient(pTextField.getText());
@@ -584,8 +584,8 @@ public class RegulatorParametersController {
                     amplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().amplitudeProperty());
                     relativeResponseAmplitudeColumn.setCellValueFactory(cellData -> cellData.getValue().relativeAmplitudeProperty());
 
-                    tableView.getColumns().add(amplitudeColumn);
-                    tableView.getColumns().add(relativeResponseAmplitudeColumn);
+//                    tableView.getColumns().add(amplitudeColumn);
+//                    tableView.getColumns().add(relativeResponseAmplitudeColumn);
                     break;
             }
         }

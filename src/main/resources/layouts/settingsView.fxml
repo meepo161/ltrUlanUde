@@ -110,7 +110,7 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Label text="Длительность испытаний:" GridPane.rowIndex="6">
+                              <Label text="Кол-во нагружений:" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
@@ -120,7 +120,7 @@
                                     <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="testProgramTimeTextField" onKeyPressed="#listenBackSpaceKey" promptText="чч:мм:сс" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
+                              <TextField fx:id="testProgramLoadsTextField" onKeyPressed="#listenBackSpaceKey" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="6">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>

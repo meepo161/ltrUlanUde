@@ -33,6 +33,8 @@ import static ru.avem.posum.utils.Utils.sleep;
 
 public class ProcessController implements BaseController {
     @FXML
+    public TextField loadsTextField;
+    @FXML
     private Button addChannelsButton;
     @FXML
     private Button addCommandButton;
@@ -196,9 +198,10 @@ public class ProcessController implements BaseController {
     private RegulatorParametersController regulatorParametersController;
     private List<Pair<Node, Boolean>> states;
     private StatusBarLine statusBarLine;
-    private TableController tableController;
+    public TableController tableController;
     private StopwatchController stopwatchController;
     private TestProgram testProgram;
+    public int loads;
     private TestProgramController testProgramController = new TestProgramController();
     private List<Node> uiElements = new ArrayList<>();
     private WindowsManager wm;
@@ -241,11 +244,10 @@ public class ProcessController implements BaseController {
         tableController.initTableView();
 
         fillListOfUiElements();
-
-        tfYellowZonePercent.setText("10.0");
-        tfYellowZoneTime.setText("20.0");
-        tfRedZonePercent.setText("20.0");
-        tfRedZoneTime.setText("5.0");
+        tfYellowZonePercent.setText("20.0");
+        tfYellowZoneTime.setText("300.0");
+        tfRedZonePercent.setText("30.0");
+        tfRedZoneTime.setText("30.0");
     }
 
     // Формирует список элементов GUI
@@ -279,6 +281,8 @@ public class ProcessController implements BaseController {
 
     // Инициализирует модули
     public void handleInitialize() {
+        loads = Integer.parseInt(testProgram.getTestProgramTime());
+        loadsTextField.setText(String.valueOf(loads));
         if (!processModel.getModules().isEmpty()) {
             doInitialization();
         } else {
@@ -437,6 +441,10 @@ public class ProcessController implements BaseController {
 
     // Запускает программу испытаний
     public void handleStart() {
+        rarefactionCoefficientComboBox.getSelectionModel().select(7);
+        autoScaleCheckBox.setSelected(true);
+        loadsTextField.setDisable(false);
+
         statusBarLine.setStatusOfProgress("Запуск программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Запуск программы испытаний", EventsTypes.LOG);
 
@@ -474,6 +482,7 @@ public class ProcessController implements BaseController {
                 stopButton.setDisable(false);
                 timeLabel.setDisable(false);
                 timeTextField.setDisable(false);
+                loadsTextField.setDisable(false);
                 savePointButton.setDisable(false);
                 saveWaveformButton.setDisable(false);
                 backButton.setDisable(false);
@@ -572,7 +581,6 @@ public class ProcessController implements BaseController {
 
         statusBarLine.setStatusOfProgress("Завершение программы испытаний");
         eventsController.getEventsModel().addEvent(testProgram.getId(), "Завершение программы испытаний", EventsTypes.LOG);
-
         graphController.getGraphModel().clear();
         tableController.toggleResponseUiElements(true);
         toggleUiElements(true);
@@ -701,7 +709,8 @@ public class ProcessController implements BaseController {
                     handleStop();
                 }
 
-                regulatorParametersController.clear();
+                loadsTextField.setText("");
+//                regulatorParametersController.clear();
                 regulatorParametersController.hideToolBar();
                 stopwatchController.stopStopwatch();
                 tableController.saveChannels();
@@ -709,6 +718,9 @@ public class ProcessController implements BaseController {
                 statusBarLine.toggleProgressIndicator(true);
                 statusBarLine.clear();
                 loadUiElementsState();
+                if (initialized) {
+                    doInitialization();
+                }
                 Platform.runLater(() -> wm.setScene(WindowsManager.Scenes.MAIN_SCENE));
             }).start();
 

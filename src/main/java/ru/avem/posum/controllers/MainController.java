@@ -15,6 +15,7 @@ import ru.avem.posum.ControllerManager;
 import ru.avem.posum.WindowsManager;
 import ru.avem.posum.communication.CommunicationModel;
 import ru.avem.posum.communication.ModbusConnection;
+import ru.avem.posum.controllers.process.ProcessController;
 import ru.avem.posum.db.CalibrationsRepository;
 import ru.avem.posum.db.ModulesRepository;
 import ru.avem.posum.db.TestProgramRepository;
@@ -68,6 +69,7 @@ public class MainController implements BaseController {
     private int selectedIndex;
     private StatusBarLine statusBarLine;
     private TestProgram testProgram;
+    private ProcessController processController;
     private long testProgramId;
     private ObservableList<TestProgram> testPrograms;
     private WindowsManager wm;
