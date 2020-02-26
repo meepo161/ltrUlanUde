@@ -1,10 +1,19 @@
 package ru.avem.posum.utils;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class Utils {
     private static final int DECIMAL_SCALE_LIMIT = 7; // максимальное количество знаков после запятой
@@ -63,4 +72,14 @@ public class Utils {
     }
 
     public static int getRounder(int rarefactionCoefficient) { return (int) Math.pow(10, rarefactionCoefficient); }
+
+    public void saveNodeAsPngTo(Node node, File file) {
+        WritableImage image = node.snapshot(new SnapshotParameters(), null);
+
+        try {
+            ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
