@@ -40,6 +40,7 @@
                               <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="40.0" minHeight="40.0" prefHeight="40.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints maxHeight="60.0" minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
@@ -125,41 +126,52 @@
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Label text="Дата испытаний:" GridPane.rowIndex="7">
+                              <Label text="Дата испытаний:" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
+                              <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets left="235.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="7">
+                              <TextField fx:id="testProgramDateTextField" onKeyPressed="#listenBackSpaceKey" promptText="дд.мм.гггг" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin></TextField>
-                              <Label text="Ведущий инженер:" GridPane.rowIndex="8">
+                              <Label text="Ведущий инженер:" GridPane.rowIndex="9">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="8">
+                              <TextField fx:id="leadEngineerTextField" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="9">
                                  <GridPane.margin>
                                     <Insets right="10.0" />
                                  </GridPane.margin>
                               </TextField>
-                              <Label text="Комментарии:" GridPane.rowIndex="9">
+                              <Label text="Комментарии:" GridPane.rowIndex="10">
                                  <GridPane.margin>
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextArea fx:id="commentsTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="10">
+                              <TextArea fx:id="commentsTextArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="11">
                                  <GridPane.margin>
                                     <Insets left="10.0" right="10.0" />
                                  </GridPane.margin>
                               </TextArea>
-                              <Button fx:id="backButtonGeneralTab" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="BOTTOM" />
+                              <Button fx:id="backButtonGeneralTab" cancelButton="true" maxHeight="50.0" maxWidth="250.0" minHeight="50.0" minWidth="250.0" mnemonicParsing="false" onAction="#handleBackButton" text="Назад" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="12" GridPane.valignment="BOTTOM" />
+                              <Label text="Нагружений сделано:" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets left="10.0" />
+                                 </GridPane.margin>
+                              </Label>
+                              <TextField fx:id="testProgramLoadsNow" onKeyPressed="#listenBackSpaceKey" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <Label fx:id="requiredFieldN6" alignment="CENTER_RIGHT" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
+                                 <GridPane.margin>
+                                    <Insets left="235.0" />
+                                 </GridPane.margin>
+                              </Label>
                            </children>
                         </GridPane>
                      </children>

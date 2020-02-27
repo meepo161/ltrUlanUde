@@ -31,6 +31,8 @@ public class TestProgram {
     @DatabaseField
     private String testProgramTime;
     @DatabaseField
+    private String testProgramLoadsNow;
+    @DatabaseField
     private String testProgramDate;
     @DatabaseField
     private String leadEngineer;
@@ -52,6 +54,7 @@ public class TestProgram {
                        String documentNumber,
                        String testProgramType,
                        String testProgramTime,
+                       String testProgramLoadsNow,
                        String testProgramDate,
                        String leadEngineer,
                        String comments,
@@ -65,6 +68,7 @@ public class TestProgram {
         this.documentNumber = documentNumber;
         this.testProgramType = testProgramType;
         this.testProgramTime = testProgramTime;
+        this.testProgramLoadsNow = testProgramLoadsNow;
         this.testProgramDate = testProgramDate;
         this.leadEngineer = leadEngineer;
         this.comments = comments;
@@ -136,9 +140,22 @@ public class TestProgram {
         return testProgramTime;
     }
 
+    public String getTestProgramName() {
+        return testProgramName;
+    }
+
+    public String getTestProgramLoadsNow() {
+        return testProgramLoadsNow;
+    }
+
+    public void setTestProgramLoadsNow(String testProgramLoadsNow) {
+        this.testProgramLoadsNow = testProgramLoadsNow;
+    }
+
     public void setTestProgramTime(String testProgramTime) {
         this.testProgramTime = testProgramTime;
     }
+
 
     public String getTestProgramDate() {
         return testProgramDate;

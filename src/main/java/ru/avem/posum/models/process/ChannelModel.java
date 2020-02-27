@@ -94,7 +94,7 @@ public class ChannelModel {
     }
 
     public ChannelModel(long id, String name, String pCoefficient, String iCoefficient, String dCoefficient,
-                        String chosenParameterIndex, String chosenParameterValue, String responseColor) {
+                        String chosenParameterIndex, String chosenParameterValue, String responseColor, String amplitudeValue) {
 
         this.id = id;
         this.name = new SimpleStringProperty(name);

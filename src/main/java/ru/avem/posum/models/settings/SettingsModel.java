@@ -218,6 +218,7 @@ public class SettingsModel implements BaseController {
         testProgram.setDocumentNumber(generalSettings.get("Document Number"));
         testProgram.setTestProgramType(generalSettings.get("Test Program Type"));
         testProgram.setTestProgramTime(generalSettings.get("Test Program Time"));
+        testProgram.setTestProgramLoadsNow(generalSettings.get("Test Program Loads Now"));
         testProgram.setTestProgramDate(generalSettings.get("Test Program Date"));
         testProgram.setLeadEngineer(generalSettings.get("Lead Engineer"));
         testProgram.setComments(generalSettings.get("Comments"));
@@ -234,6 +235,7 @@ public class SettingsModel implements BaseController {
                 generalSettings.get("Document Number"),
                 generalSettings.get("Test Program Type"),
                 generalSettings.get("Test Program Time"),
+                generalSettings.get("Test Program Loads Now"),
                 generalSettings.get("Test Program Date"),
                 generalSettings.get("Lead Engineer"),
                 generalSettings.get("Comments"),

@@ -53,6 +53,8 @@ public class Settings implements BaseController {
     @FXML
     private Label requiredFieldN5;
     @FXML
+    private Label requiredFieldN6;
+    @FXML
     private TextField sampleNameTextField;
     @FXML
     private TextField sampleSerialNumberTextField;
@@ -68,6 +70,8 @@ public class Settings implements BaseController {
     private TextField testProgramNameTextField;
     @FXML
     private TextField testProgramLoadsTextField;
+    @FXML
+    private TextField testProgramLoadsNow;
     @FXML
     private TextField testProgramDateTextField;
     @FXML
@@ -102,6 +106,7 @@ public class Settings implements BaseController {
                 new Pair<>(requiredFieldN2, sampleNameTextField),
                 new Pair<>(requiredFieldN3, testProgramTypeTextField),
                 new Pair<>(requiredFieldN4, testProgramLoadsTextField),
+                new Pair<>(requiredFieldN6, testProgramLoadsNow),
                 new Pair<>(requiredFieldN5, testProgramDateTextField)
         ));
 
@@ -315,6 +320,7 @@ public class Settings implements BaseController {
         generalSettings.put("Document Number", documentNumberTextField.getText());
         generalSettings.put("Test Program Type", testProgramTypeTextField.getText());
         generalSettings.put("Test Program Time", testProgramLoadsTextField.getText());
+        generalSettings.put("Test Program Loads Now", testProgramLoadsNow.getText());
         generalSettings.put("Test Program Date", testProgramDateTextField.getText());
         generalSettings.put("Lead Engineer", leadEngineerTextField.getText());
         generalSettings.put("Comments", commentsTextArea.getText());
@@ -356,6 +362,7 @@ public class Settings implements BaseController {
         documentNumberTextField.setText(testProgram.getDocumentNumber());
         testProgramTypeTextField.setText(testProgram.getTestProgramType());
         testProgramLoadsTextField.setText(testProgram.getTestProgramTime());
+        testProgramLoadsNow.setText(testProgram.getTestProgramLoadsNow());
         testProgramDateTextField.setText(testProgram.getTestProgramDate());
         leadEngineerTextField.setText(testProgram.getLeadEngineer());
         commentsTextArea.setText(testProgram.getComments());
@@ -369,6 +376,7 @@ public class Settings implements BaseController {
         documentNumberTextField.setText("");
         testProgramTypeTextField.setText("");
         testProgramLoadsTextField.setText("");
+        testProgramLoadsNow.setText("");
         testProgramDateTextField.setText("");
         leadEngineerTextField.setText("");
         commentsTextArea.setText("");

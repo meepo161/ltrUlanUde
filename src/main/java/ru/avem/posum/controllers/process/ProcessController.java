@@ -18,6 +18,7 @@ import ru.avem.posum.controllers.BaseController;
 import ru.avem.posum.controllers.protocol.JsonController;
 import ru.avem.posum.controllers.protocol.ProtocolController;
 import ru.avem.posum.controllers.protocol.ProtocolSheets;
+import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.TestProgram;
 import ru.avem.posum.hardware.Process;
 import ru.avem.posum.models.process.*;
@@ -288,6 +289,7 @@ public class ProcessController implements BaseController {
         } else {
             statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
         }
+        table.getSelectionModel().getSelectedItem().setLoadsCounter(TestProgramRepository.getTestProgramm(testProgram.getIndex()).getTestProgramLoadsNow());
     }
 
     // Выполняет инициализацию
@@ -709,6 +711,10 @@ public class ProcessController implements BaseController {
                     handleStop();
                 }
 
+                System.out.println("00000000000000" + table.getSelectionModel().getSelectedItem().getLoadsCounter());
+
+                testProgram.setTestProgramLoadsNow(table.getSelectionModel().getSelectedItem().getLoadsCounter());
+                TestProgramRepository.updateTestProgram(testProgram);
                 loadsTextField.setText("");
 //                regulatorParametersController.clear();
                 regulatorParametersController.hideToolBar();
