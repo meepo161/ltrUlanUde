@@ -206,6 +206,7 @@ public class ProcessController implements BaseController {
     private TestProgramController testProgramController = new TestProgramController();
     private List<Node> uiElements = new ArrayList<>();
     private WindowsManager wm;
+    private ChannelModel channelModel;
     @Volatile
     boolean isRegulated = false;
     @Volatile
@@ -249,6 +250,8 @@ public class ProcessController implements BaseController {
         tfYellowZoneTime.setText("300.0");
         tfRedZonePercent.setText("30.0");
         tfRedZoneTime.setText("30.0");
+
+
     }
 
     // Формирует список элементов GUI
@@ -282,14 +285,14 @@ public class ProcessController implements BaseController {
 
     // Инициализирует модули
     public void handleInitialize() {
-        loads = Integer.parseInt(testProgram.getTestProgramTime());
-        loadsTextField.setText(String.valueOf(loads));
         if (!processModel.getModules().isEmpty()) {
             doInitialization();
         } else {
             statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
         }
-        table.getSelectionModel().getSelectedItem().setLoadsCounter(TestProgramRepository.getTestProgramm(testProgram.getIndex()).getTestProgramLoadsNow());
+
+        loads = Integer.parseInt(testProgram.getTestProgramTime());
+        loadsTextField.setText(String.valueOf(loads));
     }
 
     // Выполняет инициализацию
@@ -465,7 +468,6 @@ public class ProcessController implements BaseController {
 
         processThread.setPriority(Thread.MAX_PRIORITY);
         processThread.start();
-
     }
 
     // Проверят, запущены ли измерения и генерация сигнала на всех модулях
@@ -592,7 +594,7 @@ public class ProcessController implements BaseController {
             sleep(1000);
             process.finish();
             tableController.getRegulatorController().setFirstStart(false);
-            tableController.clearChannels();
+//            tableController.clearChannels();
             stopwatchController.pauseStopwatch();
             commandsController.getTimerController().clearTimers();
             checkFinish();
