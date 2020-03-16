@@ -206,7 +206,6 @@ public class ProcessController implements BaseController {
     private TestProgramController testProgramController = new TestProgramController();
     private List<Node> uiElements = new ArrayList<>();
     private WindowsManager wm;
-    private ChannelModel channelModel;
     @Volatile
     boolean isRegulated = false;
     @Volatile
@@ -251,7 +250,6 @@ public class ProcessController implements BaseController {
         tfRedZonePercent.setText("30.0");
         tfRedZoneTime.setText("30.0");
 
-
     }
 
     // Формирует список элементов GUI
@@ -290,9 +288,8 @@ public class ProcessController implements BaseController {
         } else {
             statusBarLine.setStatus("Отсутствуют каналы для инициализации", false);
         }
-
         loads = Integer.parseInt(testProgram.getTestProgramTime());
-        loadsTextField.setText(String.valueOf(loads));
+        loadsTextField.setText(testProgram.getTestProgramLoadsNow());
     }
 
     // Выполняет инициализацию
@@ -446,6 +443,7 @@ public class ProcessController implements BaseController {
 
     // Запускает программу испытаний
     public void handleStart() {
+        table.getSelectionModel().selectFirst();
         rarefactionCoefficientComboBox.getSelectionModel().select(7);
         autoScaleCheckBox.setSelected(true);
         loadsTextField.setDisable(false);
@@ -472,6 +470,9 @@ public class ProcessController implements BaseController {
 
     // Проверят, запущены ли измерения и генерация сигнала на всех модулях
     private void checkRunning() {
+
+        loadsTextField.setText(testProgram.getTestProgramTime());
+
         statusBarLine.clear();
         statusBarLine.toggleProgressIndicator(true);
 
@@ -513,9 +514,7 @@ public class ProcessController implements BaseController {
 
             int dacIndex = tableController.getRegulatorController().getDacIndex();
 
-            new Thread(() -> {
-                CommunicationModel.INSTANCE.getMU110Controller().onKM1();
-            }).start();
+            new Thread(() -> CommunicationModel.INSTANCE.getMU110Controller().onKM1()).start();
 
             while (!process.isStopped()) {
                 if (dacIndex != -1) {
@@ -698,12 +697,21 @@ public class ProcessController implements BaseController {
 
     // Отображает предупреждающее окно и возвращает пользователя в главное окно программы
     public void handleBack() {
+
+        table.getSelectionModel().selectFirst();
+        testProgram.setTestProgramLoadsNow(table.getSelectionModel().getSelectedItem().getLoadsCounter());
+        TestProgramRepository.updateTestProgram(testProgram);
+
         ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert alert = processModel.createExitAlert(ok, cancel);
         Optional<ButtonType> result = alert.showAndWait();
 
-        if (result.isPresent() && result.get() == ok) {
+        if (result.isPresent()) {
+            if (result.get() == ok) {
+                handleSaveProtocol();
+            }
+
             statusBarLine.setStatusOfProgress("Загрузка элементов главного окна программы");
 
             new Thread(() -> {
@@ -713,10 +721,6 @@ public class ProcessController implements BaseController {
                     handleStop();
                 }
 
-                System.out.println("00000000000000" + table.getSelectionModel().getSelectedItem().getLoadsCounter());
-
-                testProgram.setTestProgramLoadsNow(table.getSelectionModel().getSelectedItem().getLoadsCounter());
-                TestProgramRepository.updateTestProgram(testProgram);
                 loadsTextField.setText("");
 //                regulatorParametersController.clear();
                 regulatorParametersController.hideToolBar();

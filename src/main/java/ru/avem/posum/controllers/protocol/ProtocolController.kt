@@ -223,7 +223,13 @@ class ProtocolController(val processController: ProcessController) {
 
         for ((columnIndex, data) in channelData.withIndex()) {
             val cell = row.createCell(columnIndex)
-            cell.setCellValue(data)
+            if (columnIndex == 0 || columnIndex == 1 || columnIndex == 2) {
+                cell.setCellValue(data)
+            } else {
+                cell.setCellValue(data.toDouble())
+//                cell.setCellValue(data.replace('.', ','))
+//                cell.cellType = CellType.NUMERIC
+            }
             cell.cellStyle = cellStyles[CellStyles.LOG]
         }
     }
@@ -276,7 +282,7 @@ class ProtocolController(val processController: ProcessController) {
         dialog.headerText = "Задайте необходимые параметры"
         return dialog
     }
-    
+
     // Создает кнопки сохранения
     private fun createButtons(): Pair<ButtonType, ButtonType> {
         val saveButton = ButtonType("Сохранить", ButtonBar.ButtonData.OK_DONE)

@@ -7,8 +7,6 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
-import java.util.Objects;
-
 /**
  * Модель канала процесса испытаний
  */

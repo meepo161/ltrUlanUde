@@ -131,6 +131,7 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
+                              <TextField fx:id="testProgramLoadsNow" onKeyPressed="#listenBackSpaceKey" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <Label fx:id="requiredFieldN5" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="8">
                                  <GridPane.margin>
                                     <Insets left="235.0" />
@@ -166,7 +167,6 @@
                                     <Insets left="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <TextField fx:id="testProgramLoadsNow" onKeyPressed="#listenBackSpaceKey" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <Label fx:id="requiredFieldN6" alignment="CENTER_RIGHT" style="-fx-font-size: 24;" text="*" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets left="235.0" />

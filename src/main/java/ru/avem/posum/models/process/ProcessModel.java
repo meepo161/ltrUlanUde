@@ -113,7 +113,7 @@ public class ProcessModel {
     public Alert createExitAlert(ButtonType ok, ButtonType cancel) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ok, cancel);
         alert.setTitle("Подтвердите действие");
-        alert.setHeaderText("Вернуться в главное окно?");
+        alert.setHeaderText("Хотите сохранить протокол?");
         ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
         buttonBar.getButtons().forEach(b -> b.setStyle("-fx-font-size: 14px;\n" + "-fx-background-radius: 5px;\n" +
                 "\t-fx-border-radius: 5px;"));

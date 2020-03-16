@@ -1,5 +1,6 @@
 package ru.avem.posum.models.process;
 
+import ru.avem.posum.db.TestProgramRepository;
 import ru.avem.posum.db.models.Modules;
 import ru.avem.posum.hardware.Crate;
 import uk.me.berndporr.iirj.Butterworth;
@@ -29,6 +30,7 @@ public class SignalParametersModel {
     private int[][] samplesPerSemiPeriods = new int[SLOTS][]; // количество сэмплов в полупериодах каналов модулей
     private String[] typesOfModules = new String[SLOTS]; // список модулей
     private double[][] zeroTransitionCounter = new double[SLOTS][]; // количество переходов через 0 на каналах  модулей
+    boolean isFirstStart = true;
 
     public SignalParametersModel() {
         initArrays();
@@ -383,12 +385,16 @@ public class SignalParametersModel {
 
     // Считает количество нагружений
     private void calculateLoadsCounters(int moduleIndex) {
+        if (isFirstStart) {
+            for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
+                loadsCounter[moduleIndex][channelIndex] += Double.parseDouble(TestProgramRepository.getAllTestPrograms().get(0).getTestProgramLoadsNow());
+            }
+            isFirstStart = false;
+        }
         for (int channelIndex = 0; channelIndex < CHANNELS; channelIndex++) {
-//            if (channelIndex == 0) {
-                if (frequencies[moduleIndex][channelIndex] < 50) {
-                    loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];
-                }
-//            }
+            if (frequencies[moduleIndex][channelIndex] < 50) {
+                loadsCounter[moduleIndex][channelIndex] += frequencies[moduleIndex][channelIndex];
+            }
         }
     }
 

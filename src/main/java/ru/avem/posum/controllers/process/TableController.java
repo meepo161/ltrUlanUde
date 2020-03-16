@@ -383,7 +383,7 @@ public class TableController {
                         channelModel.setRelativeResponseRms(String.valueOf(neededRms == 0 ? 0 : Utils.roundValue(rms / neededRms * 100.0, 100)));
 
                         channelModel.setRms(String.valueOf(Utils.roundValue(rms, 100)));
-                        channelModel.setLoadsCounter(String.valueOf(Utils.roundValue(loadsCounter, 100)));
+                        channelModel.setLoadsCounter(String.valueOf(Utils.roundValue(loadsCounter, 1)));
                         channelModel.setFrequency(String.valueOf(Utils.roundValue(neededFrequency, 100)));
                     }
                 }
