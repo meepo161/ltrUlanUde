@@ -699,7 +699,7 @@ public class ProcessController implements BaseController {
     public void handleBack() {
 
         table.getSelectionModel().selectFirst();
-        testProgram.setTestProgramLoadsNow(table.getSelectionModel().getSelectedItem().getLoadsCounter());
+        testProgram.setTestProgramLoadsNow(String.valueOf((int) Double.parseDouble(table.getSelectionModel().getSelectedItem().getLoadsCounter())));
         TestProgramRepository.updateTestProgram(testProgram);
 
         ButtonType ok = new ButtonType("Да", ButtonBar.ButtonData.OK_DONE);

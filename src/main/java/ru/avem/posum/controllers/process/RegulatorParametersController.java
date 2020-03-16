@@ -527,6 +527,7 @@ public class RegulatorParametersController {
                 channel.setDCoefficient(dTextField.getText());
                 channel.setChosenParameterIndex(selectedChannel.getChosenParameterIndex());
                 channel.setChosenParameterValue(selectedChannel.getChosenParameterValue());
+                channel.setAmplitudeValue(amplitudeTextField.getText());
                 ChannelsRepository.updateChannel(channel);
             }
         }
